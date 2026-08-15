@@ -4,7 +4,7 @@
   "schemaVersion": "0.1.0",
   "generatedAt": "2026-08-15",
   "counts": {
-    "anchors": 1191,
+    "anchors": 1329,
     "candidates": 0,
     "edges": 2091,
     "listItems": 3934,
@@ -13,7 +13,7 @@
       "艺术": 172,
       "生物学": 24,
       "化学": 58,
-      "语文": 99,
+      "语文": 237,
       "英语": 48,
       "地理": 19,
       "历史": 9,
@@ -28,15 +28,16 @@
     "byTrack": {
       "MATRIX": 742,
       "DAG": 302,
-      "LIST": 147
+      "LIST": 285
     },
     "byReview": {
       "disputed": 905,
       "ai-reviewed": 272,
-      "llm-proposed": 14
+      "llm-proposed": 14,
+      "auto-confirmed": 138
     }
   },
-  "usableAnchors": 0,
+  "usableAnchors": 138,
   "aiReviewedAnchors": 272,
   "disputedAnchors": 905,
   "files": {
@@ -51,6 +52,10 @@
     "anchors/chemistry.jsonl": {
       "bytes": 79037,
       "sha256": "16cc82bea2fb4a6257f46d19b4964b4bd75baf4c042b4fe8d093ce4191e76fce"
+    },
+    "anchors/chinese-lists.jsonl": {
+      "bytes": 155326,
+      "sha256": "046091faff0e3f21db5810fc9a5de48f501c61e239ccf79e399ab343851f0baf"
     },
     "anchors/chinese.jsonl": {
       "bytes": 135030,
@@ -145,16 +150,16 @@
       "sha256": "884ec72942e20c589b398e5c7f4cb9a08eda91f3289c826fb8ea2147a58b062a"
     },
     "lists/hanzi/changyong-3500.jsonl": {
-      "bytes": 1377786,
-      "sha256": "f197053dec759a0e98c3d5e229505b6bf90db91c62f76e8ef2ae176bceeb0859"
+      "bytes": 1423376,
+      "sha256": "fd5c50aeca00a463551c1dc2569176104d008d858745431cd5e51f79939c33af"
     },
     "lists/hanzi/jiben-300.jsonl": {
-      "bytes": 138554,
-      "sha256": "975428bd7668f0d64183dddeb26cda6c92cde6b5fe4003e6826a29fa01ad5fd3"
+      "bytes": 142441,
+      "sha256": "25bb6602f20bbab9520b7247d65a8d61b7cc0f909461b6b44c7fd4f6b2d23faa"
     },
     "lists/recite/yiwu-135.jsonl": {
-      "bytes": 56249,
-      "sha256": "a2163da2931d305d3887657030d1e33341cf5372e2e768cbad12ac71a1e58001"
+      "bytes": 58184,
+      "sha256": "f7dd71f4ae09dbd2984a5baf1678811e87061091ad7b68bb5755770f1d39b066"
     },
     "mappings/cn-2022.jsonl": {
       "bytes": 1322,
