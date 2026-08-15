@@ -159,13 +159,13 @@ canvas{display:block;cursor:grab}canvas.drag{cursor:grabbing}
 #q{background:rgba(18,18,21,.9);border:1px solid #26262b;border-radius:9px;color:#e8e6e1;padding:8px 13px;font:inherit;font-size:13px;width:240px}
 .badge{font-size:11px;color:#8b8780;background:rgba(18,18,21,.85);border:1px solid #26262b;border-radius:99px;padding:5px 11px}
 #axis{position:fixed;left:0;top:0;bottom:0;width:52px;pointer-events:none;z-index:4}
-#axis div{position:absolute;font-size:10px;color:#4e4e55;letter-spacing:.1em;transform:translateY(-50%)}
+#axis div{position:absolute;font-size:10px;color:#4e4e55;white-space:nowrap;letter-spacing:.1em;transform:translateY(-50%)}
 #tip{position:fixed;pointer-events:none;background:rgba(18,18,21,.96);border:1px solid #33333a;border-radius:8px;padding:7px 11px;font-size:12.5px;max-width:320px;display:none;z-index:9}
 </style></head><body>
 <canvas id="cv"></canvas>
 <div id="axis"></div>
 <div id="hero">
-  <div class="kicker">中国义务教育课程标准 2022 · 一至九年级</div>
+  <div class="kicker">K12 教育的能力结构 · 义务教育课程标准 2022</div>
   <h1>一个孩子<br>要学的全部。</h1>
   <p><b>__NC__</b> 条能力断言，<b>__EC__</b> 条先修依赖，覆盖 <b>__DC__</b> 个学科。<br>
   <b>点任意一个点</b>，看它之前必须先掌握什么。</p>
@@ -333,8 +333,8 @@ document.querySelectorAll('.li').forEach(el => el.onclick = () => {
   draw();
 });
 document.getElementById('stat').textContent = `${N.length} 个能力 · ${E.length} 条依赖`;
-document.getElementById('axis').innerHTML = [1,3,5,7,9].map(g =>
-  `<div style="top:${(0.08 + (g-1)/8*0.84)*100}%;left:14px">G${g}</div>`).join('');
+document.getElementById('axis').innerHTML = [[1,'一年级'],[3,'三年级'],[5,'五年级'],[7,'七年级'],[9,'九年级']].map(([g,t]) =>
+  `<div style="top:${(0.08 + (g-1)/8*0.84)*100}%;left:10px">${t}</div>`).join('');
 addEventListener('resize', fit); fit();
 </script></body></html>"""
 
@@ -363,7 +363,7 @@ def main():
     E = [[e['prerequisiteId'], e['anchorId']] for e in edges]
 
     html = (HTML
-            .replace('__TITLE__', 'K12 知识底座 · 能力图谱')
+            .replace('__TITLE__', 'K12 教育的能力结构 · 2D 图谱')
             .replace('__NODES__', json.dumps(nodes, ensure_ascii=False, separators=(',', ':')))
             .replace('__EDGES__', json.dumps(E, separators=(',', ':')))
             .replace('__COLORS__', json.dumps(COLORS, ensure_ascii=False))

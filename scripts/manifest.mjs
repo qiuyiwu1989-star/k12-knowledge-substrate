@@ -42,7 +42,7 @@ for (const [dir, counter] of [['anchors', 'anchors'], ['candidates', 'candidates
 
 const pkg = JSON.parse(readFileSync(join(ROOT, 'package.json'), 'utf8'));
 const manifest = {
-  dataset: 'K12 知识底座 (K12 Knowledge Substrate)',
+  dataset: 'K12 教育的能力结构 (K12 Capability Structure)',
   release: pkg.version,
   schemaVersion: '0.1.0',
   generatedAt: process.env.SOURCE_DATE || new Date().toISOString().slice(0, 10),

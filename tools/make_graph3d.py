@@ -31,10 +31,15 @@ def layout3d(nodes, edges, iters=420, seed=7):
     idx = {n['id']: i for i, n in enumerate(nodes)}
     N = len(nodes)
 
-    ytar = []
+    ytar, rtar = [], []
     for n in nodes:
         s = STAGE_ORD.get((n.get('stageHint') or {}).get('min'), 5)
         ytar.append(-HGT / 2 + (s - 1) / 8.0 * HGT)
+        # 漏斗：低学段铺得宽、高学段收得紧。这不是装饰 ——
+        # G1 有 557 个节点（占 47%）且平均被依赖 4.71 次，基础层本来就最宽。
+        # 调参教训：靠「压窄底部」做不出漏斗，253 个 G7 节点物理上塞不进小半径，
+        # 斥力会把它们顶回去（实测只收窄 22%）。得反过来 —— 让顶部铺得足够开。
+        rtar.append(R * (1.45 - 1.00 * (s - 1) / 8.0))
 
     discs = sorted({n['discipline'] for n in nodes})
     seed_xy = {}
@@ -51,7 +56,7 @@ def layout3d(nodes, edges, iters=420, seed=7):
     for i, n in enumerate(nodes):
         disc_idx[n['discipline']].append(i)
 
-    CELL = 110.0
+    CELL = 132.0
     for it in range(iters):
         t = 1.0 - it / iters
         fx = [0.0] * N; fy = [0.0] * N; fz = [0.0] * N
@@ -74,14 +79,14 @@ def layout3d(nodes, edges, iters=420, seed=7):
                     d2 = ddx * ddx + ddy * ddy + ddz * ddz + 0.01
                     if d2 > CELL * CELL * 4:
                         continue
-                    f = 2200.0 / d2
+                    f = 4200.0 / d2
                     fx[i] += ddx * f; fy[i] += ddy * f; fz[i] += ddz * f
                     fx[j] -= ddx * f; fy[j] -= ddy * f; fz[j] -= ddz * f
         # 引力：边把两端拽近（竖向让位给学段锚）
         for a, b in E:
             ddx = x[b] - x[a]; ddy = y[b] - y[a]; ddz = z[b] - z[a]
             d = math.sqrt(ddx * ddx + ddy * ddy + ddz * ddz) + 0.01
-            f = (d - 70.0) * 0.040
+            f = (d - 62.0) * 0.055
             fx[a] += ddx / d * f * 80; fz[a] += ddz / d * f * 80; fy[a] += ddy / d * f * 12
             fx[b] -= ddx / d * f * 80; fz[b] -= ddz / d * f * 80; fy[b] -= ddy / d * f * 12
         # 同学科弱聚类（24% 的锚点没有边，靠这个才不飘散）
@@ -89,26 +94,29 @@ def layout3d(nodes, edges, iters=420, seed=7):
             cx = sum(x[i] for i in members) / len(members)
             cz = sum(z[i] for i in members) / len(members)
             for i in members:
-                fx[i] += (cx - x[i]) * 0.009
-                fz[i] += (cz - z[i]) * 0.009
+                fx[i] += (cx - x[i]) * 0.0035
+                fz[i] += (cz - z[i]) * 0.0035
         for i in range(N):
             fy[i] += (ytar[i] - y[i]) * 0.20
-            # 弱向心：把云团收成球，别摊成饼
-            fx[i] -= x[i] * 0.0016
-            fz[i] -= z[i] * 0.0016
+            # 径向力把每个点拉向它那一层该有的半径 —— 这条力造出漏斗形
+            rr = math.hypot(x[i], z[i]) + 1e-6
+            pull = (rtar[i] - rr) * 0.052
+            fx[i] += x[i] / rr * pull
+            fz[i] += z[i] / rr * pull
             step = 2.0 * t + 0.22
             cl = lambda v: max(-26, min(26, v))
-            x[i] = max(-R * 1.5, min(R * 1.5, x[i] + cl(fx[i]) * step))
+            x[i] = max(-R * 2.1, min(R * 2.1, x[i] + cl(fx[i]) * step))
             y[i] = max(-HGT, min(HGT, y[i] + cl(fy[i]) * step))
-            z[i] = max(-R * 1.5, min(R * 1.5, z[i] + cl(fz[i]) * step))
+            z[i] = max(-R * 2.1, min(R * 2.1, z[i] + cl(fz[i]) * step))
 
     # 居中 + 水平面归一化。弱向心力压不住 1,191 个点的漂移（实测 X 范围
     # 跑到 -963..1309，云团整个偏到右边），与其调力的参数不如算完直接平移缩放——
     # 布局是离线算的，事后修正是免费且确定的。
     mx = sum(x) / N; mz = sum(z) / N; my = sum(y) / N
     x = [v - mx for v in x]; z = [v - mz for v in z]; y = [v - my for v in y]
-    rad = max(math.hypot(x[i], z[i]) for i in range(N)) or 1.0
-    k = (R * 0.92) / rad
+    rr = sorted(math.hypot(x[i], z[i]) for i in range(N))
+    rad = rr[int(len(rr) * 0.97)] or 1.0      # 用 97 分位，别让几个离群点把整团压扁
+    k = (R * 0.95) / rad
     x = [v * k for v in x]; z = [v * k for v in z]
     return x, y, z
 
@@ -120,20 +128,25 @@ HTML = r"""<!doctype html><html lang="zh-CN"><head><meta charset="utf-8">
 :root{--bg:#080a11;--fg:#eceaf0;--mut:#7d8496;--dim:#565d6e;--line:#1c2130;--card:rgba(13,16,25,.94)}
 body{background:var(--bg);color:var(--fg);font:15px/1.62 -apple-system,"PingFang SC","Microsoft YaHei",sans-serif;overflow:hidden}
 canvas{display:block;cursor:grab}canvas.drag{cursor:grabbing}
-#logo{position:fixed;left:44px;top:34px;font-size:19px;font-weight:800;letter-spacing:.16em;z-index:6}
-#logo span{color:var(--mut);font-weight:500;letter-spacing:.1em;font-size:12px;display:block;margin-top:5px}
-/* hero 常驻，不随选中消失 —— 它是这一页的说明书 */
-#hero{position:fixed;left:44px;top:23%;max-width:396px;pointer-events:none;z-index:5}
+/* 左栏是一根 flex 轨道：logo / hero+cta / 图例 各占一段，由 flex 分配空间。
+   之前 logo、hero、cta、legend 各自 position:fixed 配百分比 top，
+   窗口一变高度就互相压 —— 那类 bug 靠调数值永远调不完，得改结构。 */
+#rail{position:fixed;left:44px;top:30px;bottom:30px;width:400px;display:flex;flex-direction:column;
+ gap:18px;z-index:6;pointer-events:none}
+#rail>*{pointer-events:auto;flex:none}
+#logo{font-size:18px;font-weight:800;letter-spacing:.14em}
+#logo span{color:var(--mut);font-weight:500;letter-spacing:.1em;font-size:11.5px;display:block;margin-top:5px}
+#hero{margin-top:auto;pointer-events:none}
 #hero h1{font-size:clamp(40px,4.6vw,64px);line-height:1.02;font-weight:600;letter-spacing:-.03em;margin-bottom:26px}
 #hero h1 i{color:#e8607d;font-style:normal}
 #hero p{color:var(--mut);font-size:13.5px;margin-bottom:11px;max-width:352px}
 #hero b{color:var(--fg);font-weight:600}
 #hero .sub{color:var(--dim);font-size:12.5px}
-#cta{position:fixed;left:44px;top:calc(23% + 330px);display:flex;gap:14px;align-items:center;z-index:6}
+#cta{display:flex;gap:12px;align-items:center;flex-wrap:wrap}
 #cta a{font-size:12.5px;color:var(--fg);background:rgba(20,24,36,.9);border:1px solid var(--line);border-radius:99px;padding:8px 16px;text-decoration:none}
 #cta a:hover{border-color:var(--dim)}
 #cta em{font-style:normal;font-size:10.5px;letter-spacing:.13em;color:var(--dim)}
-#legend{position:fixed;left:44px;bottom:36px;z-index:6}
+#legend{margin-top:auto;min-height:0;overflow:auto}
 #legend h4{font-size:10px;letter-spacing:.17em;color:var(--dim);margin-bottom:11px;font-weight:600}
 .li{display:flex;align-items:center;gap:11px;padding:2.5px 0;cursor:pointer;font-size:12.5px;width:290px;color:var(--mut);transition:color .2s,opacity .2s}
 .li .dot{width:8px;height:8px;border-radius:50%;flex:none;transition:opacity .2s}
@@ -169,7 +182,7 @@ canvas{display:block;cursor:grab}canvas.drag{cursor:grabbing}
 #close{position:absolute;right:16px;top:15px;background:none;border:none;color:var(--dim);font-size:22px;cursor:pointer;line-height:1}
 #close:hover{color:var(--fg)}
 #q{position:fixed;right:26px;top:26px;background:rgba(20,24,36,.9);border:1px solid var(--line);border-radius:9px;color:var(--fg);padding:8px 14px;font:inherit;font-size:13px;width:212px;z-index:7}
-#hint{position:fixed;right:30px;bottom:26px;font-size:11.5px;color:var(--dim);z-index:5}
+#hint{position:fixed;right:30px;bottom:26px;max-width:46vw;text-align:right;font-size:11.5px;color:var(--dim);z-index:5}
 #hint b{color:var(--mut);font-weight:600}
 /* 悬停是信息卡，不是小提示条 */
 #tip{position:fixed;pointer-events:none;background:var(--card);backdrop-filter:blur(14px);border:1px solid var(--line);
@@ -179,15 +192,17 @@ canvas{display:block;cursor:grab}canvas.drag{cursor:grabbing}
 #tip .hdr span{font-size:10px;letter-spacing:.14em;color:var(--mut);text-transform:uppercase}
 #tip h3{font-size:16px;line-height:1.36;font-weight:600;margin-bottom:7px}
 #tip p{font-size:12.8px;line-height:1.55;color:var(--mut)}
-#gr{position:fixed;left:0;top:0;bottom:0;width:34px;pointer-events:none;z-index:4}
-#gr div{position:absolute;font-size:9.5px;color:#333a4a;letter-spacing:.1em;transform:translateY(-50%);left:12px}
+#gr{position:fixed;right:0;top:0;bottom:0;width:96px;pointer-events:none;z-index:4}
+#gr div{position:absolute;font-size:10px;color:#3d4557;letter-spacing:.08em;transform:translateY(-50%);right:14px;white-space:nowrap}
 #warn{position:fixed;left:50%;transform:translateX(-50%);top:26px;font-size:11px;color:#c98b2f;background:rgba(30,24,12,.8);
  border:1px solid #3a2f18;border-radius:99px;padding:5px 13px;z-index:7;white-space:nowrap}
 /* 窄屏：hero 让位给图，但警示条和搜索必须都还在，且不能叠 */
+@media(max-height:760px){#hero p:not(.lead){display:none}#hero h1{font-size:40px;margin-bottom:16px}}
 @media(max-width:1180px){
+  #rail{left:18px;top:14px;bottom:auto;width:auto;gap:0}
   #hero,#legend,#cta{display:none}
-  #logo{left:18px;top:16px;font-size:15px}#logo span{display:none}
-  #warn{left:auto;right:18px;top:16px;transform:none}
+  #logo{font-size:14px}#logo span{display:none}
+  #warn{left:auto;right:18px;top:14px;transform:none}
   #q{top:52px;right:18px;width:180px}
   #hint{left:18px;right:18px;bottom:16px;text-align:center;font-size:10.5px}
   #panel{right:10px;top:88px;width:calc(100vw - 20px);max-width:400px;max-height:calc(100vh - 108px)}
@@ -195,13 +210,14 @@ canvas{display:block;cursor:grab}canvas.drag{cursor:grabbing}
 @media(max-width:620px){#logo,#q{display:none}}
 </style></head><body>
 <canvas id="cv"></canvas><div id="gr"></div>
-<div id="logo">K12 底座<span>YONGLE · 永乐教育</span></div>
+<div id="rail">
+<div id="logo">K12 教育的能力结构<span>YONGLE · 永乐教育</span></div>
 <div id="hero">
   <h1>一个孩子<br>要学的全部<i>。</i></h1>
   <p><b>__NC__</b> 条能力断言、<b>__EC__</b> 条先修依赖，从认字到方程。</p>
   <p>每条依赖都写明了<b>什么必须排在前面、为什么</b>。<b>点任意一个点</b>，
      看一个学习者在此之前必须掌握的全部。</p>
-  <p class="sub">由 AI 从教育部《义务教育课程标准（2022年版）》1,594 页扫描件构建，<br>开放数据，等待教师复核。</p>
+  <p class="lead sub">由 AI 从教育部《义务教育课程标准（2022年版）》1,594 页扫描件构建，<br>开放数据，等待教师复核。</p>
 </div>
 <div id="cta">
   <a href="https://github.com/qiuyiwu1989-star/k12-knowledge-substrate" target="_blank" rel="noopener">在 GitHub 上查看</a>
@@ -211,6 +227,7 @@ canvas{display:block;cursor:grab}canvas.drag{cursor:grabbing}
 <div id="warn">全部条目未经教师复核</div>
 <input id="q" placeholder="搜索能力…（回车定位）">
 <div id="legend"><h4>学科 · 点击开关</h4><div id="ls"></div></div>
+</div>
 <div id="hint"><b>拖动</b>旋转 · <b>滚轮</b>缩放 · <b>点一个点</b>，然后顺着它的前置往回走</div>
 <div id="panel"><button id="close">×</button><div id="pc"></div></div>
 <div id="tip"></div>
@@ -219,6 +236,7 @@ const N = __NODES__, E = __EDGES__, COLOR = __COLORS__, HGT = __HGT__;
 const cv = document.getElementById('cv'), ctx = cv.getContext('2d', { alpha: false });
 const DPR = Math.min(2, devicePixelRatio || 1);
 let W, H, yaw = .5, pitch = -.18, zoom = 1, sel = null, hi = null, auto = true, dragging = null;
+let panX = 0, panY = 0, tw = null, popT = 0;      // 视角平移 + 选中动画状态
 let stack = [];                       // 面板导航历史，支持 ← Back 一跳一跳往回走
 const off = new Set();
 const byId = new Map(N.map(n => [n.i, n]));
@@ -235,24 +253,26 @@ function resize() {
 function project() {
   const sy = Math.sin(yaw), cyw = Math.cos(yaw), sp = Math.sin(pitch), cp = Math.cos(pitch);
   const f = Math.min(W, H) * .62 * zoom, CAM = 2600;
+  const OFF = innerWidth > 1180 ? W * .13 : 0;   // 左栏隐藏时不该再往右让位
   for (let k = 0; k < N.length; k++) {
     const n = N[k];
     const X = n.x * cyw - n.z * sy, Z0 = n.x * sy + n.z * cyw;
     const Y = n.y * cp - Z0 * sp, Z = n.y * sp + Z0 * cp;
     const s = f / Math.max(60, CAM + Z);
-    px[k] = W / 2 + X * s + W * .13; py[k] = H / 2 + Y * s; pz[k] = Z;
+    px[k] = W / 2 + X * s + OFF + panX; py[k] = H / 2 + Y * s + panY; pz[k] = Z;
   }
   order = Array.from({ length: N.length }, (_, k) => k).sort((a, b) => pz[b] - pz[a]);
 }
 function autoFit(fill = .74) {
-  const z0 = zoom; zoom = 1; project();
+  const z0 = zoom; zoom = 1; panX = 0; panY = 0; project();
   let x0 = 1e9, x1 = -1e9, y0 = 1e9, y1 = -1e9;
   for (let k = 0; k < N.length; k++) {
     if (off.has(N[k].d)) continue;
     if (px[k] < x0) x0 = px[k]; if (px[k] > x1) x1 = px[k];
     if (py[k] < y0) y0 = py[k]; if (py[k] > y1) y1 = py[k];
   }
-  zoom = Math.min(W * .58 * fill / ((x1 - x0) || 1), H * fill / ((y1 - y0) || 1));
+  const availW2 = innerWidth > 1180 ? W * .56 : W * .92;
+  zoom = Math.min(availW2 * fill / ((x1 - x0) || 1), H * fill / ((y1 - y0) || 1));
   if (!isFinite(zoom) || zoom <= 0) zoom = z0;
   zoom = Math.max(.25, Math.min(9, zoom));
 }
@@ -278,10 +298,11 @@ function draw() {
       const t = ((pz[e[0]] + pz[e[1]]) / 2 - zmin) / zspan;
       bk[t < .34 ? 0 : t < .67 ? 1 : 2].push(e);
     }
-    const al = hi ? [.028, .018, .01] : [.13, .085, .05];
+    // 边要看得见才叫「网络」。之前 0.13 的透明度让整张图像一盘散点。
+    const al = hi ? [.035, .022, .013] : [.34, .22, .13];
     for (let i = 0; i < 3; i++) {
       if (!bk[i].length) continue;
-      ctx.strokeStyle = `rgba(140,152,184,${al[i]})`; ctx.lineWidth = .65 * DPR;
+      ctx.strokeStyle = `rgba(158,176,214,${al[i]})`; ctx.lineWidth = .8 * DPR;
       ctx.beginPath();
       for (const [a, b] of bk[i]) { ctx.moveTo(px[a], py[a]); ctx.lineTo(px[b], py[b]); }
       ctx.stroke();
@@ -303,33 +324,78 @@ function draw() {
     if (!groups.has(key)) groups.set(key, { d: n.d, b, lit: isLit, it: [] });
     groups.get(key).it.push(k);
   }
+  // 描边用底色：相邻的点之间留出一圈暗边，每个点就「实」了，
+  // 不描边时密集处会糊成一片色块，看着虚。
   for (const g of groups.values()) {
-    ctx.globalAlpha = (g.lit ? 1 : .07) * (1 - g.b * .2);
-    ctx.fillStyle = COLOR[g.d] || '#888';
-    ctx.beginPath();
+    const a = (g.lit ? 1 : .07) * (1 - g.b * .16);
+    ctx.globalAlpha = a; ctx.fillStyle = COLOR[g.d] || '#888';
+    ctx.strokeStyle = '#080a11'; ctx.lineWidth = 1.1 * DPR;
     for (const k of g.it) {
-      const r = (1.5 + Math.sqrt(N[k].o) * 1.05) * zoom * (2600 / (2600 + pz[k])) * DPR;
-      ctx.moveTo(px[k] + r, py[k]); ctx.arc(px[k], py[k], Math.max(.85, r), 0, 7);
+      const r = Math.max(.75, (0.85 + Math.sqrt(N[k].o) * 0.62) * zoom * (2600 / (2600 + pz[k])) * DPR * pop(k));
+      ctx.beginPath(); ctx.arc(px[k], py[k], r, 0, 7);
+      if (r > 1.8 * DPR) ctx.stroke();
+      ctx.fill();
     }
-    ctx.fill();
   }
   ctx.globalAlpha = 1;
   if (sel != null) {
     const k = idxOf.get(sel);
-    const r = (1.5 + Math.sqrt(byId.get(sel).o) * 1.05) * zoom * (2600 / (2600 + pz[k])) * DPR;
+    const r = (0.85 + Math.sqrt(byId.get(sel).o) * 0.62) * zoom * (2600 / (2600 + pz[k])) * DPR * pop(idxOf.get(sel));
     ctx.fillStyle = selColor; ctx.beginPath(); ctx.arc(px[k], py[k], Math.max(4.5 * DPR, r), 0, 7); ctx.fill();
     ctx.strokeStyle = '#fff'; ctx.lineWidth = 1.7 * DPR;
     ctx.beginPath(); ctx.arc(px[k], py[k], Math.max(8 * DPR, r + 5 * DPR), 0, 7); ctx.stroke();
   }
   const gr = document.getElementById('gr');
-  if (!gr.dataset.b) { gr.innerHTML = [1,3,5,7,9].map(g => `<div data-g="${g}">G${g}</div>`).join(''); gr.dataset.b = 1; }
+  // 课标只给学段不给年级，数据实际只落在 4 层上；标 G1–G9 是误导
+  // 学段修正后数据落在 G1/G3/G5/G7/G8/G9 六层上，标签得对齐真实位置
+  if (!gr.dataset.b) { gr.innerHTML = [[1,'一年级'],[3,'三年级'],[5,'五年级'],[7,'七年级'],[9,'九年级']]
+    .map(([g, t]) => `<div data-g="${g}">${t}</div>`).join(''); gr.dataset.b = 1; }
   const sp2 = Math.sin(pitch), cp2 = Math.cos(pitch), f2 = Math.min(W, H) * .62 * zoom;
   gr.querySelectorAll('div').forEach(el => {
     const g = +el.dataset.g, yy = -HGT / 2 + (g - 1) / 8 * HGT;
-    el.style.top = ((H / 2 + yy * cp2 * f2 / (2600 + yy * sp2)) / DPR) + 'px';
+    el.style.top = ((H / 2 + yy * cp2 * f2 / (2600 + yy * sp2) + panY) / DPR) + 'px';
   });
 }
-function tick() { if (auto && !dragging && !sel) { yaw += .0015; draw(); } requestAnimationFrame(tick); }
+/** 选中的点在 0.5 秒里「弹」一下再稳住 —— 让点击有被按下去的手感 */
+function pop(k) {
+  if (popT <= 0 || N[k].i !== sel) return 1;
+  const t = Math.min(1, popT);
+  return 1 + 1.5 * Math.sin(t * Math.PI) ** 2;
+}
+/** 视角补间：选中后把该点的整张前置子图框进画面，像展开一样 */
+function tweenTo(z1, x1, y1, ms = 620) {
+  const z0 = zoom, X0 = panX, Y0 = panY, t0 = performance.now();
+  tw = () => {
+    const t = Math.min(1, (performance.now() - t0) / ms);
+    const e = 1 - Math.pow(1 - t, 3);          // easeOutCubic
+    zoom = z0 + (z1 - z0) * e; panX = X0 + (x1 - X0) * e; panY = Y0 + (y1 - Y0) * e;
+    if (t >= 1) tw = null;
+  };
+}
+function frameSelection() {
+  if (!hi || !hi.size) return;
+  project();
+  let x0 = 1e9, x1 = -1e9, y0 = 1e9, y1 = -1e9;
+  for (const id of hi) {
+    const k = idxOf.get(id); if (k === undefined || off.has(N[k].d)) continue;
+    if (px[k] < x0) x0 = px[k]; if (px[k] > x1) x1 = px[k];
+    if (py[k] < y0) y0 = py[k]; if (py[k] > y1) y1 = py[k];
+  }
+  if (x1 < x0) return;
+  const availW = innerWidth > 1180 ? W - 470 * DPR : W, pad = 120 * DPR;   // 右侧留给面板
+  const z = Math.max(.3, Math.min(6, zoom * Math.min(
+    (availW - pad) / Math.max(60, x1 - x0), (H - pad) / Math.max(60, y1 - y0))));
+  const cxn = (x0 + x1) / 2, cyn = (y0 + y1) / 2, k = z / zoom;
+  tweenTo(z, panX + (availW / 2 - cxn) * k, panY + (H / 2 - cyn) * k);
+}
+function tick() {
+  let need = false;
+  if (tw) { tw(); need = true; }
+  if (popT > 0) { popT -= 1 / 30; need = true; }
+  if (auto && !dragging && !sel && !tw) { yaw += .0015; need = true; }
+  if (need) draw();
+  requestAnimationFrame(tick);
+}
 
 function ancestors(id, cap = 900) {
   const seen = new Set(), q = [id];
@@ -367,7 +433,7 @@ function show(n, push = true) {
   document.getElementById('panel').classList.add('on');
   document.getElementById('q').style.display = 'none';
   document.querySelectorAll('.li').forEach(el => el.classList.toggle('faded', el.dataset.d !== n.d));
-  draw();
+  popT = 1; frameSelection(); draw();
 }
 window.jump = id => { const n = byId.get(id); if (n) show(n); };
 window.goBack = () => { const p = stack.pop(); if (p) show(byId.get(p), false); else clear(); };
@@ -376,8 +442,11 @@ function clear() {
   document.getElementById('panel').classList.remove('on');
   document.getElementById('q').style.display = '';
   document.querySelectorAll('.li').forEach(el => el.classList.remove('faded'));
-  draw();
+  autoFitTween(); draw();
 }
+function autoFitTween() { const z0 = zoom, X0 = panX, Y0 = panY;
+  panX = panY = 0; autoFit(); const z1 = zoom;
+  zoom = z0; panX = X0; panY = Y0; tweenTo(z1, 0, 0, 520); }
 function pick(mx, my) {
   let best = -1, bd = 24 * 24;
   for (let k = 0; k < N.length; k++) {
@@ -480,7 +549,7 @@ def main():
         'a': (n.get('assessment') or '').replace('{{name}}', '孩子').strip(),
     } for k, n in enumerate(anchors)]
 
-    html = (HTML.replace('__TITLE__', 'K12 知识底座 · 3D 能力图谱')
+    html = (HTML.replace('__TITLE__', 'K12 教育的能力结构 · 3D 图谱')
             .replace('__NODES__', json.dumps(nodes, ensure_ascii=False, separators=(',', ':')))
             .replace('__EDGES__', json.dumps([[e['prerequisiteId'], e['anchorId']] for e in edges], separators=(',', ':')))
             .replace('__COLORS__', json.dumps(COLORS, ensure_ascii=False))
