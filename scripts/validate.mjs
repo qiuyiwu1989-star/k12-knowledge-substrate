@@ -63,13 +63,19 @@ const candidates = walk(join(ROOT, 'candidates')).flatMap(readJsonl);
 
 const DISCIPLINES = new Set(['语文', '数学', '英语', '物理', '化学', '生物学', '历史', '地理', '道德与法治', '思想政治', '科学', '信息科技', '劳动', '艺术', '体育与健康']);
 const TRACKS = new Set(['DAG', 'LIST', 'MATRIX']);
-const TYPES = new Set(['CONCEPTUAL', 'PROCEDURAL', 'REPRESENTATIONAL', 'LANGUAGE', 'META']);
+// KNOWLEDGE：事实性知识（「已知最早的汉字是甲骨文」）。史地生政这类知识型学科
+// 的【内容要求】几乎全是这一类，先前没有对应类型，它们只能硬塞进 CONCEPTUAL。
+const TYPES = new Set(['CONCEPTUAL', 'PROCEDURAL', 'REPRESENTATIONAL', 'LANGUAGE', 'KNOWLEDGE', 'META']);
 const COGNITIVE = new Set(['了解', '理解', '掌握', '应用']);
 // ai-reviewed：过了 AI 学科审查，但**不是**教师复核。
 // 单列一档而不是并入 auto-confirmed，是因为 auto-confirmed 的含义是
 // 「三源证据一致，机器可以自动确认」——那是客观校验；AI 审查是主观判断，
 // 两者混在一起，usableAnchors 这个指标就废了。
-const REVIEW = new Set(['llm-proposed', 'ai-reviewed', 'auto-confirmed', 'expert-confirmed', 'disputed']);
+// ai-adjudicated：AI 带全部材料做过裁定，**计入可用，但人未签字**。
+// 只在用户明示「AI 先判、人有异议再改」时产生。它和 auto-confirmed 必须分开：
+// 后者是判定客观、根本不需要人；前者是需要人、只是人还没看。混为一谈，
+// 「异议」就无从提起 —— 没有东西标着待异议。
+const REVIEW = new Set(['llm-proposed', 'ai-reviewed', 'ai-adjudicated', 'auto-confirmed', 'expert-confirmed', 'disputed']);
 const ID_RE = /^ca_[A-Za-z0-9]{8}$/;
 const GRADE_RE = /^G(1[0-2]|[1-9])$/;
 

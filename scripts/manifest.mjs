@@ -52,7 +52,11 @@ const manifest = {
   // 唯一重要的进度指标：候选不算数，llm-proposed 不算数，只有复核过的才是可用锚点
   // 唯一重要的指标：只有教师复核过（或三源证据自动确认）的才算可用。
   // ai-reviewed 不算 —— AI 审查是筛子不是合格证。
-  usableAnchors: (byReview['expert-confirmed'] ?? 0) + (byReview['auto-confirmed'] ?? 0),
+  // ai-adjudicated 计入可用：用户明示授权「AI 先判、人有异议再改」。
+  // 但它在 byReview 里仍单列，任何消费方都能一眼看出哪些是人签过字的。
+  usableAnchors: (byReview['expert-confirmed'] ?? 0) + (byReview['auto-confirmed'] ?? 0)
+                 + (byReview['ai-adjudicated'] ?? 0),
+  humanConfirmedAnchors: byReview['expert-confirmed'] ?? 0,
   aiReviewedAnchors: byReview['ai-reviewed'] ?? 0,
   disputedAnchors: byReview['disputed'] ?? 0,
   files,

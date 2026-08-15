@@ -4,19 +4,19 @@
   "schemaVersion": "0.1.0",
   "generatedAt": "2026-08-15",
   "counts": {
-    "anchors": 1339,
+    "anchors": 1428,
     "candidates": 0,
     "edges": 569,
     "listItems": 6262,
     "mappings": 4,
     "byDiscipline": {
       "艺术": 172,
-      "生物学": 24,
+      "生物学": 57,
       "化学": 58,
       "语文": 237,
       "英语": 58,
-      "地理": 19,
-      "历史": 9,
+      "地理": 38,
+      "历史": 46,
       "信息科技": 41,
       "劳动": 41,
       "数学": 188,
@@ -26,7 +26,7 @@
       "科学": 245
     },
     "byTrack": {
-      "MATRIX": 742,
+      "MATRIX": 831,
       "DAG": 302,
       "LIST": 295
     },
@@ -34,10 +34,12 @@
       "disputed": 884,
       "ai-reviewed": 291,
       "llm-proposed": 18,
+      "ai-adjudicated": 89,
       "auto-confirmed": 146
     }
   },
-  "usableAnchors": 146,
+  "usableAnchors": 235,
+  "humanConfirmedAnchors": 0,
   "aiReviewedAnchors": 291,
   "disputedAnchors": 884,
   "files": {
@@ -46,8 +48,8 @@
       "sha256": "b9844a0468c4658127b2c802e37c36f0535dd02a2da8fa4a6fca07f25fb35eff"
     },
     "anchors/biology.jsonl": {
-      "bytes": 37616,
-      "sha256": "570bf71ae96f510b0e63db139a9a2941c972e2e1693fff10aa13ba0b666e8416"
+      "bytes": 85778,
+      "sha256": "305403e7e6596e890eecb14af7778f4ab386dcbe1982db3896e22be248ae30df"
     },
     "anchors/chemistry.jsonl": {
       "bytes": 85613,
@@ -70,12 +72,12 @@
       "sha256": "0cba82f22430472933a8dd9dc454d2f85169b9e1c7de0882c4b99187791e60f7"
     },
     "anchors/geography.jsonl": {
-      "bytes": 30426,
-      "sha256": "5fb6f6ee30812b9280e55e57c702932bd5b260fe2037a16d45ed5a54e856bdb4"
+      "bytes": 57833,
+      "sha256": "12c76dcda9eb48825febb3666ac3dc71f592764ce91c65c0a5e913ce2849a25c"
     },
     "anchors/history.jsonl": {
-      "bytes": 15976,
-      "sha256": "9559ed06fb72b45efea80b2e2d1977be786314ea20911d057ba66f921bda0c53"
+      "bytes": 73734,
+      "sha256": "74a5117e07977604f0b1e588c1067452ba8853c12aba09863eb301cf8b067b22"
     },
     "anchors/infotech.jsonl": {
       "bytes": 70352,

@@ -5,7 +5,20 @@
   "description": "底座的唯一稳定 ID 空间。一个锚点 = 一条可判定的能力断言。档案层(L3)的所有掌握记录都以 anchor.id 为谓词宾语。",
   "type": "object",
   "additionalProperties": false,
-  "required": ["id", "discipline", "track", "strand", "statement", "verb", "object", "type", "cognitive", "evidence", "reviewStatus", "schemaVersion"],
+  "required": [
+    "id",
+    "discipline",
+    "track",
+    "strand",
+    "statement",
+    "verb",
+    "object",
+    "type",
+    "cognitive",
+    "evidence",
+    "reviewStatus",
+    "schemaVersion"
+  ],
   "properties": {
     "id": {
       "type": "string",
@@ -14,11 +27,31 @@
     },
     "discipline": {
       "type": "string",
-      "enum": ["语文", "数学", "英语", "物理", "化学", "生物学", "历史", "地理", "道德与法治", "思想政治", "科学", "信息科技", "劳动", "艺术", "体育与健康"]
+      "enum": [
+        "语文",
+        "数学",
+        "英语",
+        "物理",
+        "化学",
+        "生物学",
+        "历史",
+        "地理",
+        "道德与法治",
+        "思想政治",
+        "科学",
+        "信息科技",
+        "劳动",
+        "艺术",
+        "体育与健康"
+      ]
     },
     "track": {
       "type": "string",
-      "enum": ["DAG", "LIST", "MATRIX"],
+      "enum": [
+        "DAG",
+        "LIST",
+        "MATRIX"
+      ],
       "description": "结构档位。DAG=强先修(数理化)；LIST=清单/覆盖(语文字词篇目、英语词表)；MATRIX=能力维度×主题(史地生政科)。决定该锚点允许存在什么边——校验器强制执行。"
     },
     "strand": {
@@ -28,12 +61,18 @@
       "description": "课标领域，如 数与代数 / 识字与写字 / 物质的性质与应用"
     },
     "topic": {
-      "type": ["string", "null"],
+      "type": [
+        "string",
+        "null"
+      ],
       "maxLength": 40,
       "description": "主题。MATRIX 档必填(如 秦汉/唐宋)；DAG 档可空。"
     },
     "dimension": {
-      "type": ["string", "null"],
+      "type": [
+        "string",
+        "null"
+      ],
       "maxLength": 30,
       "description": "能力维度。MATRIX 档必填(如 史料实证/时空观念)。"
     },
@@ -57,57 +96,108 @@
     },
     "type": {
       "type": "string",
-      "enum": ["CONCEPTUAL", "PROCEDURAL", "REPRESENTATIONAL", "LANGUAGE", "META"]
+      "enum": [
+        "CONCEPTUAL",
+        "PROCEDURAL",
+        "REPRESENTATIONAL",
+        "LANGUAGE",
+        "META"
+      ]
     },
     "literacy": {
       "type": "array",
-      "items": { "type": "string" },
+      "items": {
+        "type": "string"
+      },
       "maxItems": 4,
       "description": "2022 课标核心素养标签。是标签不是结构——不要拿它当分类主键。"
     },
     "cognitive": {
       "type": "string",
-      "enum": ["了解", "理解", "掌握", "应用"],
+      "enum": [
+        "了解",
+        "理解",
+        "掌握",
+        "应用"
+      ],
       "description": "课标行为动词分级。"
     },
     "stageHint": {
-      "type": ["object", "null"],
+      "type": [
+        "object",
+        "null"
+      ],
       "additionalProperties": false,
-      "required": ["min", "max"],
+      "required": [
+        "min",
+        "max"
+      ],
       "description": "学段提示，非权威。真正的年级来自 L2 编排层(教材版本×年级)，同一锚点在不同教材落在不同年级。这里只给一个用于排序和兜底的粗略区间。",
       "properties": {
-        "min": { "type": "string", "pattern": "^G(1[0-2]|[1-9])$" },
-        "max": { "type": "string", "pattern": "^G(1[0-2]|[1-9])$" }
+        "min": {
+          "type": "string",
+          "pattern": "^G(1[0-2]|[1-9])$"
+        },
+        "max": {
+          "type": "string",
+          "pattern": "^G(1[0-2]|[1-9])$"
+        }
       }
     },
     "evidence": {
       "type": "array",
       "minItems": 1,
       "maxItems": 6,
-      "items": { "type": "string", "minLength": 4, "maxLength": 60 },
+      "items": {
+        "type": "string",
+        "minLength": 4,
+        "maxLength": 60
+      },
       "description": "掌握证据。每条都必须是可观察的行为，不是感受。"
     },
     "assessment": {
-      "type": ["string", "null"],
+      "type": [
+        "string",
+        "null"
+      ],
       "maxLength": 120,
       "description": "自然语言检核问句。可含 {{name}} 占位符，展示前必须替换或剥离。"
     },
     "reviewStatus": {
       "type": "string",
-      "enum": ["llm-proposed", "auto-confirmed", "expert-confirmed", "disputed"],
-      "description": "llm-proposed 的锚点禁止被 L3 档案引用——这是底座和普通知识图谱的分界线。"
+      "enum": [
+        "llm-proposed",
+        "ai-reviewed",
+        "ai-adjudicated",
+        "auto-confirmed",
+        "expert-confirmed",
+        "disputed"
+      ],
+      "description": "可信度分档，从低到高：\n· llm-proposed    模型提议，未经任何复核。禁止被 L3 档案引用。\n· ai-reviewed     经 AI 复审但未裁定，仍不可用。\n· disputed        机械闸与 AI 判断冲突，或原句本身有问题。\n· ai-adjudicated  **AI 带全部材料做过裁定，计入可用，但人未签字。**\n                  用户明示「AI 先判、人有异议再改」时才产生这一档。\n                  它与 auto-confirmed 的区别必须保留：后者是判定客观、\n                  根本不需要人；前者是需要人、只是人还没看。混为一谈，\n                  「异议」就无从提起，因为没有东西标着待异议。\n· auto-confirmed  判定客观（写对/读对/背下来），无需教师复核。\n· expert-confirmed 教师当面确认过。"
     },
     "reviewedBy": {
       "type": "array",
-      "items": { "type": "string", "pattern": "^(teacher|editor|ai):[A-Za-z0-9_.-]+$" },
+      "items": {
+        "type": "string",
+        "pattern": "^(teacher|editor|ai):[A-Za-z0-9_.-]+$"
+      },
       "description": "谁复核的。老师的复核痕迹累积起来就是他自己的教学序列 IP —— 这个字段是复核者愿意干活的理由，别省。"
     },
-    "deprecated": { "type": "boolean", "default": false },
+    "deprecated": {
+      "type": "boolean",
+      "default": false
+    },
     "supersededBy": {
-      "type": ["string", "null"],
+      "type": [
+        "string",
+        "null"
+      ],
       "pattern": "^ca_[A-Za-z0-9]{8}$",
       "description": "弃用时必填。档案里有几十万条引用，锚点只能弃用不能删除，否则历史记录悬空。"
     },
-    "schemaVersion": { "type": "string", "const": "0.1.0" }
+    "schemaVersion": {
+      "type": "string",
+      "const": "0.1.0"
+    }
   }
 }
