@@ -278,7 +278,8 @@ for (const { rec: e, where } of edges) {
 for (const { rec: it, where } of lists) {
   if (!/^lst_[a-z0-9-]{3,40}$/.test(it.listId ?? '')) err(where, `listId 格式非法：${it.listId}`);
   if (!it.key) err(where, `清单条目缺 key`);
-  const un = findUnnormalized(it, ['key'], '语文');
+  // 英语词表条目是拉丁文本，套中文标点规则会把 `Britain n.` 改成 `Britain n`
+  const un = findUnnormalized(it, ['key'], /^lst_en-/.test(it.listId || '') ? 'latin' : '语文');
   for (const u of un) err(where, `清单 key 未规范化：「${u.raw}」→「${u.normalized}」`);
   if (it.level && !GRADE_RE.test(it.level)) err(where, `清单 level 非法：${it.level}`);
   if (it.stage && !/^G(1[0-2]|[1-9])(-(1[0-2]|[1-9]))?$/.test(it.stage)) err(where, `清单 stage 非法：${it.stage}`);

@@ -51,6 +51,28 @@ PROMPTS = {
 - 不要输出页眉、页脚、页码、书名、说明性段落
 不解释、不总结、不写任何前言后语。第一个字符必须是第一个条目的第一个字符。""",
 
+    'cihui': """逐词转写这一页英语词汇表的全部内容。这是《义务教育英语课程标准（2022年版）》附录3 词汇表的一页，按字母序分多栏排列。
+
+输出规则：
+- 每行一个词条，格式为 <TAB>词条
+- 按从左到右、从上到下的阅读顺序（先读完第一栏，再读第二栏）
+- 词条**原样保留**括号和斜杠：`a / an`、`be (am, is, are)`、`colour (AmE color)`、`AI (= artificial intelligence)`
+- 词条后的星号 `*` 原样保留（它标记三级新增词）
+- 遇到单个大写字母的音序标题（A/B/C…），输出一行 #A
+- 遇到「二级词汇表」「三级词汇表」这类小标题，输出一行 ##标题
+- 不要输出页眉、页脚、页码、说明段落
+不解释、不总结、不写任何前言后语。第一个字符必须是 # 或制表符。""",
+
+    'buguize': """逐行转写这一页「不规则动词表」的内容。三列：动词原形 / 过去式 / 过去分词。
+
+输出规则：
+- 每行一个动词，格式为 原形<TAB>过去式<TAB>过去分词
+- 一格里有多个形式的用斜杠原样保留，如 `dreamt / dreamed`、`got / gotten`、`burnt / burned`
+- 破折号「—」原样保留（表示该形式不存在）
+- 括号注释原样保留，如 `hang (悬挂)`、`be (am, is, are)`
+- 不要输出表头「动词/过去式/过去分词」，不要输出页眉页脚页码
+不解释、不总结。第一个字符必须是第一个动词的第一个字母。""",
+
     'pianmu': """逐字转写这一页的全部篇目列表。这是《义务教育语文课程标准（2022年版）》附录1「优秀诗文背诵推荐篇目」的一页，条目形如「编号 篇名（首句）  作者」。
 
 输出规则：
@@ -109,6 +131,18 @@ def parse(kind, text):
             rows.append(('#', line.strip().lstrip('#').strip()))
             continue
         parts = [p.strip() for p in line.split('\t')]
+        if kind == 'cihui':
+            if line.lstrip().startswith('##'):
+                rows.append(('##', line.strip().lstrip('#').strip()))
+            else:
+                w = parts[-1].strip() if parts else ''
+                if w:
+                    rows.append(('@' + str(len(rows)), w))
+            continue
+        if kind == 'buguize':
+            if len(parts) >= 3 and parts[0]:
+                rows.append(('@' + str(len(rows)), tuple(parts[:3])))
+            continue
         if kind in ('zibiao', 'jibenzi'):
             if len(parts) >= 2 and parts[0]:
                 rows.append((parts[0], parts[1]))

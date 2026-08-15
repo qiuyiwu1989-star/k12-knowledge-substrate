@@ -26,9 +26,15 @@ const CHAR_MAP = {
  *  真正需要半角的是英语的**词表条目**，那属于 LIST 层，不走这条路径。 */
 const HALFWIDTH_OK = new Set();
 
-export function normalizeText(raw, { discipline = '' } = {}) {
+export function normalizeText(raw, { discipline = '', latin = false } = {}) {
   if (typeof raw !== 'string') return raw;
   let s = raw.normalize('NFKC');
+  // 纯拉丁内容（英语词表条目 `Britain n.`、`colour (AmE color)`）不能套中文标点规则。
+  // 教训：校验器给清单 key 归一时写死了「语文」，把英文词条的句点改成了中文句号，
+  // 于是「抽得对的数据」被规范化改错了 —— 规范化该按**内容**定，不按学科定。
+  if (latin || (!/[一-鿿]/.test(s) && /[A-Za-z]/.test(s))) {
+    return s.replace(/[\u200b-\u200d\ufeff\u00a0]/g, '').replace(/\s+/g, ' ').trim();
+  }
 
   // 零宽字符、BOM、不间断空格
   s = s.replace(/[​-‍﻿ ]/g, '');
@@ -78,10 +84,11 @@ export function dedupeSignature(anchor) {
 /** 返回 [{field, raw, normalized}]，raw !== normalized 即为未规范化 */
 export function findUnnormalized(obj, fields, discipline) {
   const out = [];
+  const latin = discipline === 'latin';
   for (const f of fields) {
     const raw = obj[f];
     if (typeof raw !== 'string') continue;
-    const n = normalizeText(raw, { discipline });
+    const n = normalizeText(raw, { discipline: latin ? '' : discipline, latin });
     if (n !== raw) out.push({ field: f, raw, normalized: n });
   }
   return out;
