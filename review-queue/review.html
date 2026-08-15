@@ -1,0 +1,4179 @@
+<meta charset=utf-8><title>K12 底座 · 教师复核台</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#f4f6f5;color:#182420;font:15px/1.6 -apple-system,"PingFang SC",sans-serif;padding:28px 20px 120px}
+.wrap{max-width:1080px;margin:0 auto}
+h1{font-size:26px;font-weight:640;letter-spacing:-.02em}
+.lede{color:#5b6b65;margin:8px 0 6px;max-width:64ch}
+.warn{background:#fff8e6;border:1px solid #e6d199;border-radius:10px;padding:12px 15px;margin:16px 0 26px;font-size:13.5px;color:#6b5320}
+.card{background:#fff;border:1px solid #dfe5e2;border-radius:13px;margin-bottom:16px;overflow:hidden}
+.card.done{opacity:.5}
+header{display:flex;gap:14px;padding:15px 18px;border-bottom:1px solid #eef1f0;align-items:flex-start}
+.rank{flex:none;width:30px;height:30px;border-radius:8px;background:#0e6e5b;color:#fff;display:grid;place-items:center;font:600 13px ui-monospace,monospace}
+.stmt{font-weight:600;font-size:15.5px}
+.meta{display:flex;gap:8px;flex-wrap:wrap;margin-top:6px;align-items:center}
+.pill{font-size:11.5px;padding:2px 9px;border-radius:99px;background:#eef2f0;color:#4a5b55}
+.st-disputed{background:#fbe9e8;color:#8d3d38}
+.st-llm-proposed{background:#f0eafc;color:#5b4494}
+.lev{font-size:12px;color:#7b8a84;font-variant-numeric:tabular-nums}
+.body{display:grid;grid-template-columns:1fr 1fr;gap:22px;padding:16px 18px}
+h4{font-size:11px;letter-spacing:.12em;color:#8a9a94;margin:0 0 5px;text-transform:uppercase}
+.col>*+h4{margin-top:14px}
+.src{background:#f7faf9;border-left:2px solid #cfdad6;padding:7px 11px;font-size:13.5px;color:#3d4f49}
+.ask{font-size:13.5px;color:#3d4f49}
+ul{margin-left:17px;font-size:13.5px;color:#4a5b55}
+.dn li{color:#0e6e5b}
+.ex{background:#f2f8f6;border:1px solid #cfe3dc;border-radius:9px;padding:10px 12px;margin-top:12px;font-size:13px}
+.ex p{color:#3d4f49;margin-top:4px}
+footer{display:flex;gap:12px;padding:13px 18px;background:#fafbfb;border-top:1px solid #eef1f0;align-items:center}
+.btns{display:flex;gap:7px;flex:none}
+button{font:600 13px inherit;padding:8px 15px;border-radius:8px;border:1px solid #cfdad6;background:#fff;cursor:pointer}
+button:hover{border-color:#0e6e5b}
+button.on{background:#0e6e5b;border-color:#0e6e5b;color:#fff}
+button[data-v=drop].on{background:#8d3d38;border-color:#8d3d38}
+button[data-v=skip].on{background:#7b8a84;border-color:#7b8a84}
+.note{flex:1;font:inherit;font-size:13px;padding:8px 11px;border:1px solid #dfe5e2;border-radius:8px}
+#dock{position:fixed;left:0;right:0;bottom:0;background:rgba(244,246,245,.96);backdrop-filter:blur(10px);border-top:1px solid #cfdad6;padding:13px 20px}
+#dock .in{max-width:1080px;margin:0 auto;display:flex;gap:14px;align-items:center}
+#stat{font-size:13.5px;color:#5b6b65;flex:1;font-variant-numeric:tabular-nums}
+#dock button{padding:10px 18px}
+#dock button.go{background:#0e6e5b;border-color:#0e6e5b;color:#fff}
+textarea{position:fixed;left:-9999px}
+@media(max-width:820px){.body{grid-template-columns:1fr}}
+</style>
+<div class=wrap>
+<h1>教师复核台</h1>
+<p class=lede>按<b>杠杆</b>排序：判一条能解锁多少下游，排在前面的先判。做多少算多少，随时停都有净收益。</p>
+<div class=warn><b>这里只放了杠杆最高的 120 条</b>（全库待复核 454 条）。
+这 120 条占全部杠杆的 <b>85%</b> —— 判完这批，剩下的多是孤立锚点，边际收益陡降。<br>
+判定材料已一次给全（课标原文、判定标准、官方例题、下游是谁），不需要另外翻资料。</div>
+
+<article class=card data-id="ca_2v8Gu7th" data-i="1">
+  <header>
+    <span class=rank>1</span>
+    <div class=hd>
+      <div class=stmt>能仔细观察和比较，如实表达观察到的现象</div>
+      <div class=meta>
+        <span class=pill>科学</span>
+        <span class=pill>G1–G9</span>
+        <span class="pill st-disputed">disputed</span>
+        <span class=lev>解锁 0 条目 · 34 条下游</span>
+      </div>
+    </div>
+  </header>
+  <div class=body>
+    <div class=col>
+      <h4>课标原文</h4><p class=src>能仔细观察和比较，如实表达观察到的现象；</p>
+      <h4>怎么问</h4><p class=ask>{{name}}，你能告诉我你观察到的两个东西有什么不一样吗？</p>
+    </div>
+    <div class=col>
+      <h4>算「会了」的表现</h4><ul><li>能用放大镜观察叶片并画出叶脉的分布细节</li><li>能对比两块岩石并说出它们在颜色和纹理上的不同</li></ul>
+      <h4>下游（判通过即解锁）</h4><ul class=dn><li>学会根据血常规、尿常规等化验的主要结果初步判断身体的健康状况</li><li>能在好奇心驱使下，对天气变化和土壤中的动植物表现出探究兴趣，乐于表达和分享</li><li>能比较事物的本质特征，抽象概括常见事物的共同属性，并按照本质特征和共同属性进行分类</li><li>能依据颜色、形状或大小等外部特征对常见物体进行比较和分类</li><li>能客观描述溶解实验中观察到的现象</li><li>能设计对比实验探究物质在水中溶解快慢的影响因素</li><li>能使用方位名词说出物体所处的位置和方向</li><li>能举例说明磁铁具有磁力</li><li>能说明常见的物体运动方式（如滑动、滚动）及其特点</li><li>能用科学词汇、图示符号等表达物体运动的方式</li><li>能在动手连接电路等活动中，耐心操作、反复检查</li><li>能解释人眼看到光源和物体的原因</li></ul>
+      
+    </div>
+  </div>
+  <footer>
+    <div class=btns>
+      <button data-v=pass>通过</button>
+      <button data-v=rewrite>要改写</button>
+      <button data-v=drop>废弃</button>
+      <button data-v=skip>拿不准</button>
+    </div>
+    <input class=note placeholder="改写成什么 / 为什么废弃（选填）">
+  </footer>
+</article>
+<article class=card data-id="ca_IEwCTfif" data-i="2">
+  <header>
+    <span class=rank>2</span>
+    <div class=hd>
+      <div class=stmt>能在句子中正确使用课标语法项目表所列的语法项目</div>
+      <div class=meta>
+        <span class=pill>英语</span>
+        <span class=pill>G3–G9</span>
+        <span class="pill st-ai-reviewed">ai-reviewed</span>
+        <span class=lev>解锁 64 条目 · 0 条下游</span>
+      </div>
+    </div>
+  </header>
+  <div class=body>
+    <div class=col>
+      <h4>课标原文</h4><p class=src>（未留存）</p>
+      <h4>怎么问</h4><p class=ask>给{{name}}一个含该语法点的句子，他能判断对错并改正吗？</p>
+    </div>
+    <div class=col>
+      <h4>算「会了」的表现</h4><ul><li>在自己写的句子中该项目使用无误</li><li>被指出错误后能说出正确形式</li></ul>
+      
+      
+    </div>
+  </div>
+  <footer>
+    <div class=btns>
+      <button data-v=pass>通过</button>
+      <button data-v=rewrite>要改写</button>
+      <button data-v=drop>废弃</button>
+      <button data-v=skip>拿不准</button>
+    </div>
+    <input class=note placeholder="改写成什么 / 为什么废弃（选填）">
+  </footer>
+</article>
+<article class=card data-id="ca_cAq3pYiK" data-i="3">
+  <header>
+    <span class=rank>3</span>
+    <div class=hd>
+      <div class=stmt>能收集、整理具体实例中的数据，并用合适的方式描述数据</div>
+      <div class=meta>
+        <span class=pill>数学</span>
+        <span class=pill>G3–G4</span>
+        <span class="pill st-ai-reviewed">ai-reviewed</span>
+        <span class=lev>解锁 0 条目 · 11 条下游</span>
+      </div>
+    </div>
+  </header>
+  <div class=body>
+    <div class=col>
+      <h4>课标原文</h4><p class=src>【学业要求】能收集、整理具体实例中的数据，并用合适的方式描述数据，分析与表达数据中蕴含的信息。</p>
+      <h4>怎么问</h4><p class=ask>{{name}}，你能收集数据并整理成图表吗？</p>
+    </div>
+    <div class=col>
+      <h4>算「会了」的表现</h4><ul><li>能从全班同学最喜欢的水果调查中，正确记录并整理出各项数据</li><li>能用条形图或统计表清晰呈现整理后的数据，并说明图表各部分的含义</li></ul>
+      <h4>下游（判通过即解锁）</h4><ul class=dn><li>能结合具体情境，探索百分数的意义，解决与百分数有关的简单实际问题</li><li>能在真实情境中理解百分数的统计意义，解决与百分数有关的简单问题</li><li>会呈现数据整理的结果（例39）</li><li>通过对数据的简单分析，感受数据蕴含着信息，体会运用数据进行表达与交流的作用</li><li>会用条形统计图合理表示和分析数据</li><li>能在简单的实际情境中，合理应用统计图表和平均数（例41）</li><li>会用条形统计图、折线统计图呈现相关数据</li><li>能把数据整理成条形统计图、折线统计图</li><li>能用表格、图像等多种方式展示实验数据，并通过分析和处理数据得出实验结论</li><li>会用简单的物理图像描述数据，根据图像特点对实验结果作出解释</li><li>能根据实验数据通过归纳推理获得探究结论</li></ul>
+      
+    </div>
+  </div>
+  <footer>
+    <div class=btns>
+      <button data-v=pass>通过</button>
+      <button data-v=rewrite>要改写</button>
+      <button data-v=drop>废弃</button>
+      <button data-v=skip>拿不准</button>
+    </div>
+    <input class=note placeholder="改写成什么 / 为什么废弃（选填）">
+  </footer>
+</article>
+<article class=card data-id="ca_wBxFcaY6" data-i="4">
+  <header>
+    <span class=rank>4</span>
+    <div class=hd>
+      <div class=stmt>能进行整数四则混合运算（以两步为主，不超过三步），正确运用小括号和中括号</div>
+      <div class=meta>
+        <span class=pill>数学</span>
+        <span class=pill>G3–G4</span>
+        <span class="pill st-ai-reviewed">ai-reviewed</span>
+        <span class=lev>解锁 0 条目 · 10 条下游</span>
+      </div>
+    </div>
+  </header>
+  <div class=body>
+    <div class=col>
+      <h4>课标原文</h4><p class=src>能进行整数四则混合运算（以两步为主，不超过三步），正确运用小括号和中括号。</p>
+      <h4>怎么问</h4><p class=ask>你能先算小括号再算中括号，然后按顺序完成运算吗？</p>
+    </div>
+    <div class=col>
+      <h4>算「会了」的表现</h4><ul><li>能正确计算 12×(18÷3)-20 并说明运算顺序</li><li>能用中括号列出算式并计算 240÷[(10+6)÷2]</li></ul>
+      <h4>下游（判通过即解锁）</h4><ul class=dn><li>能基于守恒和比例关系推断化学反应的相关信息</li><li>能用质量分数表示混合物体系中物质的成分</li><li>能根据化学方程式进行简单的计算，并解决生产生活中的简单问题</li><li>能根据家人需求设计一顿午餐或晚餐的营养食谱</li><li>能计算两位数乘三位数和三位数除以两位数</li><li>能运用运算律进行简便运算，解决相关的简单实际问题</li><li>运用四则混合运算解决问题</li><li>能判断一个自然数是否是质数或合数</li><li>能运用常见的数量关系解决实际问题并合理解释结果的实际意义</li><li>能在解决实际问题中运用恰当的方法进行估算，并能描述估算的过程</li></ul>
+      
+    </div>
+  </div>
+  <footer>
+    <div class=btns>
+      <button data-v=pass>通过</button>
+      <button data-v=rewrite>要改写</button>
+      <button data-v=drop>废弃</button>
+      <button data-v=skip>拿不准</button>
+    </div>
+    <input class=note placeholder="改写成什么 / 为什么废弃（选填）">
+  </footer>
+</article>
+<article class=card data-id="ca_jbt8Fpra" data-i="5">
+  <header>
+    <span class=rank>5</span>
+    <div class=hd>
+      <div class=stmt>能依据物质的组成对物质进行分类，并能识别纯净物和混合物、单质和化合物</div>
+      <div class=meta>
+        <span class=pill>化学</span>
+        <span class=pill>G9–G9</span>
+        <span class="pill st-ai-reviewed">ai-reviewed</span>
+        <span class=lev>解锁 0 条目 · 9 条下游</span>
+      </div>
+    </div>
+  </header>
+  <div class=body>
+    <div class=col>
+      <h4>课标原文</h4><p class=src>1. 能依据物质的组成对物质进行分类，并能识别纯净物和混合物、单质和化合物；</p>
+      <h4>怎么问</h4><p class=ask>{{name}}，你能告诉我氧气和空气分别属于哪一类物质吗？</p>
+    </div>
+    <div class=col>
+      <h4>算「会了」的表现</h4><ul><li>能将氯化钠、氧气、空气等物质正确归入纯净物或混合物，并说出判断依据</li><li>能将纯净物进一步区分为单质或化合物，并举出各一个例子</li></ul>
+      <h4>下游（判通过即解锁）</h4><ul class=dn><li>能基于必做实验形成的探究思路与方法，结合物质的组成及变化等相关知识，分析解决真实情境中的简单实验问题</li><li>能举例说明物质性质的广泛应用及性质与用途的关系</li><li>能基于真实问题情境，依据常见物质的性质，初步分析和解决相关的综合问题</li><li>能判断常见的物理变化和化学变化，并能从宏观和微观的视角说明二者的区别</li><li>能举例说明物质组成、性质和用途的关系</li><li>能用质量分数表示混合物体系中物质的成分</li><li>能列举常见的金属</li><li>能举例说明金属性质与金属材料应用的关系，如合金的性能与应用等</li><li>能从元素与分子视角辨识常见物质，结合实例区分混合物与纯净物、单质与化合物</li></ul>
+      
+    </div>
+  </div>
+  <footer>
+    <div class=btns>
+      <button data-v=pass>通过</button>
+      <button data-v=rewrite>要改写</button>
+      <button data-v=drop>废弃</button>
+      <button data-v=skip>拿不准</button>
+    </div>
+    <input class=note placeholder="改写成什么 / 为什么废弃（选填）">
+  </footer>
+</article>
+<article class=card data-id="ca_YK9SqQvF" data-i="6">
+  <header>
+    <span class=rank>6</span>
+    <div class=hd>
+      <div class=stmt>能用数表示物体的个数或事物的顺序</div>
+      <div class=meta>
+        <span class=pill>数学</span>
+        <span class=pill>G1–G2</span>
+        <span class="pill st-ai-reviewed">ai-reviewed</span>
+        <span class=lev>解锁 0 条目 · 9 条下游</span>
+      </div>
+    </div>
+  </header>
+  <div class=body>
+    <div class=col>
+      <h4>课标原文</h4><p class=src>能用数表示物体的个数或事物的顺序，能认、读、写万以内的数；</p>
+      <h4>怎么问</h4><p class=ask>{{name}}，你能告诉我这里有几个东西，或者谁排在第几吗？</p>
+    </div>
+    <div class=col>
+      <h4>算「会了」的表现</h4><ul><li>能正确数出10个苹果并说出总数</li><li>能按顺序说出从第1到第5的位置</li></ul>
+      <h4>下游（判通过即解锁）</h4><ul class=dn><li>能说出万以上数中各数位的名称</li><li>能认、读、写万以内的数</li><li>能说出不同数位上的数表示的数值</li><li>能用 》、《 或 = 符号连接两个数表示大小关系</li><li>能描述四则运算的含义</li><li>能熟练口算20以内数的加减法和表内乘除法</li><li>能在熟悉的生活情境中运用数和数的运算，合理表达简单的数量关系，解决简单的问题</li><li>会在真实或模拟的情境中合理使用人民币</li><li>能认、读、写万以上的数</li></ul>
+      
+    </div>
+  </div>
+  <footer>
+    <div class=btns>
+      <button data-v=pass>通过</button>
+      <button data-v=rewrite>要改写</button>
+      <button data-v=drop>废弃</button>
+      <button data-v=skip>拿不准</button>
+    </div>
+    <input class=note placeholder="改写成什么 / 为什么废弃（选填）">
+  </footer>
+</article>
+<article class=card data-id="ca_F9rkKeDv" data-i="7">
+  <header>
+    <span class=rank>7</span>
+    <div class=hd>
+      <div class=stmt>能熟练口算20以内数的加减法和表内乘除法</div>
+      <div class=meta>
+        <span class=pill>数学</span>
+        <span class=pill>G1–G2</span>
+        <span class="pill st-ai-reviewed">ai-reviewed</span>
+        <span class=lev>解锁 0 条目 · 9 条下游</span>
+      </div>
+    </div>
+  </header>
+  <div class=body>
+    <div class=col>
+      <h4>课标原文</h4><p class=src>能熟练口算20以内数的加减法和表内乘除法，能口算简单的百以内数的加减法；</p>
+      <h4>怎么问</h4><p class=ask>{{name}}，你能快速说出9加7等于几，还能告诉我&#x27;三五十五&#x27;可以写出哪两个乘法算式吗？</p>
+    </div>
+    <div class=col>
+      <h4>算「会了」的表现</h4><ul><li>能在2秒内正确说出9+7的结果</li><li>能根据一句乘法口诀写出两个乘法算式</li></ul>
+      <h4>下游（判通过即解锁）</h4><ul class=dn><li>能计算两位数乘三位数和三位数除以两位数</li><li>能描述减法与加法的关系、除法与乘法的关系</li><li>能计算两位数和三位数的加减法</li><li>会在真实或模拟的情境中合理使用人民币</li><li>能用直尺测量并计算长方形和正方形的周长与面积</li><li>能判断一个自然数是否是质数或合数</li><li>能描述四则运算的含义</li><li>能在熟悉的生活情境中运用数和数的运算，合理表达简单的数量关系，解决简单的问题</li><li>能根据燃料的热值计算热机的能耗问题</li></ul>
+      
+    </div>
+  </div>
+  <footer>
+    <div class=btns>
+      <button data-v=pass>通过</button>
+      <button data-v=rewrite>要改写</button>
+      <button data-v=drop>废弃</button>
+      <button data-v=skip>拿不准</button>
+    </div>
+    <input class=note placeholder="改写成什么 / 为什么废弃（选填）">
+  </footer>
+</article>
+<article class=card data-id="ca_2PgUWDZq" data-i="8">
+  <header>
+    <span class=rank>8</span>
+    <div class=hd>
+      <div class=stmt>能说出直角、锐角、钝角的特征</div>
+      <div class=meta>
+        <span class=pill>数学</span>
+        <span class=pill>G3–G4</span>
+        <span class="pill st-llm-proposed">llm-proposed</span>
+        <span class=lev>解锁 0 条目 · 9 条下游</span>
+      </div>
+    </div>
+  </header>
+  <div class=body>
+    <div class=col>
+      <h4>课标原文</h4><p class=src>能说出直角、锐角、钝角的特征，能辨认平角和周角；</p>
+      <h4>怎么问</h4><p class=ask>{{name}}，你能画出直角、锐角和钝角，并告诉它们各自的特点吗？</p>
+    </div>
+    <div class=col>
+      <h4>算「会了」的表现</h4><ul><li>能用直角三角板比对并指认图中的直角、锐角和钝角</li><li>能画出三种角并标注名称和大概度数范围</li></ul>
+      <h4>下游（判通过即解锁）</h4><ul class=dn><li>会判断简单的相似三角形</li><li>能根据已知两个角的度数求出第三个角的度数</li><li>能辨认同一平面内两条直线是否平行或垂直</li><li>能用直尺和量角器画出指定度数的角</li><li>能说出图形之间的共性与区别（例28）</li><li>能利用平移或旋转解释现实生活中的现象</li><li>能描述圆和扇形的特征</li><li>能辨认平角和周角</li><li>能用直尺测量并计算长方形和正方形的周长与面积</li></ul>
+      
+    </div>
+  </div>
+  <footer>
+    <div class=btns>
+      <button data-v=pass>通过</button>
+      <button data-v=rewrite>要改写</button>
+      <button data-v=drop>废弃</button>
+      <button data-v=skip>拿不准</button>
+    </div>
+    <input class=note placeholder="改写成什么 / 为什么废弃（选填）">
+  </footer>
+</article>
+<article class=card data-id="ca_xwPiEkqA" data-i="9">
+  <header>
+    <span class=rank>9</span>
+    <div class=hd>
+      <div class=stmt>能用表格、图像等多种方式展示实验数据，并通过分析和处理数据得出实验结论</div>
+      <div class=meta>
+        <span class=pill>物理</span>
+        <span class=pill>G8–G9</span>
+        <span class="pill st-ai-reviewed">ai-reviewed</span>
+        <span class=lev>解锁 0 条目 · 9 条下游</span>
+      </div>
+    </div>
+  </header>
+  <div class=body>
+    <div class=col>
+      <h4>课标原文</h4><p class=src>能用表格、图像等多种方式展示实验数据，并通过分析和处理数据得出实验结论；</p>
+      <h4>怎么问</h4><p class=ask>{{name}}，你能把实验数据画成图表，并告诉我从图上看出了什么规律吗？</p>
+    </div>
+    <div class=col>
+      <h4>算「会了」的表现</h4><ul><li>能将测量的多组数据整理成包含物理量和单位的表格</li><li>能根据数据点绘制出趋势图并基于图像形态得出规律</li></ul>
+      <h4>下游（判通过即解锁）</h4><ul class=dn><li>在归纳或演绎中会引用证据</li><li>会用简单的物理图像描述数据，根据图像特点对实验结果作出解释</li><li>能撰写简单的实验报告</li><li>能撰写实验报告，书面或口头表述科学探究的过程和结果</li><li>能从物理学视角，把所学概念和规律与实际情境联系起来，解释常见自然现象和解决常见物理问题</li><li>会用所学模型分析常见的实际问题</li><li>能根据实验目的整理信息</li><li>能根据实验目的，用简单的图像或表格整理并描述信息</li><li>能通过实验或实例归纳总结物态变化过程中的吸、放热规律</li></ul>
+      
+    </div>
+  </div>
+  <footer>
+    <div class=btns>
+      <button data-v=pass>通过</button>
+      <button data-v=rewrite>要改写</button>
+      <button data-v=drop>废弃</button>
+      <button data-v=skip>拿不准</button>
+    </div>
+    <input class=note placeholder="改写成什么 / 为什么废弃（选填）">
+  </footer>
+</article>
+<article class=card data-id="ca_n4gPxEFM" data-i="10">
+  <header>
+    <span class=rank>10</span>
+    <div class=hd>
+      <div class=stmt>能用化学式表示某些常见物质的组成</div>
+      <div class=meta>
+        <span class=pill>化学</span>
+        <span class=pill>G9–G9</span>
+        <span class="pill st-ai-reviewed">ai-reviewed</span>
+        <span class=lev>解锁 0 条目 · 8 条下游</span>
+      </div>
+    </div>
+  </header>
+  <div class=body>
+    <div class=col>
+      <h4>课标原文</h4><p class=src>2. 能用化学式表示某些常见物质的组成，能分析常见物质中元素的化合价；</p>
+      <h4>怎么问</h4><p class=ask>{{name}}，你能写出水和二氧化碳的化学式，并告诉我它们分别由什么元素组成吗？</p>
+    </div>
+    <div class=col>
+      <h4>算「会了」的表现</h4><ul><li>能写出水、二氧化碳等常见物质的化学式</li><li>能根据化学式说出该物质由哪些元素组成</li></ul>
+      <h4>下游（判通过即解锁）</h4><ul class=dn><li>能识记并正确书写常见元素的名称和符号</li><li>能从组成物质的元素的角度判断物质的类别</li><li>能从宏观与微观、定性与定量相结合的视角说明化学式的含义</li><li>能依据化学反应过程中元素不变的规律，推断反应物或生成物的元素组成</li><li>能用质量分数表示混合物体系中物质的成分</li><li>能说明分子、原子、离子的区别和联系</li><li>能根据实验事实用文字和符号描述、表示化学变化，并正确书写常见的化学方程式</li><li>能用物质名称和化学式表示常见物质</li></ul>
+      
+    </div>
+  </div>
+  <footer>
+    <div class=btns>
+      <button data-v=pass>通过</button>
+      <button data-v=rewrite>要改写</button>
+      <button data-v=drop>废弃</button>
+      <button data-v=skip>拿不准</button>
+    </div>
+    <input class=note placeholder="改写成什么 / 为什么废弃（选填）">
+  </footer>
+</article>
+<article class=card data-id="ca_DXckPTEF" data-i="11">
+  <header>
+    <span class=rank>11</span>
+    <div class=hd>
+      <div class=stmt>能依据颜色、形状或大小等外部特征对常见物体进行比较和分类</div>
+      <div class=meta>
+        <span class=pill>科学</span>
+        <span class=pill>G1–G1</span>
+        <span class="pill st-llm-proposed">llm-proposed</span>
+        <span class=lev>解锁 0 条目 · 8 条下游</span>
+      </div>
+    </div>
+  </header>
+  <div class=body>
+    <div class=col>
+      <h4>课标原文</h4><p class=src>能依据一些外部特征对常见物体进行比较和分类。</p>
+      <h4>怎么问</h4><p class=ask>{{name}}，你能告诉我你是怎么把这些东西分成不同组的吗？</p>
+    </div>
+    <div class=col>
+      <h4>算「会了」的表现</h4><ul><li>能根据颜色将一组混合的积木分成红色和蓝色两堆</li><li>能说出为什么把苹果和橙子放在同一类而把石头放在另一类</li></ul>
+      <h4>下游（判通过即解锁）</h4><ul class=dn><li>能比较事物的本质特征，抽象概括常见事物的共同属性，并按照本质特征和共同属性进行分类</li><li>能通过比较与分类，区分可再生和不可再生资源</li><li>能归纳总结常见产品或工程的主要外在特征</li><li>能对观察到的物体和现象的外在特征进行简单的比较和分类，并简要交流探究过程与结论</li><li>能利用工具测量并描述常见物体的特征和材料的性能</li><li>能使用方位名词说出物体所处的位置和方向</li><li>能说明常见的物体运动方式（如滑动、滚动）及其特点</li><li>能基于观察提出并描述一个简单的制作问题</li></ul>
+      
+    </div>
+  </div>
+  <footer>
+    <div class=btns>
+      <button data-v=pass>通过</button>
+      <button data-v=rewrite>要改写</button>
+      <button data-v=drop>废弃</button>
+      <button data-v=skip>拿不准</button>
+    </div>
+    <input class=note placeholder="改写成什么 / 为什么废弃（选填）">
+  </footer>
+</article>
+<article class=card data-id="ca_jb9My7E4" data-i="12">
+  <header>
+    <span class=rank>12</span>
+    <div class=hd>
+      <div class=stmt>能保护个人及他人隐私，自觉维护网络安全和数据安全</div>
+      <div class=meta>
+        <span class=pill>信息科技</span>
+        <span class=pill>G3–G8</span>
+        <span class="pill st-ai-reviewed">ai-reviewed</span>
+        <span class=lev>解锁 0 条目 · 7 条下游</span>
+      </div>
+    </div>
+  </header>
+  <div class=body>
+    <div class=col>
+      <h4>课标原文</h4><p class=src>3. 初步具备数据安全防护能力，能保护个人及他人隐私，自觉维护网络安全和数据安全。</p>
+      <h4>怎么问</h4><p class=ask>{{name}}，你能告诉我怎样设置账号隐私，或者哪些信息不该随便给别人吗？</p>
+    </div>
+    <div class=col>
+      <h4>算「会了」的表现</h4><ul><li>能解释自己社交账号的隐私设置，并演示如何调整可见范围</li><li>能识别出问卷调查中索要家庭住址的不当问题，并拒绝填写</li></ul>
+      <h4>下游（判通过即解锁）</h4><ul class=dn><li>能使用用户标识、密码和身份验证等措施做好基本防护</li><li>能使用加密软件对重要数据和个人信息进行加密保护</li><li>在使用数字设备时不打扰他人，自觉维护社会公共秩序</li><li>能关注数字设备使用的健康与安全问题</li><li>尊重数字作品所有者的权益，在与他人交流时能遵守网络礼仪</li><li>能理解用计算机实现过程与控制时存在的安全问题</li><li>能遵循信息科技领域的伦理道德规范，明确科技活动中应遵守的价值观念、道德责任和行为准则</li></ul>
+      
+    </div>
+  </div>
+  <footer>
+    <div class=btns>
+      <button data-v=pass>通过</button>
+      <button data-v=rewrite>要改写</button>
+      <button data-v=drop>废弃</button>
+      <button data-v=skip>拿不准</button>
+    </div>
+    <input class=note placeholder="改写成什么 / 为什么废弃（选填）">
+  </footer>
+</article>
+<article class=card data-id="ca_ysq6TuHB" data-i="13">
+  <header>
+    <span class=rank>13</span>
+    <div class=hd>
+      <div class=stmt>能识记并正确书写常见元素的名称和符号</div>
+      <div class=meta>
+        <span class=pill>化学</span>
+        <span class=pill>G9–G9</span>
+        <span class="pill st-ai-reviewed">ai-reviewed</span>
+        <span class=lev>解锁 0 条目 · 7 条下游</span>
+      </div>
+    </div>
+  </header>
+  <div class=body>
+    <div class=col>
+      <h4>课标原文</h4><p class=src>1. 能对元素进行简单分类，能识记并正确书写常见元素的名称和符号，能从组成物质的元素的角度判断物质的类别，能根据原子的核电荷数判断核内质子数和核外电子数，能根据元素的原子序数在元素周期表中查到该元素的名称、符号、相对原子质量等信息。</p>
+      <h4>怎么问</h4><p class=ask>{{name}}，你能写出多少常见元素的符号？比如看到Mg你知道是什么元素吗？</p>
+    </div>
+    <div class=col>
+      <h4>算「会了」的表现</h4><ul><li>能正确写出氧、铁、铜等10种常见元素的名称和符号</li><li>能根据元素符号说出对应的元素名称，如看到Na能说出钠</li></ul>
+      <h4>下游（判通过即解锁）</h4><ul class=dn><li>能从组成物质的元素的角度判断物质的类别</li><li>能从宏观与微观、定性与定量相结合的视角说明化学式的含义</li><li>能依据化学反应过程中元素不变的规律，推断反应物或生成物的元素组成</li><li>能根据实验事实用文字和符号描述、表示化学变化，并正确书写常见的化学方程式</li><li>能用物质名称和化学式表示常见物质</li><li>能列举常见的金属</li><li>能根据原子的核电荷数判断核内质子数和核外电子数</li></ul>
+      
+    </div>
+  </div>
+  <footer>
+    <div class=btns>
+      <button data-v=pass>通过</button>
+      <button data-v=rewrite>要改写</button>
+      <button data-v=drop>废弃</button>
+      <button data-v=skip>拿不准</button>
+    </div>
+    <input class=note placeholder="改写成什么 / 为什么废弃（选填）">
+  </footer>
+</article>
+<article class=card data-id="ca_YwQwQpbx" data-i="14">
+  <header>
+    <span class=rank>14</span>
+    <div class=hd>
+      <div class=stmt>会用量角器测量角的大小</div>
+      <div class=meta>
+        <span class=pill>数学</span>
+        <span class=pill>G3–G4</span>
+        <span class="pill st-ai-reviewed">ai-reviewed</span>
+        <span class=lev>解锁 0 条目 · 7 条下游</span>
+      </div>
+    </div>
+  </header>
+  <div class=body>
+    <div class=col>
+      <h4>课标原文</h4><p class=src>会用量角器测量角的大小，能用直尺和量角器画出指定度数的角；</p>
+      <h4>怎么问</h4><p class=ask>{{name}}，你能用量角器量出这个角是多少度吗？</p>
+    </div>
+    <div class=col>
+      <h4>算「会了」的表现</h4><ul><li>能将量角器中心点准确对准角的顶点</li><li>能读出量角器上刻度并正确说出角的度数</li></ul>
+      <h4>下游（判通过即解锁）</h4><ul class=dn><li>能根据已知两个角的度数求出第三个角的度数</li><li>能描述圆和扇形的特征</li><li>能说出直角、锐角、钝角的特征</li><li>能辨认平角和周角</li><li>能用直尺和量角器画出指定度数的角</li><li>能辨认同一平面内两条直线是否平行或垂直</li><li>会根据角的特征对三角形分类，认识直角三角形、锐角三角形和钝角三角形</li></ul>
+      
+    </div>
+  </div>
+  <footer>
+    <div class=btns>
+      <button data-v=pass>通过</button>
+      <button data-v=rewrite>要改写</button>
+      <button data-v=drop>废弃</button>
+      <button data-v=skip>拿不准</button>
+    </div>
+    <input class=note placeholder="改写成什么 / 为什么废弃（选填）">
+  </footer>
+</article>
+<article class=card data-id="ca_UWuV4t2K" data-i="15">
+  <header>
+    <span class=rank>15</span>
+    <div class=hd>
+      <div class=stmt>会正确使用天平、温度计等实验器材</div>
+      <div class=meta>
+        <span class=pill>物理</span>
+        <span class=pill>G8–G9</span>
+        <span class="pill st-ai-reviewed">ai-reviewed</span>
+        <span class=lev>解锁 0 条目 · 7 条下游</span>
+      </div>
+    </div>
+  </header>
+  <div class=body>
+    <div class=col>
+      <h4>课标原文</h4><p class=src>能制订简单的实验方案，会正确使用天平、温度计等实验器材，能按实验方案操作，获得实验数据；</p>
+      <h4>怎么问</h4><p class=ask>{{name}}，你能独立完成天平调平和正确读温度计吗？</p>
+    </div>
+    <div class=col>
+      <h4>算「会了」的表现</h4><ul><li>能调节天平横梁平衡，并按左物右码规则称量物体质量</li><li>能读取温度计示数，视线与液柱上表面相平</li></ul>
+      <h4>下游（判通过即解锁）</h4><ul class=dn><li>能通过实验或实例归纳总结物态变化过程中的吸、放热规律</li><li>会用简单的物理图像描述数据，根据图像特点对实验结果作出解释</li><li>能根据控制变量法制订简单的探究方案</li><li>能根据所学知识和说明书等解决现实中的简单问题</li><li>能根据实验目的设计实验方案</li><li>会正确读取和记录实验数据</li><li>能针对实验问题，运用控制变量法等制订方案，并排除简单的实验故障</li></ul>
+      
+    </div>
+  </div>
+  <footer>
+    <div class=btns>
+      <button data-v=pass>通过</button>
+      <button data-v=rewrite>要改写</button>
+      <button data-v=drop>废弃</button>
+      <button data-v=skip>拿不准</button>
+    </div>
+    <input class=note placeholder="改写成什么 / 为什么废弃（选填）">
+  </footer>
+</article>
+<article class=card data-id="ca_CdnpYavt" data-i="16">
+  <header>
+    <span class=rank>16</span>
+    <div class=hd>
+      <div class=stmt>运用结构与功能相适应的观念</div>
+      <div class=meta>
+        <span class=pill>生物学</span>
+        <span class=pill>G7–G9</span>
+        <span class="pill st-ai-reviewed">ai-reviewed</span>
+        <span class=lev>解锁 0 条目 · 7 条下游</span>
+      </div>
+    </div>
+  </header>
+  <div class=body>
+    <div class=col>
+      <h4>课标原文</h4><p class=src>（8）运用结构与功能相适应的观念，分析由于机体特定结构受损可能导致的机体功能障碍或异常行为表现，提出相应的预防措施。</p>
+      <h4>怎么问</h4><p class=ask>{{name}}，你能说说为什么鸟的翅膀长这样，而鱼的鳃又长那样吗？</p>
+    </div>
+    <div class=col>
+      <h4>算「会了」的表现</h4><ul><li>能解释鸟的翅膀结构如何适应飞行功能</li><li>能对比鱼鳃和肺的结构差异并说明各自适应的呼吸环境</li></ul>
+      <h4>下游（判通过即解锁）</h4><ul class=dn><li>能运用营养成分、消化吸收和均衡膳食的知识，设计一份合理的食谱</li><li>学会根据血常规、尿常规等化验的主要结果初步判断身体的健康状况</li><li>能结合具体实例，分析神经系统、内分泌系统和免疫功能对内外环境变化作出的反应并阐明其意义</li><li>分析由于机体特定结构受损可能导致的机体功能障碍或异常行为表现，提出相应的预防措施</li><li>运用进化与适应观和生态观分析生物在形态结构和行为等方面与环境相适应的特征</li><li>对于给定的一组生物，尝试根据一定的特征对其进行分类</li><li>根据观察到的生物学现象或与生物学相关的现实需求，尝试提出需要解决的生物学或跨学科实践问题</li></ul>
+      
+    </div>
+  </div>
+  <footer>
+    <div class=btns>
+      <button data-v=pass>通过</button>
+      <button data-v=rewrite>要改写</button>
+      <button data-v=drop>废弃</button>
+      <button data-v=skip>拿不准</button>
+    </div>
+    <input class=note placeholder="改写成什么 / 为什么废弃（选填）">
+  </footer>
+</article>
+<article class=card data-id="ca_CLymqGRK" data-i="17">
+  <header>
+    <span class=rank>17</span>
+    <div class=hd>
+      <div class=stmt>能从音乐要素的角度简单分析音乐情绪、情感产生变化的原因</div>
+      <div class=meta>
+        <span class=pill>艺术</span>
+        <span class=pill>G7–G9</span>
+        <span class="pill st-ai-reviewed">ai-reviewed</span>
+        <span class=lev>解锁 0 条目 · 7 条下游</span>
+      </div>
+    </div>
+  </header>
+  <div class=body>
+    <div class=col>
+      <h4>课标原文</h4><p class=src>·能听辨音乐中的情绪和情感变化，能从音乐要素的角度简单分析音乐情绪、情感产生变化的原因。</p>
+      <h4>怎么问</h4><p class=ask>{{name}}，你能说说这段音乐里，是哪些声音的变化让你感觉情绪不同了吗？</p>
+    </div>
+    <div class=col>
+      <h4>算「会了」的表现</h4><ul><li>能指出乐曲中速度变慢、力度减弱等要素变化对应了情绪从激昂到平静的转变</li><li>能解释弦乐音色由尖锐转为柔和时，音乐情感为何显得更加温暖</li></ul>
+      <h4>下游（判通过即解锁）</h4><ul class=dn><li>能区分我国有代表性的地区和民族音乐的风格</li><li>能根据情感表达或与人交流的需要，选用合适的音乐</li><li>能运用所学知识和听觉经验区分中国民歌的基本体裁</li><li>能对有代表性的世界民族民间音乐及优秀创作作品的体裁、形式、审美特征和风格类型作出判断和简单描述</li><li>能对舞蹈、戏剧（含戏曲）、影视（含数字媒体艺术）等姊妹艺术中音乐的特点及其表现作用作出分析和评价</li><li>能对音乐在舞蹈、戏剧（含戏曲）、影视（含数字媒体艺术）等艺术中的表现作用作出一定的分析评价</li><li>能用身体语言配合音乐旋律、节奏表达自己的情绪与情感</li></ul>
+      
+    </div>
+  </div>
+  <footer>
+    <div class=btns>
+      <button data-v=pass>通过</button>
+      <button data-v=rewrite>要改写</button>
+      <button data-v=drop>废弃</button>
+      <button data-v=skip>拿不准</button>
+    </div>
+    <input class=note placeholder="改写成什么 / 为什么废弃（选填）">
+  </footer>
+</article>
+<article class=card data-id="ca_iaEDgjsQ" data-i="18">
+  <header>
+    <span class=rank>18</span>
+    <div class=hd>
+      <div class=stmt>理解并主动运用所学体操类运动项目的安全知识，做好准备活动和自我保护</div>
+      <div class=meta>
+        <span class=pill>体育与健康</span>
+        <span class=pill>G1–G9</span>
+        <span class="pill st-ai-reviewed">ai-reviewed</span>
+        <span class=lev>解锁 0 条目 · 6 条下游</span>
+      </div>
+    </div>
+  </header>
+  <div class=body>
+    <div class=col>
+      <h4>课标原文</h4><p class=src>理解并主动运用所学体操类运动项目的安全知识，做好准备活动和自我保护，能主动帮助他人安全地进行运动。</p>
+      <h4>怎么问</h4><p class=ask>{{name}}，做体操动作前你记得先做准备活动，摔倒时会用手保护自己吗？</p>
+    </div>
+    <div class=col>
+      <h4>算「会了」的表现</h4><ul><li>能在练习前主动带领同伴做压腿、绕环等针对性热身动作</li><li>能在翻滚动作中用双臂撑地并低头，避免头部直接撞击地面</li></ul>
+      <h4>下游（判通过即解锁）</h4><ul class=dn><li>能与同伴合作，做出自我保护、相互保护与帮助的动作</li><li>积极参与所学体操类运动项目的成套动作展示，做到动作正确、规范和连贯</li><li>能主动运用所学体操运动的安全知识帮助同伴进行准备活动或自我保护</li><li>能做出所学体操类运动项目的基本动作和简单组合动作，并参与简化规则、降低要求的体操类游戏和比赛</li><li>能描述所学体操类运动项目学练和比赛中的安全注意事项，做出自我保护的动作</li><li>能解释所学体操类运动项目的安全知识，并及时处理常见的运动损伤</li></ul>
+      
+    </div>
+  </div>
+  <footer>
+    <div class=btns>
+      <button data-v=pass>通过</button>
+      <button data-v=rewrite>要改写</button>
+      <button data-v=drop>废弃</button>
+      <button data-v=skip>拿不准</button>
+    </div>
+    <input class=note placeholder="改写成什么 / 为什么废弃（选填）">
+  </footer>
+</article>
+<article class=card data-id="ca_zWiSsqiF" data-i="19">
+  <header>
+    <span class=rank>19</span>
+    <div class=hd>
+      <div class=stmt>能判断常见的物理变化和化学变化，并能从宏观和微观的视角说明二者的区别</div>
+      <div class=meta>
+        <span class=pill>化学</span>
+        <span class=pill>G9–G9</span>
+        <span class="pill st-ai-reviewed">ai-reviewed</span>
+        <span class=lev>解锁 0 条目 · 6 条下游</span>
+      </div>
+    </div>
+  </header>
+  <div class=body>
+    <div class=col>
+      <h4>课标原文</h4><p class=src>1. 能判断常见的物理变化和化学变化，并能从宏观和微观的视角说明二者的区别；</p>
+      <h4>怎么问</h4><p class=ask>{{name}}，你能告诉我为什么冰融化是物理变化，而铁生锈是化学变化吗？</p>
+    </div>
+    <div class=col>
+      <h4>算「会了」的表现</h4><ul><li>能正确区分冰融化和铁生锈，并说明前者分子不变后者生成新物质</li><li>能用分子模型解释水蒸发和水电解的本质区别</li></ul>
+      <h4>下游（判通过即解锁）</h4><ul class=dn><li>能基于必做实验形成的探究思路与方法，结合物质的组成及变化等相关知识，分析解决真实情境中的简单实验问题</li><li>能举例说明物质性质的广泛应用及性质与用途的关系</li><li>能利用化学反应相关知识分析和解释自然界、生产生活、实验中的常见现象</li><li>能基于真实问题情境，依据常见物质的性质，初步分析和解决相关的综合问题</li><li>能结合简单的实例说明反应条件对物质变化的影响，初步</li><li>能举例说明金属性质与金属材料应用的关系，如合金的性能与应用等</li></ul>
+      
+    </div>
+  </div>
+  <footer>
+    <div class=btns>
+      <button data-v=pass>通过</button>
+      <button data-v=rewrite>要改写</button>
+      <button data-v=drop>废弃</button>
+      <button data-v=skip>拿不准</button>
+    </div>
+    <input class=note placeholder="改写成什么 / 为什么废弃（选填）">
+  </footer>
+</article>
+<article class=card data-id="ca_U5G7KYQT" data-i="20">
+  <header>
+    <span class=rank>20</span>
+    <div class=hd>
+      <div class=stmt>能够阅读和提取地图上的地理信息，并利用地理信息说明和分析地理事物和现象</div>
+      <div class=meta>
+        <span class=pill>地理</span>
+        <span class=pill>G7–G9</span>
+        <span class="pill st-ai-reviewed">ai-reviewed</span>
+        <span class=lev>解锁 0 条目 · 6 条下游</span>
+      </div>
+    </div>
+  </header>
+  <div class=body>
+    <div class=col>
+      <h4>课标原文</h4><p class=src>能够阅读和提取地图上的地理信息，并利用地理信息说明和分析地理事物和现象；</p>
+      <h4>怎么问</h4><p class=ask>{{name}}，你能看懂地图上的符号和坐标，并用它们来解释一个地方的特点吗？</p>
+    </div>
+    <div class=col>
+      <h4>算「会了」的表现</h4><ul><li>能从地图上准确读出某城市的经纬度坐标</li><li>能根据地图图例识别出不同地形并描述其分布特点</li></ul>
+      <h4>下游（判通过即解锁）</h4><ul class=dn><li>能运用图片、影视资料以及数字技术等手段描述地球的宇宙环境及在太阳系中的位置</li><li>运用地球仪或软件，演示地球的自转运动</li><li>学习本主题后，学生能够运用地地图及其他地理工具，从不同媒体及生活体验中获取并运用有关中国地理的信息资料</li><li>能够描述中国不同地区的主要地理特征</li><li>学习本主题后，学生能够自主演示地球的自转和公转运动</li><li>能够秉持区域协调发展的观点，针对某区域出现的人地关系问题进行初步分析，并提出自己解决问题的思路（人地协调观）</li></ul>
+      
+    </div>
+  </div>
+  <footer>
+    <div class=btns>
+      <button data-v=pass>通过</button>
+      <button data-v=rewrite>要改写</button>
+      <button data-v=drop>废弃</button>
+      <button data-v=skip>拿不准</button>
+    </div>
+    <input class=note placeholder="改写成什么 / 为什么废弃（选填）">
+  </footer>
+</article>
+<article class=card data-id="ca_PyRD5Ghx" data-i="21">
+  <header>
+    <span class=rank>21</span>
+    <div class=hd>
+      <div class=stmt>能说出不同数位上的数表示的数值</div>
+      <div class=meta>
+        <span class=pill>数学</span>
+        <span class=pill>G1–G2</span>
+        <span class="pill st-ai-reviewed">ai-reviewed</span>
+        <span class=lev>解锁 0 条目 · 6 条下游</span>
+      </div>
+    </div>
+  </header>
+  <div class=body>
+    <div class=col>
+      <h4>课标原文</h4><p class=src>能说出不同数位上的数表示的数值；</p>
+      <h4>怎么问</h4><p class=ask>你能告诉妈妈，比如 58 这个数里，5 和 8 各代表多少吗？</p>
+    </div>
+    <div class=col>
+      <h4>算「会了」的表现</h4><ul><li>能正确读出 325 中 3 在百位表示 300</li><li>能解释 46 中 4 和 6 分别代表 40 和 6</li></ul>
+      <h4>下游（判通过即解锁）</h4><ul class=dn><li>能结合具体实例解释万以上数的含义</li><li>能认、读、写万以上的数</li><li>能说出万以上数中各数位的名称</li><li>能认、读、写万以内的数</li><li>能口算简单的百以内数的加减法</li><li>能计算两位数和三位数的加减法</li></ul>
+      
+    </div>
+  </div>
+  <footer>
+    <div class=btns>
+      <button data-v=pass>通过</button>
+      <button data-v=rewrite>要改写</button>
+      <button data-v=drop>废弃</button>
+      <button data-v=skip>拿不准</button>
+    </div>
+    <input class=note placeholder="改写成什么 / 为什么废弃（选填）">
+  </footer>
+</article>
+<article class=card data-id="ca_TmxSnW4W" data-i="22">
+  <header>
+    <span class=rank>22</span>
+    <div class=hd>
+      <div class=stmt>能估测一些身边常见物体的长度，并能借助工具测量生活中物体的长度（例 25）</div>
+      <div class=meta>
+        <span class=pill>数学</span>
+        <span class=pill>G1–G2</span>
+        <span class="pill st-llm-proposed">llm-proposed</span>
+        <span class=lev>解锁 0 条目 · 6 条下游</span>
+      </div>
+    </div>
+  </header>
+  <div class=body>
+    <div class=col>
+      <h4>课标原文</h4><p class=src>能估测一些身边常见物体的长度，并能借助工具测量生活中物体的长度（例 25）。</p>
+      <h4>怎么问</h4><p class=ask>你能不能让{{name}}先用手比划一下，再用尺子量一下课本的宽度，看看准不准？</p>
+    </div>
+    <div class=col>
+      <h4>算「会了」的表现</h4><ul><li>能用尺子测量课本宽度并读出厘米数</li><li>能用手势比划约10厘米的长度与尺子对比</li><li>课标例25「理解长度单位」：让学生结合日常生活经验，在实际情境中理解长度单位的意义，选择合适的长度单位，进行物体长度的比较。在教学中，让学生找到一个熟悉的物体长度作参照，以便作出更精准的判断。</li></ul>
+      <h4>下游（判通过即解锁）</h4><ul class=dn><li>能描述长度单位千米、分米、毫米</li><li>能在真实情境中选择合适的长度单位</li><li>能恰当地选择长度单位米、厘米描述生活中常见物体的长度</li><li>能用直尺测量并计算长方形和正方形的周长与面积</li><li>能正确使用弹簧测力计、刻度尺等相关器材获取实验数据</li><li>能利用工具测量并描述常见物体的特征和材料的性能</li></ul>
+      <div class=ex><b>课标例25「理解长度单位」</b><p>让学生结合日常生活经验，在实际情境中理解长度单位的意义，选择合适的长度单位，进行物体长度的比较。在教学中，让学生找到一个熟悉的物体长度作参照，以便作出更精准的判断。</p></div>
+    </div>
+  </div>
+  <footer>
+    <div class=btns>
+      <button data-v=pass>通过</button>
+      <button data-v=rewrite>要改写</button>
+      <button data-v=drop>废弃</button>
+      <button data-v=skip>拿不准</button>
+    </div>
+    <input class=note placeholder="改写成什么 / 为什么废弃（选填）">
+  </footer>
+</article>
+<article class=card data-id="ca_AfmqQ4Xz" data-i="23">
+  <header>
+    <span class=rank>23</span>
+    <div class=hd>
+      <div class=stmt>能比较事物的本质特征，抽象概括常见事物的共同属性，并按照本质特征和共同属性进行分类</div>
+      <div class=meta>
+        <span class=pill>科学</span>
+        <span class=pill>G7–G9</span>
+        <span class="pill st-ai-reviewed">ai-reviewed</span>
+        <span class=lev>解锁 0 条目 · 6 条下游</span>
+      </div>
+    </div>
+  </header>
+  <div class=body>
+    <div class=col>
+      <h4>课标原文</h4><p class=src>能比较事物的本质特征，抽象概括常见事物的共同属性，并按照本质特征和共同属性进行分类；</p>
+      <h4>怎么问</h4><p class=ask>{{name}}，你能说说你是怎么把蝙蝠和鲸放进哺乳动物这个类别的吗？</p>
+    </div>
+    <div class=col>
+      <h4>算「会了」的表现</h4><ul><li>能从一组混合的动物图片中，仅依据是否具有脊柱这一特征，将其分为脊椎动物和无脊椎动物两类。</li><li>能描述出多种哺乳动物的共同特征（如胎生、哺乳），并据此将蝙蝠和鲸归入哺乳类，而非鸟类或鱼类。</li></ul>
+      <h4>下游（判通过即解锁）</h4><ul class=dn><li>能解释物质的一些基本性质，从分子水平解释物质的结构及状态变化</li><li>能根据问题需要选择材料建构模型，并解释模型中各要素的作用</li><li>能应用创造性思维的基本方法，从多角度提出具有新颖性和合理性的观点</li><li>能针对简单问题，基于事实与证据，利用分析或比较方法建构一个解释性模型</li><li>能说出常见的天气现象</li><li>能解释物质的一些基本性质并从分子水平解释物质的结构及状态变化</li></ul>
+      
+    </div>
+  </div>
+  <footer>
+    <div class=btns>
+      <button data-v=pass>通过</button>
+      <button data-v=rewrite>要改写</button>
+      <button data-v=drop>废弃</button>
+      <button data-v=skip>拿不准</button>
+    </div>
+    <input class=note placeholder="改写成什么 / 为什么废弃（选填）">
+  </footer>
+</article>
+<article class=card data-id="ca_SxrKsY92" data-i="24">
+  <header>
+    <span class=rank>24</span>
+    <div class=hd>
+      <div class=stmt>能区分所听音乐的体裁、类别和表现形式，并运用所学知识分析其特点和表现作用</div>
+      <div class=meta>
+        <span class=pill>艺术</span>
+        <span class=pill>G7–G7</span>
+        <span class="pill st-disputed">disputed</span>
+        <span class=lev>解锁 0 条目 · 6 条下游</span>
+      </div>
+    </div>
+  </header>
+  <div class=body>
+    <div class=col>
+      <h4>课标原文</h4><p class=src>• 能区分所听音乐的体裁、类别和表现形式，运用所学知识分析其特点和表现作用，阐述音乐表现要素与体裁、形式之间的关系；</p>
+      <h4>怎么问</h4><p class=ask>请{{name}}选一首喜欢的音乐，说说它的节奏、旋律有什么特点，以及这些特点如何帮助表达情感？</p>
+    </div>
+    <div class=col>
+      <h4>算「会了」的表现</h4><ul><li>能听辨出一段音乐是进行曲还是圆舞曲，并说出其主要节奏特点</li><li>能听出一段音乐是独奏还是合奏，并说明其音色特点对情绪表达的作用</li></ul>
+      <h4>下游（判通过即解锁）</h4><ul class=dn><li>能从音乐要素的角度简单分析音乐情绪、情感产生变化的原因</li><li>能说出音乐与舞蹈、戏剧、影视在表现形式上的区别和联系</li><li>能运用所学知识和听觉经验区分中国民歌的基本体裁</li><li>能区分歌曲的不同类别和演唱形式</li><li>能对有代表性的世界民族民间音乐及优秀创作作品的体裁、形式、审美特征和风格类型作出判断和简单描述</li><li>能对舞蹈、戏剧（含戏曲）、影视（含数字媒体艺术）等姊妹艺术中音乐的特点及其表现作用作出分析和评价</li></ul>
+      
+    </div>
+  </div>
+  <footer>
+    <div class=btns>
+      <button data-v=pass>通过</button>
+      <button data-v=rewrite>要改写</button>
+      <button data-v=drop>废弃</button>
+      <button data-v=skip>拿不准</button>
+    </div>
+    <input class=note placeholder="改写成什么 / 为什么废弃（选填）">
+  </footer>
+</article>
+<article class=card data-id="ca_iryMPNTf" data-i="25">
+  <header>
+    <span class=rank>25</span>
+    <div class=hd>
+      <div class=stmt>能严格遵守实验室安全规则</div>
+      <div class=meta>
+        <span class=pill>化学</span>
+        <span class=pill>G9–G9</span>
+        <span class="pill st-ai-reviewed">ai-reviewed</span>
+        <span class=lev>解锁 0 条目 · 5 条下游</span>
+      </div>
+    </div>
+  </header>
+  <div class=body>
+    <div class=col>
+      <h4>课标原文</h4><p class=src>3. 能严格遵守实验室安全规则，能识别实验室安全警示标志和常用危险化学品标志，具有预防化学实验安全事故的意识。</p>
+      <h4>怎么问</h4><p class=ask>{{name}}做实验时，有没有自己穿戴好防护装备并正确处理废弃物？</p>
+    </div>
+    <div class=col>
+      <h4>算「会了」的表现</h4><ul><li>能正确佩戴护目镜和实验服进行操作</li><li>能按规范处理废液并清洗仪器</li></ul>
+      <h4>下游（判通过即解锁）</h4><ul class=dn><li>能说明必做实验的基本思路与方法</li><li>能设计简单实验，制备并检验氧气和二氧化碳</li><li>能检验溶液的酸碱性</li><li>能运用变量控制思想设计燃烧条件等实验探究方案</li><li>能撰写简单的实验报告，并与他人交流和评价探究过程及结果</li></ul>
+      
+    </div>
+  </div>
+  <footer>
+    <div class=btns>
+      <button data-v=pass>通过</button>
+      <button data-v=rewrite>要改写</button>
+      <button data-v=drop>废弃</button>
+      <button data-v=skip>拿不准</button>
+    </div>
+    <input class=note placeholder="改写成什么 / 为什么废弃（选填）">
+  </footer>
+</article>
+<article class=card data-id="ca_f6Z8kJrp" data-i="26">
+  <header>
+    <span class=rank>26</span>
+    <div class=hd>
+      <div class=stmt>能选取实验证据说明质量守恒定律，并阐释其微观本质</div>
+      <div class=meta>
+        <span class=pill>化学</span>
+        <span class=pill>G9–G9</span>
+        <span class="pill st-ai-reviewed">ai-reviewed</span>
+        <span class=lev>解锁 0 条目 · 5 条下游</span>
+      </div>
+    </div>
+  </header>
+  <div class=body>
+    <div class=col>
+      <h4>课标原文</h4><p class=src>2. 能选取实验证据说明质量守恒定律，并阐释其微观本质；</p>
+      <h4>怎么问</h4><p class=ask>请{{name}}描述一个证明质量守恒的实验，并解释为什么反应前后原子没有变？</p>
+    </div>
+    <div class=col>
+      <h4>算「会了」的表现</h4><ul><li>能正确记录密闭容器中红磷燃烧前后的总质量数据，并解释原子种类和数目不变</li><li>能分析开放系统中碳酸钠与盐酸反应后质量减少的原因，并联系微观粒子运动说明气体逸散</li></ul>
+      <h4>下游（判通过即解锁）</h4><ul class=dn><li>能依据化学反应过程中元素不变的规律，推断反应物或生成物的元素组成</li><li>能根据实验事实用文字和符号描述、表示化学变化，并正确书写常见的化学方程式</li><li>能利用化学反应相关知识分析和解释自然界、生产生活、实验中的常见现象</li><li>能根据化学方程式进行简单的计算，并解决生产生活中的简单问题</li><li>能运用变量控制思想设计燃烧条件等实验探究方案</li></ul>
+      
+    </div>
+  </div>
+  <footer>
+    <div class=btns>
+      <button data-v=pass>通过</button>
+      <button data-v=rewrite>要改写</button>
+      <button data-v=drop>废弃</button>
+      <button data-v=skip>拿不准</button>
+    </div>
+    <input class=note placeholder="改写成什么 / 为什么废弃（选填）">
+  </footer>
+</article>
+<article class=card data-id="ca_9VNasAem" data-i="27">
+  <header>
+    <span class=rank>27</span>
+    <div class=hd>
+      <div class=stmt>能描述四则运算的含义</div>
+      <div class=meta>
+        <span class=pill>数学</span>
+        <span class=pill>G1–G2</span>
+        <span class="pill st-ai-reviewed">ai-reviewed</span>
+        <span class=lev>解锁 0 条目 · 5 条下游</span>
+      </div>
+    </div>
+  </header>
+  <div class=body>
+    <div class=col>
+      <h4>课标原文</h4><p class=src>能描述四则运算的含义，知道减法是加法的逆运算、乘法是加法的简便运算、除法是乘法的逆运算；</p>
+      <h4>怎么问</h4><p class=ask>{{name}}，你能告诉我加减乘除分别是什么意思吗？</p>
+    </div>
+    <div class=col>
+      <h4>算「会了」的表现</h4><ul><li>能用实物演示加法是合并、减法是拿走的过程</li><li>能解释乘法是相同加数的连加，除法是平均分</li></ul>
+      <h4>下游（判通过即解锁）</h4><ul class=dn><li>能描述减法与加法的关系、除法与乘法的关系</li><li>能在熟悉的生活情境中运用数和数的运算，合理表达简单的数量关系，解决简单的问题</li><li>能进行整数四则混合运算（以两步为主，不超过三步），正确运用小括号和中括号</li><li>能说出运算律的含义，并能用字母表示</li><li>运用四则混合运算解决问题</li></ul>
+      
+    </div>
+  </div>
+  <footer>
+    <div class=btns>
+      <button data-v=pass>通过</button>
+      <button data-v=rewrite>要改写</button>
+      <button data-v=drop>废弃</button>
+      <button data-v=skip>拿不准</button>
+    </div>
+    <input class=note placeholder="改写成什么 / 为什么废弃（选填）">
+  </footer>
+</article>
+<article class=card data-id="ca_Rb3WmrqW" data-i="28">
+  <header>
+    <span class=rank>28</span>
+    <div class=hd>
+      <div class=stmt>能说出运算律的含义，并能用字母表示</div>
+      <div class=meta>
+        <span class=pill>数学</span>
+        <span class=pill>G3–G4</span>
+        <span class="pill st-ai-reviewed">ai-reviewed</span>
+        <span class=lev>解锁 0 条目 · 5 条下游</span>
+      </div>
+    </div>
+  </header>
+  <div class=body>
+    <div class=col>
+      <h4>课标原文</h4><p class=src>能说出运算律的含义，并能用字母表示；</p>
+      <h4>怎么问</h4><p class=ask>你能用字母写出运算律并解释它们的意思吗？</p>
+    </div>
+    <div class=col>
+      <h4>算「会了」的表现</h4><ul><li>能用字母写出 a+b=b+a 并解释这是加法交换律</li><li>能举例说明乘法结合律并用 (a×b)×c=a×(b×c) 表示</li></ul>
+      <h4>下游（判通过即解锁）</h4><ul class=dn><li>能合理运用运算律简化运算</li><li>能描述减法与加法的关系、除法与乘法的关系</li><li>能进行整数四则混合运算（以两步为主，不超过三步），正确运用小括号和中括号</li><li>能运用运算律进行简便运算，解决相关的简单实际问题</li><li>能运用代数式表示具体问题中简单的数量关系，体验用数学符号表达数量关系的过程</li></ul>
+      
+    </div>
+  </div>
+  <footer>
+    <div class=btns>
+      <button data-v=pass>通过</button>
+      <button data-v=rewrite>要改写</button>
+      <button data-v=drop>废弃</button>
+      <button data-v=skip>拿不准</button>
+    </div>
+    <input class=note placeholder="改写成什么 / 为什么废弃（选填）">
+  </footer>
+</article>
+<article class=card data-id="ca_UHbsbg6s" data-i="29">
+  <header>
+    <span class=rank>29</span>
+    <div class=hd>
+      <div class=stmt>能在方格纸上补全简单的轴对称图形</div>
+      <div class=meta>
+        <span class=pill>数学</span>
+        <span class=pill>G5–G6</span>
+        <span class="pill st-ai-reviewed">ai-reviewed</span>
+        <span class=lev>解锁 0 条目 · 5 条下游</span>
+      </div>
+    </div>
+  </header>
+  <div class=body>
+    <div class=col>
+      <h4>课标原文</h4><p class=src>认识轴对称图形和对称轴，能在方格纸上补全简单的轴对称图形。</p>
+      <h4>怎么问</h4><p class=ask>你可以请{{name}}在方格纸上补全一个只画了一半的轴对称图形吗？</p>
+    </div>
+    <div class=col>
+      <h4>算「会了」的表现</h4><ul><li>能根据给出的对称轴，将图形缺失部分准确补画在方格纸上</li><li>能检查补全后的图形与原图形关于对称轴完全重合</li></ul>
+      <h4>下游（判通过即解锁）</h4><ul class=dn><li>会用图形的运动认识、理解和表达现实世界中相应的现象</li><li>能借助方格纸设计一个简单图案</li><li>能在方格纸上补全轴对称图形</li><li>能在方格纸上，按给定比例画出简单图形放大或缩小后的图形</li><li>能在方格纸上描述图形的位置</li></ul>
+      
+    </div>
+  </div>
+  <footer>
+    <div class=btns>
+      <button data-v=pass>通过</button>
+      <button data-v=rewrite>要改写</button>
+      <button data-v=drop>废弃</button>
+      <button data-v=skip>拿不准</button>
+    </div>
+    <input class=note placeholder="改写成什么 / 为什么废弃（选填）">
+  </footer>
+</article>
+<article class=card data-id="ca_dbvFPRrX" data-i="30">
+  <header>
+    <span class=rank>30</span>
+    <div class=hd>
+      <div class=stmt>能合理运用运算律简化运算</div>
+      <div class=meta>
+        <span class=pill>数学</span>
+        <span class=pill>G7–G9</span>
+        <span class="pill st-ai-reviewed">ai-reviewed</span>
+        <span class=lev>解锁 0 条目 · 5 条下游</span>
+      </div>
+    </div>
+  </header>
+  <div class=body>
+    <div class=col>
+      <h4>课标原文</h4><p class=src>能熟练地对有理数进行加、减、乘、除、乘方及简单的混合运算（以三步以内为主），理解有理数的运算律，能合理运用运算律简化运算，能运用有理数的运算解决简单问题。</p>
+      <h4>怎么问</h4><p class=ask>你能帮 {{name}} 找找看，哪些题目可以像这样用运算律让计算更简单吗？</p>
+    </div>
+    <div class=col>
+      <h4>算「会了」的表现</h4><ul><li>能将 25×37+25×63 改写为 25×(37+63) 并算出正确结果</li><li>能识别 48×99+48 并运用乘法分配律转化为 48×(99+1) 进行计算</li></ul>
+      <h4>下游（判通过即解锁）</h4><ul class=dn><li>能运用有理数的运算解决简单问题</li><li>会选择适当的方法求代数式的值</li><li>能利用分式的基本性质进行约分、通分，并化简分式</li><li>能运用等式的基本性质进行等式的变形</li><li>会运用乘方的意义准确进行有理数的乘方运算</li></ul>
+      
+    </div>
+  </div>
+  <footer>
+    <div class=btns>
+      <button data-v=pass>通过</button>
+      <button data-v=rewrite>要改写</button>
+      <button data-v=drop>废弃</button>
+      <button data-v=skip>拿不准</button>
+    </div>
+    <input class=note placeholder="改写成什么 / 为什么废弃（选填）">
+  </footer>
+</article>
+<article class=card data-id="ca_NBdvkmXC" data-i="31">
+  <header>
+    <span class=rank>31</span>
+    <div class=hd>
+      <div class=stmt>能说出所听乐曲的体裁、类别和表现形式，并分析其特点与表现作用</div>
+      <div class=meta>
+        <span class=pill>艺术</span>
+        <span class=pill>G7–G7</span>
+        <span class="pill st-disputed">disputed</span>
+        <span class=lev>解锁 0 条目 · 5 条下游</span>
+      </div>
+    </div>
+  </header>
+  <div class=body>
+    <div class=col>
+      <h4>课标原文</h4><p class=src>• 能区分所听音乐的体裁、类别和表现形式，运用所学知识分析其特点和表现作用，阐述音乐表现要素与体裁、形式之间的关系；</p>
+      <h4>怎么问</h4><p class=ask>{{name}}，你能告诉我刚才听的音乐属于哪种体裁吗？</p>
+    </div>
+    <div class=col>
+      <h4>算「会了」的表现</h4><ul><li>能说出所听音乐是交响乐、室内乐还是独奏乐。</li><li>能分析所听乐曲的特点（如结构、情绪）及其在音乐中的作用。</li></ul>
+      <h4>下游（判通过即解锁）</h4><ul class=dn><li>能区分歌曲的不同类别和演唱形式</li><li>能区分我国有代表性的地区和民族音乐的风格</li><li>能说出音乐与舞蹈、戏剧、影视在表现形式上的区别和联系</li><li>能对有代表性的世界民族民间音乐及优秀创作作品的体裁、形式、审美特征和风格类型作出判断和简单描述</li><li>能对舞蹈、戏剧（含戏曲）、影视（含数字媒体艺术）等姊妹艺术中音乐的特点及其表现作用作出分析和评价</li></ul>
+      
+    </div>
+  </div>
+  <footer>
+    <div class=btns>
+      <button data-v=pass>通过</button>
+      <button data-v=rewrite>要改写</button>
+      <button data-v=drop>废弃</button>
+      <button data-v=skip>拿不准</button>
+    </div>
+    <input class=note placeholder="改写成什么 / 为什么废弃（选填）">
+  </footer>
+</article>
+<article class=card data-id="ca_4ZGDmYaQ" data-i="32">
+  <header>
+    <span class=rank>32</span>
+    <div class=hd>
+      <div class=stmt>参与体能练习、游戏和比赛</div>
+      <div class=meta>
+        <span class=pill>体育与健康</span>
+        <span class=pill>G1–G2</span>
+        <span class="pill st-ai-reviewed">ai-reviewed</span>
+        <span class=lev>解锁 0 条目 · 4 条下游</span>
+      </div>
+    </div>
+  </header>
+  <div class=body>
+    <div class=col>
+      <h4>课标原文</h4><p class=src>(1) 参与体能练习、游戏和比赛，能说出相关的体能术语和游戏名称，体能有所发展。</p>
+      <h4>怎么问</h4><p class=ask>{{name}}在体育课上是否愿意跟着大家一起做练习和玩游戏呢？</p>
+    </div>
+    <div class=col>
+      <h4>算「会了」的表现</h4><ul><li>能跟随老师指令完成3组开合跳练习</li><li>能在小组接力游戏中主动跑完全程</li></ul>
+      <h4>下游（判通过即解锁）</h4><ul class=dn><li>做出所学中华传统体育类运动项目的基本动作和简单组合动作，并运用于游戏中</li><li>能描述体能对生活和健康的重要性</li><li>能做出所学球类运动项目的基本动作和简单组合动作，并在竞赛性游戏中运用，参与班级内对抗性游戏和简化规则要求的教学比赛</li><li>能描述各种体能的练习方法并在游戏和比赛中积极运用</li></ul>
+      
+    </div>
+  </div>
+  <footer>
+    <div class=btns>
+      <button data-v=pass>通过</button>
+      <button data-v=rewrite>要改写</button>
+      <button data-v=drop>废弃</button>
+      <button data-v=skip>拿不准</button>
+    </div>
+    <input class=note placeholder="改写成什么 / 为什么废弃（选填）">
+  </footer>
+</article>
+<article class=card data-id="ca_awKKEAPV" data-i="33">
+  <header>
+    <span class=rank>33</span>
+    <div class=hd>
+      <div class=stmt>能分析常见物质中元素的化合价</div>
+      <div class=meta>
+        <span class=pill>化学</span>
+        <span class=pill>G9–G9</span>
+        <span class="pill st-ai-reviewed">ai-reviewed</span>
+        <span class=lev>解锁 0 条目 · 4 条下游</span>
+      </div>
+    </div>
+  </header>
+  <div class=body>
+    <div class=col>
+      <h4>课标原文</h4><p class=src>2. 能用化学式表示某些常见物质的组成，能分析常见物质中元素的化合价；</p>
+      <h4>怎么问</h4><p class=ask>你能告诉{{name}}水里氢和氧各是几价吗？</p>
+    </div>
+    <div class=col>
+      <h4>算「会了」的表现</h4><ul><li>能正确标出H₂O中氢和氧元素的化合价</li><li>能计算并写出KClO₃中各元素的化合价</li></ul>
+      <h4>下游（判通过即解锁）</h4><ul class=dn><li>能用物质名称和化学式表示常见物质</li><li>能根据实验事实用文字和符号描述、表示化学变化，并正确书写常见的化学方程式</li><li>能基于守恒和比例关系推断化学反应的相关信息</li><li>能根据化学方程式进行简单的计算，并解决生产生活中的简单问题</li></ul>
+      
+    </div>
+  </div>
+  <footer>
+    <div class=btns>
+      <button data-v=pass>通过</button>
+      <button data-v=rewrite>要改写</button>
+      <button data-v=drop>废弃</button>
+      <button data-v=skip>拿不准</button>
+    </div>
+    <input class=note placeholder="改写成什么 / 为什么废弃（选填）">
+  </footer>
+</article>
+<article class=card data-id="ca_MQ57rcRz" data-i="34">
+  <header>
+    <span class=rank>34</span>
+    <div class=hd>
+      <div class=stmt>能说明分子、原子、离子的区别和联系</div>
+      <div class=meta>
+        <span class=pill>化学</span>
+        <span class=pill>G9–G9</span>
+        <span class="pill st-ai-reviewed">ai-reviewed</span>
+        <span class=lev>解锁 0 条目 · 4 条下游</span>
+      </div>
+    </div>
+  </header>
+  <div class=body>
+    <div class=col>
+      <h4>课标原文</h4><p class=src>3. 能说明分子、原子、离子的区别和联系，能用分子的观点解释生活中的某些变化或现象；</p>
+      <h4>怎么问</h4><p class=ask>{{name}}，你能说说分子、原子和离子有什么不同，又有什么关系吗？</p>
+    </div>
+    <div class=col>
+      <h4>算「会了」的表现</h4><ul><li>能正确画出水分子、钠原子和氯离子的结构示意图并标注名称</li><li>能用分子、原子、离子三种微粒解释氯化钠的形成过程</li></ul>
+      <h4>下游（判通过即解锁）</h4><ul class=dn><li>能识记并正确书写常见元素的名称和符号</li><li>能根据原子的核电荷数判断核内质子数和核外电子数</li><li>能判断常见的物理变化和化学变化，并能从宏观和微观的视角说明二者的区别</li><li>能选取实验证据说明质量守恒定律，并阐释其微观本质</li></ul>
+      
+    </div>
+  </div>
+  <footer>
+    <div class=btns>
+      <button data-v=pass>通过</button>
+      <button data-v=rewrite>要改写</button>
+      <button data-v=drop>废弃</button>
+      <button data-v=skip>拿不准</button>
+    </div>
+    <input class=note placeholder="改写成什么 / 为什么废弃（选填）">
+  </footer>
+</article>
+<article class=card data-id="ca_H76eUtzw" data-i="35">
+  <header>
+    <span class=rank>35</span>
+    <div class=hd>
+      <div class=stmt>能根据实验事实用文字和符号描述、表示化学变化，并正确书写常见的化学方程式</div>
+      <div class=meta>
+        <span class=pill>化学</span>
+        <span class=pill>G9–G9</span>
+        <span class="pill st-ai-reviewed">ai-reviewed</span>
+        <span class=lev>解锁 0 条目 · 4 条下游</span>
+      </div>
+    </div>
+  </header>
+  <div class=body>
+    <div class=col>
+      <h4>课标原文</h4><p class=src>能根据实验事实用文字和符号描述、表示化学变化，并正确书写常见的化学方程式。</p>
+      <h4>怎么问</h4><p class=ask>{{name}}，你能把铁丝燃烧的实验现象写成化学方程式吗？</p>
+    </div>
+    <div class=col>
+      <h4>算「会了」的表现</h4><ul><li>能观察铁丝在氧气中燃烧的实验，写出反应的文字表达式和符号表达式</li><li>能根据实验现象，正确书写并配平镁条燃烧的化学方程式</li></ul>
+      <h4>下游（判通过即解锁）</h4><ul class=dn><li>能基于真实问题情境，依据常见物质的性质，初步分析和解决相关的综合问题</li><li>能利用化学反应相关知识分析和解释自然界、生产生活、实验中的常见现象</li><li>能根据化学方程式进行简单的计算，并解决生产生活中的简单问题</li><li>能判断常见的物理变化和化学变化，并能从宏观和微观的视角说明二者的区别</li></ul>
+      
+    </div>
+  </div>
+  <footer>
+    <div class=btns>
+      <button data-v=pass>通过</button>
+      <button data-v=rewrite>要改写</button>
+      <button data-v=drop>废弃</button>
+      <button data-v=skip>拿不准</button>
+    </div>
+    <input class=note placeholder="改写成什么 / 为什么废弃（选填）">
+  </footer>
+</article>
+<article class=card data-id="ca_T8MSssvy" data-i="36">
+  <header>
+    <span class=rank>36</span>
+    <div class=hd>
+      <div class=stmt>能从元素与分子视角辨识常见物质，结合实例区分混合物与纯净物、单质与化合物</div>
+      <div class=meta>
+        <span class=pill>化学</span>
+        <span class=pill>G9–G9</span>
+        <span class="pill st-ai-reviewed">ai-reviewed</span>
+        <span class=lev>解锁 0 条目 · 4 条下游</span>
+      </div>
+    </div>
+  </header>
+  <div class=body>
+    <div class=col>
+      <h4>课标原文</h4><p class=src>能从元素与分子视角辨识常见物质，结合实例区分混合物与纯净物、单质与化合物；</p>
+      <h4>怎么问</h4><p class=ask>{{name}}，你能告诉我，你喝的矿泉水和杯子里的盐水，哪种是纯净物，哪种是混合物吗？</p>
+    </div>
+    <div class=col>
+      <h4>算「会了」的表现</h4><ul><li>能正确分类标签为「空气」和「氧气」的物质，并说明氧气是单质而空气是混合物</li><li>能写出水（H₂O）的化学式，并解释它是化合物而非单质的原因</li></ul>
+      <h4>下游（判通过即解锁）</h4><ul class=dn><li>能从定性和定量的视角，说明饱和溶液、溶解度和溶质质量</li><li>能用化学式表示某些常见物质的组成</li><li>能说明分子、原子、离子的区别和联系</li><li>能用分子的观点解释生活中的某些变化或现象</li></ul>
+      
+    </div>
+  </div>
+  <footer>
+    <div class=btns>
+      <button data-v=pass>通过</button>
+      <button data-v=rewrite>要改写</button>
+      <button data-v=drop>废弃</button>
+      <button data-v=skip>拿不准</button>
+    </div>
+    <input class=note placeholder="改写成什么 / 为什么废弃（选填）">
+  </footer>
+</article>
+<article class=card data-id="ca_b6a7ihBd" data-i="37">
+  <header>
+    <span class=rank>37</span>
+    <div class=hd>
+      <div class=stmt>能认、读、写万以上的数</div>
+      <div class=meta>
+        <span class=pill>数学</span>
+        <span class=pill>G3–G4</span>
+        <span class="pill st-ai-reviewed">ai-reviewed</span>
+        <span class=lev>解锁 0 条目 · 4 条下游</span>
+      </div>
+    </div>
+  </header>
+  <div class=body>
+    <div class=col>
+      <h4>课标原文</h4><p class=src>能结合具体实例解释万以上数的含义，能认、读、写万以上的数，会用万、亿为单位表示大数，能说出各数位的名称，理解各数位上的数表示的意义，能进行整万、整亿数的改写。</p>
+      <h4>怎么问</h4><p class=ask>家长可以问：{{name}}，你能读出520000这个数，并在数位表上标出每个数字在哪个数位吗？</p>
+    </div>
+    <div class=col>
+      <h4>算「会了」的表现</h4><ul><li>能正确读出520000并写出对应汉字读法</li><li>能在数位顺序表中填出520000各数位上的数字</li></ul>
+      <h4>下游（判通过即解锁）</h4><ul class=dn><li>能结合具体实例解释万以上数的含义</li><li>能说出一个大数的万位或亿位名称并解释其数值含义</li><li>能借助计算器进行计算，并解释计算结果的实际意义</li><li>能判断一个自然数是否是质数或合数</li></ul>
+      
+    </div>
+  </div>
+  <footer>
+    <div class=btns>
+      <button data-v=pass>通过</button>
+      <button data-v=rewrite>要改写</button>
+      <button data-v=drop>废弃</button>
+      <button data-v=skip>拿不准</button>
+    </div>
+    <input class=note placeholder="改写成什么 / 为什么废弃（选填）">
+  </footer>
+</article>
+<article class=card data-id="ca_yyMBrshz" data-i="38">
+  <header>
+    <span class=rank>38</span>
+    <div class=hd>
+      <div class=stmt>能描述减法与加法的关系、除法与乘法的关系</div>
+      <div class=meta>
+        <span class=pill>数学</span>
+        <span class=pill>G3–G4</span>
+        <span class="pill st-ai-reviewed">ai-reviewed</span>
+        <span class=lev>解锁 0 条目 · 4 条下游</span>
+      </div>
+    </div>
+  </header>
+  <div class=body>
+    <div class=col>
+      <h4>课标原文</h4><p class=src>能描述减法与加法的关系、除法与乘法的关系；</p>
+      <h4>怎么问</h4><p class=ask>{{name}}，你能用加法来检查减法算得对不对吗？</p>
+    </div>
+    <div class=col>
+      <h4>算「会了」的表现</h4><ul><li>能用加法算式验证减法算式的正确性，如用 12+8=20 验证 20-8=12</li><li>能用乘法算式验证除法算式的正确性，如用 3×5=15 验证 15÷3=5</li></ul>
+      <h4>下游（判通过即解锁）</h4><ul class=dn><li>能进行整数四则混合运算（以两步为主，不超过三步），正确运用小括号和中括号</li><li>能运用运算律进行简便运算，解决相关的简单实际问题</li><li>运用四则混合运算解决问题</li><li>能计算两位数乘三位数和三位数除以两位数</li></ul>
+      
+    </div>
+  </div>
+  <footer>
+    <div class=btns>
+      <button data-v=pass>通过</button>
+      <button data-v=rewrite>要改写</button>
+      <button data-v=drop>废弃</button>
+      <button data-v=skip>拿不准</button>
+    </div>
+    <input class=note placeholder="改写成什么 / 为什么废弃（选填）">
+  </footer>
+</article>
+<article class=card data-id="ca_4qKPsXyg" data-i="39">
+  <header>
+    <span class=rank>39</span>
+    <div class=hd>
+      <div class=stmt>会根据角的特征对三角形分类，认识直角三角形、锐角三角形和钝角三角形</div>
+      <div class=meta>
+        <span class=pill>数学</span>
+        <span class=pill>G3–G4</span>
+        <span class="pill st-ai-reviewed">ai-reviewed</span>
+        <span class=lev>解锁 0 条目 · 4 条下游</span>
+      </div>
+    </div>
+  </header>
+  <div class=body>
+    <div class=col>
+      <h4>课标原文</h4><p class=src>会根据角的特征对三角形分类，认识直角三角形、锐角三角形和钝角三角形；</p>
+      <h4>怎么问</h4><p class=ask>{{name}}，你能根据角的大小把三角形分成直角、锐角和钝角三角形吗？</p>
+    </div>
+    <div class=col>
+      <h4>算「会了」的表现</h4><ul><li>能将一组三角形按角分类并说出每类三角形的名称</li><li>能正确指出三角形中最大角的类型并判断该三角形属于哪一类</li></ul>
+      <h4>下游（判通过即解锁）</h4><ul class=dn><li>在直观理解和掌握图形与几何基本事实的基础上，经历得到和验证数学结论的过程，感悟具有传递性的数学逻辑</li><li>会判断简单的相似三角形</li><li>能根据已知两个角的度数求出第三个角的度数</li><li>能说出直角、锐角、钝角的特征</li></ul>
+      
+    </div>
+  </div>
+  <footer>
+    <div class=btns>
+      <button data-v=pass>通过</button>
+      <button data-v=rewrite>要改写</button>
+      <button data-v=drop>废弃</button>
+      <button data-v=skip>拿不准</button>
+    </div>
+    <input class=note placeholder="改写成什么 / 为什么废弃（选填）">
+  </footer>
+</article>
+<article class=card data-id="ca_7VhGafE2" data-i="40">
+  <header>
+    <span class=rank>40</span>
+    <div class=hd>
+      <div class=stmt>会计算长方形、正方形的周长和面积</div>
+      <div class=meta>
+        <span class=pill>数学</span>
+        <span class=pill>G3–G4</span>
+        <span class="pill st-ai-reviewed">ai-reviewed</span>
+        <span class=lev>解锁 0 条目 · 4 条下游</span>
+      </div>
+    </div>
+  </header>
+  <div class=body>
+    <div class=col>
+      <h4>课标原文</h4><p class=src>会计算长方形、正方形的周长和面积。</p>
+      <h4>怎么问</h4><p class=ask>{{name}}，你能告诉我这个长方形的周长和面积分别是怎么算出来的吗？</p>
+    </div>
+    <div class=col>
+      <h4>算「会了」的表现</h4><ul><li>能根据给定长和宽的长方形，正确列出周长与面积的算式并求出结果</li><li>能用单位长度的小正方形铺满一个长方形，数出面积并写出计算式</li></ul>
+      <h4>下游（判通过即解锁）</h4><ul class=dn><li>会计算平行四边形、三角形、梯形的面积</li><li>能在方格纸上，按给定比例画出简单图形放大或缩小后的图形</li><li>能通过具体事例描述面积单位厘米2、分米2、米2</li><li>能计算长方体、正方体和圆柱的体积和表面积</li></ul>
+      
+    </div>
+  </div>
+  <footer>
+    <div class=btns>
+      <button data-v=pass>通过</button>
+      <button data-v=rewrite>要改写</button>
+      <button data-v=drop>废弃</button>
+      <button data-v=skip>拿不准</button>
+    </div>
+    <input class=note placeholder="改写成什么 / 为什么废弃（选填）">
+  </footer>
+</article>
+<article class=card data-id="ca_CnA26FG8" data-i="41">
+  <header>
+    <span class=rank>41</span>
+    <div class=hd>
+      <div class=stmt>能用有序数对（限于自然数）表示点的位置</div>
+      <div class=meta>
+        <span class=pill>数学</span>
+        <span class=pill>G5–G6</span>
+        <span class="pill st-ai-reviewed">ai-reviewed</span>
+        <span class=lev>解锁 0 条目 · 4 条下游</span>
+      </div>
+    </div>
+  </header>
+  <div class=body>
+    <div class=col>
+      <h4>课标原文</h4><p class=src>能用有序数对（限于自然数）表示点的位置，理解有序数对与方格纸上点的对应关系（例36）。</p>
+      <h4>怎么问</h4><p class=ask>{{name}}，你能告诉我数对(4,2)在图上的哪个位置吗？</p>
+    </div>
+    <div class=col>
+      <h4>算「会了」的表现</h4><ul><li>能在方格纸上用(3,5)标出指定点的位置</li><li>能根据数对(2,4)在坐标图中找到对应点并圈出</li><li>课标例36「数对与点的对应」：通过实际操作，让学生感知数与形的结合，形成几何直观；感知数学的抽象过程，进一步增强符号意识。在具体教学过程中，要明晰方格纸上的点与整数对的关系，以及与实际情境的关系，提升学生的数学表达能力，为将来学习平面直角坐标系积累经</li></ul>
+      <h4>下游（判通过即解锁）</h4><ul class=dn><li>能用坐标描述简单几何图形的位置</li><li>能在方格纸上补全简单的轴对称图形</li><li>能借助方格纸设计一个简单图案</li><li>能在方格纸上，按给定比例画出简单图形放大或缩小后的图形</li></ul>
+      <div class=ex><b>课标例36「数对与点的对应」</b><p>通过实际操作，让学生感知数与形的结合，形成几何直观；感知数学的抽象过程，进一步增强符号意识。在具体教学过程中，要明晰方格纸上的点与整数对的关系，以及与实际情境的关系，提升学生的数学表达能力，为将来学习平面直角坐标系积累经验。</p></div>
+    </div>
+  </div>
+  <footer>
+    <div class=btns>
+      <button data-v=pass>通过</button>
+      <button data-v=rewrite>要改写</button>
+      <button data-v=drop>废弃</button>
+      <button data-v=skip>拿不准</button>
+    </div>
+    <input class=note placeholder="改写成什么 / 为什么废弃（选填）">
+  </footer>
+</article>
+<article class=card data-id="ca_mcsy9V8v" data-i="42">
+  <header>
+    <span class=rank>42</span>
+    <div class=hd>
+      <div class=stmt>通过对数据的简单分析，感受数据蕴含着信息，体会运用数据进行表达与交流的作用</div>
+      <div class=meta>
+        <span class=pill>数学</span>
+        <span class=pill>G3–G4</span>
+        <span class="pill st-ai-reviewed">ai-reviewed</span>
+        <span class=lev>解锁 0 条目 · 4 条下游</span>
+      </div>
+    </div>
+  </header>
+  <div class=body>
+    <div class=col>
+      <h4>课标原文</h4><p class=src>（2）通过对数据的简单分析，感受数据蕴含着信息，体会运用数据进行表达与交流的作用。</p>
+      <h4>怎么问</h4><p class=ask>{{name}}，你能从图表里看出哪些有趣的信息吗？</p>
+    </div>
+    <div class=col>
+      <h4>算「会了」的表现</h4><ul><li>能根据提供的班级身高数据，指出大多数同学的身高在哪个范围</li><li>能用简单的语言描述一张统计图所反映的主要信息</li></ul>
+      <h4>下游（判通过即解锁）</h4><ul class=dn><li>能结合具体情境，探索百分数的意义，解决与百分数有关的简单实际问题</li><li>能在真实情境中理解百分数的统计意义，解决与百分数有关的简单问题</li><li>会用条形统计图、折线统计图呈现相关数据</li><li>能根据统计图表达的意义，对数据结果作出简单的判断和预测</li></ul>
+      
+    </div>
+  </div>
+  <footer>
+    <div class=btns>
+      <button data-v=pass>通过</button>
+      <button data-v=rewrite>要改写</button>
+      <button data-v=drop>废弃</button>
+      <button data-v=skip>拿不准</button>
+    </div>
+    <input class=note placeholder="改写成什么 / 为什么废弃（选填）">
+  </footer>
+</article>
+<article class=card data-id="ca_K6cXunub" data-i="43">
+  <header>
+    <span class=rank>43</span>
+    <div class=hd>
+      <div class=stmt>会运用乘方的意义准确进行有理数的乘方运算</div>
+      <div class=meta>
+        <span class=pill>数学</span>
+        <span class=pill>G7–G9</span>
+        <span class="pill st-ai-reviewed">ai-reviewed</span>
+        <span class=lev>解锁 0 条目 · 4 条下游</span>
+      </div>
+    </div>
+  </header>
+  <div class=body>
+    <div class=col>
+      <h4>课标原文</h4><p class=src>会运用乘方的意义准确进行有理数的乘方运算；</p>
+      <h4>怎么问</h4><p class=ask>{{name}}，你能告诉我(-2)^3和-3^2分别等于多少吗？</p>
+    </div>
+    <div class=col>
+      <h4>算「会了」的表现</h4><ul><li>能正确计算(-2)^3并说明结果为-8的原因</li><li>能区分(-3)^2与-3^2的不同并分别计算出正确结果</li></ul>
+      <h4>下游（判通过即解锁）</h4><ul class=dn><li>会用根号表示平方根、算术平方根、立方根</li><li>能用乘方运算求百以内完全平方数的平方根和千以内完全立方数的立方根（及对应的负整数）</li><li>会用科学记数法表示数（包括在计算器上表示）</li><li>会用计算器计算平方根和立方根</li></ul>
+      
+    </div>
+  </div>
+  <footer>
+    <div class=btns>
+      <button data-v=pass>通过</button>
+      <button data-v=rewrite>要改写</button>
+      <button data-v=drop>废弃</button>
+      <button data-v=skip>拿不准</button>
+    </div>
+    <input class=note placeholder="改写成什么 / 为什么废弃（选填）">
+  </footer>
+</article>
+<article class=card data-id="ca_RQ2iqEuL" data-i="44">
+  <header>
+    <span class=rank>44</span>
+    <div class=hd>
+      <div class=stmt>能运用代数式表示具体问题中简单的数量关系，体验用数学符号表达数量关系的过程</div>
+      <div class=meta>
+        <span class=pill>数学</span>
+        <span class=pill>G7–G9</span>
+        <span class="pill st-ai-reviewed">ai-reviewed</span>
+        <span class=lev>解锁 0 条目 · 4 条下游</span>
+      </div>
+    </div>
+  </header>
+  <div class=body>
+    <div class=col>
+      <h4>课标原文</h4><p class=src>能运用代数式表示具体问题中简单的数量关系，体验用数学符号表达数量关系的过程，会选择适当的方法求代数式的值；</p>
+      <h4>怎么问</h4><p class=ask>{{name}}，你能用字母表示出长方形的周长吗？或者能告诉我买书打折后怎么用式子表示总价吗？</p>
+    </div>
+    <div class=col>
+      <h4>算「会了」的表现</h4><ul><li>能用含字母的代数式表示一个长方形的周长或面积</li><li>能根据题意列出“原价打折后价格”这类两步运算的代数式</li></ul>
+      <h4>下游（判通过即解锁）</h4><ul class=dn><li>会选择适当的方法求代数式的值</li><li>能利用分式的基本性质进行约分、通分，并化简分式</li><li>能运用等式的基本性质进行等式的变形</li><li>能根据二元一次方程组的特征，选择代入消元法或加减消元法解二元一次方程组</li></ul>
+      
+    </div>
+  </div>
+  <footer>
+    <div class=btns>
+      <button data-v=pass>通过</button>
+      <button data-v=rewrite>要改写</button>
+      <button data-v=drop>废弃</button>
+      <button data-v=skip>拿不准</button>
+    </div>
+    <input class=note placeholder="改写成什么 / 为什么废弃（选填）">
+  </footer>
+</article>
+<article class=card data-id="ca_iAuEGqaE" data-i="45">
+  <header>
+    <span class=rank>45</span>
+    <div class=hd>
+      <div class=stmt>会用简单的物理图像描述数据，根据图像特点对实验结果作出解释</div>
+      <div class=meta>
+        <span class=pill>物理</span>
+        <span class=pill>G8–G9</span>
+        <span class="pill st-ai-reviewed">ai-reviewed</span>
+        <span class=lev>解锁 0 条目 · 4 条下游</span>
+      </div>
+    </div>
+  </header>
+  <div class=body>
+    <div class=col>
+      <h4>课标原文</h4><p class=src>会用简单的物理图像描述数据，根据图像特点对实验结果作出解释；</p>
+      <h4>怎么问</h4><p class=ask>{{name}}，你能根据实验数据画出图像，并从图像中看出实验结果说明了什么吗？</p>
+    </div>
+    <div class=col>
+      <h4>算「会了」的表现</h4><ul><li>能根据实验数据画出温度-时间曲线并指出熔化过程的水平段</li><li>能从v-t图像中读出物体在某时刻的速度并解释其运动状态变化</li></ul>
+      <h4>下游（判通过即解锁）</h4><ul class=dn><li>会用所学模型分析常见的实际问题</li><li>能根据实验目的，用简单的图像或表格整理并描述信息</li><li>能撰写实验报告，书面或口头表述科学探究的过程和结果</li><li>能从物理学视角，把所学概念和规律与实际情境联系起来，解释常见自然现象和解决常见物理问题</li></ul>
+      
+    </div>
+  </div>
+  <footer>
+    <div class=btns>
+      <button data-v=pass>通过</button>
+      <button data-v=rewrite>要改写</button>
+      <button data-v=drop>废弃</button>
+      <button data-v=skip>拿不准</button>
+    </div>
+    <input class=note placeholder="改写成什么 / 为什么废弃（选填）">
+  </footer>
+</article>
+<article class=card data-id="ca_kZTsngGk" data-i="46">
+  <header>
+    <span class=rank>46</span>
+    <div class=hd>
+      <div class=stmt>能根据实验目的设计实验方案</div>
+      <div class=meta>
+        <span class=pill>物理</span>
+        <span class=pill>G8–G9</span>
+        <span class="pill st-ai-reviewed">ai-reviewed</span>
+        <span class=lev>解锁 0 条目 · 4 条下游</span>
+      </div>
+    </div>
+  </header>
+  <div class=body>
+    <div class=col>
+      <h4>课标原文</h4><p class=src>能根据实验目的设计实验方案，会正确使用已学实验器材收集数据，能遵守实验室规则，注意实验中的安全问题；</p>
+      <h4>怎么问</h4><p class=ask>您可以问{{name}}：如果想验证一个物理猜想，你能说出需要设计哪些关键步骤吗？</p>
+    </div>
+    <div class=col>
+      <h4>算「会了」的表现</h4><ul><li>能根据&#x27;测量小灯泡功率&#x27;的目的，说出需改变电压并记录对应电流</li><li>能为验证&#x27;滑动摩擦力与压力有关&#x27;设计控制变量的实验步骤</li></ul>
+      <h4>下游（判通过即解锁）</h4><ul class=dn><li>能根据控制变量法制订简单的探究方案</li><li>能设计简单的跨学科实践方案</li><li>能从物理学视角，把所学概念和规律与实际情境联系起来，解释常见自然现象和解决常见物理问题</li><li>能根据实验目的整理信息</li></ul>
+      
+    </div>
+  </div>
+  <footer>
+    <div class=btns>
+      <button data-v=pass>通过</button>
+      <button data-v=rewrite>要改写</button>
+      <button data-v=drop>废弃</button>
+      <button data-v=skip>拿不准</button>
+    </div>
+    <input class=note placeholder="改写成什么 / 为什么废弃（选填）">
+  </footer>
+</article>
+<article class=card data-id="ca_PWus3vBn" data-i="47">
+  <header>
+    <span class=rank>47</span>
+    <div class=hd>
+      <div class=stmt>识别动植物细胞的结构并说出其异同点，说明细胞是生物体结构和功能的基本单位</div>
+      <div class=meta>
+        <span class=pill>生物学</span>
+        <span class=pill>G7–G9</span>
+        <span class="pill st-ai-reviewed">ai-reviewed</span>
+        <span class=lev>解锁 0 条目 · 4 条下游</span>
+      </div>
+    </div>
+  </header>
+  <div class=body>
+    <div class=col>
+      <h4>课标原文</h4><p class=src>(2) 识别动植物细胞的结构并说出其异同点，说明细胞是生物体结构和功能的基本单位。</p>
+      <h4>怎么问</h4><p class=ask>{{name}}，你能告诉我植物细胞比动物细胞多了哪些结构，以及为什么说细胞是生命的基本单位吗？</p>
+    </div>
+    <div class=col>
+      <h4>算「会了」的表现</h4><ul><li>能正确指出动植物细胞图中的细胞壁、叶绿体等结构并说明其功能</li><li>能对比动植物细胞结构并解释为何细胞是生物体的基本单位</li></ul>
+      <h4>下游（判通过即解锁）</h4><ul class=dn><li>学会根据血常规、尿常规等化验的主要结果初步判断身体的健康状况</li><li>分析由于机体特定结构受损可能导致的机体功能障碍或异常行为表现，提出相应的预防措施</li><li>能够解释遗传信息在生殖过程中完成了传递，并控制新个体的生长发育</li><li>对于给定的一组生物，尝试根据一定的特征对其进行分类</li></ul>
+      
+    </div>
+  </div>
+  <footer>
+    <div class=btns>
+      <button data-v=pass>通过</button>
+      <button data-v=rewrite>要改写</button>
+      <button data-v=drop>废弃</button>
+      <button data-v=skip>拿不准</button>
+    </div>
+    <input class=note placeholder="改写成什么 / 为什么废弃（选填）">
+  </footer>
+</article>
+<article class=card data-id="ca_tYiB4tEC" data-i="48">
+  <header>
+    <span class=rank>48</span>
+    <div class=hd>
+      <div class=stmt>能对舞蹈、戏剧（含戏曲）、影视（含数字媒体艺术）等姊妹艺术中音乐的特点及其表现作用作出分析和评价</div>
+      <div class=meta>
+        <span class=pill>艺术</span>
+        <span class=pill>G7–G9</span>
+        <span class="pill st-ai-reviewed">ai-reviewed</span>
+        <span class=lev>解锁 0 条目 · 4 条下游</span>
+      </div>
+    </div>
+  </header>
+  <div class=body>
+    <div class=col>
+      <h4>课标原文</h4><p class=src>• 能对舞蹈、戏剧（含戏曲）、影视（含数字媒体艺术）等姊妹艺术中音乐的特点及其表现作用作出分析和评价。</p>
+      <h4>怎么问</h4><p class=ask>{{name}}，你能说说刚才那段舞蹈的音乐是怎么帮助表达情绪的吗？</p>
+    </div>
+    <div class=col>
+      <h4>算「会了」的表现</h4><ul><li>能指出一段舞蹈配乐中节奏变化如何配合了舞者动作的快慢</li><li>能评价一部短片中背景音乐对烘托主角情绪所起的作用</li></ul>
+      <h4>下游（判通过即解锁）</h4><ul class=dn><li>能说出一段舞蹈或戏剧片段的审美特征与风格特点，并解释其表现内容和内在意蕴</li><li>能对音乐在舞蹈、戏剧（含戏曲）、影视（含数字媒体艺术）等艺术中的表现作用作出一定的分析评价</li><li>能对影视（含数字媒体艺术）作品进行辨析、描述和评价</li><li>能说出音乐与舞蹈、戏剧、影视在表现形式上的区别和联系</li></ul>
+      
+    </div>
+  </div>
+  <footer>
+    <div class=btns>
+      <button data-v=pass>通过</button>
+      <button data-v=rewrite>要改写</button>
+      <button data-v=drop>废弃</button>
+      <button data-v=skip>拿不准</button>
+    </div>
+    <input class=note placeholder="改写成什么 / 为什么废弃（选填）">
+  </footer>
+</article>
+<article class=card data-id="ca_JQ2P7v3R" data-i="49">
+  <header>
+    <span class=rank>49</span>
+    <div class=hd>
+      <div class=stmt>能比较顺畅地识读简单乐谱</div>
+      <div class=meta>
+        <span class=pill>艺术</span>
+        <span class=pill>G7–G9</span>
+        <span class="pill st-ai-reviewed">ai-reviewed</span>
+        <span class=lev>解锁 0 条目 · 4 条下游</span>
+      </div>
+    </div>
+  </header>
+  <div class=body>
+    <div class=col>
+      <h4>课标原文</h4><p class=src>• 具备识谱能力，能比较顺畅地识读简单乐谱。</p>
+      <h4>怎么问</h4><p class=ask>{{name}}，你能看着乐谱把这首歌唱出来吗？</p>
+    </div>
+    <div class=col>
+      <h4>算「会了」的表现</h4><ul><li>能看着五线谱准确唱出《小星星》的旋律</li><li>能指出乐谱中四分音符和二分音符的时值区别</li></ul>
+      <h4>下游（判通过即解锁）</h4><ul class=dn><li>能构思音乐创作的主题和内容，并运用一定的技法完成富有新意的节奏型、简单歌曲或乐曲编创</li><li>能运用相关软件或其他技术，进行简单的音乐编创或编辑</li><li>能分工协作，综合运用舞台艺术手段，完成剧目演出</li><li>按要求独立或与他人合作编创、表现有重复和变化的节奏或旋律</li></ul>
+      
+    </div>
+  </div>
+  <footer>
+    <div class=btns>
+      <button data-v=pass>通过</button>
+      <button data-v=rewrite>要改写</button>
+      <button data-v=drop>废弃</button>
+      <button data-v=skip>拿不准</button>
+    </div>
+    <input class=note placeholder="改写成什么 / 为什么废弃（选填）">
+  </footer>
+</article>
+<article class=card data-id="ca_AKK9EbJ5" data-i="50">
+  <header>
+    <span class=rank>50</span>
+    <div class=hd>
+      <div class=stmt>能描述各种体能的练习方法并在游戏和比赛中积极运用</div>
+      <div class=meta>
+        <span class=pill>体育与健康</span>
+        <span class=pill>G1–G1</span>
+        <span class="pill st-disputed">disputed</span>
+        <span class=lev>解锁 0 条目 · 3 条下游</span>
+      </div>
+    </div>
+  </header>
+  <div class=body>
+    <div class=col>
+      <h4>课标原文</h4><p class=src>(1) 描述各种体能的练习方法并能在游戏和比赛中积极运用，体能水平明显提高，能做到“站如松、坐如钟、卧如弓、行如风”。</p>
+      <h4>怎么问</h4><p class=ask>{{name}}，你能告诉我怎么练速度和耐力吗？</p>
+    </div>
+    <div class=col>
+      <h4>算「会了」的表现</h4><ul><li>能在游戏前说出至少两种体能（如速度、力量）的练习方法</li><li>能在比赛中运用至少一种体能练习方法（如用快速跑练习提升速度）</li></ul>
+      <h4>下游（判通过即解锁）</h4><ul class=dn><li>能说出移动性、非移动性和操控性技能的练习方法和动作名称</li><li>能设计包含目标、内容、方法和评价的体能锻炼计划</li><li>能描述体能对生活和健康的重要性</li></ul>
+      
+    </div>
+  </div>
+  <footer>
+    <div class=btns>
+      <button data-v=pass>通过</button>
+      <button data-v=rewrite>要改写</button>
+      <button data-v=drop>废弃</button>
+      <button data-v=skip>拿不准</button>
+    </div>
+    <input class=note placeholder="改写成什么 / 为什么废弃（选填）">
+  </footer>
+</article>
+<article class=card data-id="ca_uhGtGD9f" data-i="51">
+  <header>
+    <span class=rank>51</span>
+    <div class=hd>
+      <div class=stmt>安全地参与所学田径类运动项目的活动</div>
+      <div class=meta>
+        <span class=pill>体育与健康</span>
+        <span class=pill>G1–G9</span>
+        <span class="pill st-ai-reviewed">ai-reviewed</span>
+        <span class=lev>解锁 0 条目 · 3 条下游</span>
+      </div>
+    </div>
+  </header>
+  <div class=body>
+    <div class=col>
+      <h4>课标原文</h4><p class=src>安全地参与所学田径类运动项目的活动，能简单处理田径类运动中的轻度损伤。</p>
+      <h4>怎么问</h4><p class=ask>{{name}}，你跑步和跳远时有没有注意老师说的安全要点呀？</p>
+    </div>
+    <div class=col>
+      <h4>算「会了」的表现</h4><ul><li>能按教师示范的正确起跑姿势完成短跑练习</li><li>能在跳远助跑时保持节奏并在踏板前减速调整步点</li></ul>
+      <h4>下游（判通过即解锁）</h4><ul class=dn><li>做出所学水上或冰雪类运动项目的基本动作和简单组合动作，并运用于简化规则、降低要求的游戏中</li><li>参与所学田径类运动项目学练和比赛时，能表现出稳定的情绪</li><li>能按照规则参与田径类运动项目的比赛，并接受比赛结果</li></ul>
+      
+    </div>
+  </div>
+  <footer>
+    <div class=btns>
+      <button data-v=pass>通过</button>
+      <button data-v=rewrite>要改写</button>
+      <button data-v=drop>废弃</button>
+      <button data-v=skip>拿不准</button>
+    </div>
+    <input class=note placeholder="改写成什么 / 为什么废弃（选填）">
+  </footer>
+</article>
+<article class=card data-id="ca_ps7EZeA5" data-i="52">
+  <header>
+    <span class=rank>52</span>
+    <div class=hd>
+      <div class=stmt>能与同伴合作，做出自我保护、相互保护与帮助的动作</div>
+      <div class=meta>
+        <span class=pill>体育与健康</span>
+        <span class=pill>G1–G9</span>
+        <span class="pill st-ai-reviewed">ai-reviewed</span>
+        <span class=lev>解锁 0 条目 · 3 条下游</span>
+      </div>
+    </div>
+  </header>
+  <div class=body>
+    <div class=col>
+      <h4>课标原文</h4><p class=src>能与同伴合作，做出自我保护、相互保护与帮助的动作。</p>
+      <h4>怎么问</h4><p class=ask>{{name}}，你能和小伙伴一起练习体操动作时，互相保护和帮助吗？</p>
+    </div>
+    <div class=col>
+      <h4>算「会了」的表现</h4><ul><li>能在同伴做前滚翻时，用双手扶住其背部并跟随其动作移动</li><li>能在自己做动作前，主动检查垫子位置并提醒同伴注意安全距离</li></ul>
+      <h4>下游（判通过即解锁）</h4><ul class=dn><li>积极参与所学体操类运动项目的成套动作展示，做到动作正确、规范和连贯</li><li>能描述所学体操类运动项目学练和比赛中的安全注意事项，做出自我保护的动作</li><li>能解释所学体操类运动项目的安全知识，并及时处理常见的运动损伤</li></ul>
+      
+    </div>
+  </div>
+  <footer>
+    <div class=btns>
+      <button data-v=pass>通过</button>
+      <button data-v=rewrite>要改写</button>
+      <button data-v=drop>废弃</button>
+      <button data-v=skip>拿不准</button>
+    </div>
+    <input class=note placeholder="改写成什么 / 为什么废弃（选填）">
+  </footer>
+</article>
+<article class=card data-id="ca_hya2fMd6" data-i="53">
+  <header>
+    <span class=rank>53</span>
+    <div class=hd>
+      <div class=stmt>能运用所学技术在运动中保护自己和同伴，并能进行运动后的放松恢复</div>
+      <div class=meta>
+        <span class=pill>体育与健康</span>
+        <span class=pill>G1–G1</span>
+        <span class="pill st-disputed">disputed</span>
+        <span class=lev>解锁 0 条目 · 3 条下游</span>
+      </div>
+    </div>
+  </header>
+  <div class=body>
+    <div class=col>
+      <h4>课标原文</h4><p class=src>熟练运用所学技术保护自己和同伴，能消除运动中产生的疲劳，并积极进行身心恢复。</p>
+      <h4>怎么问</h4><p class=ask>{{name}}，你在练习时会主动保护自己和同伴吗？</p>
+    </div>
+    <div class=col>
+      <h4>算「会了」的表现</h4><ul><li>能在对练中用格挡动作护住自己和搭档的要害部位</li><li>能在运动后主动进行拉伸或深呼吸来放松身体</li></ul>
+      <h4>下游（判通过即解锁）</h4><ul class=dn><li>在展示或比赛中根据所学知识与技能做出合理的安全保护动作</li><li>能在展示或比赛中提醒同伴使用安全防护技能并简单处理常见的运动损伤</li><li>在参与所学中华传统体育类运动项目的游戏中表现出自我安全防护行为</li></ul>
+      
+    </div>
+  </div>
+  <footer>
+    <div class=btns>
+      <button data-v=pass>通过</button>
+      <button data-v=rewrite>要改写</button>
+      <button data-v=drop>废弃</button>
+      <button data-v=skip>拿不准</button>
+    </div>
+    <input class=note placeholder="改写成什么 / 为什么废弃（选填）">
+  </footer>
+</article>
+<article class=card data-id="ca_HzzwDNad" data-i="54">
+  <header>
+    <span class=rank>54</span>
+    <div class=hd>
+      <div class=stmt>尊重数字作品所有者的权益，在与他人交流时能遵守网络礼仪</div>
+      <div class=meta>
+        <span class=pill>信息科技</span>
+        <span class=pill>G3–G8</span>
+        <span class="pill st-ai-reviewed">ai-reviewed</span>
+        <span class=lev>解锁 0 条目 · 3 条下游</span>
+      </div>
+    </div>
+  </header>
+  <div class=body>
+    <div class=col>
+      <h4>课标原文</h4><p class=src>尊重数字作品所有者的权益，在与他人交流时能遵守网络礼仪。</p>
+      <h4>怎么问</h4><p class=ask>您可以问问{{name}}，在使用别人的图片或文章前会怎么做？</p>
+    </div>
+    <div class=col>
+      <h4>算「会了」的表现</h4><ul><li>能主动询问并获得他人数字作品的使用授权</li><li>能在网络交流中使用文明用语，不随意转发他人作品</li></ul>
+      <h4>下游（判通过即解锁）</h4><ul class=dn><li>能在分享他人数字作品时标注来源</li><li>能适应在线学习环境，通过网络与同学交流协作完成学习任务</li><li>在使用数字设备时不打扰他人，自觉维护社会公共秩序</li></ul>
+      
+    </div>
+  </div>
+  <footer>
+    <div class=btns>
+      <button data-v=pass>通过</button>
+      <button data-v=rewrite>要改写</button>
+      <button data-v=drop>废弃</button>
+      <button data-v=skip>拿不准</button>
+    </div>
+    <input class=note placeholder="改写成什么 / 为什么废弃（选填）">
+  </footer>
+</article>
+<article class=card data-id="ca_JBeHhr7S" data-i="55">
+  <header>
+    <span class=rank>55</span>
+    <div class=hd>
+      <div class=stmt>能用符号和编码表示问题求解所关心的对象，并用流程图等方式描述算法</div>
+      <div class=meta>
+        <span class=pill>信息科技</span>
+        <span class=pill>G3–G3</span>
+        <span class="pill st-disputed">disputed</span>
+        <span class=lev>解锁 0 条目 · 3 条下游</span>
+      </div>
+    </div>
+  </header>
+  <div class=body>
+    <div class=col>
+      <h4>课标原文</h4><p class=src>能用符号和编码表示问题求解所关心的对象，采用自然语言、流程图等方式，运用三种基本控制结构及其组合，正确进行问题求解的算法描述。</p>
+      <h4>怎么问</h4><p class=ask>您家{{name}}在解决一个问题时，能把它拆解成一步步的操作吗？</p>
+    </div>
+    <div class=col>
+      <h4>算「会了」的表现</h4><ul><li>能将&#x27;计算三角形面积&#x27;问题分解为输入、计算、输出三步，并画出对应的流程图</li><li>能用T=0表示计数器初始值，并用T=T+1表示循环增加，画出循环流程</li></ul>
+      <h4>下游（判通过即解锁）</h4><ul class=dn><li>能根据具体应用场景，选择数字、字母或文字编码表示信息</li><li>能识别系统中的输入、计算、输出环节</li><li>能针对不同的输入数据规模，分别数出给定算法中某些步骤执行的次数</li></ul>
+      
+    </div>
+  </div>
+  <footer>
+    <div class=btns>
+      <button data-v=pass>通过</button>
+      <button data-v=rewrite>要改写</button>
+      <button data-v=drop>废弃</button>
+      <button data-v=skip>拿不准</button>
+    </div>
+    <input class=note placeholder="改写成什么 / 为什么废弃（选填）">
+  </footer>
+</article>
+<article class=card data-id="ca_Zn3ndpd9" data-i="56">
+  <header>
+    <span class=rank>56</span>
+    <div class=hd>
+      <div class=stmt>能识别实验室安全警示标志和常用危险化学品标志，具有预防化学实验安全事故的意识</div>
+      <div class=meta>
+        <span class=pill>化学</span>
+        <span class=pill>G9–G9</span>
+        <span class="pill st-ai-reviewed">ai-reviewed</span>
+        <span class=lev>解锁 0 条目 · 3 条下游</span>
+      </div>
+    </div>
+  </header>
+  <div class=body>
+    <div class=col>
+      <h4>课标原文</h4><p class=src>3. 能严格遵守实验室安全规则，能识别实验室安全警示标志和常用危险化学品标志，具有预防化学实验安全事故的意识。</p>
+      <h4>怎么问</h4><p class=ask>{{name}}，你能告诉我这个红色三角形标志是什么意思吗？</p>
+    </div>
+    <div class=col>
+      <h4>算「会了」的表现</h4><ul><li>能正确指出“腐蚀品”、“易燃物”等标志的位置和含义</li><li>能在模拟实验前，根据化学品标签正确说出其危险性和防护要求</li></ul>
+      <h4>下游（判通过即解锁）</h4><ul class=dn><li>能严格遵守实验室安全规则</li><li>能设计简单实验，制备并检验氧气和二氧化碳</li><li>能检验溶液的酸碱性</li></ul>
+      
+    </div>
+  </div>
+  <footer>
+    <div class=btns>
+      <button data-v=pass>通过</button>
+      <button data-v=rewrite>要改写</button>
+      <button data-v=drop>废弃</button>
+      <button data-v=skip>拿不准</button>
+    </div>
+    <input class=note placeholder="改写成什么 / 为什么废弃（选填）">
+  </footer>
+</article>
+<article class=card data-id="ca_QJ7jXWkN" data-i="57">
+  <header>
+    <span class=rank>57</span>
+    <div class=hd>
+      <div class=stmt>能举例说明物质性质的广泛应用及性质与用途的关系</div>
+      <div class=meta>
+        <span class=pill>化学</span>
+        <span class=pill>G9–G9</span>
+        <span class="pill st-ai-reviewed">ai-reviewed</span>
+        <span class=lev>解锁 0 条目 · 3 条下游</span>
+      </div>
+    </div>
+  </header>
+  <div class=body>
+    <div class=col>
+      <h4>课标原文</h4><p class=src>能举例说明物质性质的广泛应用及性质与用途的关系；</p>
+      <h4>怎么问</h4><p class=ask>{{name}}，你能告诉我为什么活性炭常被用在净水器里吗？</p>
+    </div>
+    <div class=col>
+      <h4>算「会了」的表现</h4><ul><li>能举出铁易生锈的例子并说明防锈涂层的应用</li><li>能解释活性炭吸附性与净水器用途的对应关系</li></ul>
+      <h4>下游（判通过即解锁）</h4><ul class=dn><li>能举例说明物质组成、性质和用途的关系</li><li>能举例说明金属性质与金属材料应用的关系，如合金的性能与应用等</li><li>能举例说明化学科学对促进社会发展的重要作用，列举化学家创造的对日常生活有价值的物质</li></ul>
+      
+    </div>
+  </div>
+  <footer>
+    <div class=btns>
+      <button data-v=pass>通过</button>
+      <button data-v=rewrite>要改写</button>
+      <button data-v=drop>废弃</button>
+      <button data-v=skip>拿不准</button>
+    </div>
+    <input class=note placeholder="改写成什么 / 为什么废弃（选填）">
+  </footer>
+</article>
+<article class=card data-id="ca_FREUUGu7" data-i="58">
+  <header>
+    <span class=rank>58</span>
+    <div class=hd>
+      <div class=stmt>能基于守恒和比例关系推断化学反应的相关信息</div>
+      <div class=meta>
+        <span class=pill>化学</span>
+        <span class=pill>G9–G9</span>
+        <span class="pill st-ai-reviewed">ai-reviewed</span>
+        <span class=lev>解锁 0 条目 · 3 条下游</span>
+      </div>
+    </div>
+  </header>
+  <div class=body>
+    <div class=col>
+      <h4>课标原文</h4><p class=src>能基于守恒和比例关系推断化学反应的相关信息；</p>
+      <h4>怎么问</h4><p class=ask>{{name}}，你能用守恒或比例关系，解决一个化学计算题吗？</p>
+    </div>
+    <div class=col>
+      <h4>算「会了」的表现</h4><ul><li>能根据质量守恒定律，正确计算反应前后某元素的质量</li><li>能根据化学方程式，准确计算生成物与反应物的质量比</li></ul>
+      <h4>下游（判通过即解锁）</h4><ul class=dn><li>能利用化学反应相关知识分析和解释自然界、生产生活、实验中的常见现象</li><li>能根据化学方程式进行简单的计算，并解决生产生活中的简单问题</li><li>能选取实验证据说明质量守恒定律，并阐释其微观本质</li></ul>
+      
+    </div>
+  </div>
+  <footer>
+    <div class=btns>
+      <button data-v=pass>通过</button>
+      <button data-v=rewrite>要改写</button>
+      <button data-v=drop>废弃</button>
+      <button data-v=skip>拿不准</button>
+    </div>
+    <input class=note placeholder="改写成什么 / 为什么废弃（选填）">
+  </footer>
+</article>
+<article class=card data-id="ca_hsZ8jz4C" data-i="59">
+  <header>
+    <span class=rank>59</span>
+    <div class=hd>
+      <div class=stmt>能认、读、写万以内的数</div>
+      <div class=meta>
+        <span class=pill>数学</span>
+        <span class=pill>G1–G2</span>
+        <span class="pill st-ai-reviewed">ai-reviewed</span>
+        <span class=lev>解锁 0 条目 · 3 条下游</span>
+      </div>
+    </div>
+  </header>
+  <div class=body>
+    <div class=col>
+      <h4>课标原文</h4><p class=src>能用数表示物体的个数或事物的顺序，能认、读、写万以内的数；</p>
+      <h4>怎么问</h4><p class=ask>你能让{{name}}读一读这个数吗？比如让他读出6500或写下一个你喜欢的四位数。</p>
+    </div>
+    <div class=col>
+      <h4>算「会了」的表现</h4><ul><li>能读出纸条上的7056，并说明每个数字在千位、百位、十位、个位上的值</li><li>能在田字格中正确书写出2803，书写规范且无涂改</li></ul>
+      <h4>下游（判通过即解锁）</h4><ul class=dn><li>能认、读、写万以上的数</li><li>能说出万以上数中各数位的名称</li><li>能用 》、《 或 = 符号连接两个数表示大小关系</li></ul>
+      
+    </div>
+  </div>
+  <footer>
+    <div class=btns>
+      <button data-v=pass>通过</button>
+      <button data-v=rewrite>要改写</button>
+      <button data-v=drop>废弃</button>
+      <button data-v=skip>拿不准</button>
+    </div>
+    <input class=note placeholder="改写成什么 / 为什么废弃（选填）">
+  </footer>
+</article>
+<article class=card data-id="ca_PvagbcfZ" data-i="60">
+  <header>
+    <span class=rank>60</span>
+    <div class=hd>
+      <div class=stmt>能说出万以上数中各数位的名称</div>
+      <div class=meta>
+        <span class=pill>数学</span>
+        <span class=pill>G3–G3</span>
+        <span class="pill st-ai-reviewed">ai-reviewed</span>
+        <span class=lev>解锁 0 条目 · 3 条下游</span>
+      </div>
+    </div>
+  </header>
+  <div class=body>
+    <div class=col>
+      <h4>课标原文</h4><p class=src>能结合具体实例解释万以上数的含义，能认、读、写万以上的数，会用万、亿为单位表示大数，能说出各数位的名称，理解各数位上的数表示的意义，能进行整万、整亿数的改写。</p>
+      <h4>怎么问</h4><p class=ask>你可以问{{name}}：这个数的百位是几，十位是几，个位是几？</p>
+    </div>
+    <div class=col>
+      <h4>算「会了」的表现</h4><ul><li>能正确指出12345678中亿位、千万位、百万位等数位的名称</li><li>能写出数字后标明各位的数位名称</li></ul>
+      <h4>下游（判通过即解锁）</h4><ul class=dn><li>能结合具体实例解释万以上数的含义</li><li>能认、读、写万以上的数</li><li>能说出一个大数的万位或亿位名称并解释其数值含义</li></ul>
+      
+    </div>
+  </div>
+  <footer>
+    <div class=btns>
+      <button data-v=pass>通过</button>
+      <button data-v=rewrite>要改写</button>
+      <button data-v=drop>废弃</button>
+      <button data-v=skip>拿不准</button>
+    </div>
+    <input class=note placeholder="改写成什么 / 为什么废弃（选填）">
+  </footer>
+</article>
+<article class=card data-id="ca_9hbKt4Gx" data-i="61">
+  <header>
+    <span class=rank>61</span>
+    <div class=hd>
+      <div class=stmt>能在具体情境中判断两个量的比并计算比值</div>
+      <div class=meta>
+        <span class=pill>数学</span>
+        <span class=pill>G3–G3</span>
+        <span class="pill st-ai-reviewed">ai-reviewed</span>
+        <span class=lev>解锁 0 条目 · 3 条下游</span>
+      </div>
+    </div>
+  </header>
+  <div class=body>
+    <div class=col>
+      <h4>课标原文</h4><p class=src>能在具体情境中判断两个量的比，会计算比值，理解比值相同的量，能解决按比例分配的简单问题。</p>
+      <h4>怎么问</h4><p class=ask>{{name}}，你能告诉我，如果小明用4本书换了8支笔，书和笔的比是多少吗？</p>
+    </div>
+    <div class=col>
+      <h4>算「会了」的表现</h4><ul><li>能从‘3个苹果换6个橘子’的情境中说出苹果与橘子的数量比是1:2</li><li>能计算出1:2的比值是0.5</li></ul>
+      <h4>下游（判通过即解锁）</h4><ul class=dn><li>能在具体情境中，理解比例尺的意义，能解决与比例尺相关的问题</li><li>能探索规律或变化趋势（如y=5x）（例21）</li><li>能解决按比例分配的实际问题</li></ul>
+      
+    </div>
+  </div>
+  <footer>
+    <div class=btns>
+      <button data-v=pass>通过</button>
+      <button data-v=rewrite>要改写</button>
+      <button data-v=drop>废弃</button>
+      <button data-v=skip>拿不准</button>
+    </div>
+    <input class=note placeholder="改写成什么 / 为什么废弃（选填）">
+  </footer>
+</article>
+<article class=card data-id="ca_rjapWFfz" data-i="62">
+  <header>
+    <span class=rank>62</span>
+    <div class=hd>
+      <div class=stmt>能恰当地选择长度单位米、厘米描述生活中常见物体的长度</div>
+      <div class=meta>
+        <span class=pill>数学</span>
+        <span class=pill>G1–G2</span>
+        <span class="pill st-ai-reviewed">ai-reviewed</span>
+        <span class=lev>解锁 0 条目 · 3 条下游</span>
+      </div>
+    </div>
+  </header>
+  <div class=body>
+    <div class=col>
+      <h4>课标原文</h4><p class=src>感悟统一单位的重要性，能恰当地选择长度单位米、厘米描述生活中常见物体的长度，能进行单位之间的换算；</p>
+      <h4>怎么问</h4><p class=ask>{{name}}，你能告诉我你的铅笔有多长，用什么单位吗？</p>
+    </div>
+    <div class=col>
+      <h4>算「会了」的表现</h4><ul><li>能正确说出课桌的高度大约是80厘米</li><li>能用米尺测量教室门的高度并记录为2米</li></ul>
+      <h4>下游（判通过即解锁）</h4><ul class=dn><li>能描述长度单位千米、分米、毫米</li><li>能在真实情境中选择合适的长度单位</li><li>能选择合适单位描述实际问题</li></ul>
+      
+    </div>
+  </div>
+  <footer>
+    <div class=btns>
+      <button data-v=pass>通过</button>
+      <button data-v=rewrite>要改写</button>
+      <button data-v=drop>废弃</button>
+      <button data-v=skip>拿不准</button>
+    </div>
+    <input class=note placeholder="改写成什么 / 为什么废弃（选填）">
+  </footer>
+</article>
+<article class=card data-id="ca_gQK8FkcK" data-i="63">
+  <header>
+    <span class=rank>63</span>
+    <div class=hd>
+      <div class=stmt>能说出线段、射线和直线的共性与区别</div>
+      <div class=meta>
+        <span class=pill>数学</span>
+        <span class=pill>G3–G4</span>
+        <span class="pill st-ai-reviewed">ai-reviewed</span>
+        <span class=lev>解锁 0 条目 · 3 条下游</span>
+      </div>
+    </div>
+  </header>
+  <div class=body>
+    <div class=col>
+      <h4>课标原文</h4><p class=src>能说出线段、射线和直线的共性与区别；</p>
+      <h4>怎么问</h4><p class=ask>{{name}}，你能告诉我线段、射线和直线有什么相同和不同的地方吗？</p>
+    </div>
+    <div class=col>
+      <h4>算「会了」的表现</h4><ul><li>能准确指出图中线段、射线和直线各一条，并说出它们在端点数量上的不同</li><li>能用直尺画出一条线段，并标出两个端点，解释它与其他两种线的区别</li></ul>
+      <h4>下游（判通过即解锁）</h4><ul class=dn><li>能说出两点间所有连线中线段最短，并在具体情境中运用这一知识解决简单问题</li><li>能在现实场景中尝试以站立点为正中心（圆心），以钟表盘12个小时的点位来说明方向</li><li>能用直尺测量并计算长方形和正方形的周长与面积</li></ul>
+      
+    </div>
+  </div>
+  <footer>
+    <div class=btns>
+      <button data-v=pass>通过</button>
+      <button data-v=rewrite>要改写</button>
+      <button data-v=drop>废弃</button>
+      <button data-v=skip>拿不准</button>
+    </div>
+    <input class=note placeholder="改写成什么 / 为什么废弃（选填）">
+  </footer>
+</article>
+<article class=card data-id="ca_3UBKZZbU" data-i="64">
+  <header>
+    <span class=rank>64</span>
+    <div class=hd>
+      <div class=stmt>能描述长度单位千米、分米、毫米</div>
+      <div class=meta>
+        <span class=pill>数学</span>
+        <span class=pill>G3–G4</span>
+        <span class="pill st-ai-reviewed">ai-reviewed</span>
+        <span class=lev>解锁 0 条目 · 3 条下游</span>
+      </div>
+    </div>
+  </header>
+  <div class=body>
+    <div class=col>
+      <h4>课标原文</h4><p class=src>能描述长度单位千米、分米、毫米，能进行长度单位之间的换算；</p>
+      <h4>怎么问</h4><p class=ask>{{name}}，你能告诉我，从家到学校大约是1千米，1分米大概有多长，以及1毫米大概有多厚吗？</p>
+    </div>
+    <div class=col>
+      <h4>算「会了」的表现</h4><ul><li>能正确说出1千米等于1000米，1分米等于10厘米，1毫米等于0.1厘米。</li><li>能从三个选项中准确选出描述1千米、1分米、1毫米实际长度的图片。</li></ul>
+      <h4>下游（判通过即解锁）</h4><ul class=dn><li>能选择合适单位描述实际问题</li><li>能通过具体事例描述面积单位厘米2、分米2、米2</li><li>会计算长方形、正方形的周长和面积</li></ul>
+      
+    </div>
+  </div>
+  <footer>
+    <div class=btns>
+      <button data-v=pass>通过</button>
+      <button data-v=rewrite>要改写</button>
+      <button data-v=drop>废弃</button>
+      <button data-v=skip>拿不准</button>
+    </div>
+    <input class=note placeholder="改写成什么 / 为什么废弃（选填）">
+  </footer>
+</article>
+<article class=card data-id="ca_2UwMjnnU" data-i="65">
+  <header>
+    <span class=rank>65</span>
+    <div class=hd>
+      <div class=stmt>能在方格纸上描述图形的位置</div>
+      <div class=meta>
+        <span class=pill>数学</span>
+        <span class=pill>G5–G6</span>
+        <span class="pill st-ai-reviewed">ai-reviewed</span>
+        <span class=lev>解锁 0 条目 · 3 条下游</span>
+      </div>
+    </div>
+  </header>
+  <div class=body>
+    <div class=col>
+      <h4>课标原文</h4><p class=src>能在方格纸上描述图形的位置，能辨别和想象简单图形平移、旋转后的图形，画出简单图形沿水平或垂直方向平移后的图形，以及旋转90°后的图形（例30）；</p>
+      <h4>怎么问</h4><p class=ask>{{name}}，你能告诉我图上这个点的位置是第几列第几行吗？</p>
+    </div>
+    <div class=col>
+      <h4>算「会了」的表现</h4><ul><li>能用数对(3,5)准确标出方格纸上指定点的位置</li><li>能根据给定数对(2,4)在方格纸上画出对应点并连线成图形</li><li>课标例30「图画还原」：通过实际操作理解图形的平移和旋转，不仅能增加问题的趣味性，还可以让学生感悟图形运动是可以记录的，甚至可以体验选取最佳方案的过程。在这样的过程中，培养学生的想象力。 教学设计时，可关注如下要点。 （1）完成还原积木的任务一</li></ul>
+      <h4>下游（判通过即解锁）</h4><ul class=dn><li>能用坐标描述简单几何图形的位置</li><li>能根据指定参照点的具体方向和距离描述物体所处位置</li><li>能在方格纸上，按给定比例画出简单图形放大或缩小后的图形</li></ul>
+      <div class=ex><b>课标例30「图画还原」</b><p>通过实际操作理解图形的平移和旋转，不仅能增加问题的趣味性，还可以让学生感悟图形运动是可以记录的，甚至可以体验选取最佳方案的过程。在这样的过程中，培养学生的想象力。 教学设计时，可关注如下要点。 （1）完成还原积木的任务一定要从简单到复杂。如图 11，先打乱四块积木中的下面两块，让学生经历思考的过程。学生有了一定经验后，可以打乱三块或四块积木，让学生继续尝试。 （2）可以分小组进行。为了记录准确，事先要确定每一个步骤的代表符号。 （3）小组活动时，可以先讨论，确定一个大概的还原路线，然后操作验证。 （4）小组成员共同操作，进行比较，验证确定的路线。</p></div>
+    </div>
+  </div>
+  <footer>
+    <div class=btns>
+      <button data-v=pass>通过</button>
+      <button data-v=rewrite>要改写</button>
+      <button data-v=drop>废弃</button>
+      <button data-v=skip>拿不准</button>
+    </div>
+    <input class=note placeholder="改写成什么 / 为什么废弃（选填）">
+  </footer>
+</article>
+<article class=card data-id="ca_HfLHR4pT" data-i="66">
+  <header>
+    <span class=rank>66</span>
+    <div class=hd>
+      <div class=stmt>会用条形统计图合理表示和分析数据</div>
+      <div class=meta>
+        <span class=pill>数学</span>
+        <span class=pill>G3–G4</span>
+        <span class="pill st-ai-reviewed">ai-reviewed</span>
+        <span class=lev>解锁 0 条目 · 3 条下游</span>
+      </div>
+    </div>
+  </header>
+  <div class=body>
+    <div class=col>
+      <h4>课标原文</h4><p class=src>（3）认识条形统计图，会用条形统计图合理表示和分析数据。</p>
+      <h4>怎么问</h4><p class=ask>{{name}}，你能根据数据画出条形图，并说出图里哪个最多、哪个最少吗？</p>
+    </div>
+    <div class=col>
+      <h4>算「会了」的表现</h4><ul><li>能根据给定数据绘制出条形统计图并标注标题和单位</li><li>能从条形统计图中读出数量最多和最少的类别并比较差异</li></ul>
+      <h4>下游（判通过即解锁）</h4><ul class=dn><li>能根据需要使用恰当的统计图表整理和表示数据，并根据图表进行分析</li><li>会呈现数据整理的结果（例39）</li><li>能在简单的实际情境中，合理应用统计图表和平均数（例41）</li></ul>
+      
+    </div>
+  </div>
+  <footer>
+    <div class=btns>
+      <button data-v=pass>通过</button>
+      <button data-v=rewrite>要改写</button>
+      <button data-v=drop>废弃</button>
+      <button data-v=skip>拿不准</button>
+    </div>
+    <input class=note placeholder="改写成什么 / 为什么废弃（选填）">
+  </footer>
+</article>
+<article class=card data-id="ca_7GA5cZwn" data-i="67">
+  <header>
+    <span class=rank>67</span>
+    <div class=hd>
+      <div class=stmt>能把数据整理成条形统计图、折线统计图</div>
+      <div class=meta>
+        <span class=pill>数学</span>
+        <span class=pill>G5–G6</span>
+        <span class="pill st-ai-reviewed">ai-reviewed</span>
+        <span class=lev>解锁 0 条目 · 3 条下游</span>
+      </div>
+    </div>
+  </header>
+  <div class=body>
+    <div class=col>
+      <h4>课标原文</h4><p class=src>能根据问题的需要，从报纸、杂志、电视、互联网等媒体上获取数据，或者通过其他合适的方式获取数据，能把数据整理成条形统计图、折线统计图，知道条形统计图、折线统计图和扇形统计图的功能，会解释统计图表达的意义，能根据结果作出简单的判断和预测。</p>
+      <h4>怎么问</h4><p class=ask>{{name}}，你能把一组数据画成条形图和折线图吗？</p>
+    </div>
+    <div class=col>
+      <h4>算「会了」的表现</h4><ul><li>能根据给定数据绘制出条形统计图并标注标题、轴标签和刻度</li><li>能根据给定数据绘制出折线统计图并正确连接各数据点</li></ul>
+      <h4>下游（判通过即解锁）</h4><ul class=dn><li>能根据收集到的数据绘制出扇形统计图或频数直方图</li><li>能根据需要使用恰当的统计图表整理和表示数据，并根据图表进行分析</li><li>能根据统计图表达的意义，对数据结果作出简单的判断和预测</li></ul>
+      
+    </div>
+  </div>
+  <footer>
+    <div class=btns>
+      <button data-v=pass>通过</button>
+      <button data-v=rewrite>要改写</button>
+      <button data-v=drop>废弃</button>
+      <button data-v=skip>拿不准</button>
+    </div>
+    <input class=note placeholder="改写成什么 / 为什么废弃（选填）">
+  </footer>
+</article>
+<article class=card data-id="ca_7ZdCPtwK" data-i="68">
+  <header>
+    <span class=rank>68</span>
+    <div class=hd>
+      <div class=stmt>能用数轴上的点表示有理数</div>
+      <div class=meta>
+        <span class=pill>数学</span>
+        <span class=pill>G7–G9</span>
+        <span class="pill st-ai-reviewed">ai-reviewed</span>
+        <span class=lev>解锁 0 条目 · 3 条下游</span>
+      </div>
+    </div>
+  </header>
+  <div class=body>
+    <div class=col>
+      <h4>课标原文</h4><p class=src>理解有理数的意义，能用数轴上的点表示有理数，能借助数轴体会相反数和绝对值的意义，初步体会数形结合的思想方法；</p>
+      <h4>怎么问</h4><p class=ask>{{name}}，你能告诉我数轴上这个点表示的数是多少吗？</p>
+    </div>
+    <div class=col>
+      <h4>算「会了」的表现</h4><ul><li>能在数轴上准确标出-2.5、3/4等有理数的位置</li><li>能根据数轴上点的位置读出对应的有理数</li></ul>
+      <h4>下游（判通过即解锁）</h4><ul class=dn><li>会用正数和负数表示具体情境中具有相反意义的量</li><li>能用数轴上的点表示一些具体的实数</li><li>能比较实数的大小</li></ul>
+      
+    </div>
+  </div>
+  <footer>
+    <div class=btns>
+      <button data-v=pass>通过</button>
+      <button data-v=rewrite>要改写</button>
+      <button data-v=drop>废弃</button>
+      <button data-v=skip>拿不准</button>
+    </div>
+    <input class=note placeholder="改写成什么 / 为什么废弃（选填）">
+  </footer>
+</article>
+<article class=card data-id="ca_JL6WPUQX" data-i="69">
+  <header>
+    <span class=rank>69</span>
+    <div class=hd>
+      <div class=stmt>能比较有理数的大小</div>
+      <div class=meta>
+        <span class=pill>数学</span>
+        <span class=pill>G7–G9</span>
+        <span class="pill st-ai-reviewed">ai-reviewed</span>
+        <span class=lev>解锁 0 条目 · 3 条下游</span>
+      </div>
+    </div>
+  </header>
+  <div class=body>
+    <div class=col>
+      <h4>课标原文</h4><p class=src>能比较有理数的大小，能求有理数的相反数和绝对值；</p>
+      <h4>怎么问</h4><p class=ask>{{name}}，你能告诉我为什么 -2 比 -5 大吗？</p>
+    </div>
+    <div class=col>
+      <h4>算「会了」的表现</h4><ul><li>能正确排列 -3、1/2、0、-1.5 的大小顺序并说明理由</li><li>能解释为何 -2 大于 -5 并用数轴验证</li></ul>
+      <h4>下游（判通过即解锁）</h4><ul class=dn><li>会用正数和负数表示具体情境中具有相反意义的量</li><li>能运用有理数的运算解决简单问题</li><li>能比较实数的大小</li></ul>
+      
+    </div>
+  </div>
+  <footer>
+    <div class=btns>
+      <button data-v=pass>通过</button>
+      <button data-v=rewrite>要改写</button>
+      <button data-v=drop>废弃</button>
+      <button data-v=skip>拿不准</button>
+    </div>
+    <input class=note placeholder="改写成什么 / 为什么废弃（选填）">
+  </footer>
+</article>
+<article class=card data-id="ca_mVsTNkkK" data-i="70">
+  <header>
+    <span class=rank>70</span>
+    <div class=hd>
+      <div class=stmt>能运用等式的基本性质进行等式的变形</div>
+      <div class=meta>
+        <span class=pill>数学</span>
+        <span class=pill>G7–G9</span>
+        <span class="pill st-ai-reviewed">ai-reviewed</span>
+        <span class=lev>解锁 0 条目 · 3 条下游</span>
+      </div>
+    </div>
+  </header>
+  <div class=body>
+    <div class=col>
+      <h4>课标原文</h4><p class=src>掌握等式的基本性质，能运用等式的基本性质进行等式的变形；</p>
+      <h4>怎么问</h4><p class=ask>{{name}}，你能告诉我，你是怎么一步步解出方程 3x+5=20 的吗？</p>
+    </div>
+    <div class=col>
+      <h4>算「会了」的表现</h4><ul><li>能将方程 3x+5=20 两边同时减去5，得到 3x=15</li><li>能将方程 2x=10 两边同时除以2，得到 x=5</li></ul>
+      <h4>下游（判通过即解锁）</h4><ul class=dn><li>能利用分式的基本性质进行约分、通分，并化简分式</li><li>能根据二元一次方程组的特征，选择代入消元法或加减消元法解二元一次方程组</li><li>能根据具体问题的实际意义，检验方程的解是否合理</li></ul>
+      
+    </div>
+  </div>
+  <footer>
+    <div class=btns>
+      <button data-v=pass>通过</button>
+      <button data-v=rewrite>要改写</button>
+      <button data-v=drop>废弃</button>
+      <button data-v=skip>拿不准</button>
+    </div>
+    <input class=note placeholder="改写成什么 / 为什么废弃（选填）">
+  </footer>
+</article>
+<article class=card data-id="ca_TRfX2NeE" data-i="71">
+  <header>
+    <span class=rank>71</span>
+    <div class=hd>
+      <div class=stmt>能根据需要使用恰当的统计图表整理和表示数据，并根据图表进行分析</div>
+      <div class=meta>
+        <span class=pill>数学</span>
+        <span class=pill>G7–G9</span>
+        <span class="pill st-ai-reviewed">ai-reviewed</span>
+        <span class=lev>解锁 0 条目 · 3 条下游</span>
+      </div>
+    </div>
+  </header>
+  <div class=body>
+    <div class=col>
+      <h4>课标原文</h4><p class=src>能根据需要使用恰当的统计图表整理和表示数据，能根据统计图表分析</p>
+      <h4>怎么问</h4><p class=ask>{{name}}，你能告诉我为什么用折线图来展示这组数据吗？</p>
+    </div>
+    <div class=col>
+      <h4>算「会了」的表现</h4><ul><li>能根据数据特点，选择条形图或折线图，并正确绘制出来</li><li>能基于绘制好的图表，指出数据的主要特征或趋势</li></ul>
+      <h4>下游（判通过即解锁）</h4><ul class=dn><li>能根据收集到的数据绘制出扇形统计图或频数直方图</li><li>能利用频数直方图解释数据中蕴含的信息</li><li>能计算一组数据的中位数、众数、加权平均数</li></ul>
+      
+    </div>
+  </div>
+  <footer>
+    <div class=btns>
+      <button data-v=pass>通过</button>
+      <button data-v=rewrite>要改写</button>
+      <button data-v=drop>废弃</button>
+      <button data-v=skip>拿不准</button>
+    </div>
+    <input class=note placeholder="改写成什么 / 为什么废弃（选填）">
+  </footer>
+</article>
+<article class=card data-id="ca_8agveE5P" data-i="72">
+  <header>
+    <span class=rank>72</span>
+    <div class=hd>
+      <div class=stmt>在归纳或演绎中会引用证据</div>
+      <div class=meta>
+        <span class=pill>物理</span>
+        <span class=pill>G8–G9</span>
+        <span class="pill st-ai-reviewed">ai-reviewed</span>
+        <span class=lev>解锁 0 条目 · 3 条下游</span>
+      </div>
+    </div>
+  </header>
+  <div class=body>
+    <div class=col>
+      <h4>课标原文</h4><p class=src>在归纳或演绎中会引用证据，养成使用证据的习惯；</p>
+      <h4>怎么问</h4><p class=ask>{{name}}，你能告诉我，你是根据哪些观察到的现象或数据，得出那个结论的吗？</p>
+    </div>
+    <div class=col>
+      <h4>算「会了」的表现</h4><ul><li>能从实验数据中找出支持自己结论的具体现象或数值</li><li>能根据已知的物理定律，推导出特定情境下的必然结果</li></ul>
+      <h4>下游（判通过即解锁）</h4><ul class=dn><li>能从物理学视角对生活中不合理的说法进行质疑并说出理由，发表自己的见解</li><li>会用简单的物理图像描述数据，根据图像特点对实验结果作出解释</li><li>能从物理学视角，把所学概念和规律与实际情境联系起来，解释常见自然现象和解决常见物理问题</li></ul>
+      
+    </div>
+  </div>
+  <footer>
+    <div class=btns>
+      <button data-v=pass>通过</button>
+      <button data-v=rewrite>要改写</button>
+      <button data-v=drop>废弃</button>
+      <button data-v=skip>拿不准</button>
+    </div>
+    <input class=note placeholder="改写成什么 / 为什么废弃（选填）">
+  </footer>
+</article>
+<article class=card data-id="ca_NVssPMVj" data-i="73">
+  <header>
+    <span class=rank>73</span>
+    <div class=hd>
+      <div class=stmt>能根据实验数据通过归纳推理获得探究结论</div>
+      <div class=meta>
+        <span class=pill>物理</span>
+        <span class=pill>G8–G9</span>
+        <span class="pill st-ai-reviewed">ai-reviewed</span>
+        <span class=lev>解锁 0 条目 · 3 条下游</span>
+      </div>
+    </div>
+  </header>
+  <div class=body>
+    <div class=col>
+      <h4>课标原文</h4><p class=src>能根据实验数据通过归纳推理获得探究结论；</p>
+      <h4>怎么问</h4><p class=ask>{{name}}能从实验数据中发现规律并得出结论吗？</p>
+    </div>
+    <div class=col>
+      <h4>算「会了」的表现</h4><ul><li>能从多次测量数据中识别出规律并总结出结论</li><li>能用图表展示数据趋势并据此解释实验现象</li></ul>
+      <h4>下游（判通过即解锁）</h4><ul class=dn><li>在归纳或演绎中会引用证据</li><li>能用表格、图像等多种方式展示实验数据，并通过分析和处理数据得出实验结论</li><li>会用所学模型分析常见的实际问题</li></ul>
+      
+    </div>
+  </div>
+  <footer>
+    <div class=btns>
+      <button data-v=pass>通过</button>
+      <button data-v=rewrite>要改写</button>
+      <button data-v=drop>废弃</button>
+      <button data-v=skip>拿不准</button>
+    </div>
+    <input class=note placeholder="改写成什么 / 为什么废弃（选填）">
+  </footer>
+</article>
+<article class=card data-id="ca_wWTFDMdG" data-i="74">
+  <header>
+    <span class=rank>74</span>
+    <div class=hd>
+      <div class=stmt>会正确使用已学实验器材收集数据</div>
+      <div class=meta>
+        <span class=pill>物理</span>
+        <span class=pill>G8–G9</span>
+        <span class="pill st-ai-reviewed">ai-reviewed</span>
+        <span class=lev>解锁 0 条目 · 3 条下游</span>
+      </div>
+    </div>
+  </header>
+  <div class=body>
+    <div class=col>
+      <h4>课标原文</h4><p class=src>能根据实验目的设计实验方案，会正确使用已学实验器材收集数据，能遵守实验室规则，注意实验中的安全问题；</p>
+      <h4>怎么问</h4><p class=ask>你能看看{{name}}在做实验时，是不是真的会用这些仪器记数据了吗？</p>
+    </div>
+    <div class=col>
+      <h4>算「会了」的表现</h4><ul><li>能正确读取并记录弹簧测力计上显示的力的数值。</li><li>能按照步骤连接电路，并记录下电压表和电流表的示数。</li></ul>
+      <h4>下游（判通过即解锁）</h4><ul class=dn><li>会正确使用天平、温度计等实验器材</li><li>能正确使用弹簧测力计、刻度尺等相关器材获取实验数据</li><li>会正确读取和记录实验数据</li></ul>
+      
+    </div>
+  </div>
+  <footer>
+    <div class=btns>
+      <button data-v=pass>通过</button>
+      <button data-v=rewrite>要改写</button>
+      <button data-v=drop>废弃</button>
+      <button data-v=skip>拿不准</button>
+    </div>
+    <input class=note placeholder="改写成什么 / 为什么废弃（选填）">
+  </footer>
+</article>
+<article class=card data-id="ca_8XZdG35v" data-i="75">
+  <header>
+    <span class=rank>75</span>
+    <div class=hd>
+      <div class=stmt>能遵守实验室规则，注意实验中的安全问题</div>
+      <div class=meta>
+        <span class=pill>物理</span>
+        <span class=pill>G8–G9</span>
+        <span class="pill st-ai-reviewed">ai-reviewed</span>
+        <span class=lev>解锁 0 条目 · 3 条下游</span>
+      </div>
+    </div>
+  </header>
+  <div class=body>
+    <div class=col>
+      <h4>课标原文</h4><p class=src>能根据实验目的设计实验方案，会正确使用已学实验器材收集数据，能遵守实验室规则，注意实验中的安全问题；</p>
+      <h4>怎么问</h4><p class=ask>{{name}}做实验时会主动戴护目镜、检查器材，加热时知道保持距离吗？</p>
+    </div>
+    <div class=col>
+      <h4>算「会了」的表现</h4><ul><li>能正确佩戴护目镜并检查实验器材是否完好</li><li>能在加热液体时保持安全距离并使用隔热手套</li></ul>
+      <h4>下游（判通过即解锁）</h4><ul class=dn><li>会正确使用天平、温度计等实验器材</li><li>能针对实验问题，运用控制变量法等制订方案，并排除简单的实验故障</li><li>会正确使用已学实验器材收集数据</li></ul>
+      
+    </div>
+  </div>
+  <footer>
+    <div class=btns>
+      <button data-v=pass>通过</button>
+      <button data-v=rewrite>要改写</button>
+      <button data-v=drop>废弃</button>
+      <button data-v=skip>拿不准</button>
+    </div>
+    <input class=note placeholder="改写成什么 / 为什么废弃（选填）">
+  </footer>
+</article>
+<article class=card data-id="ca_iRDXtzxf" data-i="76">
+  <header>
+    <span class=rank>76</span>
+    <div class=hd>
+      <div class=stmt>能说出空气受热会膨胀，风是空气流动的现象</div>
+      <div class=meta>
+        <span class=pill>科学</span>
+        <span class=pill>G1–G9</span>
+        <span class="pill st-disputed">disputed</span>
+        <span class=lev>解锁 0 条目 · 3 条下游</span>
+      </div>
+    </div>
+  </header>
+  <div class=body>
+    <div class=col>
+      <h4>课标原文</h4><p class=src>能说出空气受热会膨胀，风是空气流动的现象。</p>
+      <h4>怎么问</h4><p class=ask>{{name}}，你能用实验说明空气受热膨胀，并解释风是怎么形成的吗？</p>
+    </div>
+    <div class=col>
+      <h4>算「会了」的表现</h4><ul><li>能用烧瓶和气球演示加热时气球膨胀的现象</li><li>能解释风是热空气上升、冷空气补充形成的流动</li></ul>
+      <h4>下游（判通过即解锁）</h4><ul class=dn><li>能说出常见的天气现象</li><li>能设计实验，探究常见物体的热胀冷缩现象</li><li>能根据燃料的热值计算热机的能耗问题</li></ul>
+      
+    </div>
+  </div>
+  <footer>
+    <div class=btns>
+      <button data-v=pass>通过</button>
+      <button data-v=rewrite>要改写</button>
+      <button data-v=drop>废弃</button>
+      <button data-v=skip>拿不准</button>
+    </div>
+    <input class=note placeholder="改写成什么 / 为什么废弃（选填）">
+  </footer>
+</article>
+<article class=card data-id="ca_ypSwnRdE" data-i="77">
+  <header>
+    <span class=rank>77</span>
+    <div class=hd>
+      <div class=stmt>能比较水的三种状态在形状和体积上的不同点</div>
+      <div class=meta>
+        <span class=pill>科学</span>
+        <span class=pill>G3–G3</span>
+        <span class="pill st-ai-reviewed">ai-reviewed</span>
+        <span class=lev>解锁 0 条目 · 3 条下游</span>
+      </div>
+    </div>
+  </header>
+  <div class=body>
+    <div class=col>
+      <h4>课标原文</h4><p class=src>能比较水的三种状态的不同点，能利用证据说明空气占据空间、充满各处的性质等。</p>
+      <h4>怎么问</h4><p class=ask>{{name}}，你能告诉我冰、水和水蒸气有什么不一样吗？</p>
+    </div>
+    <div class=col>
+      <h4>算「会了」的表现</h4><ul><li>能正确指出冰、水、水蒸气在形状和体积上的区别</li><li>能用实验说明水加热后会变成水蒸气，冷却后会变成冰</li></ul>
+      <h4>下游（判通过即解锁）</h4><ul class=dn><li>能解释水在日常生活中的三态变化现象及引起变化的主要因素</li><li>能以生活中的实例分析水的三态变化与温度的关系</li><li>能解释物质的一些基本性质，从分子水平解释物质的结构及状态变化</li></ul>
+      
+    </div>
+  </div>
+  <footer>
+    <div class=btns>
+      <button data-v=pass>通过</button>
+      <button data-v=rewrite>要改写</button>
+      <button data-v=drop>废弃</button>
+      <button data-v=skip>拿不准</button>
+    </div>
+    <input class=note placeholder="改写成什么 / 为什么废弃（选填）">
+  </footer>
+</article>
+<article class=card data-id="ca_Y65MiK6b" data-i="78">
+  <header>
+    <span class=rank>78</span>
+    <div class=hd>
+      <div class=stmt>运用乐器编创和表现具有完整结构的短小音乐作品，表达自己的想法和情感</div>
+      <div class=meta>
+        <span class=pill>艺术</span>
+        <span class=pill>G7–G9</span>
+        <span class="pill st-ai-reviewed">ai-reviewed</span>
+        <span class=lev>解锁 0 条目 · 3 条下游</span>
+      </div>
+    </div>
+  </header>
+  <div class=body>
+    <div class=col>
+      <h4>课标原文</h4><p class=src>运用乐器编创和表现具有完整结构的短小音乐作品，表达自己的想法和情感。</p>
+      <h4>怎么问</h4><p class=ask>{{name}}，你能用乐器弹出一段自己写的、有头有尾的小曲子，并告诉我它表达了什么吗？</p>
+    </div>
+    <div class=col>
+      <h4>算「会了」的表现</h4><ul><li>能用选定乐器独立创作一段有明确开头、发展和结尾的8小节旋律</li><li>能向他人演示并解释自己作品中如何通过节奏变化表达特定情绪</li></ul>
+      <h4>下游（判通过即解锁）</h4><ul class=dn><li>能在演奏中融入个性化的理解和创意，表现音乐的风格和特点</li><li>能根据要求，采用合适的方式进行即兴创作，完成配乐或伴奏</li><li>按要求独立或与他人合作编创、表现有重复和变化的节奏或旋律</li></ul>
+      
+    </div>
+  </div>
+  <footer>
+    <div class=btns>
+      <button data-v=pass>通过</button>
+      <button data-v=rewrite>要改写</button>
+      <button data-v=drop>废弃</button>
+      <button data-v=skip>拿不准</button>
+    </div>
+    <input class=note placeholder="改写成什么 / 为什么废弃（选填）">
+  </footer>
+</article>
+<article class=card data-id="ca_ZybYqDTi" data-i="79">
+  <header>
+    <span class=rank>79</span>
+    <div class=hd>
+      <div class=stmt>能说出一段舞蹈或戏剧片段的审美特征与风格特点，并解释其表现内容和内在意蕴</div>
+      <div class=meta>
+        <span class=pill>艺术</span>
+        <span class=pill>G7–G9</span>
+        <span class="pill st-ai-reviewed">ai-reviewed</span>
+        <span class=lev>解锁 0 条目 · 3 条下游</span>
+      </div>
+    </div>
+  </header>
+  <div class=body>
+    <div class=col>
+      <h4>课标原文</h4><p class=src>7年级· 能感知和了解舞蹈、戏剧（含戏曲）等综合性表演艺术的审美特征与风格特点，理解作品的表现内容和内在意蕴。</p>
+      <h4>怎么问</h4><p class=ask>{{name}}，你能说出刚才看的舞蹈或戏剧片段里，哪些地方让你觉得它属于某种特定风格吗？</p>
+    </div>
+    <div class=col>
+      <h4>算「会了」的表现</h4><ul><li>能描述一段舞蹈片段中使用的特定动作、节奏或舞台元素，并指出其风格特点。</li><li>能解释一段戏剧片段所表现的故事内容和其中蕴含的情感或思想。</li></ul>
+      <h4>下游（判通过即解锁）</h4><ul class=dn><li>能基本模仿一段舞蹈并体验其舞姿美感，说出该舞蹈的风格或文化背景特点</li><li>能识别不同舞蹈表现形式的异同</li><li>能说出音乐与舞蹈、戏剧、影视在表现形式上的区别和联系</li></ul>
+      
+    </div>
+  </div>
+  <footer>
+    <div class=btns>
+      <button data-v=pass>通过</button>
+      <button data-v=rewrite>要改写</button>
+      <button data-v=drop>废弃</button>
+      <button data-v=skip>拿不准</button>
+    </div>
+    <input class=note placeholder="改写成什么 / 为什么废弃（选填）">
+  </footer>
+</article>
+<article class=card data-id="ca_tmptcaiW" data-i="80">
+  <header>
+    <span class=rank>80</span>
+    <div class=hd>
+      <div class=stmt>乐于参与基本运动技能学练和游戏</div>
+      <div class=meta>
+        <span class=pill>体育与健康</span>
+        <span class=pill>G1–G2</span>
+        <span class="pill st-ai-reviewed">ai-reviewed</span>
+        <span class=lev>解锁 0 条目 · 2 条下游</span>
+      </div>
+    </div>
+  </header>
+  <div class=body>
+    <div class=col>
+      <h4>课标原文</h4><p class=src>(2) 乐于参与基本运动技能学练和游戏，能说出参与体育活动前后的感受；</p>
+      <h4>怎么问</h4><p class=ask>{{name}}在体育课上会主动参与游戏吗？</p>
+    </div>
+    <div class=col>
+      <h4>算「会了」的表现</h4><ul><li>能主动加入老师组织的跑步或跳跃游戏</li><li>能在活动中尝试模仿新学的动作并坚持完成</li></ul>
+      <h4>下游（判通过即解锁）</h4><ul class=dn><li>做出所学中华传统体育类运动项目的基本动作和简单组合动作，并运用于游戏中</li><li>能在所学球类活动中与同伴配合完成攻防</li></ul>
+      
+    </div>
+  </div>
+  <footer>
+    <div class=btns>
+      <button data-v=pass>通过</button>
+      <button data-v=rewrite>要改写</button>
+      <button data-v=drop>废弃</button>
+      <button data-v=skip>拿不准</button>
+    </div>
+    <input class=note placeholder="改写成什么 / 为什么废弃（选填）">
+  </footer>
+</article>
+<article class=card data-id="ca_nuNiw3Mt" data-i="81">
+  <header>
+    <span class=rank>81</span>
+    <div class=hd>
+      <div class=stmt>能描述所学田径类运动项目的动作技术要领、练习方法和比赛基本规则</div>
+      <div class=meta>
+        <span class=pill>体育与健康</span>
+        <span class=pill>G1–G9</span>
+        <span class="pill st-ai-reviewed">ai-reviewed</span>
+        <span class=lev>解锁 0 条目 · 2 条下游</span>
+      </div>
+    </div>
+  </header>
+  <div class=body>
+    <div class=col>
+      <h4>课标原文</h4><p class=src>能描述所学田径类运动项目的动作技术要领、练习方法和比赛基本规则；</p>
+      <h4>怎么问</h4><p class=ask>{{name}}，你能说说跳远时怎么摆臂和蹬地吗？</p>
+    </div>
+    <div class=col>
+      <h4>算「会了」的表现</h4><ul><li>能口头说出短跑起跑时后脚蹬地、前脚蹬伸的动作要领</li><li>能演示并讲解立定跳远的摆臂、蹬地、收腹、落地四个步骤</li></ul>
+      <h4>下游（判通过即解锁）</h4><ul class=dn><li>能说出移动性、非移动性和操控性技能的练习方法和动作名称</li><li>能按照规则参与田径类运动项目的比赛，并接受比赛结果</li></ul>
+      
+    </div>
+  </div>
+  <footer>
+    <div class=btns>
+      <button data-v=pass>通过</button>
+      <button data-v=rewrite>要改写</button>
+      <button data-v=drop>废弃</button>
+      <button data-v=skip>拿不准</button>
+    </div>
+    <input class=note placeholder="改写成什么 / 为什么废弃（选填）">
+  </footer>
+</article>
+<article class=card data-id="ca_HSfx926U" data-i="82">
+  <header>
+    <span class=rank>82</span>
+    <div class=hd>
+      <div class=stmt>在参与所学中华传统体育类运动项目的游戏中表现出自我安全防护行为</div>
+      <div class=meta>
+        <span class=pill>体育与健康</span>
+        <span class=pill>G1–G9</span>
+        <span class="pill st-ai-reviewed">ai-reviewed</span>
+        <span class=lev>解锁 0 条目 · 2 条下游</span>
+      </div>
+    </div>
+  </header>
+  <div class=body>
+    <div class=col>
+      <h4>课标原文</h4><p class=src>在参与所学中华传统体育类运动项目的游戏中表现出自我安全防护行为。</p>
+      <h4>怎么问</h4><p class=ask>{{name}}在玩传统体育游戏时，会自己注意安全吗？</p>
+    </div>
+    <div class=col>
+      <h4>算「会了」的表现</h4><ul><li>能在练习推手时主动降低重心保持稳定，不向前扑倒</li><li>能在投掷沙包前检查场地，确保周围无人站立</li></ul>
+      <h4>下游（判通过即解锁）</h4><ul class=dn><li>在展示或比赛中根据所学知识与技能做出合理的安全保护动作</li><li>能在展示或比赛中提醒同伴使用安全防护技能并简单处理常见的运动损伤</li></ul>
+      
+    </div>
+  </div>
+  <footer>
+    <div class=btns>
+      <button data-v=pass>通过</button>
+      <button data-v=rewrite>要改写</button>
+      <button data-v=drop>废弃</button>
+      <button data-v=skip>拿不准</button>
+    </div>
+    <input class=note placeholder="改写成什么 / 为什么废弃（选填）">
+  </footer>
+</article>
+<article class=card data-id="ca_KtdFLp3U" data-i="83">
+  <header>
+    <span class=rank>83</span>
+    <div class=hd>
+      <div class=stmt>能在运动中遇到常见损伤时，运用所学知识进行初步处理</div>
+      <div class=meta>
+        <span class=pill>体育与健康</span>
+        <span class=pill>G7–G7</span>
+        <span class="pill st-disputed">disputed</span>
+        <span class=lev>解锁 0 条目 · 2 条下游</span>
+      </div>
+    </div>
+  </header>
+  <div class=body>
+    <div class=col>
+      <h4>课标原文</h4><p class=src>·能注意防范安全隐患，运用所学知识处理一些常见的运动损伤。</p>
+      <h4>怎么问</h4><p class=ask>{{name}}，如果运动时不小心擦伤了膝盖，你会怎么处理呢？</p>
+    </div>
+    <div class=col>
+      <h4>算「会了」的表现</h4><ul><li>能指出并处理同学在跑步中出现的轻微擦伤</li><li>能根据演示的步骤，对模拟的踝关节扭伤进行初步固定</li></ul>
+      <h4>下游（判通过即解锁）</h4><ul class=dn><li>能说出预防运动伤病的知识与技能、溺水自救和配合他救的方法</li><li>在发生各类自然灾害和公共安全事件时能自我保护、逃生和求助，溺水时能积极自救和配合他救</li></ul>
+      
+    </div>
+  </div>
+  <footer>
+    <div class=btns>
+      <button data-v=pass>通过</button>
+      <button data-v=rewrite>要改写</button>
+      <button data-v=drop>废弃</button>
+      <button data-v=skip>拿不准</button>
+    </div>
+    <input class=note placeholder="改写成什么 / 为什么废弃（选填）">
+  </footer>
+</article>
+<article class=card data-id="ca_fBu4LBNf" data-i="84">
+  <header>
+    <span class=rank>84</span>
+    <div class=hd>
+      <div class=stmt>能识别身边的人工智能应用</div>
+      <div class=meta>
+        <span class=pill>信息科技</span>
+        <span class=pill>G7–G8</span>
+        <span class="pill st-ai-reviewed">ai-reviewed</span>
+        <span class=lev>解锁 0 条目 · 2 条下游</span>
+      </div>
+    </div>
+  </header>
+  <div class=body>
+    <div class=col>
+      <h4>课标原文</h4><p class=src>能识别身边的人工智能应用，理解人工智能与现实社会的联系。</p>
+      <h4>怎么问</h4><p class=ask>{{name}}，你能告诉妈妈手机里的语音助手和扫地机器人分别是怎么&#x27;思考&#x27;的吗？</p>
+    </div>
+    <div class=col>
+      <h4>算「会了」的表现</h4><ul><li>能列举3个日常生活中的人工智能应用并简要说明其原理</li><li>能区分导航软件中的AI路线规划与固定路线预设</li></ul>
+      <h4>下游（判通过即解锁）</h4><ul class=dn><li>通过分析典型的人工智能应用场景</li><li>通过体验人工智能的应用场景</li></ul>
+      
+    </div>
+  </div>
+  <footer>
+    <div class=btns>
+      <button data-v=pass>通过</button>
+      <button data-v=rewrite>要改写</button>
+      <button data-v=drop>废弃</button>
+      <button data-v=skip>拿不准</button>
+    </div>
+    <input class=note placeholder="改写成什么 / 为什么废弃（选填）">
+  </footer>
+</article>
+<article class=card data-id="ca_dPwFYN2A" data-i="85">
+  <header>
+    <span class=rank>85</span>
+    <div class=hd>
+      <div class=stmt>能遵循信息科技领域的伦理道德规范，明确科技活动中应遵守的价值观念、道德责任和行为准则</div>
+      <div class=meta>
+        <span class=pill>信息科技</span>
+        <span class=pill>G3–G8</span>
+        <span class="pill st-ai-reviewed">ai-reviewed</span>
+        <span class=lev>解锁 0 条目 · 2 条下游</span>
+      </div>
+    </div>
+  </header>
+  <div class=body>
+    <div class=col>
+      <h4>课标原文</h4><p class=src>4. 能遵循信息科技领域的伦理道德规范，明确科技活动中应遵守的价值观念、道德责任和行为准则。</p>
+      <h4>怎么问</h4><p class=ask>您家孩子{{name}}在讨论科技活动时，是否经常主动提到隐私、公平这些规则，并能说出对错的理由？</p>
+    </div>
+    <div class=col>
+      <h4>算「会了」的表现</h4><ul><li>能在小组项目中主动提出并讨论作品中可能涉及的隐私和公平问题</li><li>能在讨论案例时指出哪些行为符合或违反了信息科技伦理，并说明理由</li></ul>
+      <h4>下游（判通过即解锁）</h4><ul class=dn><li>在使用数字设备时不打扰他人，自觉维护社会公共秩序</li><li>尊重数字作品所有者的权益，在与他人交流时能遵守网络礼仪</li></ul>
+      
+    </div>
+  </div>
+  <footer>
+    <div class=btns>
+      <button data-v=pass>通过</button>
+      <button data-v=rewrite>要改写</button>
+      <button data-v=drop>废弃</button>
+      <button data-v=skip>拿不准</button>
+    </div>
+    <input class=note placeholder="改写成什么 / 为什么废弃（选填）">
+  </footer>
+</article>
+<article class=card data-id="ca_aHUYYMDq" data-i="86">
+  <header>
+    <span class=rank>86</span>
+    <div class=hd>
+      <div class=stmt>能从宏观与微观、定性与定量相结合的视角说明化学式的含义</div>
+      <div class=meta>
+        <span class=pill>化学</span>
+        <span class=pill>G9–G9</span>
+        <span class="pill st-ai-reviewed">ai-reviewed</span>
+        <span class=lev>解锁 0 条目 · 2 条下游</span>
+      </div>
+    </div>
+  </header>
+  <div class=body>
+    <div class=col>
+      <h4>课标原文</h4><p class=src>能从宏观与微观、定性与定量相结合的视角说明化学式的含义；</p>
+      <h4>怎么问</h4><p class=ask>{{name}}，你能告诉我水的化学式H₂O既代表什么宏观物质，又代表什么微观粒子吗？</p>
+    </div>
+    <div class=col>
+      <h4>算「会了」的表现</h4><ul><li>能解释H₂O中每个符号代表的宏观物质和微观粒子，并说明原子个数比</li><li>能根据化学式计算物质的相对分子质量，并解释其宏观含义</li></ul>
+      <h4>下游（判通过即解锁）</h4><ul class=dn><li>能从定性和定量的视角，说明饱和溶液、溶解度和溶质质量</li><li>能分析常见物质中元素的化合价</li></ul>
+      
+    </div>
+  </div>
+  <footer>
+    <div class=btns>
+      <button data-v=pass>通过</button>
+      <button data-v=rewrite>要改写</button>
+      <button data-v=drop>废弃</button>
+      <button data-v=skip>拿不准</button>
+    </div>
+    <input class=note placeholder="改写成什么 / 为什么废弃（选填）">
+  </footer>
+</article>
+<article class=card data-id="ca_huPXSnri" data-i="87">
+  <header>
+    <span class=rank>87</span>
+    <div class=hd>
+      <div class=stmt>能用分子的观点解释生活中的某些变化或现象</div>
+      <div class=meta>
+        <span class=pill>化学</span>
+        <span class=pill>G9–G9</span>
+        <span class="pill st-ai-reviewed">ai-reviewed</span>
+        <span class=lev>解锁 0 条目 · 2 条下游</span>
+      </div>
+    </div>
+  </header>
+  <div class=body>
+    <div class=col>
+      <h4>课标原文</h4><p class=src>3. 能说明分子、原子、离子的区别和联系，能用分子的观点解释生活中的某些变化或现象；</p>
+      <h4>怎么问</h4><p class=ask>{{name}}，你能用分子的知识解释一下为什么湿衣服会变干吗？</p>
+    </div>
+    <div class=col>
+      <h4>算「会了」的表现</h4><ul><li>能用分子运动解释湿衣服晾干的原因</li><li>能用分子间隔变化解释热胀冷缩现象</li></ul>
+      <h4>下游（判通过即解锁）</h4><ul class=dn><li>能说明分子、原子、离子的区别和联系</li><li>能判断常见的物理变化和化学变化，并能从宏观和微观的视角说明二者的区别</li></ul>
+      
+    </div>
+  </div>
+  <footer>
+    <div class=btns>
+      <button data-v=pass>通过</button>
+      <button data-v=rewrite>要改写</button>
+      <button data-v=drop>废弃</button>
+      <button data-v=skip>拿不准</button>
+    </div>
+    <input class=note placeholder="改写成什么 / 为什么废弃（选填）">
+  </footer>
+</article>
+<article class=card data-id="ca_tUKZPC5e" data-i="88">
+  <header>
+    <span class=rank>88</span>
+    <div class=hd>
+      <div class=stmt>能用 》、《 或 = 符号连接两个数表示大小关系</div>
+      <div class=meta>
+        <span class=pill>数学</span>
+        <span class=pill>G1–G1</span>
+        <span class="pill st-ai-reviewed">ai-reviewed</span>
+        <span class=lev>解锁 0 条目 · 2 条下游</span>
+      </div>
+    </div>
+  </header>
+  <div class=body>
+    <div class=col>
+      <h4>课标原文</h4><p class=src>能用符号表示数的大小关系（例6），形成初步的数感和符号意识。</p>
+      <h4>怎么问</h4><p class=ask>{{name}}，你能告诉我 7 和 4 哪个大，用什么符号表示吗？</p>
+    </div>
+    <div class=col>
+      <h4>算「会了」的表现</h4><ul><li>能正确填写 3 &gt; 2 或 5 &lt; 8 等不等式符号</li><li>能比较两个数的大小并用 &gt;、&lt; 或 = 符号连接</li><li>课标例6「根据大小关系排序」：数的最基本关系是大小关系，通过排序可以考查学生对大小关系及其传递性的理解。 可以用不同的排序方法，让学生经历选择方法的过程，引导学生表述排序方法的操作过程，帮助学生积累思维的经验和做事的经验；引导学生用恰当的语言表述大小</li></ul>
+      <h4>下游（判通过即解锁）</h4><ul class=dn><li>能比较简单的小数和分数的大小</li><li>会在真实或模拟的情境中合理使用人民币</li></ul>
+      <div class=ex><b>课标例6「根据大小关系排序」</b><p>数的最基本关系是大小关系，通过排序可以考查学生对大小关系及其传递性的理解。 可以用不同的排序方法，让学生经历选择方法的过程，引导学生表述排序方法的操作过程，帮助学生积累思维的经验和做事的经验；引导学生用恰当的语言表述大小关系的程度，体会大小关系的传递性，培养思维的逻辑性。</p></div>
+    </div>
+  </div>
+  <footer>
+    <div class=btns>
+      <button data-v=pass>通过</button>
+      <button data-v=rewrite>要改写</button>
+      <button data-v=drop>废弃</button>
+      <button data-v=skip>拿不准</button>
+    </div>
+    <input class=note placeholder="改写成什么 / 为什么废弃（选填）">
+  </footer>
+</article>
+<article class=card data-id="ca_mvps8H7y" data-i="89">
+  <header>
+    <span class=rank>89</span>
+    <div class=hd>
+      <div class=stmt>能口算简单的百以内数的加减法</div>
+      <div class=meta>
+        <span class=pill>数学</span>
+        <span class=pill>G1–G2</span>
+        <span class="pill st-ai-reviewed">ai-reviewed</span>
+        <span class=lev>解锁 0 条目 · 2 条下游</span>
+      </div>
+    </div>
+  </header>
+  <div class=body>
+    <div class=col>
+      <h4>课标原文</h4><p class=src>能熟练口算20以内数的加减法和表内乘除法，能口算简单的百以内数的加减法；</p>
+      <h4>怎么问</h4><p class=ask>你可以问{{name}}：38加27等于多少？56减34呢？</p>
+    </div>
+    <div class=col>
+      <h4>算「会了」的表现</h4><ul><li>能不借助工具在10秒内说出38+27的正确结果</li><li>能正确口算56-34并说出计算过程</li></ul>
+      <h4>下游（判通过即解锁）</h4><ul class=dn><li>能熟练口算20以内数的加减法和表内乘除法</li><li>能计算两位数和三位数的加减法</li></ul>
+      
+    </div>
+  </div>
+  <footer>
+    <div class=btns>
+      <button data-v=pass>通过</button>
+      <button data-v=rewrite>要改写</button>
+      <button data-v=drop>废弃</button>
+      <button data-v=skip>拿不准</button>
+    </div>
+    <input class=note placeholder="改写成什么 / 为什么废弃（选填）">
+  </footer>
+</article>
+<article class=card data-id="ca_E4RKmfQR" data-i="90">
+  <header>
+    <span class=rank>90</span>
+    <div class=hd>
+      <div class=stmt>能在熟悉的生活情境中运用数和数的运算，合理表达简单的数量关系，解决简单的问题</div>
+      <div class=meta>
+        <span class=pill>数学</span>
+        <span class=pill>G1–G2</span>
+        <span class="pill st-ai-reviewed">ai-reviewed</span>
+        <span class=lev>解锁 0 条目 · 2 条下游</span>
+      </div>
+    </div>
+  </header>
+  <div class=body>
+    <div class=col>
+      <h4>课标原文</h4><p class=src>能在熟悉的生活情境中运用数和数的运算，合理表达简单的数量关系，解决简单的问题。</p>
+      <h4>怎么问</h4><p class=ask>{{name}}，你能用买东西的例子告诉我，3个2元的面包一共要多少钱吗？</p>
+    </div>
+    <div class=col>
+      <h4>算「会了」的表现</h4><ul><li>能根据购物清单和价签计算总花费，并解释每种商品的数量与单价关系。</li><li>能用图画或算式表示出小明有5个苹果，给了小红2个后还剩3个。</li></ul>
+      <h4>下游（判通过即解锁）</h4><ul class=dn><li>会在真实或模拟的情境中合理使用人民币</li><li>能用自己的语言说出数学连环画中数学知识的意义及数量关系</li></ul>
+      
+    </div>
+  </div>
+  <footer>
+    <div class=btns>
+      <button data-v=pass>通过</button>
+      <button data-v=rewrite>要改写</button>
+      <button data-v=drop>废弃</button>
+      <button data-v=skip>拿不准</button>
+    </div>
+    <input class=note placeholder="改写成什么 / 为什么废弃（选填）">
+  </footer>
+</article>
+<article class=card data-id="ca_ycm6izW8" data-i="91">
+  <header>
+    <span class=rank>91</span>
+    <div class=hd>
+      <div class=stmt>运用四则混合运算解决问题</div>
+      <div class=meta>
+        <span class=pill>数学</span>
+        <span class=pill>G3–G4</span>
+        <span class="pill st-ai-reviewed">ai-reviewed</span>
+        <span class=lev>解锁 0 条目 · 2 条下游</span>
+      </div>
+    </div>
+  </header>
+  <div class=body>
+    <div class=col>
+      <h4>课标原文</h4><p class=src>能在简单的实际情境中，运用四则混合运算解决问题，能选择合适的单位通过估算解决实际问题，形成初步的应用意识。</p>
+      <h4>怎么问</h4><p class=ask>{{name}}，你能先算乘除再算加减，解决两步计算的问题吗？</p>
+    </div>
+    <div class=col>
+      <h4>算「会了」的表现</h4><ul><li>能正确计算 12 + 3 × 5 并说出先算乘法再算加法</li><li>能根据题意列出 24 ÷ 6 - 2 并算出正确结果</li></ul>
+      <h4>下游（判通过即解锁）</h4><ul class=dn><li>会选择合适的方法进行估算（例18）</li><li>能运用常见的数量关系解决实际问题并合理解释结果的实际意义</li></ul>
+      
+    </div>
+  </div>
+  <footer>
+    <div class=btns>
+      <button data-v=pass>通过</button>
+      <button data-v=rewrite>要改写</button>
+      <button data-v=drop>废弃</button>
+      <button data-v=skip>拿不准</button>
+    </div>
+    <input class=note placeholder="改写成什么 / 为什么废弃（选填）">
+  </footer>
+</article>
+<article class=card data-id="ca_Frd9SZA4" data-i="92">
+  <header>
+    <span class=rank>92</span>
+    <div class=hd>
+      <div class=stmt>能用图形或数轴表示分数和小数，并比较两个数的大小</div>
+      <div class=meta>
+        <span class=pill>数学</span>
+        <span class=pill>G3–G3</span>
+        <span class="pill st-ai-reviewed">ai-reviewed</span>
+        <span class=lev>解锁 0 条目 · 2 条下游</span>
+      </div>
+    </div>
+  </header>
+  <div class=body>
+    <div class=col>
+      <h4>课标原文</h4><p class=src>能用直观的方式表示分数和小数，能比较两个分数的大小和两个小数的大小；</p>
+      <h4>怎么问</h4><p class=ask>请{{name}}用画图的方式告诉我1/2和0.25分别是什么样子的？</p>
+    </div>
+    <div class=col>
+      <h4>算「会了」的表现</h4><ul><li>能用圆形图表示1/4，用正方形图表示0.25并说明两者相等</li><li>能在数轴上准确标出1/2和0.5的位置并比较大小</li></ul>
+      <h4>下游（判通过即解锁）</h4><ul class=dn><li>能直观描述小数和分数</li><li>能比较简单的小数和分数的大小</li></ul>
+      
+    </div>
+  </div>
+  <footer>
+    <div class=btns>
+      <button data-v=pass>通过</button>
+      <button data-v=rewrite>要改写</button>
+      <button data-v=drop>废弃</button>
+      <button data-v=skip>拿不准</button>
+    </div>
+    <input class=note placeholder="改写成什么 / 为什么废弃（选填）">
+  </footer>
+</article>
+<article class=card data-id="ca_3uHyEjN5" data-i="93">
+  <header>
+    <span class=rank>93</span>
+    <div class=hd>
+      <div class=stmt>能比较两个分数的大小和两个小数的大小</div>
+      <div class=meta>
+        <span class=pill>数学</span>
+        <span class=pill>G3–G4</span>
+        <span class="pill st-ai-reviewed">ai-reviewed</span>
+        <span class=lev>解锁 0 条目 · 2 条下游</span>
+      </div>
+    </div>
+  </header>
+  <div class=body>
+    <div class=col>
+      <h4>课标原文</h4><p class=src>能用直观的方式表示分数和小数，能比较两个分数的大小和两个小数的大小；</p>
+      <h4>怎么问</h4><p class=ask>{{name}}，你能告诉我 3/4 和 5/8 哪个大，0.75 和 0.8 哪个大吗？</p>
+    </div>
+    <div class=col>
+      <h4>算「会了」的表现</h4><ul><li>能正确比较 3/4 和 5/8 的大小并说明理由</li><li>能正确比较 0.75 和 0.8 的大小并说明理由</li></ul>
+      <h4>下游（判通过即解锁）</h4><ul class=dn><li>能用图形或数轴表示分数和小数，并比较两个数的大小</li><li>能直观描述小数和分数</li></ul>
+      
+    </div>
+  </div>
+  <footer>
+    <div class=btns>
+      <button data-v=pass>通过</button>
+      <button data-v=rewrite>要改写</button>
+      <button data-v=drop>废弃</button>
+      <button data-v=skip>拿不准</button>
+    </div>
+    <input class=note placeholder="改写成什么 / 为什么废弃（选填）">
+  </footer>
+</article>
+<article class=card data-id="ca_97QpJiUQ" data-i="94">
+  <header>
+    <span class=rank>94</span>
+    <div class=hd>
+      <div class=stmt>能在解决实际问题中运用恰当的方法进行估算，并能描述估算的过程</div>
+      <div class=meta>
+        <span class=pill>数学</span>
+        <span class=pill>G3–G4</span>
+        <span class="pill st-ai-reviewed">ai-reviewed</span>
+        <span class=lev>解锁 0 条目 · 2 条下游</span>
+      </div>
+    </div>
+  </header>
+  <div class=body>
+    <div class=col>
+      <h4>课标原文</h4><p class=src>能在解决实际问题中运用恰当的方法进行估算，并能描述估算的过程。</p>
+      <h4>怎么问</h4><p class=ask>当遇到需要估算的生活问题时，{{name}}能说出估算的步骤和理由吗？</p>
+    </div>
+    <div class=col>
+      <h4>算「会了」的表现</h4><ul><li>能根据问题情境，如‘商店买东西’，选择合适的估算方法并说明每一步的思考</li><li>能估算‘学校有1287人，每人发2支铅笔，大约需要多少支’，并解释将1287看作1300的理由</li></ul>
+      <h4>下游（判通过即解锁）</h4><ul class=dn><li>能在简单实际情境中，选择合适的单位通过估算解决实际问题</li><li>会选择合适的方法进行估算（例18）</li></ul>
+      
+    </div>
+  </div>
+  <footer>
+    <div class=btns>
+      <button data-v=pass>通过</button>
+      <button data-v=rewrite>要改写</button>
+      <button data-v=drop>废弃</button>
+      <button data-v=skip>拿不准</button>
+    </div>
+    <input class=note placeholder="改写成什么 / 为什么废弃（选填）">
+  </footer>
+</article>
+<article class=card data-id="ca_svwCiC3k" data-i="95">
+  <header>
+    <span class=rank>95</span>
+    <div class=hd>
+      <div class=stmt>能从立体图形上找出一个面并说出它的形状</div>
+      <div class=meta>
+        <span class=pill>数学</span>
+        <span class=pill>G2–G2</span>
+        <span class="pill st-llm-proposed">llm-proposed</span>
+        <span class=lev>解锁 0 条目 · 2 条下游</span>
+      </div>
+    </div>
+  </header>
+  <div class=body>
+    <div class=col>
+      <h4>课标原文</h4><p class=src>能说出立体图形中某一个面对应的平面图形（例 24）。</p>
+      <h4>怎么问</h4><p class=ask>你能告诉妈妈，这个积木的这个面是什么形状吗？</p>
+    </div>
+    <div class=col>
+      <h4>算「会了」的表现</h4><ul><li>能从正方体模型上任意指出一个面，并说出它是正方形</li><li>能从长方体模型上任意指出一个面，并说出它是长方形</li><li>课标例24「找出对应图形」：如图 7，用第一行的立体图形模型能描出第二行的哪个平面图形？连一连。</li></ul>
+      <h4>下游（判通过即解锁）</h4><ul class=dn><li>能辨认长方体、正方体和圆柱的展开图</li><li>能辨认从不同角度观察简单物体所对应的照片或直观图</li></ul>
+      <div class=ex><b>课标例24「找出对应图形」</b><p>如图 7，用第一行的立体图形模型能描出第二行的哪个平面图形？连一连。</p></div>
+    </div>
+  </div>
+  <footer>
+    <div class=btns>
+      <button data-v=pass>通过</button>
+      <button data-v=rewrite>要改写</button>
+      <button data-v=drop>废弃</button>
+      <button data-v=skip>拿不准</button>
+    </div>
+    <input class=note placeholder="改写成什么 / 为什么废弃（选填）">
+  </footer>
+</article>
+<article class=card data-id="ca_qVvsKLFD" data-i="96">
+  <header>
+    <span class=rank>96</span>
+    <div class=hd>
+      <div class=stmt>能辨认同一平面内两条直线是否平行或垂直</div>
+      <div class=meta>
+        <span class=pill>数学</span>
+        <span class=pill>G3–G4</span>
+        <span class="pill st-disputed">disputed</span>
+        <span class=lev>解锁 0 条目 · 2 条下游</span>
+      </div>
+    </div>
+  </header>
+  <div class=body>
+    <div class=col>
+      <h4>课标原文</h4><p class=src>能辨认同一平面内两条直线是否平行或垂直；</p>
+      <h4>怎么问</h4><p class=ask>家长可以问：{{name}}，看看教室里的门框，哪两条边是互相平行的，哪两条是互相垂直的？</p>
+    </div>
+    <div class=col>
+      <h4>算「会了」的表现</h4><ul><li>能在同一平面图中指出两条平行的直线</li><li>能辨认两条互相垂直的直线</li></ul>
+      <h4>下游（判通过即解锁）</h4><ul class=dn><li>在直观理解和掌握图形与几何基本事实的基础上，经历得到和验证数学结论的过程，感悟具有传递性的数学逻辑</li><li>会判断简单的相似三角形</li></ul>
+      
+    </div>
+  </div>
+  <footer>
+    <div class=btns>
+      <button data-v=pass>通过</button>
+      <button data-v=rewrite>要改写</button>
+      <button data-v=drop>废弃</button>
+      <button data-v=skip>拿不准</button>
+    </div>
+    <input class=note placeholder="改写成什么 / 为什么废弃（选填）">
+  </footer>
+</article>
+<article class=card data-id="ca_VVpHJTxd" data-i="97">
+  <header>
+    <span class=rank>97</span>
+    <div class=hd>
+      <div class=stmt>能辨认从不同角度观察简单物体所对应的照片或直观图</div>
+      <div class=meta>
+        <span class=pill>数学</span>
+        <span class=pill>G3–G4</span>
+        <span class="pill st-ai-reviewed">ai-reviewed</span>
+        <span class=lev>解锁 0 条目 · 2 条下游</span>
+      </div>
+    </div>
+  </header>
+  <div class=body>
+    <div class=col>
+      <h4>课标原文</h4><p class=src>能辨认从不同角度观察简单物体所对应的照片或直观图。</p>
+      <h4>怎么问</h4><p class=ask>{{name}}，你能看着积木图，说出哪张照片是从侧面拍的吗？</p>
+    </div>
+    <div class=col>
+      <h4>算「会了」的表现</h4><ul><li>能将四个不同角度拍摄的玩具熊照片与对应视角正确连线</li><li>能根据给出的积木组合图，指出哪张照片是从正面拍摄的</li></ul>
+      <h4>下游（判通过即解锁）</h4><ul class=dn><li>能辨认不同方向（前面、侧面、上面）的形状图（例34）</li><li>能把观察的方向与相应形状图对应起来</li></ul>
+      
+    </div>
+  </div>
+  <footer>
+    <div class=btns>
+      <button data-v=pass>通过</button>
+      <button data-v=rewrite>要改写</button>
+      <button data-v=drop>废弃</button>
+      <button data-v=skip>拿不准</button>
+    </div>
+    <input class=note placeholder="改写成什么 / 为什么废弃（选填）">
+  </footer>
+</article>
+<article class=card data-id="ca_hJ9TxmeA" data-i="98">
+  <header>
+    <span class=rank>98</span>
+    <div class=hd>
+      <div class=stmt>能用直尺和量角器画出指定度数的角</div>
+      <div class=meta>
+        <span class=pill>数学</span>
+        <span class=pill>G3–G4</span>
+        <span class="pill st-ai-reviewed">ai-reviewed</span>
+        <span class=lev>解锁 0 条目 · 2 条下游</span>
+      </div>
+    </div>
+  </header>
+  <div class=body>
+    <div class=col>
+      <h4>课标原文</h4><p class=src>会用量角器测量角的大小，能用直尺和量角器画出指定度数的角；</p>
+      <h4>怎么问</h4><p class=ask>{{name}}，你能用尺子和量角器画出老师说的角吗？比如画一个75度的角。</p>
+    </div>
+    <div class=col>
+      <h4>算「会了」的表现</h4><ul><li>能用直尺和量角器准确画出一个50度的角，并标出度数</li><li>能根据要求画出一个120度的钝角，且角的两边清晰可见</li></ul>
+      <h4>下游（判通过即解锁）</h4><ul class=dn><li>能描述圆和扇形的特征</li><li>能辨认平角和周角</li></ul>
+      
+    </div>
+  </div>
+  <footer>
+    <div class=btns>
+      <button data-v=pass>通过</button>
+      <button data-v=rewrite>要改写</button>
+      <button data-v=drop>废弃</button>
+      <button data-v=skip>拿不准</button>
+    </div>
+    <input class=note placeholder="改写成什么 / 为什么废弃（选填）">
+  </footer>
+</article>
+<article class=card data-id="ca_ZTbcvvYy" data-i="99">
+  <header>
+    <span class=rank>99</span>
+    <div class=hd>
+      <div class=stmt>能说出图形之间的共性与区别（例28）</div>
+      <div class=meta>
+        <span class=pill>数学</span>
+        <span class=pill>G3–G4</span>
+        <span class="pill st-ai-reviewed">ai-reviewed</span>
+        <span class=lev>解锁 0 条目 · 2 条下游</span>
+      </div>
+    </div>
+  </header>
+  <div class=body>
+    <div class=col>
+      <h4>课标原文</h4><p class=src>能说出图形之间的共性与区别（例28）。</p>
+      <h4>怎么问</h4><p class=ask>{{name}}，你能告诉我正方形和长方形有什么相同和不同的地方吗？</p>
+    </div>
+    <div class=col>
+      <h4>算「会了」的表现</h4><ul><li>能指出正方形和长方形都有四个直角，但正方形四边相等而长方形对边相等</li><li>能比较圆和椭圆，说出圆的半径都相等而椭圆的半径不相等</li><li>课标例28「」：[图] 让学生通过直观认识不同图形，说出图形的共性，知道这些共性与图形命名的关系。例如，四边形都有四条边和四个角的共性，平行四边形要求两组对边分别平行，长方形进一步要求四个角是直角，正方形进一步要求四条边都相等。</li></ul>
+      <h4>下游（判通过即解锁）</h4><ul class=dn><li>能说出线段、射线和直线的共性与区别</li><li>能辨认从不同角度观察简单物体所对应的照片或直观图</li></ul>
+      <div class=ex><b>课标例28「」</b><p>[图] 【说明】让学生通过直观认识不同图形，说出图形的共性，知道这些共性与图形命名的关系。例如，四边形都有四条边和四个角的共性，平行四边形要求两组对边分别平行，长方形进一步要求四个角是直角，正方形进一步要求四条边都相等。</p></div>
+    </div>
+  </div>
+  <footer>
+    <div class=btns>
+      <button data-v=pass>通过</button>
+      <button data-v=rewrite>要改写</button>
+      <button data-v=drop>废弃</button>
+      <button data-v=skip>拿不准</button>
+    </div>
+    <input class=note placeholder="改写成什么 / 为什么废弃（选填）">
+  </footer>
+</article>
+<article class=card data-id="ca_yHpF8d4D" data-i="100">
+  <header>
+    <span class=rank>100</span>
+    <div class=hd>
+      <div class=stmt>能在真实情境中选择合适的长度单位</div>
+      <div class=meta>
+        <span class=pill>数学</span>
+        <span class=pill>G3–G4</span>
+        <span class="pill st-ai-reviewed">ai-reviewed</span>
+        <span class=lev>解锁 0 条目 · 2 条下游</span>
+      </div>
+    </div>
+  </header>
+  <div class=body>
+    <div class=col>
+      <h4>课标原文</h4><p class=src>能在真实情境中选择合适的长度单位。</p>
+      <h4>怎么问</h4><p class=ask>{{name}}，你能告诉妈妈为什么量桌子用厘米而量操场用米吗？</p>
+    </div>
+    <div class=col>
+      <h4>算「会了」的表现</h4><ul><li>能正确选择用厘米测量铅笔长度，用米测量教室门高度</li><li>能解释为什么测量操场跑道要用米而不用厘米</li></ul>
+      <h4>下游（判通过即解锁）</h4><ul class=dn><li>能选择合适单位描述实际问题</li><li>能描述长度单位千米、分米、毫米</li></ul>
+      
+    </div>
+  </div>
+  <footer>
+    <div class=btns>
+      <button data-v=pass>通过</button>
+      <button data-v=rewrite>要改写</button>
+      <button data-v=drop>废弃</button>
+      <button data-v=skip>拿不准</button>
+    </div>
+    <input class=note placeholder="改写成什么 / 为什么废弃（选填）">
+  </footer>
+</article>
+<article class=card data-id="ca_CAMjw9by" data-i="101">
+  <header>
+    <span class=rank>101</span>
+    <div class=hd>
+      <div class=stmt>能根据已知两个角的度数求出第三个角的度数</div>
+      <div class=meta>
+        <span class=pill>数学</span>
+        <span class=pill>G5–G6</span>
+        <span class="pill st-ai-reviewed">ai-reviewed</span>
+        <span class=lev>解锁 0 条目 · 2 条下游</span>
+      </div>
+    </div>
+  </header>
+  <div class=body>
+    <div class=col>
+      <h4>课标原文</h4><p class=src>通过对图形的操作，感知三角形内角和是180°，能根据已知两个角的度数求出第三个角的度数。</p>
+      <h4>怎么问</h4><p class=ask>如果给你一个三角形知道两个角的度数，{{name}}能算出第三个角是多少度吗？</p>
+    </div>
+    <div class=col>
+      <h4>算「会了」的表现</h4><ul><li>已知三角形两个角分别为45°和60°，能正确求出第三个角是75°</li><li>在四边形中已知三个内角分别为90°、110°、80°，能计算出第四个角为80°</li></ul>
+      <h4>下游（判通过即解锁）</h4><ul class=dn><li>在直观理解和掌握图形与几何基本事实的基础上，经历得到和验证数学结论的过程，感悟具有传递性的数学逻辑</li><li>会判断简单的相似三角形</li></ul>
+      
+    </div>
+  </div>
+  <footer>
+    <div class=btns>
+      <button data-v=pass>通过</button>
+      <button data-v=rewrite>要改写</button>
+      <button data-v=drop>废弃</button>
+      <button data-v=skip>拿不准</button>
+    </div>
+    <input class=note placeholder="改写成什么 / 为什么废弃（选填）">
+  </footer>
+</article>
+<article class=card data-id="ca_kG8p4kX5" data-i="102">
+  <header>
+    <span class=rank>102</span>
+    <div class=hd>
+      <div class=stmt>会计算平行四边形、三角形、梯形的面积</div>
+      <div class=meta>
+        <span class=pill>数学</span>
+        <span class=pill>G5–G6</span>
+        <span class="pill st-ai-reviewed">ai-reviewed</span>
+        <span class=lev>解锁 0 条目 · 2 条下游</span>
+      </div>
+    </div>
+  </header>
+  <div class=body>
+    <div class=col>
+      <h4>课标原文</h4><p class=src>会计算平行四边形、三角形、梯形的面积，能用相应公式解决实际问题。</p>
+      <h4>怎么问</h4><p class=ask>{{name}}，你能算出这个平行四边形和梯形的面积吗？</p>
+    </div>
+    <div class=col>
+      <h4>算「会了」的表现</h4><ul><li>能正确计算底为8cm、高为5cm的平行四边形面积并写出公式</li><li>能正确计算上底3cm、下底7cm、高4cm的梯形面积并说明计算步骤</li></ul>
+      <h4>下游（判通过即解锁）</h4><ul class=dn><li>能用圆的周长和面积公式解决简单的实际问题</li><li>能计算长方体、正方体和圆柱的体积和表面积</li></ul>
+      
+    </div>
+  </div>
+  <footer>
+    <div class=btns>
+      <button data-v=pass>通过</button>
+      <button data-v=rewrite>要改写</button>
+      <button data-v=drop>废弃</button>
+      <button data-v=skip>拿不准</button>
+    </div>
+    <input class=note placeholder="改写成什么 / 为什么废弃（选填）">
+  </footer>
+</article>
+<article class=card data-id="ca_Ks37crFT" data-i="103">
+  <header>
+    <span class=rank>103</span>
+    <div class=hd>
+      <div class=stmt>能描述圆和扇形的特征</div>
+      <div class=meta>
+        <span class=pill>数学</span>
+        <span class=pill>G5–G6</span>
+        <span class="pill st-ai-reviewed">ai-reviewed</span>
+        <span class=lev>解锁 0 条目 · 2 条下游</span>
+      </div>
+    </div>
+  </header>
+  <div class=body>
+    <div class=col>
+      <h4>课标原文</h4><p class=src>会用圆规画圆，能描述圆和扇形的特征；</p>
+      <h4>怎么问</h4><p class=ask>{{name}}，你能告诉我圆的半径和直径有什么关系吗？能画一个圆心角是60度的扇形吗？</p>
+    </div>
+    <div class=col>
+      <h4>算「会了」的表现</h4><ul><li>能指出圆的半径、直径并说明它们的关系</li><li>能描述扇形的圆心角、半径和弧长并画出指定角度的扇形</li></ul>
+      <h4>下游（判通过即解锁）</h4><ul class=dn><li>能说出圆锥的特征</li><li>能用圆的周长和面积公式解决简单的实际问题</li></ul>
+      
+    </div>
+  </div>
+  <footer>
+    <div class=btns>
+      <button data-v=pass>通过</button>
+      <button data-v=rewrite>要改写</button>
+      <button data-v=drop>废弃</button>
+      <button data-v=skip>拿不准</button>
+    </div>
+    <input class=note placeholder="改写成什么 / 为什么废弃（选填）">
+  </footer>
+</article>
+<article class=card data-id="ca_x8EQvCyi" data-i="104">
+  <header>
+    <span class=rank>104</span>
+    <div class=hd>
+      <div class=stmt>能辨认长方体、正方体和圆柱的展开图</div>
+      <div class=meta>
+        <span class=pill>数学</span>
+        <span class=pill>G5–G5</span>
+        <span class="pill st-ai-reviewed">ai-reviewed</span>
+        <span class=lev>解锁 0 条目 · 2 条下游</span>
+      </div>
+    </div>
+  </header>
+  <div class=body>
+    <div class=col>
+      <h4>课标原文</h4><p class=src>认识长方体、正方体和圆柱，能说出这些图形的特征，能辨认这些图形的展开图，会计算这些图形的体积和表面积；</p>
+      <h4>怎么问</h4><p class=ask>{{name}}，你看这个展开图，能告诉我它能折成什么形状吗？</p>
+    </div>
+    <div class=col>
+      <h4>算「会了」的表现</h4><ul><li>能从给出的多个展开图中，识别出长方体的展开图</li><li>能将正方体的展开图与对应的立体模型进行匹配</li></ul>
+      <h4>下游（判通过即解锁）</h4><ul class=dn><li>能计算长方体、正方体和圆柱的体积和表面积</li><li>能说出圆锥的特征</li></ul>
+      
+    </div>
+  </div>
+  <footer>
+    <div class=btns>
+      <button data-v=pass>通过</button>
+      <button data-v=rewrite>要改写</button>
+      <button data-v=drop>废弃</button>
+      <button data-v=skip>拿不准</button>
+    </div>
+    <input class=note placeholder="改写成什么 / 为什么废弃（选填）">
+  </footer>
+</article>
+<article class=card data-id="ca_RT2y7vwn" data-i="105">
+  <header>
+    <span class=rank>105</span>
+    <div class=hd>
+      <div class=stmt>能把观察的方向与相应形状图对应起来</div>
+      <div class=meta>
+        <span class=pill>数学</span>
+        <span class=pill>G5–G6</span>
+        <span class="pill st-ai-reviewed">ai-reviewed</span>
+        <span class=lev>解锁 0 条目 · 2 条下游</span>
+      </div>
+    </div>
+  </header>
+  <div class=body>
+    <div class=col>
+      <h4>课标原文</h4><p class=src>对于简单物体，能辨认不同方向（前面、侧面、上面）的形状图（例34），能把观察的方向与相应形状图对应起来，形成空间观念。</p>
+      <h4>怎么问</h4><p class=ask>{{name}}，你能看着一个立体图形，准确画出从正面、侧面和上面看到的形状图吗？</p>
+    </div>
+    <div class=col>
+      <h4>算「会了」的表现</h4><ul><li>能根据给出的俯视图正确画出物体的正面和侧面形状图</li><li>能指出从不同方向观察同一立体图形时，看到的形状图有何不同</li><li>课标例34「从不同方向观察物体」：在教学活动中，引导学生先猜想，然后通过观察验证自</li></ul>
+      <h4>下游（判通过即解锁）</h4><ul class=dn><li>能辨认长方体、正方体和圆柱的展开图</li><li>能辨认不同方向（前面、侧面、上面）的形状图（例34）</li></ul>
+      <div class=ex><b>课标例34「从不同方向观察物体」</b><p>在教学活动中，引导学生先猜想，然后通过观察验证自</p></div>
+    </div>
+  </div>
+  <footer>
+    <div class=btns>
+      <button data-v=pass>通过</button>
+      <button data-v=rewrite>要改写</button>
+      <button data-v=drop>废弃</button>
+      <button data-v=skip>拿不准</button>
+    </div>
+    <input class=note placeholder="改写成什么 / 为什么废弃（选填）">
+  </footer>
+</article>
+<article class=card data-id="ca_SiyQABe8" data-i="106">
+  <header>
+    <span class=rank>106</span>
+    <div class=hd>
+      <div class=stmt>能在方格纸上，按给定比例画出简单图形放大或缩小后的图形</div>
+      <div class=meta>
+        <span class=pill>数学</span>
+        <span class=pill>G5–G6</span>
+        <span class="pill st-ai-reviewed">ai-reviewed</span>
+        <span class=lev>解锁 0 条目 · 2 条下游</span>
+      </div>
+    </div>
+  </header>
+  <div class=body>
+    <div class=col>
+      <h4>课标原文</h4><p class=src>能在方格纸上，按给定比例画出简单图形放大或缩小后的图形，形成空间观念和推理意识。</p>
+      <h4>怎么问</h4><p class=ask>{{name}}，你能按2:1放大一个三角形，或按1:2缩小一个正方形吗？</p>
+    </div>
+    <div class=col>
+      <h4>算「会了」的表现</h4><ul><li>能将一个三角形的边长按2:1放大后准确画在方格纸上</li><li>能按1:2比例将一个正方形缩小，并保持形状不变画出</li></ul>
+      <h4>下游（判通过即解锁）</h4><ul class=dn><li>会用图形的运动认识、理解和表达现实世界中相应的现象</li><li>能借助方格纸设计一个简单图案</li></ul>
+      
+    </div>
+  </div>
+  <footer>
+    <div class=btns>
+      <button data-v=pass>通过</button>
+      <button data-v=rewrite>要改写</button>
+      <button data-v=drop>废弃</button>
+      <button data-v=skip>拿不准</button>
+    </div>
+    <input class=note placeholder="改写成什么 / 为什么废弃（选填）">
+  </footer>
+</article>
+<article class=card data-id="ca_hGYuqWym" data-i="107">
+  <header>
+    <span class=rank>107</span>
+    <div class=hd>
+      <div class=stmt>会呈现数据整理的结果（例39）</div>
+      <div class=meta>
+        <span class=pill>数学</span>
+        <span class=pill>G3–G4</span>
+        <span class="pill st-llm-proposed">llm-proposed</span>
+        <span class=lev>解锁 0 条目 · 2 条下游</span>
+      </div>
+    </div>
+  </header>
+  <div class=body>
+    <div class=col>
+      <h4>课标原文</h4><p class=src>【内容要求】（1）经历简单的数据收集和整理、描述和分析的过程，了解简单的收集数据的方法，会呈现数据整理的结果（例39）。</p>
+      <h4>怎么问</h4><p class=ask>{{name}}，你能把调查结果用图表展示出来吗？</p>
+    </div>
+    <div class=col>
+      <h4>算「会了」的表现</h4><ul><li>能用条形图或表格清晰展示一组调查数据的结果</li><li>能根据整理后的数据回答简单问题，如哪种最多哪种最少</li><li>课标例39「调查研究」：经历调查班级同学喜欢吃的水果的过程，感悟数据调查的方法，知道数据分析对于决策的作用。具体可作如下设计。 (1) 全班同学讨论决定购买方案的原则，可以在限定的金额内考虑学生最喜欢吃的一种或几种水果，或者其他原则，让学生感知</li></ul>
+      <h4>下游（判通过即解锁）</h4><ul class=dn><li>能把数据整理成条形统计图、折线统计图</li><li>通过对数据的简单分析，感受数据蕴含着信息，体会运用数据进行表达与交流的作用</li></ul>
+      <div class=ex><b>课标例39「调查研究」</b><p>经历调查班级同学喜欢吃的水果的过程，感悟数据调查的方法，知道数据分析对于决策的作用。具体可作如下设计。 (1) 全班同学讨论决定购买方案的原则，可以在限定的金额内考虑学生最喜欢吃的一种或几种水果，或者其他原则，让学生感知制订原则对于调查研究的重要性。 (2) 引导学生讨论收集数据的方法。例如：可以采用一名同学提议、其他同学赞同举手的方法；可以采取填写调查表的方法；等等。 (3) 按照讨论后的方法收集数据、整理数据，然后按照决定的原</p></div>
+    </div>
+  </div>
+  <footer>
+    <div class=btns>
+      <button data-v=pass>通过</button>
+      <button data-v=rewrite>要改写</button>
+      <button data-v=drop>废弃</button>
+      <button data-v=skip>拿不准</button>
+    </div>
+    <input class=note placeholder="改写成什么 / 为什么废弃（选填）">
+  </footer>
+</article>
+<article class=card data-id="ca_vQgMrPTN" data-i="108">
+  <header>
+    <span class=rank>108</span>
+    <div class=hd>
+      <div class=stmt>会用条形统计图、折线统计图呈现相关数据</div>
+      <div class=meta>
+        <span class=pill>数学</span>
+        <span class=pill>G3–G4</span>
+        <span class="pill st-llm-proposed">llm-proposed</span>
+        <span class=lev>解锁 0 条目 · 2 条下游</span>
+      </div>
+    </div>
+  </header>
+  <div class=body>
+    <div class=col>
+      <h4>课标原文</h4><p class=src>会用条形统计图、折线统计图呈现相关数据，解释所表达的意义。</p>
+      <h4>怎么问</h4><p class=ask>{{name}}，你能根据老师给的数据，分别画出一个条形统计图和一个折线统计图吗？</p>
+    </div>
+    <div class=col>
+      <h4>算「会了」的表现</h4><ul><li>能根据给定的数据集正确绘制出条形统计图并标明标题和轴标签</li><li>能用折线统计图清晰展示数据随时间的变化趋势并标注关键数据点</li></ul>
+      <h4>下游（判通过即解锁）</h4><ul class=dn><li>能在简单的实际情境中，合理应用统计图表和平均数（例41）</li><li>能把数据整理成条形统计图、折线统计图</li></ul>
+      
+    </div>
+  </div>
+  <footer>
+    <div class=btns>
+      <button data-v=pass>通过</button>
+      <button data-v=rewrite>要改写</button>
+      <button data-v=drop>废弃</button>
+      <button data-v=skip>拿不准</button>
+    </div>
+    <input class=note placeholder="改写成什么 / 为什么废弃（选填）">
+  </footer>
+</article>
+<article class=card data-id="ca_QqCETh82" data-i="109">
+  <header>
+    <span class=rank>109</span>
+    <div class=hd>
+      <div class=stmt>能列举生活中的随机现象，列出简单随机现象中所有可能发生的结果</div>
+      <div class=meta>
+        <span class=pill>数学</span>
+        <span class=pill>G5–G6</span>
+        <span class="pill st-ai-reviewed">ai-reviewed</span>
+        <span class=lev>解锁 0 条目 · 2 条下游</span>
+      </div>
+    </div>
+  </header>
+  <div class=body>
+    <div class=col>
+      <h4>课标原文</h4><p class=src>能列举生活中的随机现象，列出简单随机现象中所有可能发生的结果，判断简单随机现象发生可能性的大小。</p>
+      <h4>怎么问</h4><p class=ask></p>
+    </div>
+    <div class=col>
+      <h4>算「会了」的表现</h4><ul><li>能举出例如抛硬币、掷骰子、抽奖等生活中的随机现象。</li><li>能正确列出掷一个骰子时，可能出现的全部6种点数结果。</li><li>你能告诉{{name}}，抛一枚硬币会有哪些可能的结果吗？</li></ul>
+      <h4>下游（判通过即解锁）</h4><ul class=dn><li>能描述简单随机事件的特征（可能结果的个数有限，每一个可能结果出现的概率相等）</li><li>能用列表、画树状图等方法求出简单随机事件所有可能的结果以及指定随机事件发生的所有可能结果</li></ul>
+      
+    </div>
+  </div>
+  <footer>
+    <div class=btns>
+      <button data-v=pass>通过</button>
+      <button data-v=rewrite>要改写</button>
+      <button data-v=drop>废弃</button>
+      <button data-v=skip>拿不准</button>
+    </div>
+    <input class=note placeholder="改写成什么 / 为什么废弃（选填）">
+  </footer>
+</article>
+<article class=card data-id="ca_zGiyvwHS" data-i="110">
+  <header>
+    <span class=rank>110</span>
+    <div class=hd>
+      <div class=stmt>判断简单随机现象发生可能性的大小</div>
+      <div class=meta>
+        <span class=pill>数学</span>
+        <span class=pill>G5–G6</span>
+        <span class="pill st-ai-reviewed">ai-reviewed</span>
+        <span class=lev>解锁 0 条目 · 2 条下游</span>
+      </div>
+    </div>
+  </header>
+  <div class=body>
+    <div class=col>
+      <h4>课标原文</h4><p class=src>能列举生活中的随机现象，列出简单随机现象中所有可能发生的结果，判断简单随机现象发生可能性的大小。</p>
+      <h4>怎么问</h4><p class=ask>{{name}}，你能告诉我为什么摸出红球的可能性比白球大吗？</p>
+    </div>
+    <div class=col>
+      <h4>算「会了」的表现</h4><ul><li>能正确比较掷骰子时出现偶数和出现1的可能性大小</li><li>能判断从装有3红2白球的袋中摸出红球的可能性更大</li></ul>
+      <h4>下游（判通过即解锁）</h4><ul class=dn><li>能列举生活中的随机现象，列出简单随机现象中所有可能发生的结果</li><li>能用列表、画树状图等方法求出简单随机事件所有可能的结果以及指定随机事件发生的所有可能结果</li></ul>
+      
+    </div>
+  </div>
+  <footer>
+    <div class=btns>
+      <button data-v=pass>通过</button>
+      <button data-v=rewrite>要改写</button>
+      <button data-v=drop>废弃</button>
+      <button data-v=skip>拿不准</button>
+    </div>
+    <input class=note placeholder="改写成什么 / 为什么废弃（选填）">
+  </footer>
+</article>
+<article class=card data-id="ca_rRMwLLnU" data-i="111">
+  <header>
+    <span class=rank>111</span>
+    <div class=hd>
+      <div class=stmt>能根据数据提供的信息，判断随机现象发生的可能性</div>
+      <div class=meta>
+        <span class=pill>数学</span>
+        <span class=pill>G5–G5</span>
+        <span class="pill st-disputed">disputed</span>
+        <span class=lev>解锁 0 条目 · 2 条下游</span>
+      </div>
+    </div>
+  </header>
+  <div class=body>
+    <div class=col>
+      <h4>课标原文</h4><p class=src>对于现实生活中的一些简单问题，能根据数据提供的信息，判断随机现象发生的可能性。</p>
+      <h4>怎么问</h4><p class=ask>{{name}}，你能解释为什么抛硬币很多次后正反面次数差不多吗？</p>
+    </div>
+    <div class=col>
+      <h4>算「会了」的表现</h4><ul><li>能根据抛硬币100次的数据，判断正面朝上的可能性大小</li><li>能根据掷骰子的数据，判断得奇数的可能性比得1点的可能性大</li></ul>
+      <h4>下游（判通过即解锁）</h4><ul class=dn><li>能列举生活中的随机现象，列出简单随机现象中所有可能发生的结果</li><li>判断简单随机现象发生可能性的大小</li></ul>
+      
+    </div>
+  </div>
+  <footer>
+    <div class=btns>
+      <button data-v=pass>通过</button>
+      <button data-v=rewrite>要改写</button>
+      <button data-v=drop>废弃</button>
+      <button data-v=skip>拿不准</button>
+    </div>
+    <input class=note placeholder="改写成什么 / 为什么废弃（选填）">
+  </footer>
+</article>
+<article class=card data-id="ca_AnS6zgCY" data-i="112">
+  <header>
+    <span class=rank>112</span>
+    <div class=hd>
+      <div class=stmt>能用乘方运算求百以内完全平方数的平方根和千以内完全立方数的立方根（及对应的负整数）</div>
+      <div class=meta>
+        <span class=pill>数学</span>
+        <span class=pill>G7–G9</span>
+        <span class="pill st-disputed">disputed</span>
+        <span class=lev>解锁 0 条目 · 2 条下游</span>
+      </div>
+    </div>
+  </header>
+  <div class=body>
+    <div class=col>
+      <h4>课标原文</h4><p class=src>知道乘方与开方互为逆运算，会用乘方运算求百以内完全平方数的平方根和千以内完全立方数的立方根（及对应的负整数），会用计算器计算平方根和立方根；</p>
+      <h4>怎么问</h4><p class=ask>{{name}}，你能算出√49和∛-27分别等于多少吗？</p>
+    </div>
+    <div class=col>
+      <h4>算「会了」的表现</h4><ul><li>能正确计算√64和∛27并写出结果</li><li>能正确计算√(-81)和∛(-1000)并写出结果</li></ul>
+      <h4>下游（判通过即解锁）</h4><ul class=dn><li>会用根号表示平方根、算术平方根、立方根</li><li>会用计算器计算平方根和立方根</li></ul>
+      
+    </div>
+  </div>
+  <footer>
+    <div class=btns>
+      <button data-v=pass>通过</button>
+      <button data-v=rewrite>要改写</button>
+      <button data-v=drop>废弃</button>
+      <button data-v=skip>拿不准</button>
+    </div>
+    <input class=note placeholder="改写成什么 / 为什么废弃（选填）">
+  </footer>
+</article>
+<article class=card data-id="ca_bjwRsRw6" data-i="113">
+  <header>
+    <span class=rank>113</span>
+    <div class=hd>
+      <div class=stmt>会用简单随机抽样收集数据</div>
+      <div class=meta>
+        <span class=pill>数学</span>
+        <span class=pill>G7–G9</span>
+        <span class="pill st-ai-reviewed">ai-reviewed</span>
+        <span class=lev>解锁 0 条目 · 2 条下游</span>
+      </div>
+    </div>
+  </header>
+  <div class=body>
+    <div class=col>
+      <h4>课标原文</h4><p class=src>能根据问题的需要，设计恰当的调查问卷并会用简单随机抽样收集数据；</p>
+      <h4>怎么问</h4><p class=ask>{{name}}，你能说说怎么用抽签从全班抽人，以及为啥不能只在早上抽样吗？</p>
+    </div>
+    <div class=col>
+      <h4>算「会了」的表现</h4><ul><li>能设计一个随机抽样方案，例如用抽签法从30名同学中选取10人</li><li>能说明为什么不能只在上午第一节课抽样来代表全校学生</li></ul>
+      <h4>下游（判通过即解锁）</h4><ul class=dn><li>能根据收集到的数据绘制出扇形统计图或频数直方图</li><li>能综合运用统计与概率的思维方法解决简单的实际问题</li></ul>
+      
+    </div>
+  </div>
+  <footer>
+    <div class=btns>
+      <button data-v=pass>通过</button>
+      <button data-v=rewrite>要改写</button>
+      <button data-v=drop>废弃</button>
+      <button data-v=skip>拿不准</button>
+    </div>
+    <input class=note placeholder="改写成什么 / 为什么废弃（选填）">
+  </footer>
+</article>
+<article class=card data-id="ca_e8CgbmJc" data-i="114">
+  <header>
+    <span class=rank>114</span>
+    <div class=hd>
+      <div class=stmt>能描述简单随机事件的特征（可能结果的个数有限，每一个可能结果出现的概率相等）</div>
+      <div class=meta>
+        <span class=pill>数学</span>
+        <span class=pill>G7–G9</span>
+        <span class="pill st-ai-reviewed">ai-reviewed</span>
+        <span class=lev>解锁 0 条目 · 2 条下游</span>
+      </div>
+    </div>
+  </header>
+  <div class=body>
+    <div class=col>
+      <h4>课标原文</h4><p class=src>能描述简单随机事件的特征（可能结果的个数有限，每一个可能结果出现的概率相等），能用列表、画树状图等方法求出简单随机事件所有可能的结果以及指定随机事件发生的所有可能结果，能计算简单随机事件的概率；</p>
+      <h4>怎么问</h4><p class=ask>你能告诉{{name}}，掷一枚均匀硬币可能出现几种结果，它们出现的可能性一样大吗？</p>
+    </div>
+    <div class=col>
+      <h4>算「会了」的表现</h4><ul><li>能列举掷一枚均匀骰子时所有可能出现的点数结果。</li><li>能判断从装有3个红球和3个白球的袋中摸球，摸到红球和白球的机会是否相等。</li></ul>
+      <h4>下游（判通过即解锁）</h4><ul class=dn><li>能用列表、画树状图等方法求出简单随机事件所有可能的结果以及指定随机事件发生的所有可能结果</li><li>能计算简单随机事件的概率</li></ul>
+      
+    </div>
+  </div>
+  <footer>
+    <div class=btns>
+      <button data-v=pass>通过</button>
+      <button data-v=rewrite>要改写</button>
+      <button data-v=drop>废弃</button>
+      <button data-v=skip>拿不准</button>
+    </div>
+    <input class=note placeholder="改写成什么 / 为什么废弃（选填）">
+  </footer>
+</article>
+<article class=card data-id="ca_dyA8AaVY" data-i="115">
+  <header>
+    <span class=rank>115</span>
+    <div class=hd>
+      <div class=stmt>能根据控制变量法制订简单的探究方案</div>
+      <div class=meta>
+        <span class=pill>物理</span>
+        <span class=pill>G8–G9</span>
+        <span class="pill st-ai-reviewed">ai-reviewed</span>
+        <span class=lev>解锁 0 条目 · 2 条下游</span>
+      </div>
+    </div>
+  </header>
+  <div class=body>
+    <div class=col>
+      <h4>课标原文</h4><p class=src>能根据控制变量法制订简单的探究方案，会正确使用电压表、电流表测量基本的电学量，正确读取和记录实验数据，并排除简单的实验故障；</p>
+      <h4>怎么问</h4><p class=ask>咱们一起来看看，{{name}}能不能为‘影子长短’设计一个科学的实验计划？</p>
+    </div>
+    <div class=col>
+      <h4>算「会了」的表现</h4><ul><li>能针对“影响摩擦力大小的因素”实验，列出需要保持不变和改变的变量清单</li><li>能设计一个至少包含三组对比实验的步骤，明确每组中应控制的条件和改变的条件</li></ul>
+      <h4>下游（判通过即解锁）</h4><ul class=dn><li>能在跨学科实践中运用简单模型解决问题</li><li>能针对实验问题，运用控制变量法等制订方案，并排除简单的实验故障</li></ul>
+      
+    </div>
+  </div>
+  <footer>
+    <div class=btns>
+      <button data-v=pass>通过</button>
+      <button data-v=rewrite>要改写</button>
+      <button data-v=drop>废弃</button>
+      <button data-v=skip>拿不准</button>
+    </div>
+    <input class=note placeholder="改写成什么 / 为什么废弃（选填）">
+  </footer>
+</article>
+<article class=card data-id="ca_z2DmYx8w" data-i="116">
+  <header>
+    <span class=rank>116</span>
+    <div class=hd>
+      <div class=stmt>根据观察到的生物学现象或与生物学相关的现实需求，尝试提出需要解决的生物学或跨学科实践问题</div>
+      <div class=meta>
+        <span class=pill>生物学</span>
+        <span class=pill>G7–G9</span>
+        <span class="pill st-ai-reviewed">ai-reviewed</span>
+        <span class=lev>解锁 0 条目 · 2 条下游</span>
+      </div>
+    </div>
+  </header>
+  <div class=body>
+    <div class=col>
+      <h4>课标原文</h4><p class=src>(1) 根据观察到的生物学现象或与生物学相关的现实需求，尝试提出需要解决的生物学或跨学科实践问题。</p>
+      <h4>怎么问</h4><p class=ask>{{name}}，你能从看到的现象或新闻里，想到需要解决的生物学问题吗？</p>
+    </div>
+    <div class=col>
+      <h4>算「会了」的表现</h4><ul><li>能描述校园池塘青蛙数量减少的现象并提问原因</li><li>能阅读新闻后提出关于如何减少食物浪费的生物学方案</li></ul>
+      <h4>下游（判通过即解锁）</h4><ul class=dn><li>运用控制变量的方法</li><li>能够运用证据进行交流和讨论，并在此基础上反思研究中的不足，改进实践方案</li></ul>
+      
+    </div>
+  </div>
+  <footer>
+    <div class=btns>
+      <button data-v=pass>通过</button>
+      <button data-v=rewrite>要改写</button>
+      <button data-v=drop>废弃</button>
+      <button data-v=skip>拿不准</button>
+    </div>
+    <input class=note placeholder="改写成什么 / 为什么废弃（选填）">
+  </footer>
+</article>
+<article class=card data-id="ca_6Uw4ec8R" data-i="117">
+  <header>
+    <span class=rank>117</span>
+    <div class=hd>
+      <div class=stmt>能以生活中的实例分析水的三态变化与温度的关系</div>
+      <div class=meta>
+        <span class=pill>科学</span>
+        <span class=pill>G1–G9</span>
+        <span class="pill st-disputed">disputed</span>
+        <span class=lev>解锁 0 条目 · 2 条下游</span>
+      </div>
+    </div>
+  </header>
+  <div class=body>
+    <div class=col>
+      <h4>课标原文</h4><p class=src>能比较和分析常见材料在水中的沉浮现象、导热性，能以生活中的实例分析水的三态变化与温度的关系。</p>
+      <h4>怎么问</h4><p class=ask>{{name}}，你能举个生活中的例子说说温度变化怎么让水变冰或变水蒸气吗？</p>
+    </div>
+    <div class=col>
+      <h4>算「会了」的表现</h4><ul><li>能举例说明冰箱冷冻室内水结成冰是因为温度降低</li><li>能解释烧水时水壶口冒白气是因为水蒸气遇冷液化</li></ul>
+      <h4>下游（判通过即解锁）</h4><ul class=dn><li>能用比热容的物理意义直接计算热量问题</li><li>能解释水在日常生活中的三态变化现象及引起变化的主要因素</li></ul>
+      
+    </div>
+  </div>
+  <footer>
+    <div class=btns>
+      <button data-v=pass>通过</button>
+      <button data-v=rewrite>要改写</button>
+      <button data-v=drop>废弃</button>
+      <button data-v=skip>拿不准</button>
+    </div>
+    <input class=note placeholder="改写成什么 / 为什么废弃（选填）">
+  </footer>
+</article>
+<article class=card data-id="ca_n4BD2rPj" data-i="118">
+  <header>
+    <span class=rank>118</span>
+    <div class=hd>
+      <div class=stmt>能客观描述溶解实验中观察到的现象</div>
+      <div class=meta>
+        <span class=pill>科学</span>
+        <span class=pill>G1–G1</span>
+        <span class="pill st-disputed">disputed</span>
+        <span class=lev>解锁 0 条目 · 2 条下游</span>
+      </div>
+    </div>
+  </header>
+  <div class=body>
+    <div class=col>
+      <h4>课标原文</h4><p class=src>对生活中的溶解现象产生探究兴趣，能客观描述观察到的现象。</p>
+      <h4>怎么问</h4><p class=ask>{{name}}，你能告诉我你刚才看到了什么，而不是你觉得它应该是什么吗？</p>
+    </div>
+    <div class=col>
+      <h4>算「会了」的表现</h4><ul><li>能说出实验中物质溶解时颜色、形状的变化</li><li>能区分描述的是看到的溶解现象还是自己的猜想</li></ul>
+      <h4>下游（判通过即解锁）</h4><ul class=dn><li>能说明常见材料在水中的沉浮现象、导热性及其用途</li><li>能有依据地质疑别人的观点，尝试利用所学科学原理</li></ul>
+      
+    </div>
+  </div>
+  <footer>
+    <div class=btns>
+      <button data-v=pass>通过</button>
+      <button data-v=rewrite>要改写</button>
+      <button data-v=drop>废弃</button>
+      <button data-v=skip>拿不准</button>
+    </div>
+    <input class=note placeholder="改写成什么 / 为什么废弃（选填）">
+  </footer>
+</article>
+<article class=card data-id="ca_K6WAHfqt" data-i="119">
+  <header>
+    <span class=rank>119</span>
+    <div class=hd>
+      <div class=stmt>能举出至少一个化学变化的例子，并说明它如何产生新物质或伴随能量转化</div>
+      <div class=meta>
+        <span class=pill>科学</span>
+        <span class=pill>G1–G1</span>
+        <span class="pill st-disputed">disputed</span>
+        <span class=lev>解锁 0 条目 · 2 条下游</span>
+      </div>
+    </div>
+  </header>
+  <div class=body>
+    <div class=col>
+      <h4>课标原文</h4><p class=src>认识通过化学变化可以实现物质的转化，产生新物质，并伴随能的转化，能举例说明化学变化在自然界和生产生活中的重要应用价值；</p>
+      <h4>怎么问</h4><p class=ask>{{name}}，你能告诉我化学变化在我们身边有哪些重要的应用吗？</p>
+    </div>
+    <div class=col>
+      <h4>算「会了」的表现</h4><ul><li>能说出光合作用是二氧化碳和水变成有机物的变化</li><li>能描述燃烧是木头变成灰烬并释放热量的变化</li></ul>
+      <h4>下游（判通过即解锁）</h4><ul class=dn><li>能简单解释能的转化现象</li><li>能根据燃料的热值计算热机的能耗问题</li></ul>
+      
+    </div>
+  </div>
+  <footer>
+    <div class=btns>
+      <button data-v=pass>通过</button>
+      <button data-v=rewrite>要改写</button>
+      <button data-v=drop>废弃</button>
+      <button data-v=skip>拿不准</button>
+    </div>
+    <input class=note placeholder="改写成什么 / 为什么废弃（选填）">
+  </footer>
+</article>
+<article class=card data-id="ca_87i7JGyp" data-i="120">
+  <header>
+    <span class=rank>120</span>
+    <div class=hd>
+      <div class=stmt>能根据问题需要选择材料建构模型，并解释模型中各要素的作用</div>
+      <div class=meta>
+        <span class=pill>科学</span>
+        <span class=pill>G7–G9</span>
+        <span class="pill st-ai-reviewed">ai-reviewed</span>
+        <span class=lev>解锁 0 条目 · 2 条下游</span>
+      </div>
+    </div>
+  </header>
+  <div class=body>
+    <div class=col>
+      <h4>课标原文</h4><p class=src>能根据所要解决的真实问题的需要建构模型，分析、解释模型所涉及的各个要素及结构，解释并模拟相关的科学现象和过程，展示对相关概念、原理、系统的理解，表达事物整体与局部的关系；</p>
+      <h4>怎么问</h4><p class=ask>{{name}}，你能用身边的东西搭个模型来解释或解决一个真实问题吗？</p>
+    </div>
+    <div class=col>
+      <h4>算「会了」的表现</h4><ul><li>能根据月相问题选择乒乓球和手电筒搭建日地月位置模型，并指出各球代表的天体</li><li>能根据桥梁承重问题选择纸板和胶带搭建桥梁模型，并说明不同结构的作用</li></ul>
+      <h4>下游（判通过即解锁）</h4><ul class=dn><li>能应用创造性思维的基本方法，从多角度提出具有新颖性和合理性的观点</li><li>能解释物质的一些基本性质并从分子水平解释物质的结构及状态变化</li></ul>
+      
+    </div>
+  </div>
+  <footer>
+    <div class=btns>
+      <button data-v=pass>通过</button>
+      <button data-v=rewrite>要改写</button>
+      <button data-v=drop>废弃</button>
+      <button data-v=skip>拿不准</button>
+    </div>
+    <input class=note placeholder="改写成什么 / 为什么废弃（选填）">
+  </footer>
+</article>
+</div>
+<div id=dock><div class=in>
+  <span id=stat>未判定</span>
+  <button onclick="dl()">导出判定结果</button>
+  <button class=go onclick="cp()">复制成给 AI 的指令</button>
+</div></div>
+<textarea id=buf></textarea>
+<script>
+const R = {};
+document.querySelectorAll('.card').forEach(c => {
+  c.querySelectorAll('button[data-v]').forEach(b => b.onclick = () => {
+    c.querySelectorAll('button[data-v]').forEach(x => x.classList.remove('on'));
+    b.classList.add('on');
+    R[c.dataset.id] = { verdict: b.dataset.v, note: c.querySelector('.note').value,
+                         statement: c.querySelector('.stmt').textContent };
+    c.classList.toggle('done', b.dataset.v !== 'rewrite');
+    upd();
+  });
+  c.querySelector('.note').oninput = e => { if (R[c.dataset.id]) R[c.dataset.id].note = e.target.value; upd(); };
+});
+function upd() {
+  const v = Object.values(R), n = v.length;
+  const c = k => v.filter(x => x.verdict === k).length;
+  document.getElementById('stat').textContent = n
+    ? `已判 ${n}/120　通过 ${c('pass')}　改写 ${c('rewrite')}　废弃 ${c('drop')}　拿不准 ${c('skip')}`
+    : '未判定';
+}
+function payload() {
+  return Object.entries(R).map(([id, r]) => ({ anchorId: id, ...r }));
+}
+function dl() {
+  const b = new Blob([payload().map(x => JSON.stringify(x)).join('\n')],
+                     { type: 'application/x-ndjson' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(b); a.download = 'review-verdicts.jsonl'; a.click();
+}
+function cp() {
+  const p = payload();
+  if (!p.length) { document.getElementById('stat').textContent = '还没判'; return; }
+  const t = '教师复核结果，按这个更新底座：\n' + p.map(x =>
+    `- ${x.anchorId} ${x.verdict}${x.note ? '：' + x.note : ''}　（${x.statement}）`).join('\n');
+  const b = document.getElementById('buf');
+  b.value = t; b.select();
+  navigator.clipboard.writeText(t).then(
+    () => document.getElementById('stat').textContent = '已复制，粘回对话即可',
+    () => document.getElementById('stat').textContent = '复制失败，已选中文本，按 ⌘C');
+}
+upd();
+</script>
