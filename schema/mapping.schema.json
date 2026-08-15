@@ -1,0 +1,49 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://yongle.school/k12/schema/mapping.schema.json",
+  "title": "L1 课标映射 (Standard Mapping)",
+  "description": "锚点 ↔ 课标条目。2022 版课标没有官方细粒度编码，编码由本项目自造并负责稳定性。只发自编码 + 自己改写的学业要求摘要，不发课标原文段落。",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["key", "framework", "code", "discipline", "textIncluded", "schemaVersion"],
+  "properties": {
+    "key": {
+      "type": "string",
+      "pattern": "^[a-z0-9-]+:[A-Za-z0-9./_-]+$",
+      "description": "<framework-slug>:<code>，如 cn-2022:Ma.G3-4.NumAlg.7"
+    },
+    "framework": {
+      "type": "string",
+      "enum": ["cn-2022", "cn-hs-2017rev2020", "cn-eng-vocab", "local"],
+      "description": "cn-2022=义务教育课程标准(2022年版)；cn-hs-2017rev2020=普通高中课程标准(2017年版2020年修订)"
+    },
+    "code": { "type": "string", "minLength": 2, "maxLength": 60 },
+    "discipline": { "type": "string" },
+    "stage": {
+      "type": ["string", "null"],
+      "enum": ["G1-2", "G3-4", "G5-6", "G7-9", "G10-12", null],
+      "description": "2022 课标按学段组织，不按年级。别在这一层写年级——年级属于 L2 编排层。"
+    },
+    "strand": { "type": ["string", "null"], "maxLength": 40 },
+    "title": {
+      "type": "string",
+      "minLength": 2,
+      "maxLength": 60,
+      "description": "自己写的短标题，非原文。"
+    },
+    "summary": {
+      "type": ["string", "null"],
+      "maxLength": 200,
+      "description": "自己改写的学业要求摘要。textIncluded=false 时必须为 null。"
+    },
+    "textIncluded": {
+      "type": "boolean",
+      "description": "是否附带改写摘要。对权利存疑的来源置 false，只发编码——codes-only 不变式由校验器强制。"
+    },
+    "anchorIds": {
+      "type": "array",
+      "items": { "type": "string", "pattern": "^ca_[A-Za-z0-9]{8}$" }
+    },
+    "schemaVersion": { "type": "string", "const": "0.1.0" }
+  }
+}

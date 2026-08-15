@@ -1,0 +1,13 @@
+cff-version: 1.2.0
+title: K12 知识底座 (K12 Knowledge Substrate)
+message: 若在研究或产品中使用本数据集，请按此引用。
+type: dataset
+authors:
+  - name: 永乐教育 (Yongle Education)
+repository-code: https://github.com/qiuyiwu1989-star/k12-knowledge-substrate
+url: https://k12.yongle.school
+abstract: >-
+  面向中国 K12 的开放能力图谱：可判定的能力断言 + 先修依赖 + 课标清单。
+  设计目标是充当个人学习档案的坐标系，而非内容打标用的知识图谱。
+  数据源为教育部《义务教育课程标准（2022年版）》，全部条目当前未经教师复核。
+license: ODbL-1.0

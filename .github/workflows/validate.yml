@@ -1,0 +1,12 @@
+name: validate
+on: [push, pull_request]
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: '20' }
+      # 唯一门禁：过滤器自测 + 校验器自测 + 全量校验。
+      # 校验器自身没被验证过就等于没有校验器，所以 selftest 也在 CI 里。
+      - run: npm run check

@@ -1,0 +1,70 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://yongle.school/k12/schema/assertion.schema.json",
+  "title": "L3 档案断言 (Profile Assertion) —— 私有，绝不进开源包",
+  "description": "五位结构：谁认为(holder)·关于谁(subject)·什么陈述(predicate+anchorId)·何时成立(validFrom/Until)·依据在哪(evidence)。这个 schema 放在开源仓里只是为了定义接口契约，实际数据必须留在私有/校内存储。",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["assertionId", "subject", "predicate", "holder", "confidence", "validFrom", "sourceApp", "schemaVersion"],
+  "properties": {
+    "assertionId": { "type": "string", "pattern": "^as_[A-Za-z0-9]{12}$" },
+    "subject": {
+      "type": "string",
+      "pattern": "^stu_[A-Za-z0-9]{8,}$",
+      "description": "关于谁。假名化 ID —— 未成年人信息属敏感个人信息，明文姓名不进这一层。"
+    },
+    "predicate": {
+      "type": "string",
+      "enum": ["MASTERED", "LEARNING", "NOT_YET", "FORGOT", "INTERESTED_IN", "STYLE", "MISCONCEPTION"]
+    },
+    "anchorId": {
+      "type": ["string", "null"],
+      "pattern": "^ca_[A-Za-z0-9]{8}$",
+      "description": "必须是 L0 中存在、未 deprecated、且 reviewStatus != llm-proposed 的锚点。这条外键约束是整个底座存在的意义。"
+    },
+    "listRef": {
+      "type": ["object", "null"],
+      "additionalProperties": false,
+      "required": ["listId", "key"],
+      "description": "B 档清单引用（如『会写「人」字』）。anchorId 与 listRef 至少有一个。",
+      "properties": {
+        "listId": { "type": "string" },
+        "key": { "type": "string" }
+      }
+    },
+    "freeText": {
+      "type": ["string", "null"],
+      "maxLength": 200,
+      "description": "仅 INTERESTED_IN / STYLE 允许无锚点自由文本（如『喜欢甄嬛』『爱用短句』）。其余谓词一律必须挂 ID —— 否则档案又退化成形容词。"
+    },
+    "level": { "type": ["number", "null"], "minimum": 0, "maximum": 1 },
+    "validFrom": { "type": "string", "format": "date" },
+    "validUntil": {
+      "type": ["string", "null"],
+      "format": "date",
+      "description": "掌握会退化。没有时间轴的档案是假档案。"
+    },
+    "holder": {
+      "type": "string",
+      "pattern": "^(teacher|ai|self|parent):[A-Za-z0-9_.-]+$",
+      "description": "全系统最值钱的字段。老师复核过的断言权重远高于 AI 推断的；老师的复核动作本身就是免费的、竞品拿不到的标注数据。"
+    },
+    "confidence": {
+      "type": "string",
+      "enum": ["proposed", "confirmed"],
+      "description": "AI 写入一律 proposed；只有 holder 以 teacher:/parent: 开头且经过显式确认动作才能是 confirmed。沉默不算确认。"
+    },
+    "evidence": {
+      "type": "array",
+      "items": { "type": "string", "maxLength": 120 },
+      "description": "依据在哪：作业提交 ID、录音时间戳、对话轮次。没有依据的断言不可申诉、不可复核、不可信。"
+    },
+    "supersedes": {
+      "type": ["string", "null"],
+      "pattern": "^as_[A-Za-z0-9]{12}$",
+      "description": "改判用 supersede，不覆盖。同一个孩子对同一锚点的判断变化本身就是学习曲线。"
+    },
+    "sourceApp": { "type": "string", "maxLength": 40 },
+    "schemaVersion": { "type": "string", "const": "0.1.0" }
+  }
+}

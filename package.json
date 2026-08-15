@@ -1,0 +1,14 @@
+{
+  "name": "k12-knowledge-substrate",
+  "version": "0.1.0",
+  "description": "K12 全学科知识底座 —— 让所有教育产品的个人档案写在同一套 ID 空间里的坐标系",
+  "private": true,
+  "type": "module",
+  "license": "(ODbL-1.0 AND CC-BY-SA-4.0)",
+  "scripts": {
+    "validate": "node scripts/validate.mjs --warn",
+    "selftest": "node scripts/lib/decidability.mjs && node scripts/selftest.mjs",
+    "manifest": "node scripts/manifest.mjs",
+    "check": "npm run selftest && npm run manifest && npm run validate"
+  }
+}

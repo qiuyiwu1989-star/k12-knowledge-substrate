@@ -1,0 +1,67 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://yongle.school/k12/schema/list-item.schema.json",
+  "title": "L1 清单条目 (List Item) —— B 档专用",
+  "description": "语文/英语的真资产是清单不是图：字表、分级词表、背诵篇目、文言实词虚词。覆盖模型，不是依赖模型。诗歌资产库那次的结论——『词表才是真资产』——就是这一档。",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["listId", "key", "kind", "schemaVersion"],
+  "properties": {
+    "listId": {
+      "type": "string",
+      "pattern": "^lst_[a-z0-9-]{3,40}$",
+      "description": "如 lst_hanzi-3500 / lst_recite-primary / lst_wenyan-shici"
+    },
+    "key": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 60,
+      "description": "条目本体：一个字、一个词、一篇篇目标题。必须已过 normalize（全半角、异体字、空白）——这是诗歌库踩过的坑，规范化必须前置。"
+    },
+    "kind": {
+      "type": "string",
+      "enum": ["HANZI", "WORD", "RECITE", "WENYAN", "PHONICS", "SIGHTWORD"]
+    },
+    "stage": {
+      "type": ["string", "null"],
+      "pattern": "^G(1[0-2]|[1-9])(-(1[0-2]|[1-9]))?$",
+      "description": "学段范围，权威值来自课标。2022 课标按学段（G1-2/G3-4/G5-6/G7-9）组织，背诵篇目按 G1-6/G7-9 分组——课标里根本没有年级信息，这是官方有意为之，给教材编排留空间。"
+    },
+    "level": {
+      "type": ["string", "null"],
+      "pattern": "^G(1[0-2]|[1-9])$",
+      "description": "具体年级。**只能来自 L2 教材编排层**，课标不提供。为空是正常的，不是缺陷。"
+    },
+    "seq": {
+      "type": ["integer", "null"],
+      "description": "在原始清单中的官方编号。带连号的清单可做 100% 机械校验（抽完检查 1..N 无缺号），这是自验证类抽取的全部依据。"
+    },
+    "meta": {
+      "type": ["object", "null"],
+      "description": "清单类型特有字段：篇目的首句/作者、汉字的笔画数等。",
+      "additionalProperties": true
+    },
+    "extraction": {
+      "type": ["object", "null"],
+      "additionalProperties": false,
+      "description": "抽取溯源。转写是机器做的，必须留痕。",
+      "properties": {
+        "srcPage": { "type": "integer" },
+        "agree": { "type": "string", "description": "N 次投票的一致票数，如 5/5" },
+        "method": { "type": "string" }
+      }
+    },
+    "tags": {
+      "type": "array",
+      "items": { "type": "string", "maxLength": 12 },
+      "description": "如 识/写(识字表 vs 写字表)、必背/选背"
+    },
+    "anchorIds": {
+      "type": "array",
+      "items": { "type": "string", "pattern": "^ca_[A-Za-z0-9]{8}$" },
+      "description": "挂到哪些能力锚点。清单条目本身不是锚点——『会写「人」字』是锚点，「人」是清单条目。一个锚点可以覆盖一批条目。"
+    },
+    "source": { "type": ["string", "null"], "maxLength": 80 },
+    "schemaVersion": { "type": "string", "const": "0.1.0" }
+  }
+}

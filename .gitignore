@@ -1,0 +1,25 @@
+node_modules/
+.DS_Store
+*.log
+
+# L3 档案数据永远不进仓库。schema/assertion.schema.json 只定义接口契约，
+# 实际断言数据必须留在私有/校内存储 —— 未成年人信息属敏感个人信息。
+profiles/
+assertions/
+*.assertions.jsonl
+
+# 模型响应缓存（24MB，可按 prompt 哈希重建，不该进版本库）
+tools/.cache*/
+
+# 课标原件：教育部 PDF 共 298MB，且我们只发自编码不发原文，一律不入库。
+# 用 scripts/fetch-standards.sh 现取。
+sources/
+
+# 中间产物里可重算且体积大的部分
+tools/out/review-sheet.jsonl
+tools/out/triage.jsonl
+tools/out/anchor-candidates.jsonl
+tools/out/edges-generated.jsonl
+tools/out/review-*.html
+tools/out/graph.html
+tools/out/*.log

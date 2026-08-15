@@ -1,0 +1,113 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://yongle.school/k12/schema/anchor.schema.json",
+  "title": "L0 能力锚点 (Capability Anchor)",
+  "description": "底座的唯一稳定 ID 空间。一个锚点 = 一条可判定的能力断言。档案层(L3)的所有掌握记录都以 anchor.id 为谓词宾语。",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["id", "discipline", "track", "strand", "statement", "verb", "object", "type", "cognitive", "evidence", "reviewStatus", "schemaVersion"],
+  "properties": {
+    "id": {
+      "type": "string",
+      "pattern": "^ca_[A-Za-z0-9]{8}$",
+      "description": "无语义、永不复用。禁止编入学科/年级/单元——那些都会变。"
+    },
+    "discipline": {
+      "type": "string",
+      "enum": ["语文", "数学", "英语", "物理", "化学", "生物学", "历史", "地理", "道德与法治", "思想政治", "科学", "信息科技", "劳动", "艺术", "体育与健康"]
+    },
+    "track": {
+      "type": "string",
+      "enum": ["DAG", "LIST", "MATRIX"],
+      "description": "结构档位。DAG=强先修(数理化)；LIST=清单/覆盖(语文字词篇目、英语词表)；MATRIX=能力维度×主题(史地生政科)。决定该锚点允许存在什么边——校验器强制执行。"
+    },
+    "strand": {
+      "type": "string",
+      "minLength": 2,
+      "maxLength": 30,
+      "description": "课标领域，如 数与代数 / 识字与写字 / 物质的性质与应用"
+    },
+    "topic": {
+      "type": ["string", "null"],
+      "maxLength": 40,
+      "description": "主题。MATRIX 档必填(如 秦汉/唐宋)；DAG 档可空。"
+    },
+    "dimension": {
+      "type": ["string", "null"],
+      "maxLength": 30,
+      "description": "能力维度。MATRIX 档必填(如 史料实证/时空观念)。"
+    },
+    "statement": {
+      "type": "string",
+      "minLength": 8,
+      "maxLength": 60,
+      "description": "可判定的能力断言。必须能对一个具体孩子在某一时刻回答『会/不会/多大程度』。校验器用 decidability 过滤器强制执行——章节名、能力泛称一律拒绝。"
+    },
+    "verb": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 6,
+      "description": "行为动词。与 object 共同构成去重签名。"
+    },
+    "object": {
+      "type": "string",
+      "minLength": 2,
+      "maxLength": 40,
+      "description": "作用对象。与 verb 共同构成去重签名——防止 Marble 那种『同一个名字出现 5 次』。"
+    },
+    "type": {
+      "type": "string",
+      "enum": ["CONCEPTUAL", "PROCEDURAL", "REPRESENTATIONAL", "LANGUAGE", "META"]
+    },
+    "literacy": {
+      "type": "array",
+      "items": { "type": "string" },
+      "maxItems": 4,
+      "description": "2022 课标核心素养标签。是标签不是结构——不要拿它当分类主键。"
+    },
+    "cognitive": {
+      "type": "string",
+      "enum": ["了解", "理解", "掌握", "应用"],
+      "description": "课标行为动词分级。"
+    },
+    "stageHint": {
+      "type": ["object", "null"],
+      "additionalProperties": false,
+      "required": ["min", "max"],
+      "description": "学段提示，非权威。真正的年级来自 L2 编排层(教材版本×年级)，同一锚点在不同教材落在不同年级。这里只给一个用于排序和兜底的粗略区间。",
+      "properties": {
+        "min": { "type": "string", "pattern": "^G(1[0-2]|[1-9])$" },
+        "max": { "type": "string", "pattern": "^G(1[0-2]|[1-9])$" }
+      }
+    },
+    "evidence": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 6,
+      "items": { "type": "string", "minLength": 4, "maxLength": 60 },
+      "description": "掌握证据。每条都必须是可观察的行为，不是感受。"
+    },
+    "assessment": {
+      "type": ["string", "null"],
+      "maxLength": 120,
+      "description": "自然语言检核问句。可含 {{name}} 占位符，展示前必须替换或剥离。"
+    },
+    "reviewStatus": {
+      "type": "string",
+      "enum": ["llm-proposed", "auto-confirmed", "expert-confirmed", "disputed"],
+      "description": "llm-proposed 的锚点禁止被 L3 档案引用——这是底座和普通知识图谱的分界线。"
+    },
+    "reviewedBy": {
+      "type": "array",
+      "items": { "type": "string", "pattern": "^(teacher|editor|ai):[A-Za-z0-9_.-]+$" },
+      "description": "谁复核的。老师的复核痕迹累积起来就是他自己的教学序列 IP —— 这个字段是复核者愿意干活的理由，别省。"
+    },
+    "deprecated": { "type": "boolean", "default": false },
+    "supersededBy": {
+      "type": ["string", "null"],
+      "pattern": "^ca_[A-Za-z0-9]{8}$",
+      "description": "弃用时必填。档案里有几十万条引用，锚点只能弃用不能删除，否则历史记录悬空。"
+    },
+    "schemaVersion": { "type": "string", "const": "0.1.0" }
+  }
+}

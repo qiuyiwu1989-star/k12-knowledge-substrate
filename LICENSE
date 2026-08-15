@@ -1,0 +1,11 @@
+本仓库采用双许可：
+
+- **数据库**（结构、ID、关系、清单）：Open Database License (ODbL) v1.0
+  全文见 https://opendatacommons.org/licenses/odbl/1-0/
+
+- **本项目撰写的文本**（statement / evidence / reason / 文档）：CC BY-SA 4.0
+  全文见 https://creativecommons.org/licenses/by-sa/4.0/
+
+- **课标原文**：不在本仓库，权利归中华人民共和国教育部。见 PROVENANCE.md
+
+- **代码**（scripts/ 与 tools/）：MIT
