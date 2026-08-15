@@ -168,6 +168,7 @@ function show(n, push = true) {
   document.getElementById('panel').classList.add('on');
   document.getElementById('hero').style.opacity = 0;
   document.getElementById('legend').style.opacity = 0;
+  history.replaceState(null, '', '#' + n.i);   // 深链接：能把「就是这个点」发给别人
   draw();
 }
 window.goBack = () => { const p = stack.pop(); if (p) show(byId.get(p), false); else document.getElementById('close').onclick(); };
@@ -218,4 +219,6 @@ document.getElementById('stat').textContent = `${N.length} 个能力 · ${E.leng
 document.getElementById('axis').innerHTML = [[1,'一年级'],[3,'三年级'],[5,'五年级'],[7,'七年级'],[9,'九年级']].map(([g,t]) =>
   `<div style="top:${(0.08 + (g-1)/8*0.84)*100}%;left:10px">${t}</div>`).join('');
 addEventListener('resize', fit); fit();
+(() => { const n = byId.get(location.hash.slice(1)); if (n) setTimeout(() => show(n), 60); })();
+addEventListener('hashchange', () => { const n = byId.get(location.hash.slice(1)); if (n && n.i !== sel) show(n); });
 </script></body></html>

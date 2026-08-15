@@ -185,6 +185,24 @@ canvas{display:block;cursor:grab}canvas.drag{cursor:grabbing}
 #hint{position:fixed;right:30px;bottom:26px;max-width:46vw;text-align:right;font-size:11.5px;color:var(--dim);z-index:5}
 #hint b{color:var(--mut);font-weight:600}
 /* 悬停是信息卡，不是小提示条 */
+/* 标记 UI —— 老师看完的判断必须能落盘，否则全部蒸发 */
+.flag{display:flex;gap:6px;flex-wrap:wrap;margin-top:14px;padding-top:14px;border-top:1px solid var(--line)}
+.flag button{font:inherit;font-size:11.5px;padding:5px 11px;border-radius:99px;border:1px solid var(--line);
+ background:none;color:var(--mut);cursor:pointer;transition:.15s}
+.flag button:hover{color:var(--fg);border-color:var(--dim)}
+.flag button.on{background:#3a2418;border-color:#7a4a2a;color:#f0a068}
+.row .x{flex:none;font-size:11px;color:#4a5163;cursor:pointer;padding:2px 6px;border-radius:6px;border:1px solid transparent}
+.row:hover .x{color:var(--mut);border-color:var(--line)}
+.row .x:hover{color:#f0a068;border-color:#7a4a2a}
+.row .x.on{color:#f0a068;border-color:#7a4a2a;background:#3a2418}
+#marks{position:fixed;right:26px;bottom:26px;z-index:9;display:none;align-items:center;gap:10px;
+ background:#3a2418;border:1px solid #7a4a2a;border-radius:99px;padding:7px 8px 7px 15px;font-size:12.5px;color:#f0a068}
+#marks button{font:inherit;font-size:11.5px;padding:4px 12px;border-radius:99px;border:1px solid #7a4a2a;
+ background:rgba(0,0,0,.25);color:#f0a068;cursor:pointer}
+#marks button:hover{background:#7a4a2a;color:#fff}
+#copy{font-size:11px;color:var(--dim);background:none;border:1px solid var(--line);border-radius:7px;
+ padding:3px 9px;cursor:pointer;margin-left:8px}
+#copy:hover{color:var(--fg)}
 #tip{position:fixed;pointer-events:none;background:var(--card);backdrop-filter:blur(14px);border:1px solid var(--line);
  border-radius:14px;padding:15px 17px;max-width:330px;display:none;z-index:9;box-shadow:0 12px 40px rgba(0,0,0,.5)}
 #tip .hdr{display:flex;align-items:center;gap:8px;margin-bottom:8px}
@@ -230,6 +248,7 @@ canvas{display:block;cursor:grab}canvas.drag{cursor:grabbing}
 </div>
 <div id="hint"><b>拖动</b>旋转 · <b>滚轮</b>缩放 · <b>点一个点</b>，然后顺着它的前置往回走</div>
 <div id="panel"><button id="close">×</button><div id="pc"></div></div>
+<div id="marks"><span id="mn"></span><button onclick="exportMarks()">导出</button><button onclick="clearMarks()">清空</button></div>
 <div id="tip"></div>
 <script>
 const N = __NODES__, E = __EDGES__, COLOR = __COLORS__, HGT = __HGT__;
@@ -429,9 +448,18 @@ function show(n, push = true) {
   const dp = (pre.get(n.i) || []).map(i => byId.get(i)).filter(Boolean).sort((a, b) => a.s - b.s);
   const dn = (post.get(n.i) || []).map(i => byId.get(i)).filter(Boolean).sort((a, b) => a.s - b.s);
   const c = COLOR[n.d] || '#888';
-  const row = a => `<div class="row" onclick="jump('${a.i}')">
+  const row = (a, isPre) => {
+    const mk = isPre ? marks[mkey(n.i, a.i)] : null;
+    return `<div class="row">
       <span class="dot" style="background:${COLOR[a.d] || '#888'}"></span>
-      <span class="t">${esc(a.t)}</span><span class="g">${gLabel(a)}</span></div>`;
+      <span class="t" onclick="jump('${a.i}')">${esc(a.t)}</span>
+      <span class="g">${gLabel(a)}</span>` +
+      (isPre ? `<span class="x ${mk ? 'on' : ''}" title="这条依赖不成立"
+        onclick="event.stopPropagation();toggleMark('edge-wrong','${n.i}','${a.i}')">${mk ? '已标' : '✕ 不对'}</span>` : '') +
+      `</div>`;
+  };
+  const am = marks[mkey(n.i)];
+  const fbtn = (k, t) => `<button class="${am && am.issue === k ? 'on' : ''}" onclick="toggleMark('${k}','${n.i}')">${t}</button>`;
   document.getElementById('pc').innerHTML =
     (stack.length ? `<button id="back" onclick="goBack()">← 返回</button>` : '') + `
     <div class="hdr"><span class="dot" style="background:${c}"></span>
@@ -441,21 +469,68 @@ function show(n, push = true) {
     <div class="big">${total}<em>条前置，合计</em></div>
     <div class="bignote">一个学习者在此之前必须掌握的全部，一路回溯到底。</div>
     <h5>直接建立在<b>${dp.length}</b></h5>
-    ${dp.length ? dp.map(row).join('') : '<div class="none">没有前置 —— 这是一个起点</div>'}
+    ${dp.length ? dp.map(a => row(a, true)).join('') : '<div class="none">没有前置 —— 这是一个起点</div>'}
     <h5>接下来解锁<b>${dn.length}</b></h5>
-    ${dn.length ? dn.slice(0, 24).map(row).join('') : '<div class="none">暂无后继</div>'}`;
+    ${dn.length ? dn.slice(0, 24).map(a => row(a, false)).join('') : '<div class="none">暂无后继</div>'}
+    <h5>这条有问题？点一下，导出时带页码</h5>
+    <div class="flag">${fbtn('stage', '学段不对')}${fbtn('wording', '表述要改')}${fbtn('reject', '不该收')}${fbtn('missing-pre', '缺前置')}${fbtn('other', '其他')}</div>`;
   document.getElementById('panel').classList.add('on');
   document.getElementById('q').style.display = 'none';
   document.querySelectorAll('.li').forEach(el => el.classList.toggle('faded', el.dataset.d !== n.d));
   popT = 1; frameSelection(); draw();
+  // 深链接：老师发现问题得能把「就是这个点」发给别人
+  history.replaceState(null, '', '#' + n.i);
 }
+window.copyLink = id => {
+  const url = location.origin + location.pathname + '#' + id;
+  (navigator.clipboard ? navigator.clipboard.writeText(url) : Promise.reject())
+    .then(() => { const b = document.getElementById('copy'); if (b) { b.textContent = '已复制'; setTimeout(() => b.textContent = '复制链接', 1600); } })
+    .catch(() => prompt('复制这个链接：', url));
+};
 window.jump = id => { const n = byId.get(id); if (n) show(n); };
+
+/* ── 标记：老师在图上发现的问题必须能落盘 ────────────────────────
+   之前老师只能口头反馈「那个化学的点标错年级了」，没人知道是哪个点。
+   现在每条标记都带 id + 课标页码，导出后能直接翻回原页核对。        */
+const MK = 'k12-marks';
+let marks = JSON.parse(localStorage.getItem(MK) || '{}');
+const mkey = (a, b) => b ? `e|${a}|${b}` : `a|${a}`;
+function saveMarks() {
+  localStorage.setItem(MK, JSON.stringify(marks));
+  const n = Object.keys(marks).length;
+  const el = document.getElementById('marks');
+  el.style.display = n ? 'flex' : 'none';
+  document.getElementById('mn').textContent = `已标记 ${n} 处`;
+}
+window.toggleMark = (issue, a, b) => {
+  const k = mkey(a, b);
+  if (marks[k] && marks[k].issue === issue) delete marks[k];
+  else {
+    const A = byId.get(a), B = b ? byId.get(b) : null;
+    marks[k] = { kind: b ? 'edge' : 'anchor', issue, anchorId: a, prerequisiteId: b || null,
+      statement: A ? A.t : '', discipline: A ? A.d : '', stage: A && A.s ? 'G' + A.s : '',
+      srcPage: A ? A.p : '', prerequisite: B ? B.t : '', at: new Date().toISOString() };
+  }
+  saveMarks(); if (sel) show(byId.get(sel), false);
+};
+window.clearMarks = () => { if (confirm('清空全部标记？')) { marks = {}; saveMarks(); if (sel) show(byId.get(sel), false); } };
+window.exportMarks = () => {
+  let who = localStorage.getItem('k12-who');
+  if (!who) { who = (prompt('你是谁？（会写进导出文件，便于区分不同老师的意见）') || '').trim(); if (who) localStorage.setItem('k12-who', who); }
+  const rows = Object.values(marks).map(m => JSON.stringify({ reviewer: who || 'anonymous', ...m }));
+  const blob = new Blob([rows.join('\n') + '\n'], { type: 'application/x-ndjson' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `k12-review-${(who || 'anon').replace(/\W+/g, '')}.jsonl`;
+  a.click();
+};
 window.goBack = () => { const p = stack.pop(); if (p) show(byId.get(p), false); else clear(); };
 function clear() {
   sel = null; hi = null; auto = true; stack = [];
   document.getElementById('panel').classList.remove('on');
   document.getElementById('q').style.display = '';
   document.querySelectorAll('.li').forEach(el => el.classList.remove('faded'));
+  history.replaceState(null, '', location.pathname);
   autoFitTween(); draw();
 }
 function autoFitTween() { const z0 = zoom, X0 = panX, Y0 = panY;
@@ -537,7 +612,10 @@ document.querySelectorAll('.li').forEach(el => el.onclick = () => {
   draw();
 });
 addEventListener('resize', () => { resize(); if (!sel) autoFit(); draw(); });
-resize(); autoFit(); draw(); tick();
+resize(); autoFit(); draw(); tick(); saveMarks();
+// 带 #ca_xxxx 打开时直接定位到那个点
+(() => { const id = location.hash.slice(1); const n = id && byId.get(id); if (n) setTimeout(() => show(n), 60); })();
+addEventListener('hashchange', () => { const n = byId.get(location.hash.slice(1)); if (n && n.i !== sel) show(n); });
 </script></body></html>"""
 
 
