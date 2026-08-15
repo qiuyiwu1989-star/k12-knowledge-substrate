@@ -28,6 +28,24 @@ CACHE = Path(__file__).parent / '.cache-edges'
 
 STAGE_ORD = {'G1': 1, 'G2': 2, 'G3': 3, 'G4': 4, 'G5': 5, 'G6': 6, 'G7': 7, 'G8': 8, 'G9': 9}
 
+CROSS_PROMPT = """你在为一个 K12 能力图谱标注**跨学科**先修依赖。给你一条【目标能力】和一份**别的学科**的【候选前置列表】。
+
+跨学科前置是罕见的。绝大多数情况下正确答案是空数组。只有下面这种才算：
+**学这条目标能力时，学生必须现场用到那条别科能力，用不出来就卡住。**
+
+✅ 算：物理「计算速度」← 数学「两位数除法」（不会除就算不出速度）
+✅ 算：化学「根据化学方程式计算」← 数学「解一元一次方程」
+✅ 算：地理「读地图比例尺」← 数学「比与比例」
+❌ 不算：历史「分析史料」← 语文「阅读理解」（都是读，但没有具体依赖的技能点）
+❌ 不算：任何「都需要观察力/表达力/思维能力」这类泛泛的关联
+❌ 不算：主题相似、都出现在同一个情境里
+
+最多挑 2 条，宁可一条不挑。挑之前先问自己：**不会那条，这条是不是真的做不了？**
+reason 必须写清「用在哪一步」，写不出具体那一步就不要挑。
+
+只输出一行 JSON，不要代码块、不要解释：
+{"prereqs":[{"n":3,"reason":"算速度要做路程÷时间，不会两位数除法这一步就卡住"}]}"""
+
 PROMPT = """你在为一个 K12 能力图谱标注先修依赖。给你一条【目标能力】和一份【候选前置列表】。
 
 任务：从候选列表里挑出**真正必须先掌握**的前置能力，最多 3 条。
@@ -45,18 +63,18 @@ ENDPOINTS = [("/v1/chat/completions", "openai"), ("/anthropic/v1/messages", "ant
 _rr = itertools.count()
 
 
-def call(user_text, base, key, model, timeout=120):
+def call(user_text, base, key, model, timeout=120, sys_prompt=None):
     last = None
     for attempt in range(7):
         suffix, style = ENDPOINTS[next(_rr) % len(ENDPOINTS)]
         if style == "anthropic":
             body = {"model": model, "max_tokens": 600, "thinking": {"type": "disabled"},
-                    "system": PROMPT, "messages": [{"role": "user", "content": user_text}]}
+                    "system": sys_prompt or PROMPT, "messages": [{"role": "user", "content": user_text}]}
             hdr = {"x-api-key": key, "anthropic-version": "2023-06-01", "Content-Type": "application/json"}
         else:
             body = {"model": model, "temperature": 0, "max_completion_tokens": 600,
                     "thinking": {"type": "disabled"},
-                    "messages": [{"role": "system", "content": PROMPT},
+                    "messages": [{"role": "system", "content": sys_prompt or PROMPT},
                                  {"role": "user", "content": user_text}]}
             hdr = {"Authorization": "Bearer " + key, "Content-Type": "application/json"}
         req = request.Request(base + suffix, data=json.dumps(body).encode(), headers=hdr)
@@ -96,11 +114,44 @@ def build_pool(target, all_in_disc, cap=40):
     return [a for _, _, a in pool[:cap]]
 
 
+# 工具型学科：它们的能力会被别的学科现场调用。反过来极少见
+#（没有哪条数学能力是「必须先会某条历史能力」才学得了的）。
+ENABLERS = {'数学': 0, '语文': 1, '信息科技': 2}
+
+
+def build_cross_pool(target, all_anchors, outdeg, cap=40):
+    """跨学科候选池：别的学科、学段不晚于自己、被依赖多的优先。
+
+    **按学科均摊配额，不能全局排序取前 N。** 第一版按 ENABLERS 排序取前 36，
+    结果数学把池子占满了，语文一条都进不去 —— 产出 44 条边全是「数学 → X」，
+    连「撰写实验报告 ← 语文表达」这种明显的都出不来。池子里没有的，模型选不出来。
+    """
+    tmin, _ = stage_of(target)
+    td = target['discipline']
+    by_d = collections.defaultdict(list)
+    for a in all_anchors:
+        if a['discipline'] == td or stage_of(a)[0] > tmin:
+            continue
+        by_d[a['discipline']].append(a)
+    for d in by_d:
+        by_d[d].sort(key=lambda a: -outdeg.get(a['id'], 0))
+    # 工具型学科多给名额，其余每科至少 2 个，轮转直到填满
+    quota = {d: (10 if d in ENABLERS else 2) for d in by_d}
+    pool, i = [], 0
+    while len(pool) < cap and any(quota[d] > 0 and len(by_d[d]) > i for d in by_d):
+        for d in sorted(by_d, key=lambda d: ENABLERS.get(d, 9)):
+            if quota[d] > 0 and len(by_d[d]) > i and len(pool) < cap:
+                pool.append(by_d[d][i]); quota[d] -= 1
+        i += 1
+    return pool
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument('--discipline', default=None)
     ap.add_argument('--src', default='anchors')
     ap.add_argument('--concurrency', type=int, default=14)
+    ap.add_argument('--cross', action='store_true', help='只跑跨学科边（判据更严，最多 2 条/锚点）')
     ap.add_argument('--out', default=str(ROOT / 'tools/out/edges-generated.jsonl'))
     a = ap.parse_args()
 
@@ -118,32 +169,43 @@ def main():
         by_disc[x['discipline']].append(x)
     print(f"锚点 {len(anchors)} 条，{len(by_disc)} 个学科 · 并发 {a.concurrency}")
 
+    outdeg_seed = collections.Counter()
+    for f in sorted((ROOT / 'edges').rglob('*.jsonl')):
+        for l in f.open(encoding='utf-8'):
+            outdeg_seed[json.loads(l)['prerequisiteId']] += 1
+
     jobs = []
     for disc, group in by_disc.items():
-        # LIST 档不建图（语文字词篇目、英语词表是覆盖模型）
+        # LIST 档不建图（语文字词篇目、英语词表是覆盖模型）——跨学科时它们可以当前置，
+        # 但不能当被修方（覆盖模型没有「学完这个才能学那个」的语义）
         if group[0].get('track') == 'LIST':
-            print(f"  跳过 {disc}（LIST 档不建先修图）")
+            print(f"  跳过 {disc}（LIST 档不作为被修方）")
             continue
         for t in group:
-            pool = build_pool(t, group)
+            pool = (build_cross_pool(t, anchors, outdeg_seed) if a.cross
+                    else build_pool(t, group))
             if pool:
                 jobs.append((t, pool))
-    print(f"待标注 {len(jobs)} 条（平均候选池 {sum(len(p) for _, p in jobs)/max(1,len(jobs)):.0f}）")
+    print(f"待标注 {len(jobs)} 条（{'跨学科' if a.cross else '同学科'}，"
+          f"平均候选池 {sum(len(p) for _, p in jobs)/max(1,len(jobs)):.0f}）")
 
     def work(job):
         t, pool = job
-        lines = [f"{i+1}. {p['statement']}（{(p.get('stageHint') or {}).get('min','?')}，{p.get('strand') or '未标注'}）"
+        lines = [f"{i+1}. [{p['discipline']}] {p['statement']}（{(p.get('stageHint') or {}).get('min','?')}）"
+                 if a.cross else
+                 f"{i+1}. {p['statement']}（{(p.get('stageHint') or {}).get('min','?')}，{p.get('strand') or '未标注'}）"
                  for i, p in enumerate(pool)]
         user = (f"【目标能力】{t['statement']}\n"
                 f"（学科 {t['discipline']}，领域 {t.get('strand') or '未标注'}，"
                 f"学段 {(t.get('stageHint') or {}).get('min','?')}）\n\n"
                 f"【候选前置列表】\n" + "\n".join(lines))
-        h = hashlib.sha256((PROMPT + user).encode()).hexdigest()[:24]
+        sp = CROSS_PROMPT if a.cross else PROMPT
+        h = hashlib.sha256((sp + user).encode()).hexdigest()[:24]
         cf = CACHE / f"{h}.json"
         if cf.exists():
             return t, pool, json.loads(cf.read_text())
         try:
-            txt = call(user, base, key, model)
+            txt = call(user, base, key, model, sys_prompt=sp)
         except Exception as e:
             return t, pool, {'error': str(e)[:60]}
         m = re.search(r'\{.*\}', txt, re.S)
@@ -162,7 +224,7 @@ def main():
         for n, (t, pool, obj) in enumerate(ex.map(work, jobs), 1):
             if obj.get('error'):
                 errs += 1
-            for p in (obj.get('prereqs') or [])[:3]:
+            for p in (obj.get('prereqs') or [])[:(2 if a.cross else 3)]:
                 try:
                     idx = int(p['n']) - 1
                 except Exception:
@@ -174,7 +236,9 @@ def main():
                     continue                      # 说不出理由的边不要
                 raw.append({'anchorId': t['id'], 'prerequisiteId': pool[idx]['id'],
                             'strength': 'soft', 'reason': reason[:80],
-                            'evidence': [{'kind': 'llm', 'detail': f"候选池 {len(pool)} 选 {idx+1}，模型提议未复核"},
+                            'crossDiscipline': a.cross or None,
+                            'evidence': [{'kind': 'llm', 'detail': f"候选池 {len(pool)} 选 {idx+1}，模型提议未复核"
+                                          + ('（跨学科，判据更严）' if a.cross else '')},
                                          {'kind': 'standard-hierarchy',
                                           'detail': f"课标学段序：{(pool[idx].get('stageHint') or {}).get('min','?')} → {(t.get('stageHint') or {}).get('min','?')}"}],
                             'reviewStatus': 'llm-proposed', 'reviewedBy': [],

@@ -253,7 +253,7 @@ function resize() {
 function project() {
   const sy = Math.sin(yaw), cyw = Math.cos(yaw), sp = Math.sin(pitch), cp = Math.cos(pitch);
   const f = Math.min(W, H) * .62 * zoom, CAM = 2600;
-  const OFF = innerWidth > 1180 ? W * .13 : 0;   // 左栏隐藏时不该再往右让位
+  const OFF = OFFSET();
   for (let k = 0; k < N.length; k++) {
     const n = N[k];
     const X = n.x * cyw - n.z * sy, Z0 = n.x * sy + n.z * cyw;
@@ -278,6 +278,8 @@ function autoFit(fill = .74) {
 }
 
 const idxOf = new Map(N.map((n, k) => [n.i, k]));
+/** 左栏可见时把云团整体右移，隐藏时归零。投影和框选必须共用同一个值。 */
+function OFFSET() { return innerWidth > 1180 ? W * .13 : 0; }
 function draw() {
   ctx.fillStyle = '#080a11'; ctx.fillRect(0, 0, W, H);
   project();
@@ -375,18 +377,30 @@ function tweenTo(z1, x1, y1, ms = 620) {
 function frameSelection() {
   if (!hi || !hi.size) return;
   project();
-  let x0 = 1e9, x1 = -1e9, y0 = 1e9, y1 = -1e9;
+  let x0 = 1e9, x1 = -1e9, y0 = 1e9, y1 = -1e9, cnt = 0;
   for (const id of hi) {
     const k = idxOf.get(id); if (k === undefined || off.has(N[k].d)) continue;
+    cnt++;
     if (px[k] < x0) x0 = px[k]; if (px[k] > x1) x1 = px[k];
     if (py[k] < y0) y0 = py[k]; if (py[k] > y1) y1 = py[k];
   }
-  if (x1 < x0) return;
-  const availW = innerWidth > 1180 ? W - 470 * DPR : W, pad = 120 * DPR;   // 右侧留给面板
-  const z = Math.max(.3, Math.min(6, zoom * Math.min(
-    (availW - pad) / Math.max(60, x1 - x0), (H - pad) / Math.max(60, y1 - y0))));
-  const cxn = (x0 + x1) / 2, cyn = (y0 + y1) / 2, k = z / zoom;
-  tweenTo(z, panX + (availW / 2 - cxn) * k, panY + (H / 2 - cyn) * k);
+  if (!cnt) return;
+  const availW = innerWidth > 1180 ? W - 470 * DPR : W, pad = 150 * DPR;
+  // 包围盒有下限：选中一个没有前置的孤点时 bbox 退化成一个点，
+  // 按它算出的缩放会是天文数字，整张图直接飞出画面 —— 这就是「跑出画面」的原因。
+  const bw = Math.max(320 * DPR, x1 - x0), bh = Math.max(320 * DPR, y1 - y0);
+  const k = Math.max(.45, Math.min(2.6,                       // 单次最多放大 2.6 倍
+    Math.min((availW - pad) / bw, (H - pad) / bh)));
+  const z1 = Math.max(.3, Math.min(5, zoom * k));
+  const kk = z1 / zoom;
+  // 缩放是绕「屏幕中心 + 当前平移」发生的，不是绕原点。
+  // 之前按原点补偿平移，缩得越狠飞得越远。
+  const Cx = W / 2 + OFFSET() + panX, Cy = H / 2 + panY;
+  const cxn = (x0 + x1) / 2, cyn = (y0 + y1) / 2;
+  const tx = availW / 2, ty = H / 2;
+  tweenTo(z1,
+    tx - W / 2 - OFFSET() - (cxn - Cx) * kk,
+    ty - H / 2 - (cyn - Cy) * kk);
 }
 function tick() {
   let need = false;

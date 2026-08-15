@@ -71,7 +71,7 @@ const CASES = [
   ['stageHint 区间倒置被拦',          'anchors/x.jsonl', A({ id: 'ca_TEST0005', stageHint: { min: 'G5', max: 'G2' } }), '区间倒置'],
   ['弃用无 supersededBy 被拦',        'anchors/x.jsonl', A({ id: 'ca_TEST0006', deprecated: true }), '缺 supersededBy'],
   ['仅 llm 证据的 hard 边被拦',       'edges/x.jsonl',   E({ strength: 'hard' }), '只有 llm 证据'],
-  ['LIST 档建边被拦',                 'edges/x.jsonl',   E({ anchorId: S.list.id, prerequisiteId: S.early.id }), 'LIST 档'],
+  ['LIST 当被修方被拦',               'edges/x.jsonl',   E({ anchorId: S.list.id, prerequisiteId: S.early.id }), 'LIST 档不能作为被修方'],
   ['MATRIX 档 hard 边被拦',           'edges/x.jsonl',   E({ anchorId: S.matrix.id, prerequisiteId: S.matrix2.id, strength: 'hard', evidence: [{ kind: 'expert', detail: 'x' }] }), 'MATRIX 档不得有 hard 边'],
   ['学段倒挂被拦',                    'edges/x.jsonl',   E({ anchorId: S.early.id, prerequisiteId: S.late.id, evidence: [{ kind: 'expert', detail: 'x' }] }), '倒挂'],
   ['自环被拦',                        'edges/x.jsonl',   E({ prerequisiteId: S.late.id }), '自环'],

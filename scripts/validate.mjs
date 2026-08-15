@@ -197,8 +197,13 @@ for (const { rec: e, where } of edges) {
   }
 
   // ★ 档位规则
-  if (A.a.track === 'LIST' || P.a.track === 'LIST') {
-    err(where, `${k} 触及 LIST 档锚点 — 语文字词篇目、英语词表是覆盖模型，不建先修图（强建必产垃圾边）`);
+  // LIST 档规则的原意是「别在覆盖模型内部建链」——字表条目之间没有先修关系。
+  // 但「能利用网络搜集资料」这类语文能力可以是别科的真前置（艺术搜集编曲素材要用到）。
+  // 所以精确表述为：LIST 不能当被修方，LIST↔LIST 一律不许，LIST 当跨学科前置放行。
+  if (A.a.track === 'LIST') {
+    err(where, `${k} LIST 档不能作为被修方 — 覆盖模型没有「学完这个才能学那个」的语义`);
+  } else if (P.a.track === 'LIST' && A.a.discipline === P.a.discipline) {
+    err(where, `${k} 同学科内 LIST 档不建先修图 — 字表词表篇目是覆盖模型，强建必产垃圾边`);
   }
   if (e.strength === 'hard' && (A.a.track === 'MATRIX' || P.a.track === 'MATRIX')) {
     err(where, `${k} MATRIX 档不得有 hard 边 — 史地生政科的先修关系稀疏到可忽略，硬建就是「抗逆力依赖 20 以内加减法」`);
