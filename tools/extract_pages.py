@@ -222,8 +222,15 @@ def main():
     out_rows, conflicts = [], []
     for i in pages:
         maps = [keyed(parse(a.kind, results[i][r]), i) for r in range(a.runs)]
+        # 位置键形如 '@7@7' / '#12'，尾部那个数字才是页内顺序。
+        # 教训：原先直接 str() 比较，'@10@10' < '@2@2'，整页条目被打乱成
+        # 0,10,11,…,19,1,20,… —— 数据全对但顺序全错，而顺序正是字母序校验的依据。
+        def _pos(k):
+            m = re.search(r'(\d+)$', str(k))
+            return int(m.group(1)) if m else 0
         allkeys = sorted(set().union(*[set(m) for m in maps]),
-                         key=lambda x: (x[0], (0, x[1]) if isinstance(x[1], int) else (1, str(x[1]))))
+                         key=lambda x: (x[0], (0, x[1], 0) if isinstance(x[1], int)
+                                              else (1, 0, _pos(x[1]))))
         for gk in allkeys:
             votes = [m.get(gk) for m in maps]
             c = collections.Counter(v for v in votes if v is not None)
