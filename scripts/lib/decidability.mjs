@@ -123,7 +123,23 @@ export function checkDecidable(statement) {
     if (after.length < 2) reasons.push('动词后无作用对象：说清「对什么」做这个动作');
   }
 
-  // 6) 顿号堆叠 = 一条锚点塞了多条能力
+  // 6) 悬空指代。课标原文是「认识长方形、正方形…能直观描述这些平面图形的特征」，
+  //    在逗号处切开后「这些」就没了指代对象 —— 脱离上下文根本判断不了指什么。
+  //    这是切分留下的伤，不是原文的问题，但留在库里就是一条不可判定的锚点。
+  const dangling = s.match(/(这些|这类|这几|上述|该类|其中的|此类)/);
+  if (dangling && !/(这些|这类|这几|上述|该类|其中的|此类)[^，。]{0,4}(的)?[一二三四五六七八九十百千万\d]/.test(s)) {
+    reasons.push(`悬空指代「${dangling[0]}」：脱离上下文无法判断指什么，需把指代对象写进断言`);
+  }
+
+  // 7) 真谓语是虚动词。「能在解决问题的过程中，体会解决问题的道理」——
+  //    「解决」在动词表里所以过了闸，但句子真正要求的是「体会」。
+  //    判据：末尾那个动词才是谓语。
+  const tailWeak = s.match(new RegExp(`(${WEAK_VERBS.join('|')})[^，。；]{0,12}$`));
+  if (tailWeak && verb && s.indexOf(verb) < s.indexOf(tailWeak[1])) {
+    reasons.push(`句末谓语是虚动词「${tailWeak[1]}」：前面的「${verb}」只是状语里的动作，真正要求的仍不可判定`);
+  }
+
+  // 8) 顿号堆叠 = 一条锚点塞了多条能力
   const commas = (s.match(/[、，]/g) || []).length;
   if (commas >= 3) reasons.push('并列项过多（≥3 个顿号）：一个锚点只承载一条可判定能力，请拆分');
 

@@ -50,8 +50,12 @@ const manifest = {
   // 复核率是这个项目唯一重要的进度指标：llm-proposed 的锚点不许被档案引用，
   // 所以「可用锚点数」= 总数 - llm-proposed 数。
   // 唯一重要的进度指标：候选不算数，llm-proposed 不算数，只有复核过的才是可用锚点
-  usableAnchors: counts.anchors - (byReview['llm-proposed'] ?? 0),
+  // 唯一重要的指标：只有教师复核过（或三源证据自动确认）的才算可用。
+  // ai-reviewed 不算 —— AI 审查是筛子不是合格证。
+  usableAnchors: (byReview['expert-confirmed'] ?? 0) + (byReview['auto-confirmed'] ?? 0),
+  aiReviewedAnchors: byReview['ai-reviewed'] ?? 0,
+  disputedAnchors: byReview['disputed'] ?? 0,
   files,
 };
 writeFileSync(join(ROOT, 'manifest.json'), JSON.stringify(manifest, null, 2) + '\n');
-console.log(`✓ manifest.json 已生成 — 锚点 ${counts.anchors}（可用 ${manifest.usableAnchors}）· 边 ${counts.edges} · 清单 ${counts.listItems} · 映射 ${counts.mappings}`);
+console.log(`✓ manifest.json 已生成 — 锚点 ${counts.anchors}（可用 ${manifest.usableAnchors} · AI过审 ${manifest.aiReviewedAnchors} · 存疑 ${manifest.disputedAnchors}）· 边 ${counts.edges} · 清单 ${counts.listItems} · 映射 ${counts.mappings}`);

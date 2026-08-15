@@ -146,7 +146,10 @@ canvas{display:block;cursor:grab}canvas.drag{cursor:grabbing}
 #cta a{font-size:12.5px;color:var(--fg);background:rgba(20,24,36,.9);border:1px solid var(--line);border-radius:99px;padding:8px 16px;text-decoration:none}
 #cta a:hover{border-color:var(--dim)}
 #cta em{font-style:normal;font-size:10.5px;letter-spacing:.13em;color:var(--dim)}
-#legend{margin-top:auto;min-height:0;overflow:auto}
+#qf{margin-top:auto;font-size:12.5px;color:var(--mut)}
+#qf label{display:flex;align-items:center;gap:8px;cursor:pointer}
+#qf input{accent-color:#e8607d}
+#legend{min-height:0;overflow:auto}
 #legend h4{font-size:10px;letter-spacing:.17em;color:var(--dim);margin-bottom:11px;font-weight:600}
 .li{display:flex;align-items:center;gap:11px;padding:2.5px 0;cursor:pointer;font-size:12.5px;width:290px;color:var(--mut);transition:color .2s,opacity .2s}
 .li .dot{width:8px;height:8px;border-radius:50%;flex:none;transition:opacity .2s}
@@ -203,6 +206,11 @@ canvas{display:block;cursor:grab}canvas.drag{cursor:grabbing}
 #copy{font-size:11px;color:var(--dim);background:none;border:1px solid var(--line);border-radius:7px;
  padding:3px 9px;cursor:pointer;margin-left:8px}
 #copy:hover{color:var(--fg)}
+.warnbox{background:#2a1d10;border:1px solid #5a3f22;border-radius:11px;padding:12px 14px;margin-top:14px;font-size:12.5px;line-height:1.55;color:#d9a86a}
+.warnbox b{display:block;color:#f0a068;margin-bottom:6px;font-size:12px}
+.warnbox div{margin-top:4px}
+.lits{display:flex;gap:6px;flex-wrap:wrap;margin-top:12px}
+.lits span{font-size:11px;padding:3px 10px;border-radius:99px;border:1px solid var(--line);color:var(--mut)}
 #tip{position:fixed;pointer-events:none;background:var(--card);backdrop-filter:blur(14px);border:1px solid var(--line);
  border-radius:14px;padding:15px 17px;max-width:330px;display:none;z-index:9;box-shadow:0 12px 40px rgba(0,0,0,.5)}
 #tip .hdr{display:flex;align-items:center;gap:8px;margin-bottom:8px}
@@ -233,6 +241,8 @@ canvas{display:block;cursor:grab}canvas.drag{cursor:grabbing}
 <div id="hero">
   <h1>一个孩子<br>要学的全部<i>。</i></h1>
   <p><b>__NC__</b> 条能力断言、<b>__EC__</b> 条先修依赖，从认字到方程。</p>
+  <p>其中 <b>__OKN__</b> 条通过了 AI 学科审查，<b>__BADN__</b> 条被审出问题（画成空心）。
+     一条都还没有教师复核过。</p>
   <p>每条依赖都写明了<b>什么必须排在前面、为什么</b>。<b>点任意一个点</b>，
      看一个学习者在此之前必须掌握的全部。</p>
   <p class="lead sub">由 AI 从教育部《义务教育课程标准（2022年版）》1,594 页扫描件构建，<br>开放数据，等待教师复核。</p>
@@ -244,6 +254,7 @@ canvas{display:block;cursor:grab}canvas.drag{cursor:grabbing}
 </div>
 <div id="warn">全部条目未经教师复核</div>
 <input id="q" placeholder="搜索能力…（回车定位）">
+<div id="qf"><label><input type="checkbox" id="onlyok"> 只看 AI 过审的（__OKN__ 条）</label></div>
 <div id="legend"><h4>学科 · 点击开关</h4><div id="ls"></div></div>
 </div>
 <div id="hint"><b>拖动</b>旋转 · <b>滚轮</b>缩放 · <b>点一个点</b>，然后顺着它的前置往回走</div>
@@ -257,6 +268,7 @@ const DPR = Math.min(2, devicePixelRatio || 1);
 let W, H, yaw = .5, pitch = -.18, zoom = 1, sel = null, hi = null, auto = true, dragging = null;
 let panX = 0, panY = 0, tw = null, popT = 0;      // 视角平移 + 选中动画状态
 let stack = [];                       // 面板导航历史，支持 ← Back 一跳一跳往回走
+let onlyOK = false;                   // 只看 AI 过审的
 const off = new Set();
 const byId = new Map(N.map(n => [n.i, n]));
 const pre = new Map(), post = new Map();
@@ -311,7 +323,7 @@ function OFFSET() {
 function draw() {
   ctx.fillStyle = '#080a11'; ctx.fillRect(0, 0, W, H);
   project();
-  const on = k => !off.has(N[k].d);
+  const on = k => !off.has(N[k].d) && !(onlyOK && N[k].r !== 1);
   const zmin = -1400, zspan = 2800;
   const selColor = sel ? (COLOR[byId.get(sel).d] || '#fff') : null;
 
@@ -350,8 +362,8 @@ function draw() {
     if (!on(k)) continue;
     const n = N[k], isLit = !hi || hi.has(n.i) || n.i === sel;
     const b = Math.min(3, (Math.max(0, Math.min(1, (pz[k] - zmin) / zspan)) * 4) | 0);
-    const key = n.d + b + (isLit ? 1 : 0);
-    if (!groups.has(key)) groups.set(key, { d: n.d, b, lit: isLit, it: [] });
+    const key = n.d + b + (isLit ? 1 : 0) + '|' + n.r;
+    if (!groups.has(key)) groups.set(key, { d: n.d, b, lit: isLit, q: n.r, it: [] });
     groups.get(key).it.push(k);
   }
   // 描边用底色：相邻的点之间留出一圈暗边，每个点就「实」了，
@@ -363,8 +375,10 @@ function draw() {
     for (const k of g.it) {
       const r = Math.max(.75, (0.85 + Math.sqrt(N[k].o) * 0.62) * zoom * (2600 / (2600 + pz[k])) * DPR * pop(k));
       ctx.beginPath(); ctx.arc(px[k], py[k], r, 0, 7);
-      if (r > 1.8 * DPR) ctx.stroke();
-      ctx.fill();
+      // 存疑的画空心：AI 审出 75% 有问题，把它们和过审的画成一样，
+      // 等于用视觉掩盖数据质量。空心一眼能看出「这片是虚的」。
+      if (N[k].r === 2 && r > 2.2 * DPR) { ctx.stroke(); }
+      else { if (r > 1.8 * DPR) ctx.stroke(); ctx.fill(); }
     }
   }
   ctx.globalAlpha = 1;
@@ -478,6 +492,9 @@ function show(n, push = true) {
       <span>${esc(n.st || n.d)} · ${gLabel(n) || '学段未定'}</span></div>
     <h2>${esc(n.t)}</h2>
     ${n.a ? `<p class="ask">${esc(n.a)}</p>` : ''}
+    ${n.r === 2 ? `<div class="warnbox"><b>AI 学科审查认为这条有问题</b>${
+      (n.q || []).map(q => `<div>· ${esc(q.split('｜')[1] || q)}</div>`).join('')}</div>` : ''}
+    ${n.L && n.L.length ? `<div class="lits">${n.L.map(x => `<span>${esc(x)}</span>`).join('')}</div>` : ''}
     <div class="big">${total}<em>条前置，合计</em></div>
     <div class="bignote">一个学习者在此之前必须掌握的全部，一路回溯到底。</div>
     <h5>直接建立在<b>${dp.length}</b></h5>
@@ -551,7 +568,7 @@ function autoFitTween() { const z0 = zoom, X0 = panX, Y0 = panY;
 function pick(mx, my) {
   let best = -1, bd = 24 * 24;
   for (let k = 0; k < N.length; k++) {
-    if (off.has(N[k].d)) continue;
+    if (off.has(N[k].d) || (onlyOK && N[k].r !== 1)) continue;
     const dx = mx * DPR - px[k], dy = my * DPR - py[k], d = dx * dx + dy * dy;
     if (d < bd) { bd = d; best = k; }
   }
@@ -623,6 +640,9 @@ document.querySelectorAll('.li').forEach(el => el.onclick = () => {
   if (off.has(d)) { off.delete(d); el.classList.remove('off'); } else { off.add(d); el.classList.add('off'); }
   draw();
 });
+document.getElementById('onlyok').addEventListener('change', e => {
+  onlyOK = e.target.checked; if (!sel) autoFit(); draw();
+});
 addEventListener('resize', () => { resize(); if (!sel) autoFit(); draw(); });
 resize(); autoFit(); draw(); tick(); saveMarks();
 // 带 #ca_xxxx 打开时直接定位到那个点
@@ -651,6 +671,9 @@ def main():
         'o': outdeg.get(n['id'], 0), 'p': (n.get('provenance') or {}).get('srcPage', ''),
         # 家长向问句直接展示，{{name}} 换成「孩子」——占位符漏到界面上很业余
         'a': (n.get('assessment') or '').replace('{{name}}', '孩子').strip(),
+        'r': {'ai-reviewed': 1, 'disputed': 2}.get(n.get('reviewStatus'), 0),   # 0未审 1过审 2存疑
+        'q': [f"{x.get('type')}｜{x.get('detail','')[:60]}" for x in (n.get('aiIssues') or [])][:3],
+        'L': n.get('literacy') or [],
     } for k, n in enumerate(anchors)]
 
     html = (HTML.replace('__TITLE__', 'K12 教育的能力结构 · 3D 图谱')
@@ -658,6 +681,8 @@ def main():
             .replace('__EDGES__', json.dumps([[e['prerequisiteId'], e['anchorId']] for e in edges], separators=(',', ':')))
             .replace('__COLORS__', json.dumps(COLORS, ensure_ascii=False))
             .replace('__NC__', f"{len(nodes):,}").replace('__EC__', f"{len(edges):,}")
+            .replace('__OKN__', f"{sum(1 for n in nodes if n['r'] == 1):,}")
+            .replace('__BADN__', f"{sum(1 for n in nodes if n['r'] == 2):,}")
             .replace('__DC__', str(len({n['d'] for n in nodes})))
             .replace('__HGT__', str(HGT)))
     p = Path(a.out); p.write_text(html, encoding='utf-8')

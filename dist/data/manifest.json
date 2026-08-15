@@ -31,66 +31,70 @@
       "LIST": 147
     },
     "byReview": {
-      "llm-proposed": 1191
+      "disputed": 905,
+      "ai-reviewed": 272,
+      "llm-proposed": 14
     }
   },
   "usableAnchors": 0,
+  "aiReviewedAnchors": 272,
+  "disputedAnchors": 905,
   "files": {
     "anchors/art.jsonl": {
-      "bytes": 189918,
-      "sha256": "bde7cc001aad188e7f73b734e37a0e4f74a981a4964dddc9f9b1a7004756ad36"
+      "bytes": 239714,
+      "sha256": "292d09d6ebe5823f8f95f961d94e6a61788bf3984215e677bbd5eacecac32264"
     },
     "anchors/biology.jsonl": {
-      "bytes": 29006,
-      "sha256": "d849c6caa8679e4b93bd09c714930aaef260eb43144f69cb149273e0729f1f2f"
+      "bytes": 33353,
+      "sha256": "fc0796b860db45065705536d8b2c150d690f47fa809e17e89309101b3fa2ec3c"
     },
     "anchors/chemistry.jsonl": {
-      "bytes": 67965,
-      "sha256": "cc418e8eec5d7ee523814ef3577fe23904beab48b09daa89956107cb0af3fe4d"
+      "bytes": 79037,
+      "sha256": "16cc82bea2fb4a6257f46d19b4964b4bd75baf4c042b4fe8d093ce4191e76fce"
     },
     "anchors/chinese.jsonl": {
-      "bytes": 107261,
-      "sha256": "a0e383bb386f95d99ae6dbdb2c78e08c463c9f9e7cc0041677a9772fd5044f03"
+      "bytes": 135030,
+      "sha256": "482283b87a757edb028afd58abe00336d6827d2057e6eb90bae3d2761e2a96af"
     },
     "anchors/english.jsonl": {
-      "bytes": 54117,
-      "sha256": "e9b1517eb568becb40b9d4842b5faa3e6ce008a814e00fd113a8380f5510181a"
+      "bytes": 64055,
+      "sha256": "083ca919674b45b9ca9d0984c41459b7770dbc0effe62de6e990daffeae61b4b"
     },
     "anchors/geography.jsonl": {
-      "bytes": 22543,
-      "sha256": "d5c19f87ae0be1b5c22834e0844d58a0d077b466d7be390eb5caaa2fd1a79a93"
+      "bytes": 27666,
+      "sha256": "2d6624d95fb054b2225034f574243b0494e719aaaeeb891356136f764b4734b0"
     },
     "anchors/history.jsonl": {
-      "bytes": 10972,
-      "sha256": "5cbd71406e8cbde372c09b89c727558d891947a258455547bf80a9faf9b79bf5"
+      "bytes": 13211,
+      "sha256": "4de4fba6c5e34757603fed23bd16127d6526d08df73854aa3f21c6655aeefa52"
     },
     "anchors/infotech.jsonl": {
-      "bytes": 49637,
-      "sha256": "0d052a946164e39c647352ef7f602d8fef373f218052950be716a5234d63e050"
+      "bytes": 59374,
+      "sha256": "5906bbd9a0c06af6859fe41d45117f7ebd5d5b2bf03f459841244ffeb66569a1"
     },
     "anchors/labor.jsonl": {
-      "bytes": 46314,
-      "sha256": "cb160e39c2fcc193e6eae6322e704160fe7b775b99358f8d27f93429ef828d02"
+      "bytes": 61017,
+      "sha256": "a2136d1658616723994b39302da44904e9e74c0fb1eacb4e9193ba46b7bdcb1d"
     },
     "anchors/math.jsonl": {
-      "bytes": 202841,
-      "sha256": "4e2d46267520a56ae54cf721378991677df861e121b7fbfe46e5913999842111"
+      "bytes": 236709,
+      "sha256": "620ab87b27df1448b68fe0406bab2701517bebf7c0a89bc518f33512c2636df0"
     },
     "anchors/morality.jsonl": {
-      "bytes": 22950,
-      "sha256": "108e423e8caceda99d11e13c6f27d83cc37f55e4d746e835f7d2d56c6d97765e"
+      "bytes": 28908,
+      "sha256": "4654aa2db43f15e9b50b43afeb54bf1ca68159a4ac812814272025c73e82cc86"
     },
     "anchors/pe.jsonl": {
-      "bytes": 199093,
-      "sha256": "9c5f637282d246feecd797debddada7c11e66968d8307a7b681e12e254a93c7a"
+      "bytes": 255173,
+      "sha256": "f2b1c5cb4357ee073c1eb4a7c32548b7f47b1e889069fe12932c641f9cab8100"
     },
     "anchors/physics.jsonl": {
-      "bytes": 64762,
-      "sha256": "2cfb87a8a562f0adfb86a5b612b1cb6da009b85ae512fa2c83cb7b9e0f7f9718"
+      "bytes": 76076,
+      "sha256": "e57a04c7730bfcd37bc4d3ecfbb831534adef3feb86cbb820f3713d2fd8906d4"
     },
     "anchors/science.jsonl": {
-      "bytes": 265919,
-      "sha256": "b25ef44aeb80f71d5fddd2222ef0fea64413c28c609a2d5b51f37713a7db9b94"
+      "bytes": 349146,
+      "sha256": "8a3f901bc64a0e1a5ebd4cad6b3f0f6e869ccd7cb94e557df1f29ac55c58828e"
     },
     "edges/art.jsonl": {
       "bytes": 152691,

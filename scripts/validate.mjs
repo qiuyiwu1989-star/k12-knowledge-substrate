@@ -65,7 +65,11 @@ const DISCIPLINES = new Set(['语文', '数学', '英语', '物理', '化学', '
 const TRACKS = new Set(['DAG', 'LIST', 'MATRIX']);
 const TYPES = new Set(['CONCEPTUAL', 'PROCEDURAL', 'REPRESENTATIONAL', 'LANGUAGE', 'META']);
 const COGNITIVE = new Set(['了解', '理解', '掌握', '应用']);
-const REVIEW = new Set(['llm-proposed', 'auto-confirmed', 'expert-confirmed', 'disputed']);
+// ai-reviewed：过了 AI 学科审查，但**不是**教师复核。
+// 单列一档而不是并入 auto-confirmed，是因为 auto-confirmed 的含义是
+// 「三源证据一致，机器可以自动确认」——那是客观校验；AI 审查是主观判断，
+// 两者混在一起，usableAnchors 这个指标就废了。
+const REVIEW = new Set(['llm-proposed', 'ai-reviewed', 'auto-confirmed', 'expert-confirmed', 'disputed']);
 const ID_RE = /^ca_[A-Za-z0-9]{8}$/;
 const GRADE_RE = /^G(1[0-2]|[1-9])$/;
 
@@ -85,9 +89,15 @@ for (const { rec: a, where } of anchors) {
   if (!REVIEW.has(a.reviewStatus)) err(where, `reviewStatus 非法：${a.reviewStatus}`);
   if (a.schemaVersion !== '0.1.0') err(where, `schemaVersion 应为 0.1.0，实为 ${a.schemaVersion}`);
 
-  // ★ 可判定性 —— 底座的分界线
+  // ★ 可判定性 —— 底座的分界线。
+  //   disputed 的条目豁免：它们已经被标记为有问题、已退出可用集合，
+  //   再让 CI 因为它们崩掉，只会逼人把问题标记删掉了事。
   const d = checkDecidable(a.statement);
-  if (!d.ok) err(where, `[${a.id}] statement 不可判定 —— ${d.reasons.join('；')}`);
+  if (!d.ok) {
+    const msg = `[${a.id}] statement 不可判定 —— ${d.reasons.join('；')}`;
+    if (a.reviewStatus === 'disputed') warn(where, msg + '（已标 disputed，豁免）');
+    else err(where, msg);
+  }
 
   // ★ 规范化 —— 诗歌库教训
   const un = findUnnormalized(a, ['statement', 'object', 'strand', 'topic', 'dimension'], a.discipline);
@@ -118,6 +128,9 @@ for (const { rec: a, where } of anchors) {
     if (!a.supersededBy) err(where, `[${a.id}] 已弃用但缺 supersededBy — 档案里的引用会悬空`);
   } else if (a.supersededBy) {
     warn(where, `[${a.id}] 未弃用却填了 supersededBy`);
+  }
+  if (a.reviewStatus === 'ai-reviewed' && !a.literacy?.length) {
+    warn(where, `[${a.id}] 标了 ai-reviewed 却没有核心素养标签 — 审查应该顺手补上`);
   }
   if (a.reviewStatus === 'llm-proposed' && (a.reviewedBy?.length ?? 0) > 0) {
     warn(where, `[${a.id}] 有 reviewedBy 却仍是 llm-proposed，复核结果没落盘？`);
