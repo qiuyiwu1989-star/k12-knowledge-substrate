@@ -222,9 +222,17 @@ for (const { rec: e, where } of edges) {
   // LIST 档规则的原意是「别在覆盖模型内部建链」——字表条目之间没有先修关系。
   // 但「能利用网络搜集资料」这类语文能力可以是别科的真前置（艺术搜集编曲素材要用到）。
   // 所以精确表述为：LIST 不能当被修方，LIST↔LIST 一律不许，LIST 当跨学科前置放行。
-  if (A.a.track === 'LIST') {
-    err(where, `${k} LIST 档不能作为被修方 — 覆盖模型没有「学完这个才能学那个」的语义`);
-  } else if (P.a.track === 'LIST' && A.a.discipline === P.a.discipline) {
+  // LIST 档原则上不能当被修方 —— 覆盖模型里，字 A 和字 B 之间没有先修关系。
+  // **唯一例外：集合包含。** 一张表是另一张的真子集时（基本字表 ⊂ 常用字表一 95%、
+  // 二级词汇表 ⊂ 三级词汇表 100%），「掌握超集」确实要求「先掌握子集」——
+  // 这是客观可验的事实，不是语义上的牵强。
+  // 例外必须由 set-containment 证据本身背书，不接受口头声明。
+  const isContainment = (e.evidence ?? []).some((v) => v.kind === 'set-containment');
+  if (A.a.track === 'LIST' && !isContainment) {
+    err(where, `${k} LIST 档不能作为被修方 — 覆盖模型没有「学完这个才能学那个」的语义（除非有 set-containment 证据）`);
+  } else if (A.a.track === 'LIST' && isContainment && !e.containment) {
+    err(where, `${k} 声称集合包含却没有 containment 字段 — 包含率必须落盘可核`);
+  } else if (P.a.track === 'LIST' && A.a.discipline === P.a.discipline && !isContainment) {
     err(where, `${k} 同学科内 LIST 档不建先修图 — 字表词表篇目是覆盖模型，强建必产垃圾边`);
   }
   if (e.strength === 'hard' && (A.a.track === 'MATRIX' || P.a.track === 'MATRIX')) {

@@ -72,6 +72,7 @@ const CASES = [
   ['弃用无去向也无原因被拦',          'anchors/x.jsonl', A({ id: 'ca_TEST0006', deprecated: true }), '既无 supersededBy 也无 dropReason'],
   ['仅 llm 证据的 hard 边被拦',       'edges/x.jsonl',   E({ strength: 'hard' }), '只有 llm 证据'],
   ['LIST 当被修方被拦',               'edges/x.jsonl',   E({ anchorId: S.list.id, prerequisiteId: S.early.id }), 'LIST 档不能作为被修方'],
+  ['声称集合包含却无 containment 被拦', 'edges/x.jsonl',   E({ anchorId: S.list.id, prerequisiteId: S.early.id, evidence: [{ kind: 'set-containment', detail: '口说无凭' }] }), '没有 containment 字段'],
   ['MATRIX 档 hard 边被拦',           'edges/x.jsonl',   E({ anchorId: S.matrix.id, prerequisiteId: S.matrix2.id, strength: 'hard', evidence: [{ kind: 'expert', detail: 'x' }] }), 'MATRIX 档不得有 hard 边'],
   ['学段倒挂被拦',                    'edges/x.jsonl',   E({ anchorId: S.early.id, prerequisiteId: S.late.id, evidence: [{ kind: 'expert', detail: 'x' }] }), '倒挂'],
   ['自环被拦',                        'edges/x.jsonl',   E({ prerequisiteId: S.late.id }), '自环'],

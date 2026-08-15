@@ -6,7 +6,7 @@
   "counts": {
     "anchors": 1334,
     "candidates": 0,
-    "edges": 453,
+    "edges": 455,
     "listItems": 6091,
     "mappings": 4,
     "byDiscipline": {
@@ -116,6 +116,14 @@
     "edges/chemistry.jsonl": {
       "bytes": 29391,
       "sha256": "21c7235292a47ca8c36eea690a8dbf7d16b7381bc61ea7f6c2a94bd90b2164cf"
+    },
+    "edges/chinese.jsonl": {
+      "bytes": 575,
+      "sha256": "dfefe77454660d9671c6e54f317b416f27b2e4f0a40b48a4bba56ba0db454e31"
+    },
+    "edges/english.jsonl": {
+      "bytes": 552,
+      "sha256": "452a5e17892462b7fe6b957f1ddfef84e8a7781d24e0f9c170aac5af92a65665"
     },
     "edges/geography.jsonl": {
       "bytes": 2552,
