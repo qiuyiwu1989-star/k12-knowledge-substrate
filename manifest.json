@@ -4,17 +4,17 @@
   "schemaVersion": "0.1.0",
   "generatedAt": "2026-08-15",
   "counts": {
-    "anchors": 1337,
+    "anchors": 1339,
     "candidates": 0,
     "edges": 455,
-    "listItems": 6193,
+    "listItems": 6262,
     "mappings": 4,
     "byDiscipline": {
       "艺术": 172,
       "生物学": 24,
       "化学": 58,
       "语文": 237,
-      "英语": 56,
+      "英语": 58,
       "地理": 19,
       "历史": 9,
       "信息科技": 41,
@@ -28,17 +28,17 @@
     "byTrack": {
       "MATRIX": 742,
       "DAG": 302,
-      "LIST": 293
+      "LIST": 295
     },
     "byReview": {
       "disputed": 884,
-      "ai-reviewed": 289,
+      "ai-reviewed": 291,
       "llm-proposed": 18,
       "auto-confirmed": 146
     }
   },
   "usableAnchors": 146,
-  "aiReviewedAnchors": 289,
+  "aiReviewedAnchors": 291,
   "disputedAnchors": 884,
   "files": {
     "anchors/art.jsonl": {
@@ -62,8 +62,8 @@
       "sha256": "7fdc108d829ee86fe647ba02106632536af8689534c4dd06963a83343b148947"
     },
     "anchors/english-lists.jsonl": {
-      "bytes": 9350,
-      "sha256": "0238224d9f0ddb0e87e93516728d0d04d48549f311ed942d1903b5e574032f72"
+      "bytes": 11458,
+      "sha256": "016113e9c895114d54d7881772e710527a51702d2ccd785d83187d4409c93985"
     },
     "anchors/english.jsonl": {
       "bytes": 75230,
@@ -161,6 +161,10 @@
       "bytes": 22073,
       "sha256": "0ee4ed35818648df8f79c25b3c3966ac82e1c8157e33a47ccc6c698eea1ed3ea"
     },
+    "lists/grammar/en-grammar.jsonl": {
+      "bytes": 34177,
+      "sha256": "fbe56a338a472845efdedba16b310c327c456743611d44276a9d25fa877d9bdd"
+    },
     "lists/hanzi/changyong-3500.jsonl": {
       "bytes": 1423376,
       "sha256": "fd5c50aeca00a463551c1dc2569176104d008d858745431cd5e51f79939c33af"
@@ -179,15 +183,15 @@
     },
     "lists/vocab/en-culture.jsonl": {
       "bytes": 16051,
-      "sha256": "50f4f1ff49086bff6c8d6a9e712efed1bdb1e6a79dd2a49a198021e202feac23"
+      "sha256": "c39d2685c4afb7815950e11131eb4d684ea8963baf4e4dd977016bf28a1f3ea3"
     },
     "lists/vocab/en-geo.jsonl": {
       "bytes": 16568,
-      "sha256": "187d45d6edd1972c18da59b8b8c773fb546f1f4f4b4224fe0a4d55f6a75301a2"
+      "sha256": "0e12de79691597e48f89a0223742b77c3eb76a1c29a631be9fefb14b612496f9"
     },
     "lists/vocab/en-irregular-verbs.jsonl": {
-      "bytes": 47945,
-      "sha256": "084781bd94b1ee171f97398f766bc6a87157a3df897d9dac46162e79328b6e50"
+      "bytes": 47953,
+      "sha256": "a2041520f442493e55c83dc7c0d41a3e74deec66c40555531a7f3197119548f0"
     },
     "lists/vocab/en-numerals.jsonl": {
       "bytes": 23757,

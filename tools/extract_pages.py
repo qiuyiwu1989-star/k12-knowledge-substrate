@@ -73,6 +73,24 @@ PROMPTS = {
 - 不要输出表头「动词/过去式/过去分词」，不要输出页眉页脚页码
 不解释、不总结。第一个字符必须是第一个动词的第一个字母。""",
 
+    'yufa': """逐行转写这一页「语法项目表」的内容。这是《义务教育英语课程标准（2022年版）》附录4，是一份三层的层级清单。
+
+层级形如：
+    一、词类            ← 第一层，中文数字加顿号
+    （一）名词          ← 第二层，圆括号里的中文数字
+    1. 可数名词及其单、复数   ← 条目，阿拉伯数字加点
+
+输出规则（每行三或四段，用制表符分隔）：
+- 第一层输出：L1<TAB>序号<TAB>标题文字（如 `L1	一	词类`）
+- 第二层输出：L2<TAB>序号<TAB>标题文字（如 `L2	一	名词`）
+- 条目输出：I<TAB>序号<TAB>条目文字（如 `I	1	可数名词及其单、复数`）
+- 「+」号可能出现在行首（如 `+（八）主谓一致`）也可能在行末。**无论在哪**，都在第四段输出一个 +
+  （如 `L2	八	主谓一致	+`）。第三段的文字里不要保留这个 +
+- 序号只写序号本身，不带顿号、圆括号、点号
+- 条目文字去掉行首的「1.」，只保留内容
+- 不要输出页眉、页脚、页码、书名、「说明」段落及其解释文字
+不解释、不总结。第一个字符必须是 L 或 I。""",
+
     'pianmu': """逐字转写这一页的全部篇目列表。这是《义务教育语文课程标准（2022年版）》附录1「优秀诗文背诵推荐篇目」的一页，条目形如「编号 篇名（首句）  作者」。
 
 输出规则：
@@ -142,6 +160,19 @@ def parse(kind, text):
         if kind == 'buguize':
             if len(parts) >= 3 and parts[0]:
                 rows.append(('@' + str(len(rows)), tuple(parts[:3])))
+            continue
+        if kind == 'yufa':
+            # L1/L2/I<TAB>序号<TAB>文字[<TAB>+]
+            if len(parts) >= 3 and parts[0] in ('L1', 'L2', 'I'):
+                plus = '+' if (len(parts) >= 4 and '+' in parts[3]) or parts[2].startswith('+') else ''
+                txt = parts[2].lstrip('+＋').strip()
+                item = (parts[0], parts[1], txt, plus)
+                # 同一段连续重复原地丢弃。实测同一页各次转写行数在 19–23 之间摆动，
+                # 差额全是模型把某一小节重复输出了一遍 —— 不在这里压平，
+                # 位置对齐就会整段错位，投票结果虚低且并出重复条目。
+                if rows and rows[-1][1] == item:
+                    continue
+                rows.append(('@' + str(len(rows)), item))
             continue
         if kind in ('zibiao', 'jibenzi'):
             if len(parts) >= 2 and parts[0]:
@@ -218,6 +249,20 @@ def main():
             else:
                 out[(grp, f'{k}@{pos}')] = (k, v)
         return out
+
+    # ── 防跑飞：给错页码时，模型会在非目标页上打转，一页吐上百行。
+    #    实测把语法表页码写成 145-153（实际到 149），p153 一次吐了 894 行。
+    #    行数中位数的 3 倍是硬上限，超了直接报错而不是产出垃圾。
+    runaway = []
+    for i in pages:
+        counts = sorted(len(parse(a.kind, results[i][r])) for r in range(a.runs))
+        med = counts[len(counts) // 2]
+        if med > 200:
+            runaway.append((i + 1, med))
+    if runaway:
+        print("  ✗ 疑似跑飞（页, 中位行数）:", runaway)
+        print("    多半是页码给错了，模型在非目标页上打转。核对页码后重跑。")
+        return 1
 
     out_rows, conflicts = [], []
     for i in pages:

@@ -287,7 +287,11 @@ for (const { rec: it, where } of lists) {
   if (!/^lst_[a-z0-9-]{3,40}$/.test(it.listId ?? '')) err(where, `listId 格式非法：${it.listId}`);
   if (!it.key) err(where, `清单条目缺 key`);
   // 英语词表条目是拉丁文本，套中文标点规则会把 `Britain n.` 改成 `Britain n`
-  const un = findUnnormalized(it, ['key'], /^lst_en-/.test(it.listId || '') ? 'latin' : '语文');
+  // 规范化按**内容**定，不按 listId 前缀定 —— normalizeText 自己会认纯拉丁内容。
+  // 教训重演过一次：先前按 `lst_en-` 前缀强制走拉丁规则，于是 lst_en-grammar 里
+  // 中文写的语法项目「关系从句（亦称…）」被要求把全角括号改成半角。
+  // 同一条规则 normalize.mjs 顶部已经写过，这里当初没跟上。
+  const un = findUnnormalized(it, ['key'], '语文');
   for (const u of un) err(where, `清单 key 未规范化：「${u.raw}」→「${u.normalized}」`);
   if (it.level && !GRADE_RE.test(it.level)) err(where, `清单 level 非法：${it.level}`);
   if (it.stage && !/^G(1[0-2]|[1-9])(-(1[0-2]|[1-9]))?$/.test(it.stage)) err(where, `清单 stage 非法：${it.stage}`);

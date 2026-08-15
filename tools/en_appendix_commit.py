@@ -25,6 +25,17 @@ import fitz  # noqa: E402
 ALNUM = string.ascii_letters + string.digits
 
 
+def normalize_keys(keys, disc='英语'):
+    """规范形只有 scripts/decide.mjs 一份实现，Python 侧一律 shell 出去调它。
+    `hang (悬挂)` 这类中英混排，括内是中文 → 规范形是全角括号。"""
+    import subprocess
+    payload = '\n'.join(json.dumps({'statement': k, 'discipline': disc},
+                                    ensure_ascii=False) for k in keys)
+    r = subprocess.run(['node', str(ROOT / 'scripts/decide.mjs')], input=payload,
+                       capture_output=True, text=True, check=True)
+    return [json.loads(l)['normalized'] for l in r.stdout.split('\n') if l.strip()]
+
+
 def new_id(taken):
     """无语义 ID。ID 一旦被档案引用就不能变，所以不能带含义 —— 含义会过时。"""
     while True:
@@ -161,6 +172,8 @@ def main():
     def write_list(list_id, stage, sect, items, alpha, page_of, extra_tag=None):
         if alpha:
             items = sorted(items, key=lambda r: norm(r['key']))
+        for it, nk in zip(items, normalize_keys([i['key'] for i in items])):
+            it['key'] = nk
         f = LISTS / f"{list_id.replace('lst_', '')}.jsonl"
         with f.open('w', encoding='utf-8') as fh:
             for i, r in enumerate(items, 1):
@@ -187,9 +200,10 @@ def main():
 
     # 不规则动词：三列，key 取原形，过去式/过去分词进 meta
     f = LISTS / 'en-irregular-verbs.jsonl'
+    vkeys = normalize_keys([(list(r['value']) + [''])[0] for r in verbs])
     with f.open('w', encoding='utf-8') as fh:
-        for i, r in enumerate(verbs, 1):
-            base, past, part = (list(r['value']) + ['', ''])[:3]
+        for i, (r, base) in enumerate(zip(verbs, vkeys), 1):
+            _, past, part = (list(r['value']) + ['', ''])[:3]
             fh.write(json.dumps({
                 'listId': 'lst_en-irregular-verbs', 'key': base, 'kind': 'WORD',
                 'stage': 'G7-9', 'level': None, 'seq': i, 'tags': ['不规则动词表'],
@@ -204,7 +218,13 @@ def main():
 
     # 锚点回写
     tgt = ROOT / 'anchors/english-lists.jsonl'
-    arr = files.get('english-lists.jsonl', []) + new_anchors
+    # 幂等：重跑时先剔掉上一轮写进去的同名锚点，否则每跑一次多 3 条孤儿
+    prev = files.get('english-lists.jsonl', [])
+    new_st = {a['statement'] for a in new_anchors}
+    keep = [a for a in prev if a['statement'] not in new_st]
+    if len(prev) != len(keep):
+        print(f"  ~ 剔除上一轮重复写入的 {len(prev) - len(keep)} 条")
+    arr = keep + new_anchors
     with tgt.open('w', encoding='utf-8') as fh:
         for a in arr:
             fh.write(json.dumps(a, ensure_ascii=False) + '\n')
