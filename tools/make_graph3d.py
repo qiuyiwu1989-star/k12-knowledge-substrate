@@ -117,273 +117,304 @@ HTML = r"""<!doctype html><html lang="zh-CN"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1"><title>__TITLE__</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
-body{background:#07070a;color:#e8e6e1;font:15px/1.6 -apple-system,"PingFang SC","Microsoft YaHei",sans-serif;overflow:hidden}
+:root{--bg:#080a11;--fg:#eceaf0;--mut:#7d8496;--dim:#565d6e;--line:#1c2130;--card:rgba(13,16,25,.94)}
+body{background:var(--bg);color:var(--fg);font:15px/1.62 -apple-system,"PingFang SC","Microsoft YaHei",sans-serif;overflow:hidden}
 canvas{display:block;cursor:grab}canvas.drag{cursor:grabbing}
-#hero{position:fixed;left:52px;top:15%;max-width:400px;pointer-events:none;z-index:5;transition:opacity .4s;
- text-shadow:0 2px 24px #07070a,0 0 60px #07070a}
-@media(max-width:1100px){#hero{top:11%;max-width:320px}#hero h1{font-size:34px}#legend{display:none}}
-#hero .kicker{font-size:11px;letter-spacing:.2em;color:#8b8780;margin-bottom:20px}
-#hero .kicker i{color:#e0554a;font-style:normal}
-#hero h1{font-size:clamp(38px,5vw,62px);line-height:1.04;font-weight:600;letter-spacing:-.025em;margin-bottom:22px}
-#hero p{color:#a5a099;font-size:14px;max-width:330px}
-#hero b{color:#e8e6e1;font-weight:600}
-#legend{position:fixed;left:52px;bottom:34px;z-index:6;transition:opacity .3s}
-#legend h4{font-size:10px;letter-spacing:.16em;color:#6d6a64;margin-bottom:10px;font-weight:600}
-.li{display:flex;align-items:center;gap:10px;padding:2.5px 0;cursor:pointer;font-size:12.5px;width:210px}
-.li.off{opacity:.28}.li .dot{width:8px;height:8px;border-radius:50%;flex:none}
-.li .n{margin-left:auto;color:#6d6a64;font-variant-numeric:tabular-nums;font-size:11.5px}
-#panel{position:fixed;right:0;top:0;bottom:0;width:420px;background:rgba(10,10,13,.96);backdrop-filter:blur(14px);border-left:1px solid #1e1e24;padding:28px 26px;overflow:auto;transform:translateX(100%);transition:transform .28s cubic-bezier(.2,.7,.3,1);z-index:8}
-#panel.on{transform:none}
-#panel .tag{display:inline-block;font-size:11px;padding:2px 9px;border-radius:99px;border:1px solid #2b2b33;color:#a5a099;margin:0 5px 8px 0}
-#panel h2{font-size:22px;line-height:1.42;margin:10px 0 6px;font-weight:600}
-#panel h5{font-size:10px;letter-spacing:.15em;color:#6d6a64;margin:24px 0 9px;font-weight:600}
-#panel ul{padding-left:17px}#panel li{margin:5px 0;color:#c2beb7;font-size:13.5px}
-#panel .chain div{padding:5px 0 5px 13px;font-size:13px;color:#c2beb7;cursor:pointer;border-left:2px solid #232329}
-#panel .chain div:hover{color:#fff;border-left-color:#6a6a78}
-#close{position:absolute;right:18px;top:15px;background:none;border:none;color:#6d6a64;font-size:25px;cursor:pointer;line-height:1}
-#top{position:fixed;left:0;right:0;top:0;padding:18px 24px;display:flex;gap:12px;align-items:center;z-index:7;pointer-events:none}
-#top *{pointer-events:auto}
-#q{background:rgba(16,16,20,.9);border:1px solid #22222a;border-radius:9px;color:#e8e6e1;padding:8px 13px;font:inherit;font-size:13px;width:230px}
-.badge{font-size:11px;color:#8b8780;background:rgba(16,16,20,.85);border:1px solid #22222a;border-radius:99px;padding:5px 11px}
-.badge.warn{color:#c98b2f;border-color:#3a2f18}
-#hint{position:fixed;right:26px;bottom:22px;font-size:11px;color:#55535c;z-index:5;transition:opacity .3s}
-#tip{position:fixed;pointer-events:none;background:rgba(16,16,20,.97);border:1px solid #2b2b33;border-radius:8px;padding:7px 11px;font-size:12.5px;max-width:300px;display:none;z-index:9}
-#gr{position:fixed;left:14px;top:0;bottom:0;width:40px;pointer-events:none;z-index:4}
-#gr div{position:absolute;font-size:10px;color:#3c3c44;letter-spacing:.1em;transform:translateY(-50%)}
+#logo{position:fixed;left:44px;top:34px;font-size:19px;font-weight:800;letter-spacing:.16em;z-index:6}
+#logo span{color:var(--mut);font-weight:500;letter-spacing:.1em;font-size:12px;display:block;margin-top:5px}
+/* hero 常驻，不随选中消失 —— 它是这一页的说明书 */
+#hero{position:fixed;left:44px;top:23%;max-width:396px;pointer-events:none;z-index:5}
+#hero h1{font-size:clamp(40px,4.6vw,64px);line-height:1.02;font-weight:600;letter-spacing:-.03em;margin-bottom:26px}
+#hero h1 i{color:#e8607d;font-style:normal}
+#hero p{color:var(--mut);font-size:13.5px;margin-bottom:11px;max-width:352px}
+#hero b{color:var(--fg);font-weight:600}
+#hero .sub{color:var(--dim);font-size:12.5px}
+#cta{position:fixed;left:44px;top:calc(23% + 330px);display:flex;gap:14px;align-items:center;z-index:6}
+#cta a{font-size:12.5px;color:var(--fg);background:rgba(20,24,36,.9);border:1px solid var(--line);border-radius:99px;padding:8px 16px;text-decoration:none}
+#cta a:hover{border-color:var(--dim)}
+#cta em{font-style:normal;font-size:10.5px;letter-spacing:.13em;color:var(--dim)}
+#legend{position:fixed;left:44px;bottom:36px;z-index:6}
+#legend h4{font-size:10px;letter-spacing:.17em;color:var(--dim);margin-bottom:11px;font-weight:600}
+.li{display:flex;align-items:center;gap:11px;padding:2.5px 0;cursor:pointer;font-size:12.5px;width:290px;color:var(--mut);transition:color .2s,opacity .2s}
+.li .dot{width:8px;height:8px;border-radius:50%;flex:none;transition:opacity .2s}
+.li .n{margin-left:auto;font-variant-numeric:tabular-nums;font-size:11.5px;color:var(--dim)}
+.li:hover,.li.active{color:var(--fg)}
+.li.active .n{color:var(--fg)}
+.li.off{opacity:.3}
+.li.faded{opacity:.34}
+/* 面板：标题 → 家长向问句 → 全部前置总数 → 直接前置 → 解锁什么 */
+#panel{position:fixed;right:26px;top:26px;width:412px;max-height:calc(100vh - 52px);background:var(--card);backdrop-filter:blur(16px);
+ border:1px solid var(--line);border-radius:18px;padding:24px 26px 26px;overflow:auto;z-index:8;
+ opacity:0;transform:translateY(-8px) scale(.985);pointer-events:none;transition:opacity .22s,transform .22s}
+#panel.on{opacity:1;transform:none;pointer-events:auto}
+#panel .hdr{display:flex;align-items:center;gap:9px;margin-bottom:11px}
+#panel .hdr .dot{width:8px;height:8px;border-radius:50%;flex:none}
+#panel .hdr span{font-size:10.5px;letter-spacing:.15em;color:var(--mut);text-transform:uppercase}
+#panel h2{font-size:23px;line-height:1.34;font-weight:600;letter-spacing:-.01em;margin-bottom:13px}
+#panel .ask{color:var(--mut);font-size:14px;line-height:1.62}
+#panel .big{font-size:44px;font-weight:600;letter-spacing:-.03em;margin:26px 0 0;line-height:1}
+#panel .big em{font-style:normal;font-size:13.5px;font-weight:400;color:var(--mut);margin-left:9px;letter-spacing:0}
+#panel .bignote{color:var(--dim);font-size:12.5px;margin-top:7px}
+#panel h5{font-size:10.5px;letter-spacing:.15em;color:var(--dim);margin:26px 0 3px;font-weight:600;text-transform:uppercase}
+#panel h5 b{color:var(--fg);margin-left:5px;font-weight:600}
+.row{display:flex;align-items:flex-start;gap:10px;padding:8px 0;cursor:pointer;border-bottom:1px solid rgba(255,255,255,.035)}
+.row:last-child{border-bottom:none}
+.row:hover .t{color:#fff}
+.row .dot{width:7px;height:7px;border-radius:50%;flex:none;margin-top:7px}
+.row .t{font-size:13.5px;line-height:1.45;flex:1;color:#cdd2dd;transition:color .15s}
+.row .g{font-size:11.5px;color:var(--dim);flex:none;margin-top:1px}
+.none{color:var(--dim);font-size:13px;font-style:italic;padding:6px 0}
+#back{background:none;border:1px solid var(--line);border-radius:8px;color:var(--mut);font:inherit;font-size:12px;padding:4px 11px;cursor:pointer;margin-bottom:14px}
+#back:hover{color:var(--fg);border-color:var(--dim)}
+#close{position:absolute;right:16px;top:15px;background:none;border:none;color:var(--dim);font-size:22px;cursor:pointer;line-height:1}
+#close:hover{color:var(--fg)}
+#q{position:fixed;right:26px;top:26px;background:rgba(20,24,36,.9);border:1px solid var(--line);border-radius:9px;color:var(--fg);padding:8px 14px;font:inherit;font-size:13px;width:212px;z-index:7}
+#hint{position:fixed;right:30px;bottom:26px;font-size:11.5px;color:var(--dim);z-index:5}
+#hint b{color:var(--mut);font-weight:600}
+/* 悬停是信息卡，不是小提示条 */
+#tip{position:fixed;pointer-events:none;background:var(--card);backdrop-filter:blur(14px);border:1px solid var(--line);
+ border-radius:14px;padding:15px 17px;max-width:330px;display:none;z-index:9;box-shadow:0 12px 40px rgba(0,0,0,.5)}
+#tip .hdr{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+#tip .hdr .dot{width:7px;height:7px;border-radius:50%}
+#tip .hdr span{font-size:10px;letter-spacing:.14em;color:var(--mut);text-transform:uppercase}
+#tip h3{font-size:16px;line-height:1.36;font-weight:600;margin-bottom:7px}
+#tip p{font-size:12.8px;line-height:1.55;color:var(--mut)}
+#gr{position:fixed;left:0;top:0;bottom:0;width:34px;pointer-events:none;z-index:4}
+#gr div{position:absolute;font-size:9.5px;color:#333a4a;letter-spacing:.1em;transform:translateY(-50%);left:12px}
+#warn{position:fixed;left:50%;transform:translateX(-50%);top:26px;font-size:11px;color:#c98b2f;background:rgba(30,24,12,.8);
+ border:1px solid #3a2f18;border-radius:99px;padding:5px 13px;z-index:7;white-space:nowrap}
+/* 窄屏：hero 让位给图，但警示条和搜索必须都还在，且不能叠 */
+@media(max-width:1180px){
+  #hero,#legend,#cta{display:none}
+  #logo{left:18px;top:16px;font-size:15px}#logo span{display:none}
+  #warn{left:auto;right:18px;top:16px;transform:none}
+  #q{top:52px;right:18px;width:180px}
+  #hint{left:18px;right:18px;bottom:16px;text-align:center;font-size:10.5px}
+  #panel{right:10px;top:88px;width:calc(100vw - 20px);max-width:400px;max-height:calc(100vh - 108px)}
+}
+@media(max-width:620px){#logo,#q{display:none}}
 </style></head><body>
 <canvas id="cv"></canvas><div id="gr"></div>
+<div id="logo">K12 底座<span>YONGLE · 永乐教育</span></div>
 <div id="hero">
-  <div class="kicker"><i>●</i> 中国义务教育课程标准 2022 · 一至九年级</div>
-  <h1>一个孩子<br>要学的全部。</h1>
-  <p><b>__NC__</b> 条能力断言，<b>__EC__</b> 条先修依赖，<b>__DC__</b> 个学科。<br>
-  <b>拖动旋转</b>，<b>点任意一个点</b>看它之前必须先掌握什么。</p>
+  <h1>一个孩子<br>要学的全部<i>。</i></h1>
+  <p><b>__NC__</b> 条能力断言、<b>__EC__</b> 条先修依赖，从认字到方程。</p>
+  <p>每条依赖都写明了<b>什么必须排在前面、为什么</b>。<b>点任意一个点</b>，
+     看一个学习者在此之前必须掌握的全部。</p>
+  <p class="sub">由 AI 从教育部《义务教育课程标准（2022年版）》1,594 页扫描件构建，<br>开放数据，等待教师复核。</p>
 </div>
-<div id="top">
-  <input id="q" placeholder="搜索能力…（回车定位）">
-  <span class="badge" id="stat"></span>
-  <span class="badge warn">全部未经教师复核</span>
+<div id="cta">
+  <a href="https://github.com/qiuyiwu1989-star/k12-knowledge-substrate" target="_blank" rel="noopener">在 GitHub 上查看</a>
+  <a href="/2d/">2D 视角</a>
+  <em>开放数据 · ODBL 1.0</em>
 </div>
+<div id="warn">全部条目未经教师复核</div>
+<input id="q" placeholder="搜索能力…（回车定位）">
 <div id="legend"><h4>学科 · 点击开关</h4><div id="ls"></div></div>
-<div id="hint">拖动旋转 · 滚轮缩放 · 点击选中</div>
+<div id="hint"><b>拖动</b>旋转 · <b>滚轮</b>缩放 · <b>点一个点</b>，然后顺着它的前置往回走</div>
 <div id="panel"><button id="close">×</button><div id="pc"></div></div>
 <div id="tip"></div>
 <script>
 const N = __NODES__, E = __EDGES__, COLOR = __COLORS__, HGT = __HGT__;
 const cv = document.getElementById('cv'), ctx = cv.getContext('2d', { alpha: false });
 const DPR = Math.min(2, devicePixelRatio || 1);
-let W, H, yaw = 0.5, pitch = -0.18, zoom = 1, cx = 0, cy = 0;
-let sel = null, hi = null, auto = true, dragging = null;
+let W, H, yaw = .5, pitch = -.18, zoom = 1, sel = null, hi = null, auto = true, dragging = null;
+let stack = [];                       // 面板导航历史，支持 ← Back 一跳一跳往回走
 const off = new Set();
 const byId = new Map(N.map(n => [n.i, n]));
 const pre = new Map(), post = new Map();
 for (const n of N) { pre.set(n.i, []); post.set(n.i, []); }
 for (const [a, b] of E) { pre.get(b).push(a); post.get(a).push(b); }
-
 const px = new Float32Array(N.length), py = new Float32Array(N.length), pz = new Float32Array(N.length);
-const order = new Int32Array(N.length);
+let order = [];
 
 function resize() {
   W = cv.width = innerWidth * DPR; H = cv.height = innerHeight * DPR;
   cv.style.width = innerWidth + 'px'; cv.style.height = innerHeight + 'px';
 }
-
-/** 按当前角度量一次投影包围盒，把云团缩放到填满视口 —— 不同屏幕比例都别留一堆黑边 */
-function autoFit(fill = 0.72) {
-  const z0 = zoom; zoom = 1; cx = cy = 0; project();
+function project() {
+  const sy = Math.sin(yaw), cyw = Math.cos(yaw), sp = Math.sin(pitch), cp = Math.cos(pitch);
+  const f = Math.min(W, H) * .62 * zoom, CAM = 2600;
+  for (let k = 0; k < N.length; k++) {
+    const n = N[k];
+    const X = n.x * cyw - n.z * sy, Z0 = n.x * sy + n.z * cyw;
+    const Y = n.y * cp - Z0 * sp, Z = n.y * sp + Z0 * cp;
+    const s = f / Math.max(60, CAM + Z);
+    px[k] = W / 2 + X * s + W * .13; py[k] = H / 2 + Y * s; pz[k] = Z;
+  }
+  order = Array.from({ length: N.length }, (_, k) => k).sort((a, b) => pz[b] - pz[a]);
+}
+function autoFit(fill = .74) {
+  const z0 = zoom; zoom = 1; project();
   let x0 = 1e9, x1 = -1e9, y0 = 1e9, y1 = -1e9;
   for (let k = 0; k < N.length; k++) {
     if (off.has(N[k].d)) continue;
     if (px[k] < x0) x0 = px[k]; if (px[k] > x1) x1 = px[k];
     if (py[k] < y0) y0 = py[k]; if (py[k] > y1) y1 = py[k];
   }
-  const bw = (x1 - x0) || 1, bh = (y1 - y0) || 1;
-  zoom = Math.min(W * fill / bw, H * fill / bh);
+  zoom = Math.min(W * .58 * fill / ((x1 - x0) || 1), H * fill / ((y1 - y0) || 1));
   if (!isFinite(zoom) || zoom <= 0) zoom = z0;
-  zoom = Math.max(0.25, Math.min(9, zoom));
+  zoom = Math.max(.25, Math.min(9, zoom));
 }
 
-function project() {
-  const sy = Math.sin(yaw), cyw = Math.cos(yaw), sp = Math.sin(pitch), cp = Math.cos(pitch);
-  const f = Math.min(W, H) * 0.62 * zoom, CAM = 2600;
-  for (let k = 0; k < N.length; k++) {
-    const n = N[k];
-    // 绕 Y 轴转（学段轴保持竖直），再绕 X 轴俯仰
-    const X = n.x * cyw - n.z * sy;
-    const Z0 = n.x * sy + n.z * cyw;
-    const Y = n.y * cp - Z0 * sp;
-    const Z = n.y * sp + Z0 * cp;
-    const d = CAM + Z;
-    const s = f / (d > 60 ? d : 60);
-    px[k] = W / 2 + X * s + cx * DPR;
-    py[k] = H / 2 + Y * s + cy * DPR;
-    pz[k] = Z;
-    order[k] = k;
-  }
-  // 画家算法：远的先画
-  const arr = Array.from(order);
-  arr.sort((a, b) => pz[b] - pz[a]);
-  for (let k = 0; k < arr.length; k++) order[k] = arr[k];
-}
-
+const idxOf = new Map(N.map((n, k) => [n.i, k]));
 function draw() {
-  ctx.fillStyle = '#07070a'; ctx.fillRect(0, 0, W, H);
+  ctx.fillStyle = '#080a11'; ctx.fillRect(0, 0, W, H);
   project();
   const on = k => !off.has(N[k].d);
-  const idxOf = new Map(N.map((n, k) => [n.i, k]));
   const zmin = -1400, zspan = 2800;
+  const selColor = sel ? (COLOR[byId.get(sel).d] || '#fff') : null;
 
-  // 边：按深度分 3 桶，每桶合成一条 path 一次 stroke（2000+ 次 draw call → 3 次）
-  const buckets = [[], [], []];
+  // 高亮时用「学科色」画子图，不用白色 —— 白色会盖掉学科这层信息
+  const dim = [], lit = [];
   for (const [a, b] of E) {
     const ka = idxOf.get(a), kb = idxOf.get(b);
     if (ka === undefined || kb === undefined || !on(ka) || !on(kb)) continue;
-    const lit = hi && hi.has(a) && (hi.has(b) || b === sel);
-    if (hi && !lit) continue;
-    const t = (((pz[ka] + pz[kb]) / 2) - zmin) / zspan;
-    buckets[t < 0.34 ? 0 : t < 0.67 ? 1 : 2].push([ka, kb, lit]);
+    (hi && hi.has(a) && (hi.has(b) || b === sel) ? lit : dim).push([ka, kb]);
   }
-  const alphas = hi ? [0.62, 0.46, 0.32] : [0.30, 0.20, 0.12];
-  for (let bi = 0; bi < 3; bi++) {
-    if (!buckets[bi].length) continue;
-    ctx.strokeStyle = hi ? `rgba(255,255,255,${alphas[bi]})` : `rgba(150,155,175,${alphas[bi]})`;
-    ctx.lineWidth = (hi ? 1.2 : 0.75) * DPR;
+  if (!hi || dim.length) {
+    const bk = [[], [], []];
+    for (const e of dim) {
+      const t = ((pz[e[0]] + pz[e[1]]) / 2 - zmin) / zspan;
+      bk[t < .34 ? 0 : t < .67 ? 1 : 2].push(e);
+    }
+    const al = hi ? [.028, .018, .01] : [.13, .085, .05];
+    for (let i = 0; i < 3; i++) {
+      if (!bk[i].length) continue;
+      ctx.strokeStyle = `rgba(140,152,184,${al[i]})`; ctx.lineWidth = .65 * DPR;
+      ctx.beginPath();
+      for (const [a, b] of bk[i]) { ctx.moveTo(px[a], py[a]); ctx.lineTo(px[b], py[b]); }
+      ctx.stroke();
+    }
+  }
+  if (lit.length) {
+    ctx.strokeStyle = selColor; ctx.globalAlpha = .55; ctx.lineWidth = 1.15 * DPR;
     ctx.beginPath();
-    for (const [ka, kb] of buckets[bi]) { ctx.moveTo(px[ka], py[ka]); ctx.lineTo(px[kb], py[kb]); }
-    ctx.stroke();
+    for (const [a, b] of lit) { ctx.moveTo(px[a], py[a]); ctx.lineTo(px[b], py[b]); }
+    ctx.stroke(); ctx.globalAlpha = 1;
   }
 
-  // 点：按 颜色×深度桶 批绘
   const groups = new Map();
-  for (let oi = 0; oi < order.length; oi++) {
-    const k = order[oi], n = N[k];
+  for (const k of order) {
     if (!on(k)) continue;
-    const lit = !hi || hi.has(n.i) || n.i === sel;
-    const t = Math.max(0, Math.min(1, (pz[k] - zmin) / zspan));
-    const bucket = Math.min(3, (t * 4) | 0);
-    const key = n.d + '|' + bucket + '|' + (lit ? 1 : 0);
-    if (!groups.has(key)) groups.set(key, { d: n.d, b: bucket, lit, items: [] });
-    groups.get(key).items.push(k);
+    const n = N[k], isLit = !hi || hi.has(n.i) || n.i === sel;
+    const b = Math.min(3, (Math.max(0, Math.min(1, (pz[k] - zmin) / zspan)) * 4) | 0);
+    const key = n.d + b + (isLit ? 1 : 0);
+    if (!groups.has(key)) groups.set(key, { d: n.d, b, lit: isLit, it: [] });
+    groups.get(key).it.push(k);
   }
   for (const g of groups.values()) {
-    const fog = 1 - g.b * 0.19;
-    ctx.globalAlpha = (g.lit ? 1 : 0.09) * fog;
+    ctx.globalAlpha = (g.lit ? 1 : .07) * (1 - g.b * .2);
     ctx.fillStyle = COLOR[g.d] || '#888';
     ctx.beginPath();
-    for (const k of g.items) {
-      const n = N[k];
-      const persp = 2600 / (2600 + pz[k]);
-      const r = (1.45 + Math.sqrt(n.o) * 1.0) * zoom * persp * DPR;
-      ctx.moveTo(px[k] + r, py[k]);
-      ctx.arc(px[k], py[k], r < 0.8 ? 0.8 : r, 0, 7);
+    for (const k of g.it) {
+      const r = (1.5 + Math.sqrt(N[k].o) * 1.05) * zoom * (2600 / (2600 + pz[k])) * DPR;
+      ctx.moveTo(px[k] + r, py[k]); ctx.arc(px[k], py[k], Math.max(.85, r), 0, 7);
     }
     ctx.fill();
   }
   ctx.globalAlpha = 1;
   if (sel != null) {
     const k = idxOf.get(sel);
-    if (k !== undefined) {
-      const persp = 2600 / (2600 + pz[k]);
-      const r = (1.45 + Math.sqrt(byId.get(sel).o) * 1.0) * zoom * persp * DPR;
-      ctx.strokeStyle = '#fff'; ctx.lineWidth = 1.8 * DPR;
-      ctx.beginPath(); ctx.arc(px[k], py[k], Math.max(6 * DPR, r + 5 * DPR), 0, 7); ctx.stroke();
-    }
+    const r = (1.5 + Math.sqrt(byId.get(sel).o) * 1.05) * zoom * (2600 / (2600 + pz[k])) * DPR;
+    ctx.fillStyle = selColor; ctx.beginPath(); ctx.arc(px[k], py[k], Math.max(4.5 * DPR, r), 0, 7); ctx.fill();
+    ctx.strokeStyle = '#fff'; ctx.lineWidth = 1.7 * DPR;
+    ctx.beginPath(); ctx.arc(px[k], py[k], Math.max(8 * DPR, r + 5 * DPR), 0, 7); ctx.stroke();
   }
-  // 学段刻度：跟着俯仰角走
   const gr = document.getElementById('gr');
-  if (!gr.dataset.built) { gr.innerHTML = [1,3,5,7,9].map(g => `<div data-g="${g}">G${g}</div>`).join(''); gr.dataset.built = 1; }
-  const sp2 = Math.sin(pitch), cp2 = Math.cos(pitch), f2 = Math.min(W, H) * 0.62 * zoom;
+  if (!gr.dataset.b) { gr.innerHTML = [1,3,5,7,9].map(g => `<div data-g="${g}">G${g}</div>`).join(''); gr.dataset.b = 1; }
+  const sp2 = Math.sin(pitch), cp2 = Math.cos(pitch), f2 = Math.min(W, H) * .62 * zoom;
   gr.querySelectorAll('div').forEach(el => {
     const g = +el.dataset.g, yy = -HGT / 2 + (g - 1) / 8 * HGT;
-    const Y = yy * cp2, Z = yy * sp2, s = f2 / (2600 + Z);
-    el.style.top = ((H / 2 + Y * s + cy * DPR) / DPR) + 'px';
+    el.style.top = ((H / 2 + yy * cp2 * f2 / (2600 + yy * sp2)) / DPR) + 'px';
   });
 }
+function tick() { if (auto && !dragging && !sel) { yaw += .0015; draw(); } requestAnimationFrame(tick); }
 
-function tick() {
-  if (auto && !dragging && !sel) { yaw += 0.0016; draw(); }
-  requestAnimationFrame(tick);
-}
-
-function ancestors(id, cap = 500) {
+function ancestors(id, cap = 900) {
   const seen = new Set(), q = [id];
   while (q.length && seen.size < cap) { const v = q.pop();
     for (const p of pre.get(v) || []) if (!seen.has(p)) { seen.add(p); q.push(p); } }
   return seen;
 }
-function descendants(id, cap = 500) {
-  const seen = new Set(), q = [id];
-  while (q.length && seen.size < cap) { const v = q.pop();
-    for (const p of post.get(v) || []) if (!seen.has(p)) { seen.add(p); q.push(p); } }
-  return seen;
-}
+const esc = s => String(s ?? '').replace(/[&<>]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[c]));
+const gLabel = n => n.s ? 'G' + n.s : '';
 
+/** Marble 的关键设计：大字给「全部前置总数」，列表只列直接前置。
+ *  一次倒出 200 条传递前置，人是读不动的；一跳一跳走才走得下去。 */
+function show(n, push = true) {
+  if (push && sel && sel !== n.i) stack.push(sel);
+  sel = n.i; hi = ancestors(n.i); hi.add(n.i); auto = false;
+  const total = ancestors(n.i).size;
+  const dp = (pre.get(n.i) || []).map(i => byId.get(i)).filter(Boolean).sort((a, b) => a.s - b.s);
+  const dn = (post.get(n.i) || []).map(i => byId.get(i)).filter(Boolean).sort((a, b) => a.s - b.s);
+  const c = COLOR[n.d] || '#888';
+  const row = a => `<div class="row" onclick="jump('${a.i}')">
+      <span class="dot" style="background:${COLOR[a.d] || '#888'}"></span>
+      <span class="t">${esc(a.t)}</span><span class="g">${gLabel(a)}</span></div>`;
+  document.getElementById('pc').innerHTML =
+    (stack.length ? `<button id="back" onclick="goBack()">← 返回</button>` : '') + `
+    <div class="hdr"><span class="dot" style="background:${c}"></span>
+      <span>${esc(n.st || n.d)} · ${gLabel(n) || '学段未定'}</span></div>
+    <h2>${esc(n.t)}</h2>
+    ${n.a ? `<p class="ask">${esc(n.a)}</p>` : ''}
+    <div class="big">${total}<em>条前置，合计</em></div>
+    <div class="bignote">一个学习者在此之前必须掌握的全部，一路回溯到底。</div>
+    <h5>直接建立在<b>${dp.length}</b></h5>
+    ${dp.length ? dp.map(row).join('') : '<div class="none">没有前置 —— 这是一个起点</div>'}
+    <h5>接下来解锁<b>${dn.length}</b></h5>
+    ${dn.length ? dn.slice(0, 24).map(row).join('') : '<div class="none">暂无后继</div>'}`;
+  document.getElementById('panel').classList.add('on');
+  document.getElementById('q').style.display = 'none';
+  document.querySelectorAll('.li').forEach(el => el.classList.toggle('faded', el.dataset.d !== n.d));
+  draw();
+}
+window.jump = id => { const n = byId.get(id); if (n) show(n); };
+window.goBack = () => { const p = stack.pop(); if (p) show(byId.get(p), false); else clear(); };
+function clear() {
+  sel = null; hi = null; auto = true; stack = [];
+  document.getElementById('panel').classList.remove('on');
+  document.getElementById('q').style.display = '';
+  document.querySelectorAll('.li').forEach(el => el.classList.remove('faded'));
+  draw();
+}
 function pick(mx, my) {
-  let best = -1, bd = 26 * 26;
+  let best = -1, bd = 24 * 24;
   for (let k = 0; k < N.length; k++) {
     if (off.has(N[k].d)) continue;
-    const dx = mx * DPR - px[k], dy = my * DPR - py[k];
-    const d = dx * dx + dy * dy;
+    const dx = mx * DPR - px[k], dy = my * DPR - py[k], d = dx * dx + dy * dy;
     if (d < bd) { bd = d; best = k; }
   }
   return best >= 0 ? N[best] : null;
 }
-
-const esc = s => String(s ?? '').replace(/[&<>]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[c]));
-function show(n) {
-  sel = n.i; hi = ancestors(n.i); hi.add(n.i); auto = false;
-  const anc = [...ancestors(n.i)].map(i => byId.get(i)).filter(Boolean).sort((a, b) => a.s - b.s);
-  const des = [...descendants(n.i)].map(i => byId.get(i)).filter(Boolean).sort((a, b) => a.s - b.s);
-  document.getElementById('pc').innerHTML = `
-    <span class="tag" style="border-color:${COLOR[n.d]};color:${COLOR[n.d]}">${esc(n.d)}</span>
-    <span class="tag">${esc(n.st || '未标注领域')}</span>
-    <span class="tag">${n.s ? 'G' + n.s : '学段未定'}</span>
-    <h2>${esc(n.t)}</h2>
-    <div style="color:#6d6a64;font-size:12px">${esc(n.i)} · 课标 p${esc(n.p)}</div>
-    ${n.e && n.e.length ? `<h5>掌握证据（机器起草，未复核）</h5><ul>${n.e.map(x => `<li>${esc(x)}</li>`).join('')}</ul>` : ''}
-    <h5>之前必须先掌握（${anc.length}）</h5>
-    ${anc.length ? `<div class="chain">${anc.map(a => `<div onclick="jump('${a.i}')">${a.s ? 'G' + a.s + ' · ' : ''}${esc(a.t)}</div>`).join('')}</div>`
-      : '<div style="color:#6d6a64;font-size:13px">没有前置 —— 这是一个起点</div>'}
-    <h5>解锁了什么（${des.length}）</h5>
-    ${des.length ? `<div class="chain">${des.slice(0, 50).map(a => `<div onclick="jump('${a.i}')">${a.s ? 'G' + a.s + ' · ' : ''}${esc(a.t)}</div>`).join('')}</div>`
-      : '<div style="color:#6d6a64;font-size:13px">暂无后继</div>'}`;
-  document.getElementById('panel').classList.add('on');
-  for (const id of ['hero', 'legend', 'hint']) document.getElementById(id).style.opacity = 0;
-  draw();
-}
-window.jump = id => { const n = byId.get(id); if (n) show(n); };
-function clear() {
-  sel = null; hi = null; auto = true;
-  document.getElementById('panel').classList.remove('on');
-  for (const id of ['hero', 'legend', 'hint']) document.getElementById(id).style.opacity = 1;
-  draw();
-}
-
 cv.addEventListener('mousedown', e => { dragging = [e.clientX, e.clientY, yaw, pitch, false]; cv.classList.add('drag'); });
 addEventListener('mousemove', e => {
   if (dragging) {
     const dx = e.clientX - dragging[0], dy = e.clientY - dragging[1];
     if (Math.abs(dx) + Math.abs(dy) > 3) dragging[4] = true;
-    yaw = dragging[2] + dx * 0.0055;
-    pitch = Math.max(-1.15, Math.min(1.15, dragging[3] + dy * 0.0045));
+    yaw = dragging[2] + dx * .0055; pitch = Math.max(-1.15, Math.min(1.15, dragging[3] + dy * .0045));
     draw(); return;
   }
   const n = pick(e.clientX, e.clientY), tip = document.getElementById('tip');
-  if (n) { tip.style.display = 'block'; tip.style.left = Math.min(innerWidth - 320, e.clientX + 14) + 'px';
-    tip.style.top = (e.clientY + 16) + 'px'; tip.textContent = n.t; cv.style.cursor = 'pointer'; }
-  else { tip.style.display = 'none'; cv.style.cursor = dragging ? 'grabbing' : 'grab'; }
+  if (n && n.i !== sel) {
+    tip.style.display = 'block';
+    tip.innerHTML = `<div class="hdr"><span class="dot" style="background:${COLOR[n.d] || '#888'}"></span>
+      <span>${esc(n.st || n.d)} · ${gLabel(n) || '学段未定'}</span></div>
+      <h3>${esc(n.t)}</h3>${n.a ? `<p>${esc(n.a)}</p>` : ''}`;
+    const r = tip.getBoundingClientRect();
+    tip.style.left = Math.min(innerWidth - r.width - 16, e.clientX + 18) + 'px';
+    tip.style.top = Math.min(innerHeight - r.height - 16, e.clientY + 18) + 'px';
+    cv.style.cursor = 'pointer';
+  } else { tip.style.display = 'none'; cv.style.cursor = 'grab'; }
 });
 addEventListener('mouseup', e => {
-  const moved = dragging && dragging[4];
-  dragging = null; cv.classList.remove('drag');
+  const moved = dragging && dragging[4]; dragging = null; cv.classList.remove('drag');
   if (moved) return;
   const n = pick(e.clientX, e.clientY);
   if (n) show(n); else if (e.target === cv) clear();
 });
-cv.addEventListener('wheel', e => {
-  e.preventDefault(); zoom *= e.deltaY < 0 ? 1.1 : 1 / 1.1;
-  zoom = Math.max(0.25, Math.min(9, zoom)); draw();
-}, { passive: false });
-// 触屏：单指转，双指缩放
+cv.addEventListener('wheel', e => { e.preventDefault();
+  zoom = Math.max(.25, Math.min(9, zoom * (e.deltaY < 0 ? 1.1 : 1 / 1.1))); draw(); }, { passive: false });
 let tp = null;
 cv.addEventListener('touchstart', e => {
   if (e.touches.length === 1) tp = { x: e.touches[0].clientX, y: e.touches[0].clientY, yaw, pitch };
@@ -393,25 +424,26 @@ cv.addEventListener('touchstart', e => {
 cv.addEventListener('touchmove', e => {
   if (!tp) return;
   if (e.touches.length === 1 && tp.yaw !== undefined) {
-    yaw = tp.yaw + (e.touches[0].clientX - tp.x) * 0.006;
-    pitch = Math.max(-1.15, Math.min(1.15, tp.pitch + (e.touches[0].clientY - tp.y) * 0.005));
+    yaw = tp.yaw + (e.touches[0].clientX - tp.x) * .006;
+    pitch = Math.max(-1.15, Math.min(1.15, tp.pitch + (e.touches[0].clientY - tp.y) * .005));
   } else if (e.touches.length === 2 && tp.d) {
-    zoom = Math.max(0.25, Math.min(9, tp.z * Math.hypot(e.touches[0].clientX - e.touches[1].clientX,
+    zoom = Math.max(.25, Math.min(9, tp.z * Math.hypot(e.touches[0].clientX - e.touches[1].clientX,
       e.touches[0].clientY - e.touches[1].clientY) / tp.d));
   }
   draw();
 }, { passive: true });
 cv.addEventListener('touchend', () => { tp = null; }, { passive: true });
-
 document.getElementById('close').onclick = clear;
+addEventListener('keydown', e => {
+  if (e.key === 'Escape') clear();
+  if (e.key === 'Backspace' && sel && document.activeElement.id !== 'q') { e.preventDefault(); goBack(); }
+});
 document.getElementById('q').addEventListener('keydown', e => {
   if (e.key !== 'Enter') return;
   const v = e.target.value.trim(); if (!v) return;
   const n = N.find(x => x.t.includes(v));
-  if (n) { zoom = Math.max(zoom, 2); show(n); }
+  if (n) { zoom = Math.max(zoom, 2.2); show(n); }
 });
-addEventListener('keydown', e => { if (e.key === 'Escape') clear(); });
-
 const counts = {};
 for (const n of N) counts[n.d] = (counts[n.d] || 0) + 1;
 document.getElementById('ls').innerHTML = Object.entries(counts).sort((a, b) => b[1] - a[1])
@@ -421,7 +453,6 @@ document.querySelectorAll('.li').forEach(el => el.onclick = () => {
   if (off.has(d)) { off.delete(d); el.classList.remove('off'); } else { off.add(d); el.classList.add('off'); }
   draw();
 });
-document.getElementById('stat').textContent = `${N.length} 个能力 · ${E.length} 条依赖`;
 addEventListener('resize', () => { resize(); if (!sel) autoFit(); draw(); });
 resize(); autoFit(); draw(); tick();
 </script></body></html>"""
@@ -445,7 +476,8 @@ def main():
         's': STAGE_ORD.get((n.get('stageHint') or {}).get('min'), 0),
         'x': round(x[k], 1), 'y': round(y[k], 1), 'z': round(z[k], 1),
         'o': outdeg.get(n['id'], 0), 'p': (n.get('provenance') or {}).get('srcPage', ''),
-        'e': (n.get('evidence') or [])[:3],
+        # 家长向问句直接展示，{{name}} 换成「孩子」——占位符漏到界面上很业余
+        'a': (n.get('assessment') or '').replace('{{name}}', '孩子').strip(),
     } for k, n in enumerate(anchors)]
 
     html = (HTML.replace('__TITLE__', 'K12 知识底座 · 3D 能力图谱')

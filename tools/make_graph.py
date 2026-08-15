@@ -140,9 +140,19 @@ canvas{display:block;cursor:grab}canvas.drag{cursor:grabbing}
 #panel h2{font-size:21px;line-height:1.45;margin:10px 0 6px;font-weight:600}
 #panel h5{font-size:10px;letter-spacing:.14em;color:#7d7972;margin:22px 0 8px;font-weight:600}
 #panel ul{padding-left:17px}#panel li{margin:5px 0;color:#c8c4bd;font-size:13.5px}
-#panel .chain{border-left:2px solid #2b2b31;padding-left:13px;margin:4px 0}
-#panel .chain div{padding:4px 0;font-size:13px;color:#c8c4bd;cursor:pointer}
-#panel .chain div:hover{color:#fff}
+#panel .ask{color:#a5a099;font-size:14px;line-height:1.62;margin-top:4px}
+#panel .big{font-size:42px;font-weight:600;letter-spacing:-.03em;margin:24px 0 0;line-height:1}
+#panel .big em{font-style:normal;font-size:13px;font-weight:400;color:#a5a099;margin-left:9px;letter-spacing:0}
+#panel .bignote{color:#6d6a64;font-size:12.5px;margin-top:7px}
+#panel h5 b{color:#e8e6e1;margin-left:5px}
+.row{display:flex;align-items:flex-start;gap:10px;padding:8px 0;cursor:pointer;border-bottom:1px solid rgba(255,255,255,.04)}
+.row:last-child{border-bottom:none}.row:hover .t{color:#fff}
+.row .dot{width:7px;height:7px;border-radius:50%;flex:none;margin-top:7px}
+.row .t{font-size:13.5px;line-height:1.45;flex:1;color:#c8c4bd}
+.row .g{font-size:11.5px;color:#6d6a64;flex:none}
+.none{color:#6d6a64;font-size:13px;font-style:italic;padding:6px 0}
+#back{background:none;border:1px solid #26262b;border-radius:8px;color:#a5a099;font:inherit;font-size:12px;padding:4px 11px;cursor:pointer;margin-bottom:14px}
+#back:hover{color:#fff}
 #close{position:absolute;right:16px;top:14px;background:none;border:none;color:#7d7972;font-size:26px;cursor:pointer;line-height:1}
 #top{position:fixed;left:0;right:0;top:0;padding:16px 22px;display:flex;gap:14px;align-items:center;z-index:7;pointer-events:none}
 #top *{pointer-events:auto}
@@ -188,7 +198,7 @@ function fit() {
 const sx = x => (x * scale + ox) * devicePixelRatio;
 const sy = y => (y * scale + oy) * devicePixelRatio;
 
-function ancestors(id, cap = 400) {
+function ancestors(id, cap = 900) {
   const seen = new Set(), q = [id];
   while (q.length && seen.size < cap) {
     const v = q.pop();
@@ -196,7 +206,7 @@ function ancestors(id, cap = 400) {
   }
   return seen;
 }
-function descendants(id, cap = 400) {
+function descendants(id, cap = 900) {
   const seen = new Set(), q = [id];
   while (q.length && seen.size < cap) {
     const v = q.pop();
@@ -246,31 +256,39 @@ function pick(mx, my) {
 }
 
 const esc = s => String(s ?? '').replace(/[&<>]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[c]));
-function show(n) {
+let stack = [];
+const gL = n => n.s ? 'G' + n.s : '';
+/** 与 3D 版同一套：大数给「全部前置总数」，列表只列直接前置，靠返回一跳一跳走。
+ *  一次倒出 200 条传递前置，人是读不动的。 */
+function show(n, push = true) {
+  if (push && sel && sel !== n.i) stack.push(sel);
   sel = n.i; hi = ancestors(n.i); hi.add(n.i);
-  const anc = [...ancestors(n.i)].map(i => byId.get(i)).filter(Boolean)
-    .sort((a, b) => a.s - b.s);
-  const des = [...descendants(n.i)].map(i => byId.get(i)).filter(Boolean);
-  document.getElementById('pc').innerHTML = `
-    <span class="tag" style="border-color:${COLOR[n.d]};color:${COLOR[n.d]}">${esc(n.d)}</span>
+  const total = ancestors(n.i).size;
+  const dp = (pre.get(n.i) || []).map(i => byId.get(i)).filter(Boolean).sort((a, b) => a.s - b.s);
+  const dn = (post.get(n.i) || []).map(i => byId.get(i)).filter(Boolean).sort((a, b) => a.s - b.s);
+  const c = COLOR[n.d] || '#888';
+  const row = a => `<div class="row" onclick="jump('${a.i}')">
+      <span class="dot" style="background:${COLOR[a.d] || '#888'}"></span>
+      <span class="t">${esc(a.t)}</span><span class="g">${gL(a)}</span></div>`;
+  document.getElementById('pc').innerHTML =
+    (stack.length ? `<button id="back" onclick="goBack()">← 返回</button>` : '') + `
+    <span class="tag" style="border-color:${c};color:${c}">${esc(n.d)}</span>
     <span class="tag">${esc(n.st || '未标注领域')}</span>
-    <span class="tag">${n.s ? 'G' + n.s : '学段未定'}</span>
+    <span class="tag">${gL(n) || '学段未定'}</span>
     <h2>${esc(n.t)}</h2>
-    <div style="color:#7d7972;font-size:12px">${esc(n.i)} · 课标 p${esc(n.p)}</div>
-    ${n.e && n.e.length ? `<h5>掌握证据（机器起草，未复核）</h5><ul>${n.e.map(x => `<li>${esc(x)}</li>`).join('')}</ul>` : ''}
-    <h5>之前必须先掌握（${anc.length}）</h5>
-    ${anc.length ? `<div class="chain">${anc.map(a =>
-      `<div onclick="jump('${a.i}')">${a.s ? 'G' + a.s + ' · ' : ''}${esc(a.t)}</div>`).join('')}</div>`
-      : '<div style="color:#7d7972;font-size:13px">没有前置——这是一个起点</div>'}
-    <h5>解锁了什么（${des.length}）</h5>
-    ${des.length ? `<div class="chain">${des.slice(0, 40).map(a =>
-      `<div onclick="jump('${a.i}')">${a.s ? 'G' + a.s + ' · ' : ''}${esc(a.t)}</div>`).join('')}</div>`
-      : '<div style="color:#7d7972;font-size:13px">暂无后继</div>'}`;
+    ${n.a ? `<p class="ask">${esc(n.a)}</p>` : ''}
+    <div class="big">${total}<em>条前置，合计</em></div>
+    <div class="bignote">一个学习者在此之前必须掌握的全部，一路回溯到底。</div>
+    <h5>直接建立在<b>${dp.length}</b></h5>
+    ${dp.length ? dp.map(row).join('') : '<div class="none">没有前置 —— 这是一个起点</div>'}
+    <h5>接下来解锁<b>${dn.length}</b></h5>
+    ${dn.length ? dn.slice(0, 24).map(row).join('') : '<div class="none">暂无后继</div>'}`;
   document.getElementById('panel').classList.add('on');
   document.getElementById('hero').style.opacity = 0;
   document.getElementById('legend').style.opacity = 0;
   draw();
 }
+window.goBack = () => { const p = stack.pop(); if (p) show(byId.get(p), false); else document.getElementById('close').onclick(); };
 window.jump = id => { const n = byId.get(id); if (n) show(n); };
 
 cv.addEventListener('click', e => {
@@ -294,7 +312,7 @@ cv.addEventListener('wheel', e => {
   scale *= k; draw();
 }, { passive: false });
 document.getElementById('close').onclick = () => {
-  sel = null; hi = null; document.getElementById('panel').classList.remove('on');
+  sel = null; hi = null; stack = []; document.getElementById('panel').classList.remove('on');
   document.getElementById('hero').style.opacity = 1;
   document.getElementById('legend').style.opacity = 1; draw();
 };
@@ -340,7 +358,7 @@ def main():
         't': n['statement'], 's': STAGE_ORD.get((n.get('stageHint') or {}).get('min'), 0),
         'x': round(x[k], 1), 'y': round(y[k], 1), 'o': outdeg.get(n['id'], 0),
         'p': (n.get('provenance') or {}).get('srcPage', ''),
-        'e': (n.get('evidence') or [])[:3],
+        'a': (n.get('assessment') or '').replace('{{name}}', '孩子').strip(),
     } for k, n in enumerate(anchors)]
     E = [[e['prerequisiteId'], e['anchorId']] for e in edges]
 
