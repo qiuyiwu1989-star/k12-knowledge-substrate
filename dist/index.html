@@ -167,7 +167,8 @@ function autoFit(fill = .74) {
     if (px[k] < x0) x0 = px[k]; if (px[k] > x1) x1 = px[k];
     if (py[k] < y0) y0 = py[k]; if (py[k] > y1) y1 = py[k];
   }
-  const availW2 = innerWidth > 1180 ? W * .56 : W * .92;
+  // 未选中态按「面板关闭」的可用区来定缩放，别按开着算，否则整团偏小
+  const availW2 = Math.max(240 * DPR, W - PAD_L() - 24 * DPR);
   zoom = Math.min(availW2 * fill / ((x1 - x0) || 1), H * fill / ((y1 - y0) || 1));
   if (!isFinite(zoom) || zoom <= 0) zoom = z0;
   zoom = Math.max(.25, Math.min(9, zoom));
@@ -175,7 +176,15 @@ function autoFit(fill = .74) {
 
 const idxOf = new Map(N.map((n, k) => [n.i, k]));
 /** 左栏可见时把云团整体右移，隐藏时归零。投影和框选必须共用同一个值。 */
-function OFFSET() { return innerWidth > 1180 ? W * .13 : 0; }
+const PAD_L = () => (innerWidth > 1180 ? 462 : 16) * DPR;   // 左侧信息栏
+const PAD_R = () => (innerWidth > 1180 ? 456 : 16) * DPR;   // 右侧详情面板
+/** 未选中时面板是关的，可用区是「左栏右边缘 → 屏幕右边缘」，按它居中。
+ *  选中后面板打开，frameSelection 会把重心再挪到「左栏 → 面板」的中点，
+ *  补间负责这段位移 —— 内容给面板让位，是自然的，不是跳变。 */
+function OFFSET() {
+  if (innerWidth <= 1180) return 0;
+  return (PAD_L() + W) / 2 - W / 2;
+}
 function draw() {
   ctx.fillStyle = '#080a11'; ctx.fillRect(0, 0, W, H);
   project();
@@ -281,19 +290,22 @@ function frameSelection() {
     if (py[k] < y0) y0 = py[k]; if (py[k] > y1) y1 = py[k];
   }
   if (!cnt) return;
-  const availW = innerWidth > 1180 ? W - 470 * DPR : W, pad = 150 * DPR;
+  // 可视区被**两侧**夹住：左边是 400px 的信息栏，右边是 412px 的面板。
+  // 之前只扣了右侧面板，算出的中心偏左 ~230px，选中的子图正好落在 hero 文字后面。
+  const padL = PAD_L(), padR = PAD_R();
+  const availW = Math.max(240 * DPR, W - padL - padR), pad = 120 * DPR;
   // 包围盒有下限：选中一个没有前置的孤点时 bbox 退化成一个点，
   // 按它算出的缩放会是天文数字，整张图直接飞出画面 —— 这就是「跑出画面」的原因。
   const bw = Math.max(320 * DPR, x1 - x0), bh = Math.max(320 * DPR, y1 - y0);
   const k = Math.max(.45, Math.min(2.6,                       // 单次最多放大 2.6 倍
-    Math.min((availW - pad) / bw, (H - pad) / bh)));
+    Math.min(Math.max(0, availW - pad) / bw, (H - pad) / bh)));
   const z1 = Math.max(.3, Math.min(5, zoom * k));
   const kk = z1 / zoom;
   // 缩放是绕「屏幕中心 + 当前平移」发生的，不是绕原点。
   // 之前按原点补偿平移，缩得越狠飞得越远。
   const Cx = W / 2 + OFFSET() + panX, Cy = H / 2 + panY;
   const cxn = (x0 + x1) / 2, cyn = (y0 + y1) / 2;
-  const tx = availW / 2, ty = H / 2;
+  const tx = padL + availW / 2, ty = H / 2;     // 左右边界的中点，不是「减掉面板后的一半」
   tweenTo(z1,
     tx - W / 2 - OFFSET() - (cxn - Cx) * kk,
     ty - H / 2 - (cyn - Cy) * kk);
