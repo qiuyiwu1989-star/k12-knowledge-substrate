@@ -44,68 +44,68 @@
   "disputedAnchors": 884,
   "files": {
     "anchors/art.jsonl": {
-      "bytes": 295137,
-      "sha256": "b9844a0468c4658127b2c802e37c36f0535dd02a2da8fa4a6fca07f25fb35eff"
+      "bytes": 301134,
+      "sha256": "1355396508924ac2faaa25c233fa32f135b0403c073b37fcbce7871c476f1332"
     },
     "anchors/biology.jsonl": {
-      "bytes": 85778,
-      "sha256": "305403e7e6596e890eecb14af7778f4ab386dcbe1982db3896e22be248ae30df"
+      "bytes": 91765,
+      "sha256": "9b143dc854e6ac972e74054a79128127ce8d4ad237eb6cb88a9b2c5e1480b185"
     },
     "anchors/chemistry.jsonl": {
-      "bytes": 85613,
-      "sha256": "a429e7f10e009be51afcc4a79a4d95875489f4a04eff8b2205dad103356ee27d"
+      "bytes": 91091,
+      "sha256": "a2311c349ca5ee411a9d8a7029a0a90a5d6c5e79c8e514352e85a81cc3a6d33b"
     },
     "anchors/chinese-lists.jsonl": {
-      "bytes": 153790,
-      "sha256": "e60765383a884c5689a654646b4e432aa22462433f70332ff752bd1fa00e933e"
+      "bytes": 168679,
+      "sha256": "ba469c77c62d085acd0c45872e1cf7d8dad51081da199ae3066d6d9b646886e4"
     },
     "anchors/chinese.jsonl": {
-      "bytes": 161410,
-      "sha256": "7fdc108d829ee86fe647ba02106632536af8689534c4dd06963a83343b148947"
+      "bytes": 165697,
+      "sha256": "262f7a90fd45f7d3d676dcde6bc8cf3e85ae9065f39dd0bb90a3be17f9f711f2"
     },
     "anchors/english-lists.jsonl": {
-      "bytes": 11458,
-      "sha256": "016113e9c895114d54d7881772e710527a51702d2ccd785d83187d4409c93985"
+      "bytes": 12504,
+      "sha256": "ea6a8b185ac6d97a4cb939d3764374ba861b5aa40a6f06e2ffebc1fcd178a61f"
     },
     "anchors/english.jsonl": {
-      "bytes": 75230,
-      "sha256": "0cba82f22430472933a8dd9dc454d2f85169b9e1c7de0882c4b99187791e60f7"
+      "bytes": 78458,
+      "sha256": "334c7905460900d8da91a40ebf1d49f2960647ff5ea525b06d2b0c8ef9655960"
     },
     "anchors/geography.jsonl": {
-      "bytes": 57833,
-      "sha256": "12c76dcda9eb48825febb3666ac3dc71f592764ce91c65c0a5e913ce2849a25c"
+      "bytes": 61199,
+      "sha256": "c679e2614c9e5151e85f26d813df4370c3e751d3bf6827630f43ccd8dccc499f"
     },
     "anchors/history.jsonl": {
-      "bytes": 73734,
-      "sha256": "74a5117e07977604f0b1e588c1067452ba8853c12aba09863eb301cf8b067b22"
+      "bytes": 78151,
+      "sha256": "18107c4dd7c869b6803232d93f8b6aefb17478df972660503907923cac80bf27"
     },
     "anchors/infotech.jsonl": {
-      "bytes": 70352,
-      "sha256": "8cb8dfc0ba7365b38cf6678a4e6829b6c5404936cf5154ec59f590ae0b14e276"
+      "bytes": 73037,
+      "sha256": "e624168fde8f5d6cd15c8a4ee1c3593a59bb46fae153fd3b9f5649e6671bc065"
     },
     "anchors/labor.jsonl": {
-      "bytes": 76859,
-      "sha256": "294a5607a8b2917ec0adbca452b9c00871bdb397337fb040c8bc2d9047826a33"
+      "bytes": 77709,
+      "sha256": "39cdc75a4dd2edd808acc771826d941b53f8cd65eff48c44fd2fb0a199e04e61"
     },
     "anchors/math.jsonl": {
-      "bytes": 270536,
-      "sha256": "075e095a8b32ea951ce5d62ef8bce5a707e8ed1eae96d39f1635a6626d41b9e1"
+      "bytes": 288994,
+      "sha256": "e12317934220c1c018629a2ca329555c446ad41a33418231ffa7855a0490f0f5"
     },
     "anchors/morality.jsonl": {
-      "bytes": 33610,
-      "sha256": "8a49924dbcd029a6b9b790ce14a6973e2c0af95998bffd053ba9fcf8dba8f483"
+      "bytes": 34348,
+      "sha256": "317cdf135124c8ce4f6d6109bdbf11c869713df7a45314523002e79b43fc0dc8"
     },
     "anchors/pe.jsonl": {
-      "bytes": 313820,
-      "sha256": "08951fee452b15385cad1ca47f6b25a368e3cdc1234454596ed42d36b9e549de"
+      "bytes": 319081,
+      "sha256": "b4aecbcd1d7078c1f808d2205d41e111d4131433bb705713d2bf835df42bec16"
     },
     "anchors/physics.jsonl": {
-      "bytes": 87345,
-      "sha256": "1ebda90d22a622cfdc0007844949c832324da358f63409fdef2d10a0410e1df9"
+      "bytes": 90811,
+      "sha256": "b1d6777329240abd1865177c5820946a6de718df6a04035f860c2fe024b25476"
     },
     "anchors/science.jsonl": {
-      "bytes": 431312,
-      "sha256": "15950356c5d85efdbd6a797a25c0bcd634fafb1d0dcfa6cf705276b846bf48e3"
+      "bytes": 439625,
+      "sha256": "7fe6312ca090390995e131582df2c1e3b9b2d00b70a8684ddeedced7a8203be4"
     },
     "edges/art.jsonl": {
       "bytes": 21013,

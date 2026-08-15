@@ -76,6 +76,12 @@ const COGNITIVE = new Set(['了解', '理解', '掌握', '应用']);
 // 后者是判定客观、根本不需要人；前者是需要人、只是人还没看。混为一谈，
 // 「异议」就无从提起 —— 没有东西标着待异议。
 const REVIEW = new Set(['llm-proposed', 'ai-reviewed', 'ai-adjudicated', 'auto-confirmed', 'expert-confirmed', 'disputed']);
+// 横切维度是**封闭词表**。开放式打标会退化成同义词泛滥，那就又变回一堆
+// 没法 join 的自由文本 —— 而这个维度存在的全部意义就是能 join。
+const CC_VOCAB = JSON.parse(readFileSync(join(ROOT, 'mappings/crosscutting.json'), 'utf8'));
+const CROSSCUTTING = new Set(CC_VOCAB.crosscutting.map((c) => c.id));
+const PRACTICE = new Set(CC_VOCAB.practice.map((p) => p.id));
+
 const ID_RE = /^ca_[A-Za-z0-9]{8}$/;
 const GRADE_RE = /^G(1[0-2]|[1-9])$/;
 
@@ -121,6 +127,15 @@ for (const { rec: a, where } of anchors) {
   }
 
   if (!Array.isArray(a.evidence) || a.evidence.length === 0) err(where, `[${a.id}] evidence 不能为空`);
+
+  for (const c of a.crosscutting ?? []) {
+    if (!CROSSCUTTING.has(c)) err(where, `[${a.id}] crosscutting 取值不在词表内：${c}`);
+  }
+  for (const c of a.practice ?? []) {
+    if (!PRACTICE.has(c)) err(where, `[${a.id}] practice 取值不在词表内：${c}`);
+  }
+  if ((a.crosscutting?.length ?? 0) > 2) err(where, `[${a.id}] crosscutting 最多 2 个`);
+  if ((a.practice?.length ?? 0) > 2) err(where, `[${a.id}] practice 最多 2 个`);
 
   // MATRIX 档的 topic/dimension 是复核任务，不是抽取任务 —— 机器填不出来，
   // 强求只会逼出编造的维度。所以只对已复核的锚点强制。

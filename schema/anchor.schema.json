@@ -198,6 +198,41 @@
     "schemaVersion": {
       "type": "string",
       "const": "0.1.0"
+    },
+    "crosscutting": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "patterns",
+          "cause-effect",
+          "scale-proportion",
+          "systems",
+          "matter-energy",
+          "structure-function",
+          "stability-change"
+        ]
+      },
+      "maxItems": 2,
+      "description": "跨学科通用概念。跨界不靠前置边表达（那种关系罕见且易造假），靠「练的是同一件事」。见 docs/crosscutting.md"
+    },
+    "practice": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "asking-questions",
+          "modeling",
+          "investigating",
+          "analyzing-data",
+          "math-computational",
+          "explaining-designing",
+          "argumentation",
+          "communicating"
+        ]
+      },
+      "maxItems": 2,
+      "description": "学生要做哪类动作。与 crosscutting 正交。"
     }
   }
 }
