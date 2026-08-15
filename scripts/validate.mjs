@@ -95,7 +95,8 @@ for (const { rec: a, where } of anchors) {
   const d = checkDecidable(a.statement);
   if (!d.ok) {
     const msg = `[${a.id}] statement 不可判定 —— ${d.reasons.join('；')}`;
-    if (a.reviewStatus === 'disputed') warn(where, msg + '（已标 disputed，豁免）');
+    if (a.deprecated) warn(where, msg + '（已弃用，豁免）');
+    else if (a.reviewStatus === 'disputed') warn(where, msg + '（已标 disputed，豁免）');
     else err(where, msg);
   }
 
@@ -104,11 +105,14 @@ for (const { rec: a, where } of anchors) {
   for (const u of un) err(where, `[${a.id}] 字段 ${u.field} 未规范化：「${u.raw}」→ 应为「${u.normalized}」`);
 
   // ★ 去重签名 —— Marble 死在这里（21 组完全同名、75 组基名冲突）
-  const sig = dedupeSignature(a);
-  if (bySignature.has(sig)) {
-    const prev = bySignature.get(sig);
-    err(where, `[${a.id}] 去重签名与 ${prev.a.id} 冲突（${sig}）— 同一学科下 (verb, object) 相同，须合并或改写 object`);
-  } else bySignature.set(sig, { a, where });
+  // 弃用的不参与去重：它已经退出生效集合，跟活着的锚点撞签名不构成问题。
+  if (!a.deprecated) {
+    const sig = dedupeSignature(a);
+    if (bySignature.has(sig)) {
+      const prev = bySignature.get(sig);
+      err(where, `[${a.id}] 去重签名与 ${prev.a.id} 冲突（${sig}）— 同一学科下 (verb, object) 相同，须合并或改写 object`);
+    } else bySignature.set(sig, { a, where });
+  }
 
   if (!Array.isArray(a.evidence) || a.evidence.length === 0) err(where, `[${a.id}] evidence 不能为空`);
 
@@ -125,7 +129,12 @@ for (const { rec: a, where } of anchors) {
     else if (+min.slice(1) > +max.slice(1)) err(where, `[${a.id}] stageHint 区间倒置：${min} > ${max}`);
   }
   if (a.deprecated) {
-    if (!a.supersededBy) err(where, `[${a.id}] 已弃用但缺 supersededBy — 档案里的引用会悬空`);
+    // 弃用有两种：被更好的锚点替代（supersededBy），或被判定为无效而移除（dropReason）。
+    // 后者没有替代者可指 —— 强求 supersededBy 只会逼人随便填一个，那才真会让档案错乱。
+    // 两种都必须留痕：档案里可能已有引用，得查得到「当初为什么没的」。
+    if (!a.supersededBy && !a.dropReason) {
+      err(where, `[${a.id}] 已弃用但既无 supersededBy 也无 dropReason — 档案里的引用会悬空且查不到原因`);
+    }
   } else if (a.supersededBy) {
     warn(where, `[${a.id}] 未弃用却填了 supersededBy`);
   }

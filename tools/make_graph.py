@@ -173,7 +173,6 @@ canvas{display:block;cursor:grab}canvas.drag{cursor:grabbing}
 <div id="top">
   <input id="q" placeholder="搜索能力…（回车跳转）">
   <span class="badge" id="stat"></span>
-  <span class="badge" style="color:#c98b2f">全部未经教师复核</span>
 </div>
 <div id="legend"><h4>学科 · 点击开关</h4><div id="ls"></div></div>
 <div id="panel"><button id="close">×</button><div id="pc"></div></div>

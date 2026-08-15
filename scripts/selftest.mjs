@@ -69,7 +69,7 @@ const CASES = [
   ['ID 重复被拦',                     'anchors/x.jsonl', A({ id: S.early.id }), 'id 重复'],
   ['MATRIX 已复核却缺 topic/dimension 被拦', 'anchors/x.jsonl', A({ id: 'ca_TEST0004', track: 'MATRIX', topic: null, dimension: null, reviewStatus: 'expert-confirmed' }), 'MATRIX 档缺'],
   ['stageHint 区间倒置被拦',          'anchors/x.jsonl', A({ id: 'ca_TEST0005', stageHint: { min: 'G5', max: 'G2' } }), '区间倒置'],
-  ['弃用无 supersededBy 被拦',        'anchors/x.jsonl', A({ id: 'ca_TEST0006', deprecated: true }), '缺 supersededBy'],
+  ['弃用无去向也无原因被拦',          'anchors/x.jsonl', A({ id: 'ca_TEST0006', deprecated: true }), '既无 supersededBy 也无 dropReason'],
   ['仅 llm 证据的 hard 边被拦',       'edges/x.jsonl',   E({ strength: 'hard' }), '只有 llm 证据'],
   ['LIST 当被修方被拦',               'edges/x.jsonl',   E({ anchorId: S.list.id, prerequisiteId: S.early.id }), 'LIST 档不能作为被修方'],
   ['MATRIX 档 hard 边被拦',           'edges/x.jsonl',   E({ anchorId: S.matrix.id, prerequisiteId: S.matrix2.id, strength: 'hard', evidence: [{ kind: 'expert', detail: 'x' }] }), 'MATRIX 档不得有 hard 边'],

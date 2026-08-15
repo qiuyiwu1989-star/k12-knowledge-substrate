@@ -24,7 +24,14 @@ for (const line of lines) {
     process.stdout.write(JSON.stringify({ error: '无法解析', raw: line.slice(0, 80) }) + '\n');
     continue;
   }
-  const normalized = normalizeText(rec.statement ?? '', { discipline: rec.discipline ?? '' });
+  const disc = rec.discipline ?? '';
+  const normalized = normalizeText(rec.statement ?? '', { discipline: disc });
+  // 顺手把其余文本字段也归一 —— 规范化只跑 statement 是不够的：
+  // object 参与去重签名，它没归一等于签名没归一。
+  const fields = {};
+  for (const f of ['object', 'strand', 'topic', 'dimension']) {
+    if (typeof rec[f] === 'string') fields[f] = normalizeText(rec[f], { discipline: disc });
+  }
   const d = checkDecidable(normalized);
-  process.stdout.write(JSON.stringify({ ...rec, normalized, ok: d.ok, verb: d.verb, reasons: d.reasons }) + '\n');
+  process.stdout.write(JSON.stringify({ ...rec, normalized, fields, ok: d.ok, verb: d.verb, reasons: d.reasons }) + '\n');
 }

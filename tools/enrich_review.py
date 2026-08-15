@@ -121,8 +121,13 @@ def main():
     files = {}
     for f in sorted((ROOT / 'anchors').rglob('*.jsonl')):
         files[f] = [json.loads(l) for l in f.open(encoding='utf-8')]
+    # **AI 复审不许碰已确认的锚点。** 课标附录那批是 auto-confirmed（证据强度最高：
+    # 官方来源 + 机械校验 + 判定客观），让主观的 AI 判断去覆盖它，等于自己把分级拆了。
+    # 实测教训：第一次没加这条，138 条 auto-confirmed 被重判到只剩 23 条。
+    SKIP = {'auto-confirmed', 'expert-confirmed'}
     targets = [(f, i, r) for f, rows in files.items() for i, r in enumerate(rows)
-               if not a.only or r['discipline'] == a.only]
+               if r['reviewStatus'] not in SKIP and not r.get('deprecated')
+               and (not a.only or r['discipline'] == a.only)]
     print(f"待审 {len(targets)} 条 · 并发 {a.concurrency}")
 
     edges_in = collections.defaultdict(list)

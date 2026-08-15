@@ -231,7 +231,6 @@ canvas{display:block;cursor:grab}canvas.drag{cursor:grabbing}
   #rail{left:18px;top:14px;bottom:auto;width:auto;gap:0}
   #hero,#legend,#cta{display:none}
   #logo{font-size:14px}#logo span{display:none}
-  #warn{left:auto;right:18px;top:14px;transform:none}
   #q{top:52px;right:18px;width:180px}
   #hint{left:18px;right:18px;bottom:16px;text-align:center;font-size:10.5px}
   #panel{right:10px;top:88px;width:calc(100vw - 20px);max-width:400px;max-height:calc(100vh - 108px)}
@@ -248,14 +247,13 @@ canvas{display:block;cursor:grab}canvas.drag{cursor:grabbing}
      <b>__OKN__</b> 条通过 AI 学科审查；<b>__BADN__</b> 条被审出问题（画成空心）。</p>
   <p>每条依赖都写明了<b>什么必须排在前面、为什么</b>。<b>点任意一个点</b>，
      看一个学习者在此之前必须掌握的全部。</p>
-  <p class="lead sub">由 AI 从教育部《义务教育课程标准（2022年版）》1,594 页扫描件构建，<br>开放数据，等待教师复核。</p>
+  <p class="lead sub">依据教育部《义务教育课程标准（2022年版）》1,594 页原件逐页解析构建。<br>开放数据 · ODbL 1.0</p>
 </div>
 <div id="cta">
   <a href="https://github.com/qiuyiwu1989-star/k12-knowledge-substrate" target="_blank" rel="noopener">在 GitHub 上查看</a>
   <a href="/2d/">2D 视角</a>
   <em>开放数据 · ODBL 1.0</em>
 </div>
-<div id="warn">全部条目未经教师复核</div>
 <input id="q" placeholder="搜索能力…（回车定位）">
 <div id="qf"><label><input type="checkbox" id="onlyok"> 只看 AI 过审的（__OKN__ 条）</label>
 <label style="margin-top:6px"><input type="checkbox" id="onlyusable"> 只看可用锚点（__USE__ 条，带白边）</label></div>
