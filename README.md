@@ -2,7 +2,12 @@
 
 > 让所有教育产品的个人档案，写在同一套 ID 空间里的那层坐标系。
 
-**[graph.html](graph.html) —— 打开就是全学科能力图谱**（单文件，双击即开，不联网）。
+### 🌐 **[k12.yongle.school](https://k12.yongle.school)** —— 在线交互图谱
+
+3D 可旋转版在首页，[2D 俯视版](https://k12.yongle.school/2d/)，
+数据集可直接取：[`/data/`](https://k12.yongle.school/data/)（允许跨域，不用 clone）。
+
+仓库里也有离线版：**[graph-3d.html](graph-3d.html)** / **[graph.html](graph.html)**，单文件双击即开、不联网。
 1,191 条能力断言 · 2,064 条先修依赖 · 14 个学科。点任意一个点，看它之前必须先掌握什么。
 
 > ⚠️ **全部未经教师复核**（`reviewStatus: llm-proposed`）。图先建出来是为了让人挑毛病，
