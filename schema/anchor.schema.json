@@ -233,6 +233,28 @@
       },
       "maxItems": 2,
       "description": "学生要做哪类动作。与 crosscutting 正交。"
+    },
+    "stageTargets": {
+      "type": "array",
+      "description": "分学段累计目标量。仅清单类锚点有。注意这是数量目标不是字表切分——课标不说哪些字属于哪个学段。",
+      "items": {
+        "type": "object",
+        "required": [
+          "stage",
+          "target"
+        ],
+        "properties": {
+          "stage": {
+            "type": "string"
+          },
+          "band": {
+            "type": "string"
+          },
+          "target": {
+            "type": "integer"
+          }
+        }
+      }
     }
   }
 }
