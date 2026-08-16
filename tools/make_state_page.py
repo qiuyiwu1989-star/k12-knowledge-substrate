@@ -60,17 +60,22 @@ TODOS = [
     dict(id='crosscut', t='横切维度打标', d='7 通用概念 + 8 实践，封闭词表',
          done=lambda s: s['tagged'] > 400,
          got=lambda s: f"{s['tagged']} 条已打标"),
-    dict(id='npm', t='DSH 插件发 npm', d='需要你的 npm 账号，我不代办',
-         done=lambda s: bool(s['npm']),
-         got=lambda s: s['npm'] or '未发布'),
+    # 08-17 拍板：不发。git clone 装法够用，发包需要用户账号。
+    # 留在清单里但标成「已定不做」，免得下次又当待办捡起来。
+    dict(id='npm', t='DSH 插件发 npm', d='08-17 决定不发 —— git 装法够用，发包需要你的账号',
+         done=lambda s: True,
+         got=lambda s: s['npm'] or '已定不发'),
     # 3500 字表按音序排，课标只给数量不给「哪些字」—— 切不了，别把它当待办挂着。
     # 能做的是学段目标量（已做），真正的年级颗粒度只能来自教材层。
     dict(id='stage-targets', t='学段目标量', d='让分母对得上年级：386/1600 而不是 386/3500',
          done=lambda s: s['stageTargets'] > 0,
          got=lambda s: f"{s['stageTargets']} 条字表锚点已挂"),
-    dict(id='grade-source', t='年级颗粒度的来源（要你拍板）', d='课标只给学段。真年级在教材层，有版权问题',
-         done=lambda s: False,
-         got=lambda s: '未选路线'),
+    # 08-17 拍板：停在学段，但把学段用足。判据是「默认值占比」——
+    # 源文本给了学段却落成 G1-G9 默认值，就是浪费。
+    dict(id='grade-source', t='学段用足（08-17 定：停在学段，不伪造年级）',
+         d='源文本给了学段却落成 G1-G9 默认值就是浪费',
+         done=lambda s: s['defaultStageRatio'] < 0.25,
+         got=lambda s: f"默认值占比 {s['defaultStageRatio']:.0%}"),
     # 判据考的是「分类修没修好」，不是「这一科内容多不多」。劳动课标本身
     # 可判定内容就少，拿条数当判据是拿错了尺子。
     dict(id='labor-fix', t='修劳动/信息科技/道法的页面范围', d='原按 min..max 取范围，一个离群页把起点拉到 p2',
@@ -119,6 +124,10 @@ def snapshot():
         narrowStage=narrow, maxGrade=maxg,
         tagged=sum(1 for a in live if a.get('crosscutting') or a.get('practice')),
         stageTargets=sum(1 for a in live if a.get('stageTargets')),
+        defaultStageRatio=(lambda nr: (sum(1 for a in nr
+            if (a.get('stageHint') or {}).get('min') == 'G1'
+            and (a.get('stageHint') or {}).get('max') == 'G9') / len(nr)) if nr else 1.0)(
+            [a for a in live if a.get('evidenceSource') == 'curriculum-content']),
         byDiscipline=dict(collections.Counter(a['discipline'] for a in live)),
     )
 

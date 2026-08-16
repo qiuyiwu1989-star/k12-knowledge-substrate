@@ -6,7 +6,7 @@
   "counts": {
     "anchors": 1958,
     "candidates": 0,
-    "edges": 569,
+    "edges": 1204,
     "listItems": 6262,
     "mappings": 4,
     "byDiscipline": {
@@ -44,80 +44,80 @@
   "disputedAnchors": 884,
   "files": {
     "anchors/art.jsonl": {
-      "bytes": 366479,
-      "sha256": "fae40318dcd4d307a9dc245d1a1f4f0b1c2228e83eaedcf1c48b98e40de39871"
+      "bytes": 371563,
+      "sha256": "a6e7f76567f17c183fc086f9f17202a285386a65a444d566f95423bef93d38ce"
     },
     "anchors/biology.jsonl": {
-      "bytes": 87757,
-      "sha256": "525a8b2a7b9a75577ecb93efdde829c21771f91f76062400daea02fb4a5edbd3"
+      "bytes": 91765,
+      "sha256": "9cdd9d1df20bd0059bf334483e9d48b736cccd2b99cae635967d652e342e95ce"
     },
     "anchors/chemistry.jsonl": {
-      "bytes": 127280,
-      "sha256": "672f89310e19ff1b755b5ac301d7e163764a0fdffe524f913e435f5c4e0ce516"
+      "bytes": 130327,
+      "sha256": "764c6eda9f47221e6c7ef2308bc77acd02dc38c640eacc98924f8dfcae1ad2e5"
     },
     "anchors/chinese-lists.jsonl": {
       "bytes": 169439,
       "sha256": "e857b7b5b82bf80237d2f3a5e469bda4d008749521623e637a84f562bd9b75bb"
     },
     "anchors/chinese.jsonl": {
-      "bytes": 237817,
-      "sha256": "60f1033f925bee3f4e9af7d2be8b5ff4e0b8dfeb8222ac8c4503aad3f144294f"
+      "bytes": 243100,
+      "sha256": "7eced291e6da05480a3bed32a2bbf5cf816924ff6c5e29cf114899ff46ffbed3"
     },
     "anchors/english-lists.jsonl": {
       "bytes": 12504,
       "sha256": "ea6a8b185ac6d97a4cb939d3764374ba861b5aa40a6f06e2ffebc1fcd178a61f"
     },
     "anchors/english.jsonl": {
-      "bytes": 142550,
-      "sha256": "a4444d140db62548d8376548b0e06f438997c384739e219dbfa7dfd20dfc354d"
+      "bytes": 147422,
+      "sha256": "9a90a95f0f773aa0af6454cfc4359f7750101cad4874dd00ca829d7957a2d414"
     },
     "anchors/geography.jsonl": {
-      "bytes": 57257,
-      "sha256": "26246b75c499c4f8fa3920031600eeb77537ccbb399ac66837022278453bc8e9"
+      "bytes": 59401,
+      "sha256": "58ea3d681a392f75328f77b1d7047db60c7dd60f0c40d993bff460050cada60b"
     },
     "anchors/history.jsonl": {
-      "bytes": 74022,
-      "sha256": "03eee761bcce0e539762b5935927b14838d945960d0915a2885ca803dd455274"
+      "bytes": 78151,
+      "sha256": "89f53289f87997a783309e1054d63c4cb89ed9b1173f37372a82dff2a56959d7"
     },
     "anchors/infotech.jsonl": {
-      "bytes": 115230,
-      "sha256": "d451e5e1ae887987c334ee2469c09d5fc1734a1c4044aac1bd5851c0c5c657a1"
+      "bytes": 118718,
+      "sha256": "84ce070a8c7736effd30a9bca7b32da24859ad6ccdec8d19181ae8c29c65d42f"
     },
     "anchors/labor.jsonl": {
-      "bytes": 98520,
-      "sha256": "5d40d11d046ad5ad017ffc21bb8fca5297ce6a4daaf5bd62f899c3bc253dbe31"
+      "bytes": 100064,
+      "sha256": "0417530282e125573e6c742d4c3fddb16b42efd57317e5ebe1a361113b2f4f1a"
     },
     "anchors/math.jsonl": {
-      "bytes": 392009,
-      "sha256": "f09272c5d8adcf02034482ef73d9d71bd1218bd724b1bb221c8802de2fc3cf0f"
+      "bytes": 402111,
+      "sha256": "9e24ecb54ffd27ee75f83c13f6e9ab52a9f50d1cc4dcd6ac6b1f6231608bd773"
     },
     "anchors/morality.jsonl": {
-      "bytes": 80782,
-      "sha256": "63580e5c8ad8323e550dd8b0fc8ba05979472f1c34e6c5d9cc2be072d4fe8c01"
+      "bytes": 84317,
+      "sha256": "a6c50dea3eab43308693b1741c24bbcdd170a0cc392fcbc4ce052c257760abdf"
     },
     "anchors/pe.jsonl": {
-      "bytes": 428616,
-      "sha256": "ac17776e6eaa0543500b5790a10ebb3e1b13e5f4e36898f8f923653e4cf5202c"
+      "bytes": 437102,
+      "sha256": "ff43064436f96326d0b423ffd20a604a58a8ddef99748e6972db9ae77706c49f"
     },
     "anchors/physics.jsonl": {
-      "bytes": 129525,
-      "sha256": "13ef001f9786218490d9e08e54425df10c14b0762c17aecfa95b8d46a851c596"
+      "bytes": 132848,
+      "sha256": "cd7c023b66bf7539de2ffbf7e0e724c7fad266258f200544b6cd43473d500e3b"
     },
     "anchors/science.jsonl": {
-      "bytes": 622870,
-      "sha256": "e2d26725b76f11f566ca4c0cfee3e33a6e6e6567ae3cba053b131a425c25cf6a"
+      "bytes": 637959,
+      "sha256": "ba5eddf71ec3b2079fb5b4e5217ca280d06d85bf488ad9340a83305abb4b5351"
     },
     "edges/art.jsonl": {
-      "bytes": 21013,
-      "sha256": "957a6133dbc64a6d99f42e51472a99cdbf0afb27cf72508fcaff1f9a3a4c16b7"
+      "bytes": 43669,
+      "sha256": "291cf50ac1ba15aa16e0fc32cd145638a50c2e5ea7a10867494875e08b140b81"
     },
     "edges/biology.jsonl": {
-      "bytes": 7772,
-      "sha256": "4a7a19db3372f419c9202d61f5a5cb8e800920db64d8fc13d12cb9d98218f720"
+      "bytes": 33134,
+      "sha256": "3bb387d2762b861679b63b0c454be3f98c253a875a6fdb917e784ed95bdbd608"
     },
     "edges/chemistry.jsonl": {
-      "bytes": 34490,
-      "sha256": "e9c9545be9681709b628fb4a5cdcfb43aa0cee81740f69063dd611a6b858685f"
+      "bytes": 52597,
+      "sha256": "9cdd9b3fb9a96fe0e71c8a534b04346a1200f56dfa500548b1463e0f5405ffa3"
     },
     "edges/chinese.jsonl": {
       "bytes": 575,
@@ -128,36 +128,40 @@
       "sha256": "452a5e17892462b7fe6b957f1ddfef84e8a7781d24e0f9c170aac5af92a65665"
     },
     "edges/geography.jsonl": {
-      "bytes": 3437,
-      "sha256": "871d192f6b9a59032fd45aa9e92e7e14178798e67414adfe422a0c197b8ec112"
+      "bytes": 13663,
+      "sha256": "79b6c38d1ea87bbecf9c44c1059b05622564035308b5f0c2ea9aba6a828ad2aa"
+    },
+    "edges/history.jsonl": {
+      "bytes": 31130,
+      "sha256": "b7504bb58443c686db5103133fbe54e7e43bcc4c48f8864e9b7b71e1808f4d4c"
     },
     "edges/infotech.jsonl": {
-      "bytes": 10010,
-      "sha256": "741f5619ca3839e9112d6fa85609859a541f04ed696c2dce01ed0887ec56e159"
+      "bytes": 28346,
+      "sha256": "8b596fb641ad0b2964696672369f22e970114a7cbb969ab806d33befb8d75835"
     },
     "edges/labor.jsonl": {
-      "bytes": 925,
-      "sha256": "ce9498f98d8e05442f69344412c13201fd87ac404324d7559c2c715b496dd38f"
+      "bytes": 8149,
+      "sha256": "887de329552ab543d2bd746afe98d15703715a82e1dd0a21a73049b8048a6af5"
     },
     "edges/math.jsonl": {
-      "bytes": 98487,
-      "sha256": "f0e3b1e6ef313da7b87e07c0f6d504b5b8e28a17647a0e5732825c50b5102656"
+      "bytes": 130797,
+      "sha256": "f53945040fe3d6b65ca9224d5a78499855835d352259786341bdf59589ada070"
     },
     "edges/morality.jsonl": {
-      "bytes": 1729,
-      "sha256": "001a674f1ae64e23b571ed7278b2de39733ad60890e248f68476a37cf2bcc0bd"
+      "bytes": 22596,
+      "sha256": "f9b026fb8bf0516725c66da692cbbc7c954577698e23104e232cd2d49f02b4a7"
     },
     "edges/pe.jsonl": {
-      "bytes": 14547,
-      "sha256": "9993b5caa948a67929f04084eb9285b01c2a9f0817efb47877dc5ca17993e777"
+      "bytes": 42195,
+      "sha256": "d06ae993c59cf95149dc41009292b9f322991ed53d1e8cbc8018c3e485d74d89"
     },
     "edges/physics.jsonl": {
-      "bytes": 20440,
-      "sha256": "8ae80f2cc658408fbfd144f8768b2625848013992b039a920ce2b621175e0987"
+      "bytes": 29973,
+      "sha256": "f64d540a9a0718a3fca0fca6585eac462187fba0ca6c2517317179bfcaa3b624"
     },
     "edges/science.jsonl": {
-      "bytes": 31068,
-      "sha256": "d9467b98f078c567eba3da877619047893b6922074e6ef92a13efe5b1b42cc01"
+      "bytes": 94250,
+      "sha256": "2ab9ebb810f137feea67abfa0be0fb1f7c352b72d2ebdac1473d557679f9b20a"
     },
     "lists/grammar/en-grammar.jsonl": {
       "bytes": 34177,
