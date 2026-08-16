@@ -348,6 +348,12 @@ def main():
     a = ap.parse_args()
 
     anchors, edges = load()
+    # 已弃用的锚点不上公开图谱。留档是为了查「当初为什么没的」，
+    # 不是为了展示 —— 画进去等于对外声称库里有 1958 条，实际存活 1150。
+    dead = {a['id'] for a in anchors if a.get('deprecated')}
+    anchors = [a for a in anchors if not a.get('deprecated')]
+    edges = [e for e in edges
+             if e['anchorId'] not in dead and e['prerequisiteId'] not in dead]
     ids = {x['id'] for x in anchors}
     edges = [e for e in edges if e['anchorId'] in ids and e['prerequisiteId'] in ids]
     print(f"节点 {len(anchors)} · 边 {len(edges)}")
