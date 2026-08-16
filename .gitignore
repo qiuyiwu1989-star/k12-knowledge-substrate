@@ -24,3 +24,6 @@ tools/out/review-*.html
 tools/out/graph.html
 tools/out/*.log
 tools/out/profile-demo.jsonl
+
+# 对账：日志是原始记录，含完整会话内容，不进仓库
+日志/
