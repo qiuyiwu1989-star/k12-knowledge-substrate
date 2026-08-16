@@ -315,9 +315,17 @@ def main():
         if med > 200:
             runaway.append((i + 1, med))
     if runaway:
-        print("  ✗ 疑似跑飞（页, 中位行数）:", runaway)
-        print("    多半是页码给错了，模型在非目标页上打转。核对页码后重跑。")
-        return 1
+        # **跳过该页，不终止全局。** 一页坏不该让 31 页好的全跑不了 ——
+        # 跟 429 那个教训同源。实测信息科技 p32 通篇是【教学提示】，
+        # 本来就没有内容要求可抽，模型在上面打转是正常的。
+        bad = {p for p, _ in runaway}
+        print(f"  ! 跳过疑似跑飞的页（多半通篇是教学提示/建议，没有可抽的要求）：")
+        for pg, med in runaway:
+            print(f"      p{pg}  中位 {med} 行")
+        pages = [i for i in pages if i + 1 not in bad]
+        if not pages:
+            print("  ✗ 所有页都跑飞了，多半是页码整段给错。核对后重跑。")
+            return 1
 
     out_rows, conflicts = [], []
     for i in pages:

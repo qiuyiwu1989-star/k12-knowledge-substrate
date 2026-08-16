@@ -63,12 +63,21 @@ TODOS = [
     dict(id='npm', t='DSH 插件发 npm', d='需要你的 npm 账号，我不代办',
          done=lambda s: bool(s['npm']),
          got=lambda s: s['npm'] or '未发布'),
-    dict(id='stage-split', t='识字锚点按学段切分', d='课标规定了分学段识字量，能切出年级分辨率',
-         done=lambda s: s['narrowStage'] > 20,
-         got=lambda s: f"跨度窄于一学段的仅 {s['narrowStage']} 条"),
-    dict(id='labor-fix', t='修劳动/信息科技的页面分类', d='Pass A 把课程内容标成 2-48，与目录重叠',
-         done=lambda s: s['byDiscipline'].get('劳动', 0) > 40,
-         got=lambda s: f"劳动仅 {s['byDiscipline'].get('劳动',0)} 条"),
+    # 3500 字表按音序排，课标只给数量不给「哪些字」—— 切不了，别把它当待办挂着。
+    # 能做的是学段目标量（已做），真正的年级颗粒度只能来自教材层。
+    dict(id='stage-targets', t='学段目标量', d='让分母对得上年级：386/1600 而不是 386/3500',
+         done=lambda s: s['stageTargets'] > 0,
+         got=lambda s: f"{s['stageTargets']} 条字表锚点已挂"),
+    dict(id='grade-source', t='年级颗粒度的来源（要你拍板）', d='课标只给学段。真年级在教材层，有版权问题',
+         done=lambda s: False,
+         got=lambda s: '未选路线'),
+    # 判据考的是「分类修没修好」，不是「这一科内容多不多」。劳动课标本身
+    # 可判定内容就少，拿条数当判据是拿错了尺子。
+    dict(id='labor-fix', t='修劳动/信息科技/道法的页面范围', d='原按 min..max 取范围，一个离群页把起点拉到 p2',
+         done=lambda s: all(s['byDiscipline'].get(x, 0) > 10 for x in ('劳动', '信息科技', '道德与法治')),
+         got=lambda s: '劳动 %d · 信息科技 %d · 道法 %d' % (
+             s['byDiscipline'].get('劳动',0), s['byDiscipline'].get('信息科技',0),
+             s['byDiscipline'].get('道德与法治',0))),
     dict(id='senior', t='高中三年', d='需要《普通高中课程标准》PDF，手头没有',
          done=lambda s: s['maxGrade'] > 9,
          got=lambda s: f"最高学段 G{s['maxGrade']}"),
@@ -109,6 +118,7 @@ def snapshot():
         lists=lists, cards=cards, npm=npm_published(),
         narrowStage=narrow, maxGrade=maxg,
         tagged=sum(1 for a in live if a.get('crosscutting') or a.get('practice')),
+        stageTargets=sum(1 for a in live if a.get('stageTargets')),
         byDiscipline=dict(collections.Counter(a['discipline'] for a in live)),
     )
 
