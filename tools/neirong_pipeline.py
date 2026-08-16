@@ -40,7 +40,10 @@ def run(subject):
     for r in rows:
         stmt, src, stage = (list(r['value']) + ['', ''])[:3]
         if stmt and stmt not in seen:
-            seen[stmt] = {'statement': stmt, 'srcText': src, 'stage': stage}
+            # 页码要带着走 —— 学段靠它兜底（课程内容按学段分块排，
+            # 学段标题之后的页都属于那个学段）
+            seen[stmt] = {'statement': stmt, 'srcText': src, 'stage': stage,
+                          'page': r.get('page')}
     cand = list(seen.values())
 
     nometa = [c for c in cand if not is_meta(c['statement'])]

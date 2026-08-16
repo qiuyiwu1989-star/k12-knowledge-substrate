@@ -41,6 +41,27 @@ def normalize(items, disc):
     return [json.loads(l)['normalized'] for l in r.stdout.split('\n') if l.strip()]
 
 
+# 课程内容不按学段排的学科（按主题/模块排），学段是**学科级**属性。
+# 依据：义务教育课程方案规定的各科开设年级。
+SUBJECT_STAGE = {
+    '化学': ('G9', 'G9'), '物理': ('G8', 'G9'), '生物学': ('G7', 'G9'),
+    '历史': ('G7', 'G9'), '地理': ('G7', 'G9'),
+    '体育与健康': ('G1', 'G9'), '科学': ('G1', 'G6'),
+}
+
+_STAGE_MAP = None
+
+
+def stage_of_page(subject, page):
+    """页码 → 学段。见 tools/stage_by_page.py 的前向填充。"""
+    global _STAGE_MAP
+    if _STAGE_MAP is None:
+        sys.path.insert(0, str(ROOT / 'tools'))
+        from stage_by_page import build
+        _STAGE_MAP = build()
+    return _STAGE_MAP.get((subject, page))
+
+
 def parse_stage(s):
     """'G7-9' → ('G7','G9')；后半段没有 G 前缀，直接 split 会得到非法年级。"""
     s = (s or '').strip()
@@ -111,7 +132,16 @@ def main():
                 continue
             existing_sig.add((subj, c['statement']))
             existing_sigs.add(sg)
-            lo, hi = parse_stage(c.get('stage'))
+            # 学段三级兜底：模型自报 → 页码映射 → 学科默认。
+            # 前一版只用第一级，139/162 条落成 G1-G9 默认值，把源文本
+            # 明明给了的学段信息白白丢了。
+            raw = c.get('stage')
+            if not raw and c.get('page'):
+                raw = stage_of_page(subj, c['page'])
+            if raw:
+                lo, hi = parse_stage(raw)
+            else:
+                lo, hi = SUBJECT_STAGE.get(subj, ('G1', 'G9'))
             arr.append({
                 'id': nid(), 'discipline': subj, 'track': 'MATRIX',
                 'strand': STRAND.get(subj, '学科内容'),
