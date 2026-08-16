@@ -21,6 +21,10 @@ const counts = { anchors: 0, candidates: 0, edges: 0, listItems: 0, mappings: 0 
 const byDiscipline = {};
 const byTrack = {};
 const byReview = {};
+// 已弃用的锚点必须排除在这三个分布之外。**一直没排，所以 usableAnchors 一直虚报** ——
+// 弃用 69 条 ai-adjudicated 之后，实际可用 696，manifest 照旧报 765。
+// 弃用锚点留档是对的（档案里可能有引用），但它们不该出现在「现在有多少可用」里。
+let deprecatedAnchors = 0;
 
 for (const [dir, counter] of [['anchors', 'anchors'], ['candidates', 'candidates'], ['edges', 'edges'], ['lists', 'listItems'], ['mappings', 'mappings']]) {
   for (const f of walk(join(ROOT, dir)).sort()) {
@@ -33,6 +37,7 @@ for (const [dir, counter] of [['anchors', 'anchors'], ['candidates', 'candidates
       if (counter !== 'anchors' && counter !== 'candidates') continue;
       const r = JSON.parse(t);
       if (counter === 'candidates') { byReview['candidate:llm-proposed'] = (byReview['candidate:llm-proposed'] ?? 0) + 1; continue; }
+      if (r.deprecated) { deprecatedAnchors++; continue; }
       byDiscipline[r.discipline] = (byDiscipline[r.discipline] ?? 0) + 1;
       byTrack[r.track] = (byTrack[r.track] ?? 0) + 1;
       byReview[r.reviewStatus] = (byReview[r.reviewStatus] ?? 0) + 1;
@@ -46,7 +51,8 @@ const manifest = {
   release: pkg.version,
   schemaVersion: '0.1.0',
   generatedAt: process.env.SOURCE_DATE || new Date().toISOString().slice(0, 10),
-  counts: { ...counts, byDiscipline, byTrack, byReview },
+  counts: { ...counts, liveAnchors: counts.anchors - deprecatedAnchors,
+            deprecatedAnchors, byDiscipline, byTrack, byReview },
   // 复核率是这个项目唯一重要的进度指标：llm-proposed 的锚点不许被档案引用，
   // 所以「可用锚点数」= 总数 - llm-proposed 数。
   // 唯一重要的进度指标：候选不算数，llm-proposed 不算数，只有复核过的才是可用锚点
@@ -62,4 +68,4 @@ const manifest = {
   files,
 };
 writeFileSync(join(ROOT, 'manifest.json'), JSON.stringify(manifest, null, 2) + '\n');
-console.log(`✓ manifest.json 已生成 — 锚点 ${counts.anchors}（可用 ${manifest.usableAnchors} · AI过审 ${manifest.aiReviewedAnchors} · 存疑 ${manifest.disputedAnchors}）· 边 ${counts.edges} · 清单 ${counts.listItems} · 映射 ${counts.mappings}`);
+console.log(`✓ manifest.json 已生成 — 锚点 ${counts.anchors}（存活 ${counts.anchors - deprecatedAnchors} · 可用 ${manifest.usableAnchors} · AI过审 ${manifest.aiReviewedAnchors} · 存疑 ${manifest.disputedAnchors}）· 边 ${counts.edges} · 清单 ${counts.listItems} · 映射 ${counts.mappings}`);
