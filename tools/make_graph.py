@@ -15,7 +15,10 @@ import argparse, collections, json, math, random
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
-STAGE_ORD = {'G1': 1, 'G2': 2, 'G3': 3, 'G4': 4, 'G5': 5, 'G6': 6, 'G7': 7, 'G8': 8, 'G9': 9}
+# ★ 必须含 G10–G12。少了它们，891 条高中锚点全部走默认值 5，
+#   被画在**五年级的位置** —— 竖轴是这张图唯一的信息轴，画错等于整个学段轴撒谎。
+STAGE_ORD = {f'G{i}': i for i in range(1, 13)}
+STAGE_MAX = 12          # 竖轴归一用的分母。写死 8（9 个学段）会让高中出界。
 COLORS = {
     '数学': '#4a9eff', '语文': '#ff6b6b', '英语': '#ffa94d', '物理': '#845ef7',
     '化学': '#20c997', '生物学': '#51cf66', '历史': '#f783ac', '地理': '#38d9a9',
@@ -50,7 +53,11 @@ def layout(nodes, edges, iters=460, seed=42):
     ytar = []
     for n in nodes:
         s = STAGE_ORD.get((n.get('stageHint') or {}).get('min'), 5)
-        ytar.append(H * 0.08 + (s - 1) / 8.0 * H * 0.84)
+        # 高中按课程类型铺开成三层（课程方案原文：学完必修后可选学选择性必修，
+        # 再选学选修）—— 这不是发明年级，是课标自己给的顺序。
+        if s >= 10:
+            s = {'必修': 10, '选择性必修': 11, '选修': 12}.get(n.get('courseType'), 11)
+        ytar.append(H * 0.08 + (s - 1) / (STAGE_MAX - 1) * H * 0.84)
     # X 初值：按学科散在一个环上，避免一开始全挤在中间，也避免排成整齐的列
     discs = sorted({n['discipline'] for n in nodes})
     dx = {}
@@ -333,8 +340,8 @@ document.querySelectorAll('.li').forEach(el => el.onclick = () => {
   draw();
 });
 document.getElementById('stat').textContent = `${N.length} 个能力 · ${E.length} 条依赖`;
-document.getElementById('axis').innerHTML = [[1,'一年级'],[3,'三年级'],[5,'五年级'],[7,'七年级'],[9,'九年级']].map(([g,t]) =>
-  `<div style="top:${(0.08 + (g-1)/8*0.84)*100}%;left:10px">${t}</div>`).join('');
+document.getElementById('axis').innerHTML = [[1,'一年级'],[3,'三年级'],[5,'五年级'],[7,'七年级'],[9,'九年级'],[10,'高中必修'],[12,'高中选修']].map(([g,t]) =>
+  `<div style="top:${(0.08 + (g-1)/__SMAX__*0.84)*100}%;left:10px">${t}</div>`).join('');
 addEventListener('resize', fit); fit();
 (() => { const n = byId.get(location.hash.slice(1)); if (n) setTimeout(() => show(n), 60); })();
 addEventListener('hashchange', () => { const n = byId.get(location.hash.slice(1)); if (n && n.i !== sel) show(n); });
@@ -377,7 +384,8 @@ def main():
             .replace('__COLORS__', json.dumps(COLORS, ensure_ascii=False))
             .replace('__NC__', f"{len(nodes):,}").replace('__EC__', f"{len(E):,}")
             .replace('__DC__', str(len({n['d'] for n in nodes})))
-            .replace('__W__', str(W)).replace('__H__', str(H)))
+            .replace('__W__', str(W)).replace('__H__', str(H))
+            .replace('__SMAX__', str(STAGE_MAX - 1)))
     p = Path(a.out); p.parent.mkdir(parents=True, exist_ok=True)
     p.write_text(html, encoding='utf-8')
     print(f"→ {p}  {p.stat().st_size/1024:.0f}KB")

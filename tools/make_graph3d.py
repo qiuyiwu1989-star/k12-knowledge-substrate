@@ -20,7 +20,7 @@ from pathlib import Path
 import sys
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from make_graph import load, COLORS, STAGE_ORD   # noqa: E402
+from make_graph import load, COLORS, STAGE_ORD, STAGE_MAX   # noqa: E402
 
 R = 900.0          # 水平面半径
 HGT = 1250.0       # 竖直跨度（学段轴）
@@ -59,12 +59,19 @@ def layout3d(nodes, edges, iters=420, seed=7):
     ytar, rtar = [], []
     for n in nodes:
         s = STAGE_ORD.get((n.get('stageHint') or {}).get('min'), 5)
-        ytar.append(-HGT / 2 + (s - 1) / 8.0 * HGT)
+        # 高中 891 条的 stageHint 全是 G10–G12（课标按模块给内容，不按年级），
+        # 直接画就是一个 891 点的扁盘，看不出结构。
+        # 用**课程类型**在这一段内铺开 —— 这不是发明年级，课程方案原文写着
+        # 「学生学完必修课程后，可先选学选择性必修课程，再选学选修课程」，
+        # 那是课标自己给的顺序。必修 → 选择性必修 → 选修，占 G10/G11/G12 三层。
+        if s >= 10:
+            s = {'必修': 10, '选择性必修': 11, '选修': 12}.get(n.get('courseType'), 11)
+        ytar.append(-HGT / 2 + (s - 1) / (STAGE_MAX - 1) * HGT)
         # 漏斗：低学段铺得宽、高学段收得紧。这不是装饰 ——
         # G1 有 557 个节点（占 47%）且平均被依赖 4.71 次，基础层本来就最宽。
         # 调参教训：靠「压窄底部」做不出漏斗，253 个 G7 节点物理上塞不进小半径，
         # 斥力会把它们顶回去（实测只收窄 22%）。得反过来 —— 让顶部铺得足够开。
-        rtar.append(R * (1.45 - 1.00 * (s - 1) / 8.0))
+        rtar.append(R * (1.45 - 1.00 * (s - 1) / (STAGE_MAX - 1)))
 
     discs = sorted({n['discipline'] for n in nodes})
     seed_xy = {}
@@ -206,10 +213,26 @@ canvas{display:block;cursor:grab}canvas.drag{cursor:grabbing}
 #cta a{font-size:12.5px;color:var(--fg);background:rgba(20,24,36,.9);border:1px solid var(--line);border-radius:99px;padding:8px 16px;text-decoration:none}
 #cta a:hover{border-color:var(--dim)}
 #cta em{font-style:normal;font-size:10.5px;letter-spacing:.13em;color:var(--dim)}
-#qf{margin-top:auto;font-size:12.5px;color:var(--mut)}
+/* 左栏是一根 flex 轨道。**新加的块必须自己声明会不会抢空间** ——
+   把复核图例塞进 #qf 之后，#legend 被压成 0 高，学科图例和 hero 一起没了。
+   现在 #qf 和 #tiers 都是 flex:none，只有 #legend 吃剩下的空间并可滚。 */
+#qf{margin-top:auto;font-size:12.5px;color:var(--mut);flex:none}
 #qf label{display:flex;align-items:center;gap:8px;cursor:pointer}
+/* 复核档位图例。这四档是本项目最重要的一条信息 ——
+   「有多少条其实还没人看过」比「一共有多少条」重要得多。 */
+#tiers{margin-top:14px;font-size:11.5px;color:var(--mut);line-height:1.9;flex:none}
+#tiers b{display:block;font-size:10px;letter-spacing:.16em;color:var(--dim);
+  margin-bottom:6px;font-weight:600}
+#tiers div{display:flex;align-items:center;gap:9px}
+#tiers i{width:11px;height:11px;border-radius:50%;flex:none;background:#7d8496}
+#tiers i.t0{opacity:.34}#tiers i.t1{opacity:.62}
+#tiers i.t2{background:none;border:1.4px solid #7d8496}
+#tiers i.t3{opacity:1;box-shadow:0 0 0 1.4px rgba(255,255,255,.6)}
+#tiers i.rw{background:none;border:1.4px solid rgba(180,120,220,.8)}
+#tiers em{font-style:normal;color:var(--dim);margin-left:auto;font-variant-numeric:tabular-nums}
 #qf input{accent-color:#e8607d}
-#legend{min-height:0;overflow:auto}
+/* 学科图例吃剩余空间。24 个学科装不下时自己滚，不去挤别人。 */
+#legend{min-height:0;flex:1 1 auto;overflow-y:auto}
 #legend h4{font-size:10px;letter-spacing:.17em;color:var(--dim);margin-bottom:11px;font-weight:600}
 .li{display:flex;align-items:center;gap:11px;padding:2.5px 0;cursor:pointer;font-size:12.5px;width:290px;color:var(--mut);transition:color .2s,opacity .2s}
 .li .dot{width:8px;height:8px;border-radius:50%;flex:none;transition:opacity .2s}
@@ -309,6 +332,11 @@ button.cc u{text-decoration:none;font-size:12px;color:var(--mut);margin-left:aut
 @media(max-width:1180px){
   #rail{left:18px;top:14px;bottom:auto;width:auto;gap:0}
   #hero,#legend,#cta{display:none}
+  /* 复核图例在窄屏折成一行横排 —— 它是这张图最重要的一条信息（57% 的点
+     其实还没人看过），不能像 hero 那样直接隐藏；但也不能竖着占掉半屏。 */
+  #tiers{margin-top:8px;display:flex;flex-wrap:wrap;gap:4px 12px;line-height:1.5}
+  #tiers b{width:100%;margin-bottom:2px}
+  #tiers div{gap:5px}#tiers em{margin-left:3px}
   #logo{font-size:14px}#logo span{display:none}
   #q{top:52px;right:18px;width:180px}
   #hint{left:18px;right:18px;bottom:16px;text-align:center;font-size:10.5px}
@@ -336,6 +364,13 @@ button.cc u{text-decoration:none;font-size:12px;color:var(--mut);margin-left:aut
 <input id="q" placeholder="搜索能力…（回车定位）">
 <div id="qf"><label><input type="checkbox" id="onlyok"> 只看 AI 过审的（__OKN__ 条）</label>
 <label style="margin-top:6px"><input type="checkbox" id="onlyusable"> 只看可用锚点（__USE__ 条，带白边）</label></div>
+<div id="tiers"><b>复核到哪一步了</b>
+  <div><i class="t0"></i>还没有人看过<em>__T0__</em></div>
+  <div><i class="t1"></i>只过了 AI 审查<em>__T1__</em></div>
+  <div><i class="t2"></i>AI 审出有问题，已挂起<em>__T2__</em></div>
+  <div><i class="t3"></i>可被个人档案引用<em>__T3__</em></div>
+  <div><i class="rw"></i>不是课标原话，是我们的主张<em>__RW__</em></div>
+</div>
 <div id="legend"><h4>学科 · 点击开关</h4><div id="ls"></div></div>
 </div>
 <div id="hint"><b>拖动</b>旋转 · <b>滚轮</b>缩放 · <b>点一个点</b>，顺着前置往回走，
@@ -461,8 +496,14 @@ function draw() {
   }
   // 描边用底色：相邻的点之间留出一圈暗边，每个点就「实」了，
   // 不描边时密集处会糊成一片色块，看着虚。
+  /* ★ 复核档位必须在**填充强度**上体现，不能只靠描边。
+     加进 1,240 条 llm-proposed 之后（占 57%），「一个人都没看过」和
+     「过了 AI 审查」在图上长得一模一样 —— 那是用视觉掩盖数据质量，
+     跟当初把 disputed 混在里面是同一类错误。
+     四档：无人看过最淡 → AI 过审中等 → 存疑空心 → 可用最实 + 白边。 */
+  const TIER_ALPHA = [0.34, 0.62, 1, 1];   // r = 0 / 1 / 2 / 3
   for (const g of groups.values()) {
-    const a = (g.lit ? 1 : .07) * (1 - g.b * .16);
+    const a = (g.lit ? TIER_ALPHA[g.q] ?? 1 : .07) * (1 - g.b * .16);
     ctx.globalAlpha = a; ctx.fillStyle = COLOR[g.d] || '#888';
     ctx.strokeStyle = '#080a11'; ctx.lineWidth = 1.1 * DPR;
     for (const k of g.it) {
@@ -516,11 +557,11 @@ function draw() {
   const gr = document.getElementById('gr');
   // 课标只给学段不给年级，数据实际只落在 4 层上；标 G1–G9 是误导
   // 学段修正后数据落在 G1/G3/G5/G7/G8/G9 六层上，标签得对齐真实位置
-  if (!gr.dataset.b) { gr.innerHTML = [[1,'一年级'],[3,'三年级'],[5,'五年级'],[7,'七年级'],[9,'九年级']]
+  if (!gr.dataset.b) { gr.innerHTML = [[1,'一年级'],[3,'三年级'],[5,'五年级'],[7,'七年级'],[9,'九年级'],[10,'高中必修'],[12,'高中选修']]
     .map(([g, t]) => `<div data-g="${g}">${t}</div>`).join(''); gr.dataset.b = 1; }
   const sp2 = Math.sin(pitch), cp2 = Math.cos(pitch), f2 = Math.min(W, H) * .62 * zoom;
   gr.querySelectorAll('div').forEach(el => {
-    const g = +el.dataset.g, yy = -HGT / 2 + (g - 1) / 8 * HGT;
+    const g = +el.dataset.g, yy = -HGT / 2 + (g - 1) / __SMAX__ * HGT;
     el.style.top = ((H / 2 + yy * cp2 * f2 / (2600 + yy * sp2) + panY) / DPR) + 'px';
   });
 }
@@ -869,7 +910,10 @@ def main():
     outdeg = collections.Counter(e['prerequisiteId'] for e in edges)
     nodes = [{
         'i': n['id'], 'd': n['discipline'], 'st': n.get('strand') or '', 't': n['statement'],
-        's': STAGE_ORD.get((n.get('stageHint') or {}).get('min'), 0),
+        's': (({'必修': 10, '选择性必修': 11, '选修': 12}
+               .get(n.get('courseType'), 11))
+              if STAGE_ORD.get((n.get('stageHint') or {}).get('min'), 0) >= 10
+              else STAGE_ORD.get((n.get('stageHint') or {}).get('min'), 0)),
         'x': round(x[k], 1), 'y': round(y[k], 1), 'z': round(z[k], 1),
         'o': outdeg.get(n['id'], 0), 'p': (n.get('provenance') or {}).get('srcPage', ''),
         # 家长向问句直接展示，{{name}} 换成「孩子」——占位符漏到界面上很业余
@@ -903,8 +947,14 @@ def main():
             .replace('__OKN__', f"{sum(1 for n in nodes if n['r'] == 1):,}")
             .replace('__BADN__', f"{sum(1 for n in nodes if n['r'] == 2):,}")
             .replace('__USE__', f"{sum(1 for n in nodes if n['r'] == 3):,}")
+            .replace('__T0__', f"{sum(1 for n in nodes if n['r'] == 0):,}")
+            .replace('__T1__', f"{sum(1 for n in nodes if n['r'] == 1):,}")
+            .replace('__T2__', f"{sum(1 for n in nodes if n['r'] == 2):,}")
+            .replace('__T3__', f"{sum(1 for n in nodes if n['r'] == 3):,}")
+            .replace('__RW__', f"{sum(1 for n in nodes if n.get('rw')):,}")
             .replace('__DC__', str(len({n['d'] for n in nodes})))
-            .replace('__HGT__', str(HGT)))
+            .replace('__HGT__', str(HGT))
+            .replace('__SMAX__', str(STAGE_MAX - 1)))
     p = Path(a.out); p.write_text(html, encoding='utf-8')
     print(f"→ {p}  {p.stat().st_size/1024:.0f}KB")
 
