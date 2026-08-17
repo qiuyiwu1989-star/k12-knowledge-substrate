@@ -107,6 +107,41 @@ SYS = """你是{disc}教研员。有一条能力断言被抽取流水线**削平
 改不了就 {{"ok":false,"why":"原文虽有动词但主语是教师，不含学生能力"}}"""
 
 
+TRIAGE = """你是{disc}教研员，正在审一条从课标里抽出来的能力断言。
+
+课标原文：{src}
+抽出来的断言：{bad}
+
+先判断**课标原文对学生的要求到底是什么**，再决定怎么处理。三选一：
+
+A. **要求学生做某事**（原文里有真正作谓语的行为动词）
+   → 用原文自己的动词重写断言。
+   ⚠️ 注意区分动词和名词：「我国目前使用的乐谱形式」里的「使用」是定语，
+   「语言使用中」里的「使用」是名词，「环境设计的定义」里的「设计」是名词 ——
+   这些都**不是**对学生的要求。
+   ⚠️ 「探索」「合作」「参与」「尝试」这类过程词不是可判定产出。
+   原文「探索并掌握等腰三角形判定定理」的产出是掌握定理，不是「能探索」。
+
+B. **要求学生知道某事**（知道 / 了解 / 理解 / 认识，或原文是纯陈述句）
+   → 不重写。这类要变成能力形态属于额外的教育主张，走另一条流程。
+
+C. **原文的主语根本不是学生**（教学重点 / 教学建议 / 引导学生 / 与学生一起…）
+   → 这条锚点该弃用，孩子的能力里没有这一项。
+
+选 A 才重写，规则：
+1. 必须用原文自己的动词，不许换同义词，不许退回「说出」。
+2. 只能用原文已有的信息，**不许添加原文没有的对象、条件、程度**。
+3. 断言里不许出现「知道/了解/理解/认识/领会/体会」。
+4. 句式「能 + 动词 + 明确对象」，8–40 字，顿号最多 2 个，指代词换成具体所指。
+5. 证据 2 条，都是旁观者能看见的具体行为。
+6. type 选 PROCEDURAL / CONCEPTUAL / REPRESENTATIONAL / LANGUAGE，不许 KNOWLEDGE。
+
+只输出一行 JSON，不要代码块：
+A → {{"kind":"A","statement":"…","verb":"…","object":"…","type":"PROCEDURAL","evidence":["…","…"],"why":"…"}}
+B → {{"kind":"B","why":"原文要求是『了解中国画的三远法』，属知识"}}
+C → {{"kind":"C","why":"原文是教学建议，主语是教师"}}"""
+
+
 def load_anchors():
     files = {}
     for f in sorted((ROOT / 'anchors').glob('*.jsonl')):
@@ -171,6 +206,26 @@ def first_requirement(src):
         if 0 <= p < pos:
             best, pos = v, p
     return best
+
+
+def pick_all_knowledge(files):
+    """triage 模式：所有带原文的 KNOWLEDGE 锚点，**不做正则预筛**。
+
+    为什么放弃正则预筛 —— 我为它打了四轮补丁，每轮都有新的假阳性：
+      名词误判（环境设计的定义）→ 被动定语（都是经过设计的）→
+      教师主语（与学生一起探索）→ 定语（我国目前使用的乐谱形式）
+    每次收紧都漏掉真阳性，每次放宽都放进假阳性。**这是语法判断，正则做不了。**
+    交给模型判断，三道机械闸（归一 / 可判定 / 接地 + 去重）当安全网 ——
+    模型判错，闸拦得住；正则判错，没有东西拦得住。
+    """
+    out = []
+    for f, arr in files.items():
+        for i, a in enumerate(arr):
+            if a.get('deprecated') or a.get('type') != 'KNOWLEDGE':
+                continue
+            if (a.get('provenance') or {}).get('srcText'):
+                out.append((f, i, a, []))
+    return out
 
 
 def pick(files):
@@ -254,13 +309,18 @@ def main():
     ap.add_argument('--limit', type=int, default=0, help='只处理前 N 条（试跑用）')
     ap.add_argument('--concurrency', type=int, default=8)
     ap.add_argument('--dry-run', action='store_true')
+    ap.add_argument('--triage', action='store_true',
+                    help='模型三分类（做/知道/教师主语）代替正则预筛，覆盖全部 KNOWLEDGE 锚点')
     a = ap.parse_args()
 
     base, key = os.environ['MIMO_BASE'], os.environ['MIMO_KEY']
     model = os.environ.get('MIMO_MODEL', 'mimo-v2.5')
 
     files = load_anchors()
-    targets, droppable = pick(files)
+    if a.triage:
+        targets, droppable = pick_all_knowledge(files), []
+    else:
+        targets, droppable = pick(files)
     if a.only:
         droppable = [d for d in droppable if d[2]['discipline'] == a.only]
         targets = [t for t in targets if t[2]['discipline'] == a.only]
@@ -283,8 +343,11 @@ def main():
     def work(t):
         f, i, anc, vs = t
         src = anc['provenance']['srcText']
-        prompt = SYS.format(disc=anc['discipline'], src=src,
-                            bad=anc['statement'], verbs=' / '.join(vs))
+        if a.triage:
+            prompt = TRIAGE.format(disc=anc['discipline'], src=src, bad=anc['statement'])
+        else:
+            prompt = SYS.format(disc=anc['discipline'], src=src,
+                                bad=anc['statement'], verbs=' / '.join(vs))
         try:
             raw = call(prompt, '改。', base, key, model)
         except Exception as e:
@@ -296,6 +359,15 @@ def main():
             d = json.loads(m.group(0))
         except Exception:
             return t, None, 'JSON 解析失败'
+        if a.triage:
+            k = d.get('kind')
+            if k == 'B':
+                return t, None, 'B·原文要求是知道 → 转写层'
+            if k == 'C':
+                return t, {'_deprecate': True, 'why': d.get('why', '')}, None
+            if k != 'A':
+                return t, None, f'模型返回未知 kind「{k}」'
+            d['ok'] = True
         if not d.get('ok'):
             return t, None, '模型判定改不了：' + str(d.get('why', ''))[:60]
 
@@ -304,8 +376,12 @@ def main():
             return t, None, '改完仍是 KNOWLEDGE'
         if verb == '说出':
             return t, None, '又退回了「说出」'
-        if not any(v in stmt for v in vs):
+        if vs and not any(v in stmt for v in vs):
             return t, None, f'没用原文动词（{"/".join(vs)}）'
+        if not vs and verb and verb not in src:
+            # triage 模式没有预筛出的动词表，就直接查模型给的动词在不在原文里 ——
+            # 不在原文里，就说明它换了词或者自己编了一个
+            return t, None, f'动词「{verb}」不在原文里'
         # 试跑实测：模型会把原文的「了解 / 领会」整句抄进断言 ——
         # 「能观察学习与生活用品，了解『实用与美观相结合』的设计原则」。
         # 它靠前半句的「观察」过了闸，后半句仍然不可判定。半句可判定不算可判定。
@@ -327,7 +403,11 @@ def main():
             if n % 20 == 0:
                 print(f"  …{n}/{len(targets)}")
 
-    cand = [(t, d) for t, d, e in results if d]
+    # triage 判 C 的直接进弃用队列，不进改写流程
+    for t, d, e in results:
+        if d and d.get('_deprecate'):
+            droppable.append((t[0], t[1], t[2]))
+    cand = [(t, d) for t, d, e in results if d and not d.get('_deprecate')]
 
     # ★ 归一必须在可判定闸**之前** —— 闸看的是最终要写盘的那个字符串。
     #   先过闸再归一，等于闸检查的和落盘的不是一个东西。
