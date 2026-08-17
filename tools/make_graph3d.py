@@ -240,6 +240,13 @@ canvas{display:block;cursor:grab}canvas.drag{cursor:grabbing}
 .row .t{font-size:13.5px;line-height:1.45;flex:1;color:#cdd2dd;transition:color .15s}
 .row .g{font-size:11.5px;color:var(--dim);flex:none;margin-top:1px}
 .none{color:var(--dim);font-size:13px;font-style:italic;padding:6px 0}
+/* 能力转写层：用和学科色、和横切色都不同的第三种色 ——
+   它既不属于任何学科，也不是横切维度，它是「我们自己加的」。 */
+.rwbox{margin-top:12px;padding:10px 13px;border-radius:9px;font-size:12.5px;line-height:1.6;
+  background:rgba(180,120,220,.10);border:1px solid rgba(180,120,220,.34);color:#c9a4e8}
+.rwbox b{display:block;color:#d9bcf2;margin-bottom:3px;font-size:13px}
+.ctbox{margin-top:9px;padding:7px 12px;border-radius:8px;font-size:12px;
+  background:rgba(255,255,255,.04);border:1px solid var(--line);color:var(--mut)}
 /* 横切标签：和前置列表长得刻意不一样 —— 那是链条，这是同伴。 */
 .ccnote{color:var(--dim);font-size:12.5px;line-height:1.55;margin:2px 0 9px}
 .ccwrap{display:flex;flex-direction:column;gap:7px}
@@ -470,6 +477,10 @@ function draw() {
       // 等于用视觉掩盖数据质量。空心一眼能看出「这片是虚的」。
       if (N[k].r === 2 && r > 2.2 * DPR) { ctx.stroke(); }        // 存疑：空心
       else { if (r > 1.8 * DPR) ctx.stroke(); ctx.fill(); }
+      if (N[k].rw && r > 1.6 * DPR) {                               // 转写层：紫色描边
+        ctx.save(); ctx.strokeStyle = 'rgba(180,120,220,.75)'; ctx.lineWidth = 1.2 * DPR;
+        ctx.beginPath(); ctx.arc(px[k], py[k], r + 2.2 * DPR, 0, 7); ctx.stroke(); ctx.restore();
+      }
       if (N[k].r === 3 && r > 2 * DPR) {                            // 可用：加一圈亮边
         ctx.save(); ctx.strokeStyle = 'rgba(255,255,255,.55)'; ctx.lineWidth = 1 * DPR;
         ctx.beginPath(); ctx.arc(px[k], py[k], r + 1.6 * DPR, 0, 7); ctx.stroke(); ctx.restore();
@@ -665,6 +676,10 @@ function show(n, push = true) {
       <span>${esc(n.st || n.d)} · ${gLabel(n) || '学段未定'}</span></div>
     <h2>${esc(n.t)}</h2>
     ${n.a ? `<p class="ask">${esc(n.a)}</p>` : ''}
+    ${n.rw ? `<div class="rwbox"><b>这条不是课标原话</b>
+      课标只要求「知道 / 了解」，这条能力要求是永乐在此之上提的判断。
+      它单独统计、可单独撤掉，不计入「来自课标」的条数。</div>` : ''}
+    ${n.ct ? `<div class="ctbox">${esc(n.ct)}课程${n.ct === '必修' ? ' —— 所有学生都该有' : ' —— 学生自选，没学过不等于没学会'}</div>` : ''}
     ${n.r === 3 ? `<div class="okbox"><b>可被个人档案引用</b>
       来自课标附录、经编号连续性机械校验、判定标准客观 —— 全库唯一不需要教师复核的一类。</div>` : ''}
     ${n.r === 2 ? `<div class="warnbox"><b>AI 学科审查认为这条有问题</b>${
@@ -871,6 +886,12 @@ def main():
         # 横切标签。**这是「能力跨界」在本项目里的唯一载体** —— 跨学科先修边只有 11 条，
         # 而横切关联有四万多对。以前它只影响布局，界面上看不见，等于没交付。
         'cc': (n.get('crosscutting') or []) + (n.get('practice') or []),
+        # 是不是能力转写层（我们自己的教育主张，不是课标转述）。
+        # **必须在图上能一眼认出来** —— 底座的价值在「每条都能翻回课标某一页」，
+        # 这一层不能悄悄混在里面看着和别的一样。
+        'rw': 1 if n.get('evidenceSource') == 'capability-rewrite' else 0,
+        # 高中课程类型：必修的所有学生都该有，选修不是
+        'ct': n.get('courseType') or '',
     } for k, n in enumerate(anchors)]
 
     html = (HTML.replace('__TITLE__', 'K12 教育的能力结构 · 3D 图谱')

@@ -4,55 +4,55 @@
   "schemaVersion": "0.1.0",
   "generatedAt": "2026-08-17",
   "counts": {
-    "anchors": 2849,
+    "anchors": 3066,
     "candidates": 0,
     "edges": 1040,
     "listItems": 6262,
     "mappings": 4,
-    "liveAnchors": 1959,
+    "liveAnchors": 2176,
     "deprecatedAnchors": 890,
     "byDiscipline": {
-      "艺术": 102,
-      "生物学": 83,
-      "化学": 245,
-      "语文": 223,
-      "英语": 154,
-      "体育与健康": 89,
+      "艺术": 117,
+      "生物学": 100,
+      "化学": 254,
+      "语文": 231,
+      "英语": 163,
+      "体育与健康": 104,
       "俄语": 23,
       "信息技术": 33,
-      "历史": 68,
-      "地理": 27,
+      "历史": 87,
+      "地理": 36,
       "德语": 2,
       "思想政治": 5,
-      "数学": 228,
+      "数学": 252,
       "日语": 36,
       "法语": 17,
-      "物理": 97,
+      "物理": 105,
       "美术": 8,
       "西班牙语": 121,
       "通用技术": 147,
       "音乐": 2,
-      "信息科技": 46,
-      "劳动": 16,
-      "道德与法治": 35,
-      "科学": 152
+      "信息科技": 60,
+      "劳动": 22,
+      "道德与法治": 54,
+      "科学": 197
     },
     "byTrack": {
-      "MATRIX": 1278,
+      "MATRIX": 1495,
       "DAG": 469,
       "LIST": 212
     },
     "byReview": {
       "disputed": 144,
       "ai-reviewed": 404,
-      "llm-proposed": 1023,
+      "llm-proposed": 1240,
       "ai-adjudicated": 242,
       "auto-confirmed": 146
     }
   },
   "usableAnchors": 388,
   "humanConfirmedAnchors": 0,
-  "rewrittenAnchors": 0,
+  "rewrittenAnchors": 217,
   "curriculumDerivedAnchors": 1959,
   "aiReviewedAnchors": 404,
   "disputedAnchors": 144,
@@ -196,6 +196,62 @@
     "anchors/physics.jsonl": {
       "bytes": 142928,
       "sha256": "b74e224759c0fcd4a0cc9c8ff0688cd7268db3fa363fbbe538db1d5af1e01075"
+    },
+    "anchors/rewrite-体育与健康.jsonl": {
+      "bytes": 18785,
+      "sha256": "bc6620a0c364f6fcc8a55b3d07fa847157486bed4ce20f9f473ca52f17f99413"
+    },
+    "anchors/rewrite-信息科技.jsonl": {
+      "bytes": 18126,
+      "sha256": "ee7ed6f9f64deaa9526c91ca35530f9de32bcb0bbca4f87d9fbec0eaaf7b073e"
+    },
+    "anchors/rewrite-劳动.jsonl": {
+      "bytes": 7580,
+      "sha256": "0107decbac3059cf94d5553133fcafbbf3e4d0a20cfb1d7d43e7c0256aa5ef75"
+    },
+    "anchors/rewrite-化学.jsonl": {
+      "bytes": 11292,
+      "sha256": "90ea131fad52bb8279dce46b894251906cddbc4f3feed76f4a6b9c78f88ba8a1"
+    },
+    "anchors/rewrite-历史.jsonl": {
+      "bytes": 26363,
+      "sha256": "c59c37ef6a0b90ea4bb2259ec33288f8d92af251eab44ec87164fabbe4b22c6e"
+    },
+    "anchors/rewrite-地理.jsonl": {
+      "bytes": 10782,
+      "sha256": "ef5501595466c6d2e61722fe8f698ef4a8598f852d65f67b9c6f3dbe7d99a4e9"
+    },
+    "anchors/rewrite-数学.jsonl": {
+      "bytes": 30035,
+      "sha256": "471777353ea4f7a9f88dde81d78ab9ac1d97681c9b55622247df977ef14ae463"
+    },
+    "anchors/rewrite-物理.jsonl": {
+      "bytes": 9909,
+      "sha256": "00773f4bfd6d5e7b50aa91ed8a4d136ba42dbd10778f27603a8f20a0d1819486"
+    },
+    "anchors/rewrite-生物学.jsonl": {
+      "bytes": 21174,
+      "sha256": "b63bb57194d41d6d12b9cc90a31c20a21b4fde55659d2c9ff7b69974273ae2e9"
+    },
+    "anchors/rewrite-科学.jsonl": {
+      "bytes": 54111,
+      "sha256": "28b4d8cf95883de06db66265fd4461c53abbbf3fd5f1310cb50f33fe00db5cb1"
+    },
+    "anchors/rewrite-艺术.jsonl": {
+      "bytes": 18822,
+      "sha256": "63aa774865c79ef0d87c81fff684318b0ec7c5c0fe8c2589c8e82cf9a26f7547"
+    },
+    "anchors/rewrite-英语.jsonl": {
+      "bytes": 11366,
+      "sha256": "558946bd7eb4f9335ee8e7994f8c8cd98f392bda81e9b7a76f50b4724132bb81"
+    },
+    "anchors/rewrite-语文.jsonl": {
+      "bytes": 10058,
+      "sha256": "164348472e9e6361cbf77f8846671e00169482e60cd95143da8d21360a77b936"
+    },
+    "anchors/rewrite-道德与法治.jsonl": {
+      "bytes": 25320,
+      "sha256": "a03aa7acff1125b68bf5ec77593792f919e068fa92b6da73dbc55098b7f69395"
     },
     "anchors/science.jsonl": {
       "bytes": 686756,
