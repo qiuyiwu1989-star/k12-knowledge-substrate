@@ -391,10 +391,21 @@ if (existsSync(manifestPath)) {
 }
 
 // ---------- 报告 ----------
+// ★ 已弃用的锚点必须排除在摘要之外。**一直没排，所以 CI 打印的一直是虚数** ——
+//   847 条弃用的照样计进档位与复核分布，disputed 报成 884（真实 144）、
+//   ai-adjudicated 报成 410（真实 305）。manifest.mjs 早修了，这里没跟着修，
+//   而人看的恰恰是这行。同一个 bug 在两个地方，只修一个等于没修。
 const trackCount = {};
-for (const [, { a }] of byId) trackCount[a.track] = (trackCount[a.track] ?? 0) + 1;
 const reviewCount = {};
-for (const [, { a }] of byId) reviewCount[a.reviewStatus] = (reviewCount[a.reviewStatus] ?? 0) + 1;
+let liveCount = 0, deprecatedCount = 0;
+for (const [, { a }] of byId) {
+  if (a.deprecated) { deprecatedCount++; continue; }
+  liveCount++;
+  trackCount[a.track] = (trackCount[a.track] ?? 0) + 1;
+  reviewCount[a.reviewStatus] = (reviewCount[a.reviewStatus] ?? 0) + 1;
+}
+const USABLE_STATUS = new Set(['auto-confirmed', 'expert-confirmed', 'ai-adjudicated']);
+const usableCount = [...USABLE_STATUS].reduce((s, k) => s + (reviewCount[k] ?? 0), 0);
 
 if (SHOW_WARN && warnings.length) {
   console.warn(`⚠ ${warnings.length} 条 warning：`);
@@ -410,10 +421,13 @@ const candByDisc = {};
 for (const [, { c }] of candIds) candByDisc[c.discipline] = (candByDisc[c.discipline] ?? 0) + 1;
 console.log(
   `✓ 校验通过\n` +
-  `  锚点 ${byId.size}（${Object.entries(trackCount).map(([k, v]) => `${k} ${v}`).join(' / ') || '—'}）\n` +
+  `  存活锚点 ${liveCount}（${Object.entries(trackCount).map(([k, v]) => `${k} ${v}`).join(' / ') || '—'}）` +
+    `　弃用 ${deprecatedCount}（不计入以下任何分布）\n` +
   `  候选 ${candIds.size}（未复核，禁止被档案引用）：` +
     Object.entries(candByDisc).sort((a, b) => b[1] - a[1]).map(([k, v]) => `${k} ${v}`).join(' · ') + `\n` +
-  `  复核 ${Object.entries(reviewCount).map(([k, v]) => `${k} ${v}`).join(' / ') || '—'}\n` +
+  `  复核 ${Object.entries(reviewCount).sort((a, b) => b[1] - a[1]).map(([k, v]) => `${k} ${v}`).join(' / ') || '—'}\n` +
+  `  可用 ${usableCount}（auto-confirmed + ai-adjudicated + expert-confirmed）· 教师签字 ${
+    [...byId.values()].filter(({ a }) => !a.deprecated && (a.reviewedBy ?? []).some((r) => !String(r).startsWith('ai:'))).length}\n` +
   `  边 ${seenEdge.size} · 清单条目 ${lists.length} · 课标映射 ${mapKeys.size}\n` +
   `  可判定性、规范化、去重签名、无环、档位规则、codes-only 全部通过` +
   (warnings.length && !SHOW_WARN ? `\n  （${warnings.length} 条 warning，加 --warn 查看）` : ''),

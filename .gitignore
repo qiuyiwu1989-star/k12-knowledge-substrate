@@ -15,15 +15,13 @@ tools/.cache*/
 # 用 scripts/fetch-standards.sh 现取。
 sources/
 
-# 中间产物里可重算且体积大的部分
-tools/out/review-sheet.jsonl
-tools/out/triage.jsonl
-tools/out/anchor-candidates.jsonl
-tools/out/edges-generated.jsonl
-tools/out/review-*.html
-tools/out/graph.html
-tools/out/*.log
-tools/out/profile-demo.jsonl
+# 中间产物整目录不入库（19MB，全部可由 tools/ 流水线重算）。
+#
+# 原先这里是**逐个文件**列黑名单，漏了 68 个 —— 而那 68 个里带着 8,945 处
+# `provenance.srcText`（课标原文引文），包括已弃用和已驳回的候选。
+# 这些文件没有任何发布用途，是纯误伤：白名单式忽略必然漏，改成整目录。
+# CI 与 deploy 都不读 tools/out，只有 Python 流水线各段之间传递，可重算。
+tools/out/
 
 # 对账：日志是原始记录，含完整会话内容，不进仓库
 日志/
