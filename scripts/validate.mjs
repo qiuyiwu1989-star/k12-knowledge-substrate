@@ -167,6 +167,29 @@ for (const { rec: a, where } of anchors) {
   }
 }
 
+// ★ 模型污染：同一句「课标原文」不可能同时属于多个学科。
+//   实测「知道甲骨文是已知最早的汉字」在 5 个学科下都出现了 —— 模型在别科的
+//   页面上吐出了记忆里的历史课标原文。**接地校验对此完全失效**：它查的是
+//   「断言 vs 引用原文」，而引用原文本身是编的，两者当然对得上。
+{
+  const bySrc = new Map();
+  for (const [, { a, where }] of byId) {
+    const s = a.provenance?.srcText;
+    if (!s || a.deprecated) continue;
+    if (!bySrc.has(s)) bySrc.set(s, []);
+    bySrc.get(s).push({ a, where });
+  }
+  for (const [s, list] of bySrc) {
+    const subs = new Set(list.map((x) => x.a.discipline));
+    if (subs.size > 1) {
+      for (const { a, where } of list) {
+        err(where, `[${a.id}] 同一句课标原文出现在 ${subs.size} 个学科下（${[...subs].join('/')}）`
+          + ` — 一句原文只可能属于一份课标，其余是模型吐出的记忆内容：「${s.slice(0, 30)}…」`);
+      }
+    }
+  }
+}
+
 // supersededBy 可解析且不指向弃用锚点（防止链式悬空）
 for (const [, { a, where }] of byId) {
   if (!a.supersededBy) continue;
