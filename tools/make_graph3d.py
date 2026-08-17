@@ -25,6 +25,13 @@ from make_graph import load, COLORS, STAGE_ORD   # noqa: E402
 R = 900.0          # 水平面半径
 HGT = 1250.0       # 竖直跨度（学段轴）
 
+# 横切词表的中文名，从 mappings/crosscutting.json 现读 —— 不在这里抄一份。
+# 抄一份就是又一个会腐烂的手打副本。
+_ccv = json.loads((Path(__file__).resolve().parent.parent / 'mappings/crosscutting.json')
+                  .read_text(encoding='utf-8'))
+CC_VOCAB = {x['id']: {'zh': x['zh'], 'k': k}
+            for k in ('crosscutting', 'practice') for x in _ccv[k]}
+
 
 def attach_list_id(anchors):
     """给锚点标出它属于哪张清单 —— 布局要按清单聚簇。"""
@@ -175,7 +182,10 @@ HTML = r"""<!doctype html><html lang="zh-CN"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1"><title>__TITLE__</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
-:root{--bg:#080a11;--fg:#eceaf0;--mut:#7d8496;--dim:#565d6e;--line:#1c2130;--card:rgba(13,16,25,.94)}
+:root{--bg:#080a11;--fg:#eceaf0;--mut:#7d8496;--dim:#565d6e;--line:#1c2130;--card:rgba(13,16,25,.94);
+/* 横切维度专用色。刻意**不用**任何学科色 —— 横切是横跨学科的东西，
+   借用某一科的颜色会读成「这是那一科的」。 */
+--cc:#c9a227}
 body{background:var(--bg);color:var(--fg);font:15px/1.62 -apple-system,"PingFang SC","Microsoft YaHei",sans-serif;overflow:hidden}
 canvas{display:block;cursor:grab}canvas.drag{cursor:grabbing}
 /* 左栏是一根 flex 轨道：logo / hero+cta / 图例 各占一段，由 flex 分配空间。
@@ -230,6 +240,18 @@ canvas{display:block;cursor:grab}canvas.drag{cursor:grabbing}
 .row .t{font-size:13.5px;line-height:1.45;flex:1;color:#cdd2dd;transition:color .15s}
 .row .g{font-size:11.5px;color:var(--dim);flex:none;margin-top:1px}
 .none{color:var(--dim);font-size:13px;font-style:italic;padding:6px 0}
+/* 横切标签：和前置列表长得刻意不一样 —— 那是链条，这是同伴。 */
+.ccnote{color:var(--dim);font-size:12.5px;line-height:1.55;margin:2px 0 9px}
+.ccwrap{display:flex;flex-direction:column;gap:7px}
+button.cc{display:flex;align-items:baseline;gap:9px;width:100%;text-align:left;padding:9px 12px;
+  border:1px solid rgba(201,162,39,.28);border-radius:9px;background:rgba(201,162,39,.06);
+  color:var(--fg);font:inherit;cursor:pointer;transition:.16s}
+button.cc:hover{background:rgba(201,162,39,.13);border-color:rgba(201,162,39,.5)}
+button.cc.on{background:rgba(201,162,39,.2);border-color:var(--cc)}
+button.cc b{font-size:14px;font-weight:600;flex:none}
+button.cc i{font-style:normal;font-size:10px;letter-spacing:.1em;color:var(--cc);
+  border:1px solid rgba(201,162,39,.4);border-radius:4px;padding:1px 5px;flex:none}
+button.cc u{text-decoration:none;font-size:12px;color:var(--mut);margin-left:auto;flex:none}
 #back{background:none;border:1px solid var(--line);border-radius:8px;color:var(--mut);font:inherit;font-size:12px;padding:4px 11px;cursor:pointer;margin-bottom:14px}
 #back:hover{color:var(--fg);border-color:var(--dim)}
 #close{position:absolute;right:16px;top:15px;background:none;border:none;color:var(--dim);font-size:22px;cursor:pointer;line-height:1}
@@ -309,12 +331,22 @@ canvas{display:block;cursor:grab}canvas.drag{cursor:grabbing}
 <label style="margin-top:6px"><input type="checkbox" id="onlyusable"> 只看可用锚点（__USE__ 条，带白边）</label></div>
 <div id="legend"><h4>学科 · 点击开关</h4><div id="ls"></div></div>
 </div>
-<div id="hint"><b>拖动</b>旋转 · <b>滚轮</b>缩放 · <b>点一个点</b>，然后顺着它的前置往回走</div>
+<div id="hint"><b>拖动</b>旋转 · <b>滚轮</b>缩放 · <b>点一个点</b>，顺着前置往回走，
+或点<b style="color:var(--cc)">「练的是同一件事」</b>看哪些别科在练同一种能力</div>
 <div id="panel"><button id="close">×</button><div id="pc"></div></div>
 <div id="marks"><span id="mn"></span><button onclick="exportMarks()">导出</button><button onclick="clearMarks()">清空</button></div>
 <div id="tip"></div>
 <script>
-const N = __NODES__, E = __EDGES__, COLOR = __COLORS__, HGT = __HGT__;
+const N = __NODES__, E = __EDGES__, COLOR = __COLORS__, HGT = __HGT__, CCV = __CCV__;
+
+/* 横切索引：标签 → 锚点 id 列表。
+   跨学科先修边只有 11 条，四万多对「练同一件事」的关联全在这里。
+   以前它只参与布局计算，界面上完全看不见 —— 等于算了没交付。 */
+const ccIndex = new Map();
+for (const n of N) for (const c of (n.cc || [])) {
+  if (!ccIndex.has(c)) ccIndex.set(c, []);
+  ccIndex.get(c).push(n.i);
+}
 const cv = document.getElementById('cv'), ctx = cv.getContext('2d', { alpha: false });
 const DPR = Math.min(2, devicePixelRatio || 1);
 let W, H, yaw = .5, pitch = -.18, zoom = 1, sel = null, hi = null, auto = true, dragging = null;
@@ -384,7 +416,9 @@ function draw() {
   for (const [a, b] of E) {
     const ka = idxOf.get(a), kb = idxOf.get(b);
     if (ka === undefined || kb === undefined || !on(ka) || !on(kb)) continue;
-    (hi && hi.has(a) && (hi.has(b) || b === sel) ? lit : dim).push([ka, kb]);
+    // 横切模式下所有边一律压暗：边在这张图里只表示先修，而横切没有方向。
+    // 让同伴之间偶然存在的先修边亮起来，会把「同一类」误读成「有先后」。
+    (!ccSel && hi && hi.has(a) && (hi.has(b) || b === sel) ? lit : dim).push([ka, kb]);
   }
   if (!hi || dim.length) {
     const bk = [[], [], []];
@@ -443,6 +477,24 @@ function draw() {
     }
   }
   ctx.globalAlpha = 1;
+  /* 横切同伴：虚线光环，不连边。
+     连边会撒谎 —— 边在这张图里一律表示「先修」，而横切没有方向也没有先后。
+     用一圈虚线表示「这些是同一类」，形状上就和链条区分开了。 */
+  if (ccSel && hi) {
+    ctx.save();
+    ctx.strokeStyle = 'rgba(201,162,39,.85)';
+    ctx.lineWidth = 1.4 * DPR;
+    ctx.setLineDash([2.5 * DPR, 2.5 * DPR]);
+    for (const id of hi) {
+      const k = idxOf.get(id);
+      if (k == null || pz[k] <= 0) continue;
+      const n = N[k];
+      const w = 1.45 + Math.sqrt(n.o) * 0.62 + Math.min(2.2, Math.sqrt(n.c || 0) * 0.20);
+      const r = Math.max(1.15, w * zoom * (2600 / (2600 + pz[k])) * DPR);
+      ctx.beginPath(); ctx.arc(px[k], py[k], r + 3.4 * DPR, 0, 7); ctx.stroke();
+    }
+    ctx.restore();
+  }
   if (sel != null) {
     const k = idxOf.get(sel);
     const r = (0.85 + Math.sqrt(byId.get(sel).o) * 0.62) * zoom * (2600 / (2600 + pz[k])) * DPR * pop(idxOf.get(sel));
@@ -526,9 +578,69 @@ function ancestors(id, cap = 900) {
 const esc = s => String(s ?? '').replace(/[&<>]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[c]));
 const gLabel = n => n.s ? 'G' + n.s : '';
 
+/* ── 横切：练同一件事的 ────────────────────────────────────────────
+   这是本项目表达「能力跨界融合」的地方，和先修链是两种不同的关系：
+   先修是有向的、有先后的；横切是无向的、同时的 ——「背《静夜思》」和
+   「数列找规律」之间没有谁先谁后，但都在练「找规律」。
+   所以视觉上必须和前置链分开：前置链高亮走边，横切同伴走虚线光环，不画边。 */
+let ccSel = null;                       // 当前激活的横切标签
+
+function ccSection(n) {
+  const cs = (n.cc || []).filter(c => CCV[c]);
+  if (!cs.length) return `<h5>练的是同一件事</h5>
+    <div class="none">这条还没打横切标签 —— 685 / ${N.length} 条已打</div>`;
+  const chips = cs.map(c => {
+    const peers = (ccIndex.get(c) || []).filter(id => id !== n.i);
+    const other = peers.filter(id => (byId.get(id) || {}).d !== n.d).length;
+    return `<button class="cc ${ccSel === c ? 'on' : ''}" onclick="ccShow('${c}','${n.i}')">
+      <b>${esc(CCV[c].zh)}</b>
+      <i>${CCV[c].k === 'practice' ? '实践' : '概念'}</i>
+      <u>${other} 条别科在练</u></button>`;
+  }).join('');
+  return `<h5>练的是同一件事<b>${cs.length}</b></h5>
+    <div class="ccnote">这不是先修关系，没有先后 —— 是「同一种能力，长在不同学科里」。点一下看是谁。</div>
+    <div class="ccwrap">${chips}</div>`;
+}
+
+/** 点横切标签：把同一标签下的全部锚点高亮，按学科分组列出。
+ *  刻意**不**改 sel —— 面板还停在原来那条上，避免「点一下就跳走、回不来」。 */
+window.ccShow = (c, from) => {
+  if (ccSel === c) { ccSel = null; const n0 = byId.get(from); if (n0) show(n0, false); return; }
+  ccSel = c;
+  const ids = ccIndex.get(c) || [];
+  hi = new Set(ids); auto = false;
+  const self = byId.get(from);
+  const by = new Map();
+  for (const id of ids) {
+    const m = byId.get(id); if (!m) continue;
+    if (!by.has(m.d)) by.set(m.d, []);
+    by.get(m.d).push(m);
+  }
+  const groups = [...by.entries()].sort((a, b) => b[1].length - a[1].length).map(([d, arr]) => `
+    <h5><span class="dot" style="background:${COLOR[d] || '#888'}"></span>${esc(d)}<b>${arr.length}</b></h5>
+    ${arr.slice(0, 8).map(a => `<div class="row">
+      <span class="dot" style="background:${COLOR[a.d] || '#888'}"></span>
+      <span class="t" onclick="jump('${a.i}')">${esc(a.t)}</span>
+      <span class="g">${gLabel(a)}</span></div>`).join('')}
+    ${arr.length > 8 ? `<div class="none">…另有 ${arr.length - 8} 条</div>` : ''}`).join('');
+  document.getElementById('pc').innerHTML = `
+    <button id="back" onclick="ccShow('${c}','${from}')">← 回到这条能力</button>
+    <div class="hdr"><span class="dot" style="background:var(--cc)"></span>
+      <span>横切${CCV[c].k === 'practice' ? '实践' : '概念'} · 跨学科</span></div>
+    <h2>${esc(CCV[c].zh)}</h2>
+    <p class="ask">${esc((self && self.t) || '')}<br><b style="color:var(--cc)">… 和下面这些练的是同一件事。</b></p>
+    <div class="big">${by.size}<em>个学科，共 ${ids.length} 条</em></div>
+    <div class="bignote">它们之间没有先修关系，画不成有向边 —— 但确实是同一种能力长在不同学科里。</div>
+    ${groups}`;
+  document.getElementById('panel').classList.add('on');
+  document.querySelectorAll('.li').forEach(el => el.classList.remove('faded'));
+  draw();
+};
+
 /** Marble 的关键设计：大字给「全部前置总数」，列表只列直接前置。
  *  一次倒出 200 条传递前置，人是读不动的；一跳一跳走才走得下去。 */
 function show(n, push = true) {
+  ccSel = null;
   if (push && sel && sel !== n.i) stack.push(sel);
   sel = n.i; hi = ancestors(n.i); hi.add(n.i); auto = false;
   const total = ancestors(n.i).size;
@@ -564,6 +676,7 @@ function show(n, push = true) {
     ${dp.length ? dp.map(a => row(a, true)).join('') : '<div class="none">没有前置 —— 这是一个起点</div>'}
     <h5>接下来解锁<b>${dn.length}</b></h5>
     ${dn.length ? dn.slice(0, 24).map(a => row(a, false)).join('') : '<div class="none">暂无后继</div>'}
+    ${ccSection(n)}
     <h5>这条有问题？点一下，导出时带页码</h5>
     <div class="flag">${fbtn('stage', '学段不对')}${fbtn('wording', '表述要改')}${fbtn('reject', '不该收')}${fbtn('missing-pre', '缺前置')}${fbtn('other', '其他')}</div>`;
   document.getElementById('panel').classList.add('on');
@@ -618,7 +731,7 @@ window.exportMarks = () => {
 };
 window.goBack = () => { const p = stack.pop(); if (p) show(byId.get(p), false); else clear(); };
 function clear() {
-  sel = null; hi = null; auto = true; stack = [];
+  sel = null; hi = null; ccSel = null; auto = true; stack = [];
   document.getElementById('panel').classList.remove('on');
   document.getElementById('q').style.display = '';
   document.querySelectorAll('.li').forEach(el => el.classList.remove('faded'));
@@ -755,12 +868,16 @@ def main():
         # 挂了多少清单条目 —— 半径要用它。「背诵《静夜思》」不被任何东西依赖，
         # 不等于它不重要；清单类锚点的分量在条目数上。
         'c': (n.get('provenance') or {}).get('itemCount') or 0,
+        # 横切标签。**这是「能力跨界」在本项目里的唯一载体** —— 跨学科先修边只有 11 条，
+        # 而横切关联有四万多对。以前它只影响布局，界面上看不见，等于没交付。
+        'cc': (n.get('crosscutting') or []) + (n.get('practice') or []),
     } for k, n in enumerate(anchors)]
 
     html = (HTML.replace('__TITLE__', 'K12 教育的能力结构 · 3D 图谱')
             .replace('__NODES__', json.dumps(nodes, ensure_ascii=False, separators=(',', ':')))
             .replace('__EDGES__', json.dumps([[e['prerequisiteId'], e['anchorId']] for e in edges], separators=(',', ':')))
             .replace('__COLORS__', json.dumps(COLORS, ensure_ascii=False))
+            .replace('__CCV__', json.dumps(CC_VOCAB, ensure_ascii=False, separators=(',', ':')))
             .replace('__NC__', f"{len(nodes):,}").replace('__EC__', f"{len(edges):,}")
             .replace('__OKN__', f"{sum(1 for n in nodes if n['r'] == 1):,}")
             .replace('__BADN__', f"{sum(1 for n in nodes if n['r'] == 2):,}")
