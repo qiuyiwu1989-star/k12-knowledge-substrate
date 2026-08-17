@@ -111,6 +111,11 @@ const VALUES = {
   usableEdges: edges.filter((e) => uid.has(e.anchorId) && uid.has(e.prerequisiteId)).length,
   crossEdges: cross,
   crossPct: (cross / edges.length * 100).toFixed(1),
+  autoConfirmed: n('auto-confirmed'),
+  aiAdjudicated: n('ai-adjudicated'),
+  // 「reviewedBy 非空」和「教师签字」是两回事 —— 前者含 ai:extraction-pipeline。
+  // PROVENANCE 里专门解释这个坑，那句里的数字也得跟着数据走。
+  aiSigned: live.filter((a) => (a.reviewedBy || []).length).length,
   crosscuttingPairs: crossPairsOn('crosscutting'),
   practicePairs: crossPairsOn('practice'),
   crosscuttingTagged: live.filter((a) => vals(a, 'crosscutting').length || vals(a, 'practice').length).length,
