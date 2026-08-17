@@ -4,38 +4,47 @@
   "schemaVersion": "0.1.0",
   "generatedAt": "2026-08-17",
   "counts": {
-    "anchors": 1958,
+    "anchors": 2452,
     "candidates": 0,
     "edges": 1040,
     "listItems": 6262,
     "mappings": 4,
-    "liveAnchors": 1068,
+    "liveAnchors": 1562,
     "deprecatedAnchors": 890,
     "byDiscipline": {
-      "艺术": 74,
-      "生物学": 45,
-      "化学": 60,
-      "语文": 204,
-      "英语": 71,
-      "地理": 23,
-      "历史": 39,
+      "艺术": 80,
+      "生物学": 83,
+      "化学": 73,
+      "语文": 223,
+      "英语": 154,
+      "体育与健康": 87,
+      "俄语": 23,
+      "信息技术": 24,
+      "历史": 55,
+      "地理": 27,
+      "德语": 2,
+      "思想政治": 5,
+      "数学": 228,
+      "日语": 36,
+      "物理": 97,
+      "美术": 8,
+      "西班牙语": 1,
+      "通用技术": 105,
+      "音乐": 2,
       "信息科技": 46,
       "劳动": 16,
-      "数学": 184,
       "道德与法治": 35,
-      "体育与健康": 73,
-      "物理": 46,
       "科学": 152
     },
     "byTrack": {
-      "MATRIX": 667,
-      "DAG": 189,
+      "MATRIX": 1053,
+      "DAG": 297,
       "LIST": 212
     },
     "byReview": {
       "disputed": 144,
       "ai-reviewed": 404,
-      "llm-proposed": 132,
+      "llm-proposed": 626,
       "ai-adjudicated": 242,
       "auto-confirmed": 146
     }
@@ -43,7 +52,7 @@
   "usableAnchors": 388,
   "humanConfirmedAnchors": 0,
   "rewrittenAnchors": 0,
-  "curriculumDerivedAnchors": 1068,
+  "curriculumDerivedAnchors": 1562,
   "aiReviewedAnchors": 404,
   "disputedAnchors": 144,
   "files": {
@@ -74,6 +83,82 @@
     "anchors/english.jsonl": {
       "bytes": 164332,
       "sha256": "695af19d6704539a9377d993ba11bca2567682706e9f0cf07b3d3e7fb07619bb"
+    },
+    "anchors/gaozhong-体育与健康.jsonl": {
+      "bytes": 19841,
+      "sha256": "544d95e86bea4d97c5871f415e9121c4a557d344437cce425209f645366fdfdc"
+    },
+    "anchors/gaozhong-俄语.jsonl": {
+      "bytes": 23406,
+      "sha256": "2bb4c6ccb420fe4ce9debb41973498f2107f2bb76b537ee19fc89299ae07c088"
+    },
+    "anchors/gaozhong-信息技术.jsonl": {
+      "bytes": 30766,
+      "sha256": "4d4e53f329be9ac5e594c2ec043eb788f8edfa41ccadd3e6d5d0e0ef14213279"
+    },
+    "anchors/gaozhong-化学.jsonl": {
+      "bytes": 16814,
+      "sha256": "2a5a103c047d0f69e095db301d81b8e2ab3e2f6017c8639b036f6040a19da2ca"
+    },
+    "anchors/gaozhong-历史.jsonl": {
+      "bytes": 21937,
+      "sha256": "7f0a451345e12a4881496d03063303d99f72f82dcb3fd9cc60be42b31cd67a12"
+    },
+    "anchors/gaozhong-地理.jsonl": {
+      "bytes": 5024,
+      "sha256": "9accc22e716983209148a87dca5d07db36461e22ffd9bf4a01e786d342257f36"
+    },
+    "anchors/gaozhong-德语.jsonl": {
+      "bytes": 2611,
+      "sha256": "e2079c439937654882134c6422de24b2424b38ccafa576de9ad371baf7b6de13"
+    },
+    "anchors/gaozhong-思想政治.jsonl": {
+      "bytes": 6578,
+      "sha256": "bdd4fff58eab647c225f78b501a376936dcf43dd172786b898f6bf1efb35a368"
+    },
+    "anchors/gaozhong-数学.jsonl": {
+      "bytes": 70621,
+      "sha256": "c3b7677e020bb997208eb3feae83939013037179f970a8de001991446f42a978"
+    },
+    "anchors/gaozhong-日语.jsonl": {
+      "bytes": 38674,
+      "sha256": "b509741867ff2aa666d67c67f710f0d62b756ee7472bdfbdbe0a8055f278a43a"
+    },
+    "anchors/gaozhong-物理.jsonl": {
+      "bytes": 55281,
+      "sha256": "fa1fa47197bb297a9b68a69509e1cd5a80a7db613678b7c7f52e952fbdb13258"
+    },
+    "anchors/gaozhong-生物学.jsonl": {
+      "bytes": 51852,
+      "sha256": "e1d55cf199e80b709704136b4b8098fdc8c5e7483158aaf490fbfbec0e4f5693"
+    },
+    "anchors/gaozhong-美术.jsonl": {
+      "bytes": 10794,
+      "sha256": "1b8e7bb2458b979cf01b1cec8d6784e958bbd53e7a0c911ae9d7c9d8084a5252"
+    },
+    "anchors/gaozhong-艺术.jsonl": {
+      "bytes": 8640,
+      "sha256": "8bc072378a8d2de077bbd303344a5458a731bc9c92760687337606f5f1bf6059"
+    },
+    "anchors/gaozhong-英语.jsonl": {
+      "bytes": 97415,
+      "sha256": "f3401bff83c1aa909da624c2e0b79634d973ea814fc275cd63feb675e9baf086"
+    },
+    "anchors/gaozhong-西班牙语.jsonl": {
+      "bytes": 934,
+      "sha256": "35aa492cf2305957e7b1884684074c60cd90ef6fdfcb1523b5c775f3a42795d1"
+    },
+    "anchors/gaozhong-语文.jsonl": {
+      "bytes": 22805,
+      "sha256": "2b6ecbecb84b5ab2d10cf902ba1b953bf6428c8a9c11b673d0626a68c2d020ae"
+    },
+    "anchors/gaozhong-通用技术.jsonl": {
+      "bytes": 137710,
+      "sha256": "b9d6ff09e3ad06eadb624ba8452187fc00458579f296928f937eb7f7ba456c9d"
+    },
+    "anchors/gaozhong-音乐.jsonl": {
+      "bytes": 2737,
+      "sha256": "f63422f4224af1f6246d853e8187e6ee0eebe82c05a53a5c6a215e7a3aaa8d04"
     },
     "anchors/geography.jsonl": {
       "bytes": 66481,

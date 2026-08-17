@@ -61,7 +61,16 @@ const lists = walk(join(ROOT, 'lists')).flatMap(readJsonl);
 const mappings = walk(join(ROOT, 'mappings')).flatMap(readJsonl);
 const candidates = walk(join(ROOT, 'candidates')).flatMap(readJsonl);
 
-const DISCIPLINES = new Set(['语文', '数学', '英语', '物理', '化学', '生物学', '历史', '地理', '道德与法治', '思想政治', '科学', '信息科技', '劳动', '艺术', '体育与健康']);
+// 义务教育 14 科 + 高中独有的学科。高中叫「信息技术」，义务教育叫「信息科技」——
+// 那是两份课标里的两个不同名字，不要合并。
+const DISCIPLINES = new Set([
+  '语文', '数学', '英语', '物理', '化学', '生物学', '历史', '地理',
+  '道德与法治', '思想政治', '科学', '信息科技', '劳动', '艺术', '体育与健康',
+  // 高中独有
+  '信息技术', '通用技术', '音乐', '美术', '日语', '俄语', '德语', '法语', '西班牙语',
+]);
+// 高中课程类型。义务教育没有这个维度，一律 null。
+const COURSE_TYPES = new Set(['必修', '选择性必修', '选修']);
 const TRACKS = new Set(['DAG', 'LIST', 'MATRIX']);
 // KNOWLEDGE：事实性知识（「已知最早的汉字是甲骨文」）。史地生政这类知识型学科
 // 的【内容要求】几乎全是这一类，先前没有对应类型，它们只能硬塞进 CONCEPTUAL。
@@ -162,6 +171,15 @@ for (const { rec: a, where } of anchors) {
     const msg = `[${a.id}] MATRIX 档缺 topic/dimension（史地生政科的结构是「能力维度 × 主题」，不是链）`;
     if (a.reviewStatus === 'expert-confirmed' || a.reviewStatus === 'auto-confirmed') err(where, msg);
     else warn(where, msg + ' — 待复核时补');
+  }
+  // 课程类型：只有高中锚点该有，且必须在闭合词表里。
+  // 它不是装饰字段 —— 档案要靠它区分「没学过」和「学了没会」。
+  if (a.courseType != null) {
+    if (!COURSE_TYPES.has(a.courseType)) {
+      err(where, `[${a.id}] courseType「${a.courseType}」不在 必修/选择性必修/选修 之内`);
+    }
+    const g = +String(a.stageHint?.min ?? '').slice(1);
+    if (g && g < 10) err(where, `[${a.id}] 标了 courseType 却是 G${g} —— 课程类型只存在于高中`);
   }
   if (a.stageHint) {
     const { min, max } = a.stageHint;

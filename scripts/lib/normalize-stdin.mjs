@@ -11,12 +11,36 @@
  */
 import { normalizeText } from './normalize.mjs';
 
+/** 归一到不动点。
+ *
+ * `normalizeText` **单次调用不幂等** —— 实测 99 条里，第一遍留下尾空格、
+ * 第二遍才去掉（大概是某个变换先 trim、后又移除了一个字符，把空格暴露出来）。
+ * 只跑一遍的后果：带尾空格的句子被写进库，等 CI 报「未规范化」才发现，
+ * 而那时已经铸了 494 个 ID。
+ *
+ * 跑到不动点，调用方就不必关心内部顺序。上限 4 轮 —— 真要振荡就该报错，
+ * 而不是静默返回一个中间态。 */
+function normalizeFixpoint(text, opts) {
+  let cur = text;
+  for (let i = 0; i < 4; i++) {
+    const next = normalizeText(cur, opts);
+    if (next === cur) return cur;
+    cur = next;
+  }
+  const last = normalizeText(cur, opts);
+  if (last !== cur) {
+    process.stderr.write(`归一在 4 轮内没收敛：${JSON.stringify(text)}\n`);
+    process.exit(3);
+  }
+  return cur;
+}
+
 const chunks = [];
 for await (const c of process.stdin) chunks.push(c);
 const out = [];
 for (const l of Buffer.concat(chunks).toString('utf8').split('\n')) {
   if (!l.trim()) continue;
   const { text = '', discipline = '' } = JSON.parse(l);
-  out.push(JSON.stringify(normalizeText(text, { discipline })));
+  out.push(JSON.stringify(normalizeFixpoint(text, { discipline })));
 }
 process.stdout.write(out.join('\n') + (out.length ? '\n' : ''));
