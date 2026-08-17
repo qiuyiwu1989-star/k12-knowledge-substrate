@@ -42,6 +42,8 @@
   },
   "usableAnchors": 451,
   "humanConfirmedAnchors": 0,
+  "rewrittenAnchors": 0,
+  "curriculumDerivedAnchors": 1111,
   "aiReviewedAnchors": 498,
   "disputedAnchors": 144,
   "files": {

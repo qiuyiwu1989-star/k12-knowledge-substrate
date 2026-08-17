@@ -168,6 +168,39 @@ for (const { rec: a, where } of anchors) {
     if (!GRADE_RE.test(min ?? '') || !GRADE_RE.test(max ?? '')) err(where, `[${a.id}] stageHint 年级格式非法`);
     else if (+min.slice(1) > +max.slice(1)) err(where, `[${a.id}] stageHint 区间倒置：${min} > ${max}`);
   }
+
+  // ★★ 能力转写层：本项目**唯一**不是课标转述的一层 ★★
+  //
+  // 课标写「知道 / 了解 X」，NGSS 写「学生能做出 X」。忠实抽取课标就必然
+  // 继承知识本位 —— 实测 PROCEDURAL 我们 54 条、Marble 512 条，不是漏抽，
+  // 是两国文件的语言不同。要补只能在课标之上转写，**而那一步就成了
+  // 我们自己的教育主张，不再是「教育部课标里写着」**。
+  //
+  // 底座的全部价值在「每条都能翻回教育部文件某一页」。这层一旦和课标转述
+  // 混在一起，那条护城河当场就破 —— 那正是 Marble 49% 条目挂不上课标的处境。
+  // 所以分层不能只是文档里一句话，必须是机器强制的四条：
+  if (a.evidenceSource === 'capability-rewrite') {
+    const p = a.provenance ?? {};
+    // 1. 必须指回它是从哪条知识锚点转写来的，否则来源无从追溯
+    if (!p.derivedFrom) {
+      err(where, `[${a.id}] capability-rewrite 缺 provenance.derivedFrom —— 转写必须指回源锚点`);
+    }
+    // 2. 不许冒充课标转述
+    if (p.method && p.method !== 'capability-rewrite') {
+      err(where, `[${a.id}] capability-rewrite 的 method 是「${p.method}」—— 不得标成课标转述`);
+    }
+    // 3. 永远够不到 auto-confirmed。那一档的含义是「判定客观、根本不需要人」，
+    //    而「该不该把这条知识变成这条能力」是纯教学判断，必须有人签字。
+    if (a.reviewStatus === 'auto-confirmed') {
+      err(where, `[${a.id}] capability-rewrite 不得标 auto-confirmed —— 教学判断不存在「机械可判定」`);
+    }
+    // 4. 转写出来的必须真的是能力，不能又是一条「能说出 X」
+    if (a.type === 'KNOWLEDGE') {
+      err(where, `[${a.id}] capability-rewrite 的产物仍是 KNOWLEDGE 型 —— 那就没转写`);
+    }
+  } else if (a.provenance?.derivedFrom) {
+    err(where, `[${a.id}] 有 derivedFrom 却不是 capability-rewrite —— 转写来源必须显式标记`);
+  }
   if (a.deprecated) {
     // 弃用有两种：被更好的锚点替代（supersededBy），或被判定为无效而移除（dropReason）。
     // 后者没有替代者可指 —— 强求 supersededBy 只会逼人随便填一个，那才真会让档案错乱。
@@ -215,6 +248,23 @@ for (const [, { a, where }] of byId) {
   const t = byId.get(a.supersededBy);
   if (!t) err(where, `[${a.id}] supersededBy 指向不存在的锚点 ${a.supersededBy}`);
   else if (t.a.deprecated) err(where, `[${a.id}] supersededBy 指向的 ${a.supersededBy} 本身也已弃用 — 必须指向活跃锚点`);
+}
+
+// 能力转写的第 5 条：源锚点必须真实存在、活跃、且确实是 KNOWLEDGE 型。
+// 单列在这里是因为它要跨锚点查 —— 上面那四条只看单条自己。
+// 「从活跃的知识锚点转写」这件事本身就是这层的可追溯性，源没了转写就成了孤证。
+for (const [, { a, where }] of byId) {
+  const src = a.provenance?.derivedFrom;
+  if (!src || a.deprecated) continue;
+  const t = byId.get(src);
+  if (!t) { err(where, `[${a.id}] derivedFrom 指向不存在的锚点 ${src}`); continue; }
+  if (t.a.deprecated) err(where, `[${a.id}] derivedFrom 指向已弃用的 ${src} — 源没了，转写成了孤证`);
+  if (t.a.type !== 'KNOWLEDGE') {
+    err(where, `[${a.id}] derivedFrom 指向的 ${src} 是 ${t.a.type} 型 — 只能从 KNOWLEDGE 转写，不能从能力再转能力`);
+  }
+  if (t.a.discipline !== a.discipline) {
+    err(where, `[${a.id}] 转写跨了学科：${t.a.discipline} → ${a.discipline}`);
+  }
 }
 
 // ---------- 候选（candidates/）----------

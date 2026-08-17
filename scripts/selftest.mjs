@@ -43,7 +43,14 @@ function sample() {
   const early = dag.find((a) => narrow(a, 'G1', 'G2')) ?? dag.find((a) => a.stageHint?.max === 'G2') ?? dag[0];
   const late = dag.find((a) => a.discipline === early.discipline && a.stageHint?.min === 'G7')
             ?? dag.find((a) => a.stageHint?.min === 'G7') ?? dag[dag.length - 1];
-  return { early: g(early), late: g(late), list: g(list[0]), matrix: g(mat[0]), matrix2: g(mat[1]) };
+  // 能力转写的夹具：一条活跃的 KNOWLEDGE 型（合法的转写源）
+  // 和一条活跃的非 KNOWLEDGE 型（非法的转写源）。
+  const all = Object.values(byTrack).flat().filter((a) => !a.deprecated);
+  const know = all.find((a) => a.type === 'KNOWLEDGE');
+  const notKnow = all.find((a) => a.type !== 'KNOWLEDGE' && a.discipline === know?.discipline)
+               ?? all.find((a) => a.type !== 'KNOWLEDGE');
+  return { early: g(early), late: g(late), list: g(list[0]), matrix: g(mat[0]), matrix2: g(mat[1]),
+           know: { ...g(know), type: know.type }, notKnow: { ...g(notKnow), type: notKnow.type } };
 }
 const S = sample();
 
@@ -62,6 +69,14 @@ const E = (o) => JSON.stringify({
 });
 
 const CASES = [
+  // ── 能力转写层：本项目唯一不是课标转述的一层，六条硬约束逐条验证 ──
+  ['转写缺 derivedFrom 被拦',        'anchors/x.jsonl', A({ id: 'ca_TEST0010', evidenceSource: 'capability-rewrite', reviewStatus: 'llm-proposed' }), '缺 provenance.derivedFrom'],
+  ['转写冒充课标转述被拦',            'anchors/x.jsonl', A({ id: 'ca_TEST0011', evidenceSource: 'capability-rewrite', reviewStatus: 'llm-proposed', provenance: { derivedFrom: S.know.id, method: 'curriculum-content-rewrite' } }), '不得标成课标转述'],
+  ['转写标 auto-confirmed 被拦',      'anchors/x.jsonl', A({ id: 'ca_TEST0012', evidenceSource: 'capability-rewrite', reviewStatus: 'auto-confirmed', reviewedBy: [], provenance: { derivedFrom: S.know.id, method: 'capability-rewrite' } }), '不得标 auto-confirmed'],
+  ['转写产物仍是 KNOWLEDGE 被拦',     'anchors/x.jsonl', A({ id: 'ca_TEST0013', type: 'KNOWLEDGE', evidenceSource: 'capability-rewrite', reviewStatus: 'llm-proposed', provenance: { derivedFrom: S.know.id, method: 'capability-rewrite' } }), '那就没转写'],
+  ['有 derivedFrom 却不标转写被拦',   'anchors/x.jsonl', A({ id: 'ca_TEST0014', reviewStatus: 'llm-proposed', provenance: { derivedFrom: S.know.id } }), '必须显式标记'],
+  ['转写源不是 KNOWLEDGE 被拦',       'anchors/x.jsonl', A({ id: 'ca_TEST0015', discipline: S.notKnow.discipline, evidenceSource: 'capability-rewrite', reviewStatus: 'llm-proposed', provenance: { derivedFrom: S.notKnow.id, method: 'capability-rewrite' } }), '不能从能力再转能力'],
+  ['转写源不存在被拦',                'anchors/x.jsonl', A({ id: 'ca_TEST0016', evidenceSource: 'capability-rewrite', reviewStatus: 'llm-proposed', provenance: { derivedFrom: 'ca_NOPE0000', method: 'capability-rewrite' } }), 'derivedFrom 指向不存在'],
   ['不可判定的 statement 被拦',      'anchors/x.jsonl', A({ statement: '分数的意义', verb: '理解', object: '分数意义' }), '不可判定'],
   ['口号句式被拦',                    'anchors/x.jsonl', A({ statement: '培养学生的数学抽象能力和推理意识', verb: '培养', object: '抽象能力' }), '口号句式'],
   ['去重签名冲突被拦',                'anchors/x.jsonl', A({ id: 'ca_TEST0002', discipline: S.early.discipline, verb: S.early.verb, object: S.early.object }), '去重签名'],
