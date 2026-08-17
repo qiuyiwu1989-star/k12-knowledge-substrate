@@ -74,6 +74,22 @@ COURSE_CN = re.compile(r'^（[一二三四五六七八九]）\s*(必修|选择�
 TOPIC_CN = re.compile(r'^(主题|专题|模块)\s*([\d一二三四五六七八九]+)\s*[：:]\s*(.{2,30})$')
 # 二级编号小标题「1.1 化学科学的主要特征」—— 它下面才是无编号的要求段
 SUBHEAD = re.compile(r'^(\d+\.\d+)\s{1,3}(.{2,30})$')
+
+# ── 第三套版式（语文）：学习任务群 ──
+# 「学习任务群1 整本书阅读与研讨」当主题，「1. 学习目标与内容」开内容段，
+# 「（1）…」是条目。语文不按主题organize，按任务群。
+TASKGROUP = re.compile(r'^学习任务群\s*(\d+)\s*(.{2,30})$')
+XUEXI_SEC = re.compile(r'^\d+\.\s*(学习目标与内容|教学提示)\s*$')
+PAREN_ITEM = re.compile(r'^（(\d+)）\s*(.+)$')
+
+# ── 第四套版式（外语类：日/俄/德/法/西）：表格 ──
+# 「表 6 语音知识内容要求」开表，「课程类别 内容要求」是表头，
+# 裸行「必修」「选择性必修」「选修 — 提高类」切换课程类别，「1. …」是条目。
+TABLE_HEAD = re.compile(r'^表\s*\d+\s*(.{2,24}?)(内容要求|要求)\s*$')
+TABLE_COLS = re.compile(r'^课程类别\s+(内容要求|要求)\s*$')
+# 裸课程类别行。可能后面直接跟着第一个条目（「选修 — 提高类 1. 能分辨…」）
+BARE_COURSE = re.compile(r'^(选择性必修|选修|必修)\s*(?:[—–-]\s*(\S{2,6})类?)?\s*(?:(\d+)\.\s*(.+))?$')
+NUM_ITEM = re.compile(r'^(\d+)\.\s{0,2}(.{6,})$')
 # 页眉页脚噪声：页码、书名、章节名
 # 页眉页脚。**不能只匹配行首** —— 数学等科的文字层把页码和页眉粘在一行
 # （「0 2普通高中数学课程标准 （2 0 1 7年版…」），而且 CID 字体抽取会在数字间插空格
@@ -118,9 +134,9 @@ def clean_lines(txt):
 # 不区分这一点，「必修 1 的学业要求」会和后面的正文粘成一行，
 # 正则就不再匹配 —— 实测导致 学业要求 抽出 0 条。
 STANDALONE = (MODULE_HEAD, XUEYE_HEAD, TOPIC_HEAD, BARE_SECTION,
-              COURSE_CN, TOPIC_CN)
+              COURSE_CN, TOPIC_CN, TASKGROUP, XUEXI_SEC, TABLE_HEAD, TABLE_COLS)
 # 这两类是「带正文的头」，后续行是它们的续行
-ABSORBING = (ITEM, EXAMPLE)
+ABSORBING = (ITEM, EXAMPLE, PAREN_ITEM, NUM_ITEM)
 
 
 def unwrap(stream):
@@ -164,6 +180,13 @@ def parse(subject, pdf):
     sub_code, sub_name = None, None
     pr_buf, pr_page = [], None
 
+    def _emit_item(text, pno, code=None):
+        rows.append({'subject': subject, 'course': course, 'courseNo': course_no,
+                     'topic': topic, 'topicName': topic_name,
+                     'code': code or sub_code, 'subTopic': sub_name,
+                     'text': text, 'page': pno, 'section': '内容要求',
+                     'examples': []})
+
     def flush_prose():
         """落一段无编号的内容要求。
 
@@ -206,6 +229,37 @@ def parse(subject, pdf):
               for l in clean_lines(page.extract_text() or '')]
     if True:
         for s, pno in unwrap(stream):
+            # ── 第三套（语文）：学习任务群 ──
+            m = TASKGROUP.match(s)
+            if m:
+                flush_xueye(); flush_prose()
+                topic, topic_name = m.group(1), m.group(2).strip()
+                section = None
+                continue
+            m = XUEXI_SEC.match(s)
+            if m:
+                flush_xueye(); flush_prose()
+                section = '内容要求' if m.group(1) == '学习目标与内容' else m.group(1)
+                continue
+
+            # ── 第四套（外语类）：表格 ──
+            m = TABLE_HEAD.match(s)
+            if m:
+                flush_xueye(); flush_prose()
+                topic, topic_name, section = None, m.group(1).strip(), '内容要求'
+                continue
+            if TABLE_COLS.match(s):
+                continue
+            # 裸课程类别行。可能同行带着第一个条目
+            m = BARE_COURSE.match(s)
+            if m and section == '内容要求' and not ITEM.match(s):
+                flush_prose()
+                course = m.group(1)
+                course_no = (m.group(2) or '')
+                if m.group(4):                      # 「选修 — 提高类 1. 能分辨…」
+                    _emit_item(m.group(4).strip(), pno, m.group(3))
+                continue
+
             # 第二套版式的课程类型：（一）必修课程
             m = COURSE_CN.match(s)
             if m:
@@ -263,6 +317,14 @@ def parse(subject, pdf):
                              'examples': []})
                 continue
 
+            # （1）… 和 1. … 型条目
+            if section == '内容要求':
+                m = PAREN_ITEM.match(s) or NUM_ITEM.match(s)
+                if m and len(m.group(2)) > 10:
+                    flush_prose()
+                    _emit_item(m.group(2).strip(), pno, m.group(1))
+                    continue
+
             m = EXAMPLE.match(s)
             if m and rows and section == '内容要求':
                 rows[-1]['examples'].append(m.group(2).strip())
@@ -307,7 +369,9 @@ def check_codes(rows):
     holes = []
     by = collections.defaultdict(list)
     for r in rows:
-        if r['code']:
+        # 只对三级编号（1.1.1）做连续性校验。其他版式的编号是纯数字或二级，
+        # 在不同课程类别下会重新从 1 开始，「不连续」是正常的，不是缺口。
+        if r['code'] and r['code'].count('.') == 2:
             by[(r['subject'], r['topic'])].append(r['code'])
     for k, codes in by.items():
         nums = sorted(int(c.rsplit('.', 1)[1]) for c in codes)
@@ -329,8 +393,25 @@ def main():
         sys.exit(f'没有课标 PDF。先跑 bash scripts/fetch-standards-gaozhong.sh')
 
     all_rows, all_warn = [], []
-    print(f"{'学科':<10}{'内容要求':>8}{'学业要求':>8}{'例题':>6}{'编号缺口':>8}")
-    print('─' * 42)
+    # 碎片率是这一步唯一有意义的质量指标。条数上去了不等于对 ——
+    # 实测宽规则能抽出 2,598 条，一半是内容清单和半句话。
+    def frag_rate(items):
+        if not items:
+            return 0.0
+        # ★ 「不以句号结尾」**不能**单独当碎片信号。生物学的内容要求整栏都不带
+        #   句号（「说出细胞主要由 C、H、O、N、P、S 等元素构成」），按那个规则
+        #   算出 100% 碎片率 —— 而它其实是全表最干净的一科。指标误判比没指标更糟：
+        #   它会让人去修没坏的东西。
+        #   真碎片的三个信号：从标点/连词起头、句中夹着编号（多条糊在一起）、
+        #   混进了表头文字。
+        bad = sum(1 for r in items
+                  if re.match(r'^[，、；。等和与或）]', r['text'])
+                  or re.search(r'[^0-9]\d\.\s*\S.{4,}\d\.', r['text'])
+                  or re.search(r'课程类别|普通高中|课程标准', r['text']))
+        return bad / len(items) * 100
+
+    print(f"{'学科':<10}{'内容要求':>8}{'学业要求':>8}{'例题':>6}{'碎片率':>7}{'编号缺口':>8}")
+    print('─' * 50)
     for p in pdfs:
         subject = p.stem.split('-', 1)[1]
         if subject == '课程方案':
@@ -342,16 +423,20 @@ def main():
         nc = sum(1 for r in rows if r['section'] == '内容要求')
         nx = sum(1 for r in rows if r['section'] == '学业要求')
         ne = sum(len(r['examples']) for r in rows)
-        print(f"{subject:<10}{nc:>8}{nx:>8}{ne:>6}{len(holes):>8}")
+        fr = frag_rate([r for r in rows if r['section'] == '内容要求'])
+        flag = '  ⚠' if fr > 12 else ''
+        print(f"{subject:<10}{nc:>8}{nx:>8}{ne:>6}{fr:>6.0f}%{len(holes):>8}{flag}")
         all_rows += rows
         all_warn += [f'[{subject}] {w}' for w in warn]
         if holes:
             all_warn += [f'[{subject}] 主题 {k[1]} 编号缺 {m}' for k, m in holes[:6]]
 
-    print('─' * 42)
+    print('─' * 50)
     nc = sum(1 for r in all_rows if r['section'] == '内容要求')
     print(f"{'合计':<10}{nc:>8}{sum(1 for r in all_rows if r['section']=='学业要求'):>8}"
-          f"{sum(len(r['examples']) for r in all_rows):>6}")
+          f"{sum(len(r['examples']) for r in all_rows):>6}"
+          f"{frag_rate([r for r in all_rows if r['section']=='内容要求']):>6.0f}%")
+    print("\n⚠ = 碎片率 >12%，这一科的版式还没适配好，不要往 anchors/ 推")
     print(f"\n课程类型分布: {dict(collections.Counter((r['course'] or '未标') for r in all_rows))}")
     if all_warn:
         print(f"\n⚠ {len(all_warn)} 条告警（前 8 条）：")
