@@ -57,7 +57,8 @@ def layout(nodes, edges, iters=460, seed=42):
         # 再选学选修）—— 这不是发明年级，是课标自己给的顺序。
         if s >= 10:
             s = {'必修': 10, '选择性必修': 11, '选修': 12}.get(n.get('courseType'), 11)
-        ytar.append(H * 0.08 + (s - 1) / (STAGE_MAX - 1) * H * 0.84)
+        # 一年级在底、高中在顶 —— 能力是长上去的。见 make_graph3d.py 里的说明。
+        ytar.append(H * 0.92 - (s - 1) / (STAGE_MAX - 1) * H * 0.84)
     # X 初值：按学科散在一个环上，避免一开始全挤在中间，也避免排成整齐的列
     discs = sorted({n['discipline'] for n in nodes})
     dx = {}
@@ -341,7 +342,7 @@ document.querySelectorAll('.li').forEach(el => el.onclick = () => {
 });
 document.getElementById('stat').textContent = `${N.length} 个能力 · ${E.length} 条依赖`;
 document.getElementById('axis').innerHTML = [[1,'一年级'],[3,'三年级'],[5,'五年级'],[7,'七年级'],[9,'九年级'],[10,'高中必修'],[12,'高中选修']].map(([g,t]) =>
-  `<div style="top:${(0.08 + (g-1)/__SMAX__*0.84)*100}%;left:10px">${t}</div>`).join('');
+  `<div style="top:${(0.92 - (g-1)/__SMAX__*0.84)*100}%;left:10px">${t}</div>`).join('');
 addEventListener('resize', fit); fit();
 (() => { const n = byId.get(location.hash.slice(1)); if (n) setTimeout(() => show(n), 60); })();
 addEventListener('hashchange', () => { const n = byId.get(location.hash.slice(1)); if (n && n.i !== sel) show(n); });
