@@ -86,6 +86,12 @@ PAREN_ITEM = re.compile(r'^（(\d+)）\s*(.+)$')
 # 「表 6 语音知识内容要求」开表，「课程类别 内容要求」是表头，
 # 裸行「必修」「选择性必修」「选修 — 提高类」切换课程类别，「1. …」是条目。
 TABLE_HEAD = re.compile(r'^表\s*\d+\s*(.{2,24}?)(内容要求|要求)\s*$')
+# ── 第五套版式（法语）：按级别组织，全部内容挂在【学业要求】下 ──
+# 「预备级（法语起步）」「一级（法语Ⅰ）」「二级（法语Ⅱ）」是级别，
+# 法语**没有单独的内容要求栏** —— 要求就在【学业要求】里，以「N. …」逐条列出。
+LEVEL_HEAD = re.compile(r'^(预备级|[一二三四五六七八九]级)\s*（(.{2,12})）\s*$')
+# 「1. 语言知识（法语起步）」这类分类小标题
+CAT_HEAD = re.compile(r'^\d+\.\s*(语言知识|文化知识|语言技能|学习策略|主题|语篇)\s*（.{2,12}）\s*$')
 TABLE_COLS = re.compile(r'^课程类别\s+(内容要求|要求)\s*$')
 # 裸课程类别行。可能后面直接跟着第一个条目（「选修 — 提高类 1. 能分辨…」）
 BARE_COURSE = re.compile(r'^(选择性必修|选修|必修)\s*(?:[—–-]\s*(\S{2,6})类?)?\s*(?:(\d+)\.\s*(.+))?$')
@@ -134,7 +140,8 @@ def clean_lines(txt):
 # 不区分这一点，「必修 1 的学业要求」会和后面的正文粘成一行，
 # 正则就不再匹配 —— 实测导致 学业要求 抽出 0 条。
 STANDALONE = (MODULE_HEAD, XUEYE_HEAD, TOPIC_HEAD, BARE_SECTION,
-              COURSE_CN, TOPIC_CN, TASKGROUP, XUEXI_SEC, TABLE_HEAD, TABLE_COLS)
+              COURSE_CN, TOPIC_CN, TASKGROUP, XUEXI_SEC, TABLE_HEAD, TABLE_COLS,
+              LEVEL_HEAD, CAT_HEAD)
 # 这两类是「带正文的头」，后续行是它们的续行
 ABSORBING = (ITEM, EXAMPLE, PAREN_ITEM, NUM_ITEM)
 
@@ -242,6 +249,22 @@ def parse(subject, pdf):
                 section = '内容要求' if m.group(1) == '学习目标与内容' else m.group(1)
                 continue
 
+            # ── 第五套（法语）：级别 ──
+            m = LEVEL_HEAD.match(s)
+            if m:
+                flush_xueye(); flush_prose()
+                topic, topic_name = m.group(1), m.group(2).strip()
+                # 「法语起步 / 法语Ⅰ / 法语Ⅱ」是必修，其余是选修
+                course = '必修' if re.match(r'^法语(起步|[ⅠⅡ])$', m.group(2).strip()) else '选修'
+                course_no, section = '', None
+                continue
+            m = CAT_HEAD.match(s)
+            if m:
+                flush_xueye(); flush_prose()
+                sub_code, sub_name = None, m.group(1)
+                section = '内容要求'          # 法语的要求就在这些分类下面
+                continue
+
             # ── 第四套（外语类）：表格 ──
             m = TABLE_HEAD.match(s)
             if m:
@@ -315,6 +338,15 @@ def parse(subject, pdf):
                              'topic': topic, 'topicName': topic_name, 'code': code,
                              'text': text, 'page': pno, 'section': '内容要求',
                              'examples': []})
+                continue
+
+            # 【学业要求】栏里出现「N. …」逐条编号 → 那是要求清单，不是散文段。
+            # 法语整份课标就是这么组织的（没有单独的内容要求栏）。
+            # 这条规则是通用的：**任何栏目下的逐条编号项都是要求，不是叙述。**
+            if section == '学业要求' and NUM_ITEM.match(s) and len(s) > 12:
+                flush_xueye()
+                mm = NUM_ITEM.match(s)
+                _emit_item(mm.group(2).strip(), pno, mm.group(1))
                 continue
 
             # （1）… 和 1. … 型条目

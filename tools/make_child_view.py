@@ -25,7 +25,10 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 USE = {'auto-confirmed', 'expert-confirmed', 'ai-adjudicated'}
 BANDS = [('G1-2', 1, 2, '一二年级'), ('G3-4', 3, 4, '三四年级'),
-         ('G5-6', 5, 6, '五六年级'), ('G7-9', 7, 9, '初中')]
+         ('G5-6', 5, 6, '五六年级'), ('G7-9', 7, 9, '初中'),
+         # 高中课标按模块给内容不按年级，所以这一档是整个高中三年。
+         # 真实区分在 courseType（必修/选择性必修/选修）上，不在年级上。
+         ('G10-12', 10, 12, '高中')]
 
 
 def grade(a, k):
@@ -89,6 +92,22 @@ def main():
         tgt = (f'<div class=target>课标给这个学段的识字目标：'
                f'累计认识 <b>{tg["recognize"]}</b> 字，会写 <b>{tg["write"]}</b> 字</div>') if tg else ''
         obj_n = sum(1 for a in hit if a['reviewStatus'] == 'auto-confirmed')
+        # 一个学段可能一条可用锚点都没有 —— 高中现在就是这样。
+        # **不能只显示 0 就完了**：家长会以为「高中没内容」，
+        # 而真相是「有 891 条，但一条都还没人复核，所以不摊给你看」。
+        # 空状态必须说清是哪一种空。
+        if not hit:
+            total_stage = sum(1 for a in live
+                              if grade(a, 'min') and grade(a, 'max')
+                              and grade(a, 'min') <= hi and grade(a, 'max') >= lo)
+            bands_html.append(
+                f'<div class=band data-band="{code}" hidden>'
+                f'<div class=summary>这个学段<b>暂时没有可用锚点</b>。'
+                + (f'底座里已经有 <b>{total_stage}</b> 条，但一条都还没经过复核 —— '
+                   f'没复核的东西不摊给家长看，那比不显示更糟。'
+                   if total_stage else '底座里还没有这个学段的内容。')
+                + '</div></div>')
+            continue
         bands_html.append(
             f'<div class=band data-band="{code}" hidden>'
             f'<div class=summary>这个学段共 <b>{len(hit)}</b> 条能力锚点，'

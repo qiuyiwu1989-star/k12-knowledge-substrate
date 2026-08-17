@@ -250,6 +250,20 @@ def main():
         print("\n（--dry-run：没有写盘）")
         return
 
+    # ★ topic / strand 也必须归一。第一版只归一了 statement，
+    #   结果法语的「法语Ⅰ」（罗马数字）落进 topic，CI 报 22 处未规范化。
+    #   **凡是要落盘的文本字段，都得过同一道归一** —— 挑着过就一定漏。
+    topics = sorted({(c['src'].get('topicName') or '') for c in kept} - {''})
+    if topics:
+        tn = node_call('normalize-stdin.mjs',
+                       [json.dumps({'text': t, 'discipline': ''}, ensure_ascii=False) for t in topics])
+        topic_fix = dict(zip(topics, tn))
+        nfix = sum(1 for k, v in topic_fix.items() if k != v)
+        if nfix:
+            print(f"  主题名归一 {nfix} 个（如 {[f'{k}→{v}' for k, v in topic_fix.items() if k != v][:2]}）")
+    else:
+        topic_fix = {}
+
     used = load_used_ids(ROOT)
     rows = []
     for c in kept:
@@ -258,7 +272,8 @@ def main():
         rows.append({
             'id': mint_id(used), 'discipline': subj,
             'track': 'DAG' if subj in DAG_SUBJECTS else 'MATRIX',
-            'strand': s.get('topicName'), 'topic': s.get('topicName'),
+            'strand': topic_fix.get(s.get('topicName') or '', s.get('topicName')),
+            'topic': topic_fix.get(s.get('topicName') or '', s.get('topicName')),
             'dimension': None,
             'statement': c['statement'], 'verb': c['verb'], 'object': c['object'],
             'type': 'KNOWLEDGE' if cognitive_of(c['statement']) == '了解' else 'CONCEPTUAL',
