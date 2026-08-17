@@ -45,13 +45,17 @@
 force-push 到 main。改写前做过 dry-run 路径比对：删除的 68 个路径全部属于 `tools/out/`，
 无误伤、无新增。本地历史里 `tools/out` 残留对象为 **0**。
 
-⚠️ **但 force-push 不等于删除。** 实测：改写后旧 commit `eb2f040` 及其下的 blob
-仍能从 GitHub 完整取回（2.25MB，`raw.githubusercontent.com` 返回 200）。
-GitHub 在 force-push 后**不会自动回收悬空对象** —— 任何拿到旧 SHA 的人仍读得到。
+⚠️ **但 force-push 不等于删除 —— 这一步失败了。** 实测：改写后旧 commit `eb2f040`
+及其下的 blob 仍能从 GitHub 完整取回（2.25MB，`raw.githubusercontent.com` 返回 200）。
+GitHub 在 force-push 后**不会自动回收悬空对象**，任何拿到旧 SHA 的人照样读得到。
 
-彻底清除只有两条路：请 GitHub Support 手工执行 GC，或删库重建。
-**本仓库 0 fork / 0 star / 0 issue，删库重建代价极低**，但这是需要单独授权的破坏性操作。
-在此如实记录当前状态：**main 分支已干净，旧对象在 GitHub 上仍可达。**
+所以又做了一步：**删库重建**（本仓库当时 0 fork / 0 star / 0 issue / 0 PR，建库仅两天，
+代价只有 clone 流量统计和 Actions 运行历史）。重建后复验：旧 commit、旧 blob、
+raw 路径**三者全部 404**，这次是真的没了。
+
+**留下这段失败记录，是因为它本身就是本文件存在的理由：**
+改写历史是「做了动作」，旧对象仍可达是「没达到效果」。上一版 PROVENANCE 犯的
+正是把前者写成后者的毛病 —— 那就不能在修它的时候再犯一次。
 
 ## 抽取方式
 
