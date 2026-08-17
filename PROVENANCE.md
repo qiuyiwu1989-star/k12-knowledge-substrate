@@ -38,12 +38,20 @@
 
 ### 已从仓库移出的
 
-`tools/out/`（19MB，85 个中间产物文件）**已整目录移出版本管理**。
+`tools/out/`（19MB，85 个中间产物文件）**已整目录移出版本管理，并改写历史清除**。
 里面是流水线各段之间的传递文件，含已弃用与已驳回的候选，全部可重算，没有发布用途。
 
-⚠️ **但 git 历史里还在。** `git rm --cached` 只停止今后发布，不清除既往提交。
-彻底清除要改写历史（`git filter-repo`），那会让所有已 fork/clone 的副本失效，
-**不在本次改动范围内，需要单独决定。**
+2026-08-17 用 `git filter-repo --path tools/out --invert-paths` 改写了全部 36 个提交，
+force-push 到 main。改写前做过 dry-run 路径比对：删除的 68 个路径全部属于 `tools/out/`，
+无误伤、无新增。本地历史里 `tools/out` 残留对象为 **0**。
+
+⚠️ **但 force-push 不等于删除。** 实测：改写后旧 commit `eb2f040` 及其下的 blob
+仍能从 GitHub 完整取回（2.25MB，`raw.githubusercontent.com` 返回 200）。
+GitHub 在 force-push 后**不会自动回收悬空对象** —— 任何拿到旧 SHA 的人仍读得到。
+
+彻底清除只有两条路：请 GitHub Support 手工执行 GC，或删库重建。
+**本仓库 0 fork / 0 star / 0 issue，删库重建代价极低**，但这是需要单独授权的破坏性操作。
+在此如实记录当前状态：**main 分支已干净，旧对象在 GitHub 上仍可达。**
 
 ## 抽取方式
 
