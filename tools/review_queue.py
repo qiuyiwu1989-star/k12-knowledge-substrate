@@ -75,6 +75,9 @@ def main():
             'gatedItems': g, 'downstream': d[:12], 'downstreamCount': len(d),
             'leverage': score,
             'reviewNote': a.get('reviewNote'),
+            # 独立验证的结果 —— 复核的人最需要看的就是「为什么它被标存疑」
+            'independentCheck': a.get('independentCheck'),
+            'downgradedBy': (a.get('adjudication') or {}).get('downgradedBy'),
         })
     rows.sort(key=lambda r: (-r['leverage'], r['discipline']))
 
@@ -109,6 +112,14 @@ def sheet(rows, A, X, total_n, share):
         dn = ''.join(f"<li>{esc(A[d]['statement'] if d in A else d)}</li>"
                      for d in r['downstream'])
         ev = ''.join(f"<li>{esc(e)}</li>" for e in r['evidence'])
+        c = r.get('independentCheck') or {}
+        ic = ''
+        if c and not c.get('passed'):
+            fl = ''.join(f"<li>{esc(x)}</li>" for x in (c.get('facts') or []))
+            ic = (f"<div class='ex warnbox'><b>独立验证没通过</b>"
+                  f"<p>让模型只读原文、看不到这条断言，它自己抽出的事实是："
+                  f"{'<ul>'+fl+'</ul>' if fl else '<b>一条都没抽出（原文本是动作要求，没有可陈述的事实）</b>'}"
+                  f"实词覆盖 {c.get('overlap')}。</p></div>")
         stg = r['stage'] or {}
         cards.append(f"""
 <article class=card data-id="{esc(r['anchorId'])}" data-i="{i}">
@@ -133,6 +144,7 @@ def sheet(rows, A, X, total_n, share):
       <h4>算「会了」的表现</h4><ul>{ev}</ul>
       {f'<h4>下游（判通过即解锁）</h4><ul class=dn>{dn}</ul>' if dn else ''}
       {ex}
+      {ic}
     </div>
   </div>
   <footer>
@@ -172,6 +184,8 @@ h4{{font-size:11px;letter-spacing:.12em;color:#8a9a94;margin:0 0 5px;text-transf
 ul{{margin-left:17px;font-size:13.5px;color:#4a5b55}}
 .dn li{{color:#0e6e5b}}
 .ex{{background:#f2f8f6;border:1px solid #cfe3dc;border-radius:9px;padding:10px 12px;margin-top:12px;font-size:13px}}
+.ex.warnbox{{background:#fdf6ec;border-color:#e3c98f}}
+.ex.warnbox b{{color:#8a6516}}
 .ex p{{color:#3d4f49;margin-top:4px}}
 footer{{display:flex;gap:12px;padding:13px 18px;background:#fafbfb;border-top:1px solid #eef1f0;align-items:center}}
 .btns{{display:flex;gap:7px;flex:none}}
