@@ -128,6 +128,25 @@ for (const { rec: a, where } of anchors) {
 
   if (!Array.isArray(a.evidence) || a.evidence.length === 0) err(where, `[${a.id}] evidence 不能为空`);
 
+  // assessment 是**家长/老师照着念的那句话**，里面不能有他看不见的指代。
+  // 「给{{name}}听写这张表里的字」—— 哪张表？家长手里没有那张表。
+  // 这类问题只有从「一个孩子的视角」成批看才会现形，逐条审查看不出来。
+  // **指代只有在句内找不到对象时才算悬空。** 第一版没看上下文，
+  // 把「你能把『跑、跳、踢』这些字放在一起吗」也判成了悬空 ——
+  // 那句的指代对象就在前面，改写反而改成了病句。
+  if (a.assessment && !a.deprecated) {
+    const m = a.assessment.match(/这张表|这些字|这些词|这批|该表|上面的/);
+    if (m) {
+      const before = a.assessment.slice(0, a.assessment.indexOf(m[0]));
+      // 指代之前有具名的东西（引号里的例子、书名号、顿号并列）就不算悬空
+      const hasReferent = /['‘’"“”《》]|[^，。]、[^，。]/.test(before);
+      if (!hasReferent) {
+        err(where, `[${a.id}] assessment 含悬空指代「${m[0]}」，且句内找不到指代对象`
+          + ` — 它是给家长照着念的，得说清是哪张表、共多少条`);
+      }
+    }
+  }
+
   for (const c of a.crosscutting ?? []) {
     if (!CROSSCUTTING.has(c)) err(where, `[${a.id}] crosscutting 取值不在词表内：${c}`);
   }
