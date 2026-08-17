@@ -2,132 +2,132 @@
   "dataset": "K12 教育的能力结构 (K12 Capability Structure)",
   "release": "0.1.0",
   "schemaVersion": "0.1.0",
-  "generatedAt": "2026-08-16",
+  "generatedAt": "2026-08-17",
   "counts": {
     "anchors": 1958,
     "candidates": 0,
-    "edges": 1124,
+    "edges": 1087,
     "listItems": 6262,
     "mappings": 4,
-    "liveAnchors": 1150,
-    "deprecatedAnchors": 808,
+    "liveAnchors": 1111,
+    "deprecatedAnchors": 847,
     "byDiscipline": {
-      "艺术": 80,
+      "艺术": 79,
       "生物学": 46,
-      "化学": 62,
-      "语文": 212,
-      "英语": 76,
+      "化学": 61,
+      "语文": 208,
+      "英语": 74,
       "地理": 25,
       "历史": 39,
-      "信息科技": 49,
+      "信息科技": 47,
       "劳动": 19,
-      "数学": 196,
-      "道德与法治": 38,
+      "数学": 189,
+      "道德与法治": 36,
       "体育与健康": 77,
-      "物理": 54,
-      "科学": 177
+      "物理": 48,
+      "科学": 163
     },
     "byTrack": {
-      "MATRIX": 749,
+      "MATRIX": 710,
       "DAG": 189,
       "LIST": 212
     },
     "byReview": {
-      "disputed": 145,
-      "ai-reviewed": 291,
+      "disputed": 144,
+      "ai-reviewed": 498,
       "llm-proposed": 18,
-      "ai-adjudicated": 550,
+      "ai-adjudicated": 305,
       "auto-confirmed": 146
     }
   },
-  "usableAnchors": 696,
+  "usableAnchors": 451,
   "humanConfirmedAnchors": 0,
-  "aiReviewedAnchors": 291,
-  "disputedAnchors": 145,
+  "aiReviewedAnchors": 498,
+  "disputedAnchors": 144,
   "files": {
     "anchors/art.jsonl": {
-      "bytes": 372808,
-      "sha256": "ce853dfa6122613dbed7b44fdcff42338b5262f381369d97175b6ab5981ff72e"
+      "bytes": 384480,
+      "sha256": "1efe726203b9f39765ddae996578c79420331df13dabf2ff4c62d5f654ec75e6"
     },
     "anchors/biology.jsonl": {
-      "bytes": 91765,
-      "sha256": "9cdd9d1df20bd0059bf334483e9d48b736cccd2b99cae635967d652e342e95ce"
+      "bytes": 100965,
+      "sha256": "fbbcf5fe60f218cc78c95dcbe481bbfa51fdd28b9159e5e8fbcf1054a3fa29c7"
     },
     "anchors/chemistry.jsonl": {
-      "bytes": 130327,
-      "sha256": "764c6eda9f47221e6c7ef2308bc77acd02dc38c640eacc98924f8dfcae1ad2e5"
+      "bytes": 138191,
+      "sha256": "991a3cd6d7012a85f183610d855a13e0a38f24b2929166f67a39bff30ead099f"
     },
     "anchors/chinese-lists.jsonl": {
-      "bytes": 169439,
-      "sha256": "e857b7b5b82bf80237d2f3a5e469bda4d008749521623e637a84f562bd9b75bb"
+      "bytes": 169504,
+      "sha256": "a690cc83aa0115d90bf95ccfcd797cbe2f3c9d1068ac55992e3555e73780858d"
     },
     "anchors/chinese.jsonl": {
-      "bytes": 244806,
-      "sha256": "27dec299bf5b8ae8cf7d5e24e315a3f1e8a2af48864c4461bf643c5f9996d8c0"
+      "bytes": 259009,
+      "sha256": "419ad7fa40266999d6364cf8924efc5e6f13df643ff728337f7e3bc7ec7fd900"
     },
     "anchors/english-lists.jsonl": {
       "bytes": 12504,
       "sha256": "ea6a8b185ac6d97a4cb939d3764374ba861b5aa40a6f06e2ffebc1fcd178a61f"
     },
     "anchors/english.jsonl": {
-      "bytes": 148426,
-      "sha256": "b96671b3965f7e125e761e032ec76150ddd5d18cbbdc3c3a69a6d1acb63da5aa"
+      "bytes": 161700,
+      "sha256": "2c123d571d07222dce6811c70584ae56086a2fd1e00c4012c861edb861cc6938"
     },
     "anchors/geography.jsonl": {
-      "bytes": 59401,
-      "sha256": "58ea3d681a392f75328f77b1d7047db60c7dd60f0c40d993bff460050cada60b"
+      "bytes": 64552,
+      "sha256": "8e619bd41f9b71015ac83551230ff40ca226a4307f211c198af995faa37e7509"
     },
     "anchors/history.jsonl": {
-      "bytes": 78151,
-      "sha256": "89f53289f87997a783309e1054d63c4cb89ed9b1173f37372a82dff2a56959d7"
+      "bytes": 90894,
+      "sha256": "efaec495390122af2c1addf4a85a36f04a41ada3ec487594f85cacc8238dfb78"
     },
     "anchors/infotech.jsonl": {
-      "bytes": 118718,
-      "sha256": "84ce070a8c7736effd30a9bca7b32da24859ad6ccdec8d19181ae8c29c65d42f"
+      "bytes": 127545,
+      "sha256": "a21d99537df66cae1e73e99508bd2503e9796113875a75951c734fca6fcebc48"
     },
     "anchors/labor.jsonl": {
-      "bytes": 100257,
-      "sha256": "e6de3a66ae9b5e91411fa9729998ad6dda1e49c69c2279313ebdff8621d220bd"
+      "bytes": 105092,
+      "sha256": "ef4d274b51feb9d9b053682e10b3ee51f82acac4e94cf349adbcd70c7610aaa0"
     },
     "anchors/math.jsonl": {
-      "bytes": 402469,
-      "sha256": "93003e329654e91ed77d4da3af2c29349b081f90a23b09a88b5d589edfcc4c5b"
+      "bytes": 421972,
+      "sha256": "f8335dbb7e44d4297f6246294f57d41f5bcfa62369e0e2bcdafa2b6643ae9211"
     },
     "anchors/morality.jsonl": {
-      "bytes": 84317,
-      "sha256": "a6c50dea3eab43308693b1741c24bbcdd170a0cc392fcbc4ce052c257760abdf"
+      "bytes": 93371,
+      "sha256": "cea85ae97f77123bb2fdab5f81ca98096aae064c668ca3cf63cd1fb3859785b1"
     },
     "anchors/pe.jsonl": {
-      "bytes": 442712,
-      "sha256": "7e7f046af360e43f1e5dd61678f581e1a91bec439aaef6dd8ab8df413a4469d1"
+      "bytes": 454903,
+      "sha256": "6d1c9e9fa958dc3ec597c211e9703fe51601885997e9aa6dc3d2691f37bdfa8f"
     },
     "anchors/physics.jsonl": {
-      "bytes": 132848,
-      "sha256": "cd7c023b66bf7539de2ffbf7e0e724c7fad266258f200544b6cd43473d500e3b"
+      "bytes": 141133,
+      "sha256": "5ba8909b82f140460d3d2f3a8d12608f24dfca4280a745ee329e4a0c781d66df"
     },
     "anchors/science.jsonl": {
-      "bytes": 639580,
-      "sha256": "9c3ba45ab3a1cc2a14f736f79ba7a1d564cf2bc8a74fb5ddff4994625cb1d1d4"
+      "bytes": 676276,
+      "sha256": "ef4ce0703021deb51be7e0f86efdfc8b3e4a0d3d92d8b06021c8ca71561f73d2"
     },
     "edges/art.jsonl": {
-      "bytes": 35860,
-      "sha256": "e954be72a936f09bf9a6154af73a9a35d2b0907ac83f3419a98059d5947e16ed"
+      "bytes": 34057,
+      "sha256": "dedf9209b4c3d9fc895862e8d96a6a88d712650be5a79d1fc89a5b6b1c147d89"
     },
     "edges/biology.jsonl": {
       "bytes": 33134,
       "sha256": "3bb387d2762b861679b63b0c454be3f98c253a875a6fdb917e784ed95bdbd608"
     },
     "edges/chemistry.jsonl": {
-      "bytes": 52597,
-      "sha256": "9cdd9b3fb9a96fe0e71c8a534b04346a1200f56dfa500548b1463e0f5405ffa3"
+      "bytes": 52145,
+      "sha256": "b76354ad4ee947e1dc2ddad4229d4a3fb155397901ef313e26d691512151cfb3"
     },
     "edges/chinese.jsonl": {
       "bytes": 575,
       "sha256": "dfefe77454660d9671c6e54f317b416f27b2e4f0a40b48a4bba56ba0db454e31"
     },
     "edges/english.jsonl": {
-      "bytes": 552,
-      "sha256": "452a5e17892462b7fe6b957f1ddfef84e8a7781d24e0f9c170aac5af92a65665"
+      "bytes": 1102,
+      "sha256": "a44ce37b822799b9621dbd4e0c1b12885f4093565e16fef711192a09a08c2db8"
     },
     "edges/geography.jsonl": {
       "bytes": 13663,
@@ -138,32 +138,32 @@
       "sha256": "b7504bb58443c686db5103133fbe54e7e43bcc4c48f8864e9b7b71e1808f4d4c"
     },
     "edges/infotech.jsonl": {
-      "bytes": 28346,
-      "sha256": "8b596fb641ad0b2964696672369f22e970114a7cbb969ab806d33befb8d75835"
+      "bytes": 26501,
+      "sha256": "17c96c17a91e619c1990a80b21568383dd09aec1cfc1c835f02f10c0bb7d1e51"
     },
     "edges/labor.jsonl": {
       "bytes": 6317,
       "sha256": "64a7dda11e07783f29b03dc486ee1a6dc64a7d189bb4c4519f6031884d686d83"
     },
     "edges/math.jsonl": {
-      "bytes": 129414,
-      "sha256": "62e2ae5e7b9e48faf8d44a51ec57d541c57cf56102df0e8184e07e6a2a291ade"
+      "bytes": 127179,
+      "sha256": "fcca5b5c022ed21d3c60259919851d76f3e88607bf96e713bc9cf416546cb0f5"
     },
     "edges/morality.jsonl": {
-      "bytes": 22596,
-      "sha256": "f9b026fb8bf0516725c66da692cbbc7c954577698e23104e232cd2d49f02b4a7"
+      "bytes": 20750,
+      "sha256": "3152f5d139d96503787cee6cbf2016fb5d8c02a1c56c284c3db0d7fc7faf0e1d"
     },
     "edges/pe.jsonl": {
       "bytes": 21364,
       "sha256": "d6f1f65c52bca30344df0e51a79eebc11207f3d694133d547fdd36436ebf7d3e"
     },
     "edges/physics.jsonl": {
-      "bytes": 29973,
-      "sha256": "f64d540a9a0718a3fca0fca6585eac462187fba0ca6c2517317179bfcaa3b624"
+      "bytes": 27741,
+      "sha256": "7fde6160715ef801836f68ff56b6de0ed9dcd4570d65b5281ac33347ed6fe6cc"
     },
     "edges/science.jsonl": {
-      "bytes": 89752,
-      "sha256": "7ed69a18fe89c1150f77305c15956960a43478fd46a7fb786ad17f7bc51a3703"
+      "bytes": 82988,
+      "sha256": "e2855bbfc6db3280d2d89a4f1e46010a6117c90f33c96cd296cff464779be613"
     },
     "lists/grammar/en-grammar.jsonl": {
       "bytes": 34177,

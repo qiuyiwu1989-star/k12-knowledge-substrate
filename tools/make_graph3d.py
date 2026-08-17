@@ -26,6 +26,24 @@ R = 900.0          # 水平面半径
 HGT = 1250.0       # 竖直跨度（学段轴）
 
 
+def attach_list_id(anchors):
+    """给锚点标出它属于哪张清单 —— 布局要按清单聚簇。"""
+    import glob as _g
+    owner = {}
+    root = Path(__file__).resolve().parent.parent
+    for f in _g.glob(str(root / 'lists/**/*.jsonl'), recursive=True):
+        for l in open(f, encoding='utf-8'):
+            if not l.strip():
+                continue
+            x = json.loads(l)
+            for aid in (x.get('anchorIds') or []):
+                owner.setdefault(aid, x['listId'])
+    for a in anchors:
+        if a['id'] in owner:
+            a['listId'] = owner[a['id']]
+    return anchors
+
+
 def layout3d(nodes, edges, iters=420, seed=7):
     rnd = random.Random(seed)
     idx = {n['id']: i for i, n in enumerate(nodes)}
@@ -53,8 +71,14 @@ def layout3d(nodes, edges, iters=420, seed=7):
     E = [(idx[e['prerequisiteId']], idx[e['anchorId']]) for e in edges
          if e['prerequisiteId'] in idx and e['anchorId'] in idx]
     disc_idx = collections.defaultdict(list)
+    list_idx = collections.defaultdict(list)
+    cc_idx = collections.defaultdict(list)
     for i, n in enumerate(nodes):
         disc_idx[n['discipline']].append(i)
+        if n.get('listId'):
+            list_idx[n['listId']].append(i)
+        for c in (n.get('crosscutting') or []):
+            cc_idx[c].append(i)
 
     CELL = 132.0
     for it in range(iters):
@@ -89,13 +113,39 @@ def layout3d(nodes, edges, iters=420, seed=7):
             f = (d - 62.0) * 0.055
             fx[a] += ddx / d * f * 80; fz[a] += ddz / d * f * 80; fy[a] += ddy / d * f * 12
             fx[b] -= ddx / d * f * 80; fz[b] -= ddz / d * f * 80; fy[b] -= ddy / d * f * 12
-        # 同学科弱聚类（24% 的锚点没有边，靠这个才不飘散）
+        # 同学科弱聚类（35% 的锚点没有边，靠这个才不飘散）
         for d, members in disc_idx.items():
             cx = sum(x[i] for i in members) / len(members)
             cz = sum(z[i] for i in members) / len(members)
             for i in members:
-                fx[i] += (cx - x[i]) * 0.0035
-                fz[i] += (cz - z[i]) * 0.0035
+                fx[i] += (cx - x[i]) * 0.010
+                fz[i] += (cz - z[i]) * 0.010
+        # 同清单强聚类。LIST 档 98% 无边 —— 那是**设计如此**：背《静夜思》和背
+        # 《春晓》之间没有先修关系。但它们确实同属一张表，这是真实结构，
+        # 不是为了好看造的假边。力导向里只有边提供吸引力，所以这类点必然飘散，
+        # 只能靠布局约束把它们收拢。系数比学科聚类大一个量级。
+        # 横切维度聚类。**这是把图收拢的主力** —— 1,095 个孤立点既无边也无清单，
+        # 但它们里大多数打了横切标签：练「找规律」的语文锚点和练「找规律」的数学
+        # 锚点之间确实有关联，只是那关联不是先修关系，所以画不成边。
+        # 用它做布局吸引，等于把「跨界融合」这件事画出来，而不是只画在数据里。
+        for c, members in cc_idx.items():
+            if len(members) < 3:
+                continue
+            cx = sum(x[i] for i in members) / len(members)
+            cz = sum(z[i] for i in members) / len(members)
+            for i in members:
+                fx[i] += (cx - x[i]) * 0.012
+                fz[i] += (cz - z[i]) * 0.012
+        for lst, members in list_idx.items():
+            if len(members) < 2:
+                continue
+            cx = sum(x[i] for i in members) / len(members)
+            cz = sum(z[i] for i in members) / len(members)
+            cy = sum(y[i] for i in members) / len(members)
+            for i in members:
+                fx[i] += (cx - x[i]) * 0.030
+                fz[i] += (cz - z[i]) * 0.030
+                fy[i] += (cy - y[i]) * 0.010
         for i in range(N):
             fy[i] += (ytar[i] - y[i]) * 0.20
             # 径向力把每个点拉向它那一层该有的半径 —— 这条力造出漏斗形
@@ -375,7 +425,12 @@ function draw() {
     ctx.globalAlpha = a; ctx.fillStyle = COLOR[g.d] || '#888';
     ctx.strokeStyle = '#080a11'; ctx.lineWidth = 1.1 * DPR;
     for (const k of g.it) {
-      const r = Math.max(.75, (0.85 + Math.sqrt(N[k].o) * 0.62) * zoom * (2600 / (2600 + pz[k])) * DPR * pop(k));
+      // 半径 = 基础 + √被依赖次数 + √清单条目数。
+      // 原公式只看被依赖次数，孤立点（35%）一律取最小值 0.85 → 画成针尖。
+      // 但「背诵《静夜思》」不被任何东西依赖，不等于它不重要 ——
+      // 清单类锚点的分量在它挂了多少条目上。
+      const w = 1.45 + Math.sqrt(N[k].o) * 0.62 + Math.min(2.2, Math.sqrt(N[k].c || 0) * 0.20);
+      const r = Math.max(1.15, w * zoom * (2600 / (2600 + pz[k])) * DPR * pop(k));
       ctx.beginPath(); ctx.arc(px[k], py[k], r, 0, 7);
       // 存疑的画空心：AI 审出 75% 有问题，把它们和过审的画成一样，
       // 等于用视觉掩盖数据质量。空心一眼能看出「这片是虚的」。
@@ -671,6 +726,7 @@ def main():
     a = ap.parse_args()
 
     anchors, edges = load()
+    anchors = attach_list_id(anchors)
     # 已弃用的锚点不上公开图谱。留档是为了查「当初为什么没的」，
     # 不是为了展示 —— 画进去等于对外声称库里有 1958 条，实际存活 1150。
     dead = {a['id'] for a in anchors if a.get('deprecated')}
@@ -696,6 +752,9 @@ def main():
              'ai-adjudicated': 3}.get(n.get('reviewStatus'), 0),
         'q': [f"{x.get('type')}｜{x.get('detail','')[:60]}" for x in (n.get('aiIssues') or [])][:3],
         'L': n.get('literacy') or [],
+        # 挂了多少清单条目 —— 半径要用它。「背诵《静夜思》」不被任何东西依赖，
+        # 不等于它不重要；清单类锚点的分量在条目数上。
+        'c': (n.get('provenance') or {}).get('itemCount') or 0,
     } for k, n in enumerate(anchors)]
 
     html = (HTML.replace('__TITLE__', 'K12 教育的能力结构 · 3D 图谱')
