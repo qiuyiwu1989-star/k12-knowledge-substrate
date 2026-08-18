@@ -164,6 +164,14 @@ h1{{font-size:clamp(26px,5vw,34px);line-height:1.22;font-weight:680;letter-spaci
 .lede b{{color:var(--ink);font-weight:640}}
 
 /* ── 学科条 ── */
+.sign{{background:rgba(255,255,255,.04);border:1px solid var(--line);
+  border-radius:12px;padding:16px 18px;margin:20px 0 4px}}
+.sign label{{display:block;font-size:13.5px;font-weight:600;margin-bottom:9px}}
+.sign input{{display:block;width:100%;max-width:340px;margin-top:7px;padding:9px 12px;
+  border-radius:8px;border:1px solid var(--line);background:var(--bg);
+  color:inherit;font:inherit;font-size:14px}}
+.sign input:focus{{outline:none;border-color:var(--ok)}}
+.sign p{{font-size:12.5px;color:var(--mut);margin:10px 0 0;line-height:1.7}}
 .tabs{{position:sticky;top:0;z-index:5;display:flex;gap:7px;overflow-x:auto;
   padding:12px 0;background:linear-gradient(var(--ground) 72%,transparent);
   scrollbar-width:none}}
@@ -251,6 +259,13 @@ details ul{{margin:5px 0 0 18px;color:var(--mut);font-size:13px}}
     <p>你要判的只有一件事：<b>这句话能不能直接拿去对一个具体的孩子问「他会不会」。</b>
       不用逐字改写，看出哪里不对、点一下就行。每一条都能展开看课标原文和页码。</p>
     <p>做完点右下角把结果复制走，发回来即可。<b>没做完也没关系</b> —— 判过几条就交几条。</p>
+    <div class=sign>
+      <label>请留个称呼（会记进数据）
+        <input id=who placeholder="例：张老师 / 王明 · 初中化学" autocomplete=off></label>
+      <p>标「成立」的条目会被记成 <b>你签字确认</b>，进入可被孩子档案引用的集合。
+        <b>不署名的「成立」不算数</b> —— 那一档的含义是「有具体的人对这条负责」，
+        将来出问题查得到人。挑错不需要署名。</p>
+    </div>
   </div>
   <div class=tabs role=tablist>{tabs}</div>
   {''.join(panes)}
@@ -326,8 +341,21 @@ function tally(){{
 document.getElementById('give').onclick=async()=>{{
   const rows=Object.entries(store).filter(([,r])=>r.verdict)
     .map(([anchorId,r])=>({{anchorId, verdict:r.verdict, note:r.note||'', discipline:r.discipline}}));
+  const who=(document.getElementById('who').value||'').trim();
+  const okCount=rows.filter(r=>r.verdict==='ok').length;
+  // 标了「成立」却没署名 —— 那些条目回流时会被丢弃，得当场说清楚，
+  // 而不是等老师交回来之后石沉大海。
+  if(!who && okCount){{
+    document.getElementById('who').focus();
+    document.getElementById('who').style.borderColor='#e8607d';
+    const g0=document.getElementById('give');
+    g0.textContent=`有 ${{okCount}} 条「成立」需要署名`;
+    setTimeout(tally, 3200);
+    return;
+  }}
   const payload=JSON.stringify({{
-    schema:'k12-teacher-review/1', reviewedAt:new Date().toISOString().slice(0,10),
+    schema:'k12-teacher-review/1', reviewer:who,
+    reviewedAt:new Date().toISOString().slice(0,10),
     count:rows.length, rows}}, null, 1);
   const g=document.getElementById('give');
   try{{ await navigator.clipboard.writeText(payload); }}

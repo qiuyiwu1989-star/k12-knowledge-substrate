@@ -9,8 +9,9 @@
     "validate": "node scripts/validate.mjs --warn",
     "selftest": "node scripts/lib/decidability.mjs && node scripts/selftest.mjs",
     "manifest": "node scripts/manifest.mjs",
-    "check": "npm run selftest && npm run manifest && node scripts/sync-docs.mjs --check && npm run validate",
+    "check": "npm run selftest && npm run review-loop && npm run manifest && node scripts/sync-docs.mjs --check && npm run validate",
     "sync-docs": "node scripts/sync-docs.mjs",
-    "strip-srctext": "node scripts/strip-srctext.mjs"
+    "strip-srctext": "node scripts/strip-srctext.mjs",
+    "review-loop": "node scripts/review-loop-test.mjs"
   }
 }
