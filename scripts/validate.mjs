@@ -90,6 +90,11 @@ const REVIEW = new Set(['llm-proposed', 'ai-reviewed', 'ai-adjudicated', 'auto-c
 const CC_VOCAB = JSON.parse(readFileSync(join(ROOT, 'mappings/crosscutting.json'), 'utf8'));
 const CROSSCUTTING = new Set(CC_VOCAB.crosscutting.map((c) => c.id));
 const PRACTICE = new Set(CC_VOCAB.practice.map((p) => p.id));
+// 核心素养也是封闭词表，理由同上。义务教育沿用库中已按 2022 版课标填的取值，
+// 高中逐科摘自《普通高中课程标准》「（一）学科核心素养」正文。
+// MATRIX 的 dimension 取的就是核心素养 —— 两个字段同一套词表，取值必须一致，
+// 否则同一条锚点在两处说法不同，join 就废了。
+const LIT_VOCAB = JSON.parse(readFileSync(join(ROOT, 'mappings/literacy.json'), 'utf8')).disciplines;
 
 const ID_RE = /^ca_[A-Za-z0-9]{8}$/;
 const GRADE_RE = /^G(1[0-2]|[1-9])$/;
@@ -155,6 +160,18 @@ for (const { rec: a, where } of anchors) {
       }
     }
   }
+
+  const litOk = LIT_VOCAB[a.discipline]?.values;
+  if (litOk) {
+    for (const l of a.literacy ?? []) {
+      if (!litOk.includes(l)) err(where, `[${a.id}] literacy「${l}」不在${a.discipline}的核心素养词表内`);
+    }
+    if (a.dimension && a.track === 'MATRIX' && !litOk.includes(a.dimension)) {
+      err(where, `[${a.id}] dimension「${a.dimension}」不在${a.discipline}的核心素养词表内`
+        + ` — MATRIX 的能力维度取的就是核心素养`);
+    }
+  }
+  if ((a.literacy?.length ?? 0) > 2) err(where, `[${a.id}] literacy 最多 2 个 —— 标全部等于没标`);
 
   for (const c of a.crosscutting ?? []) {
     if (!CROSSCUTTING.has(c)) err(where, `[${a.id}] crosscutting 取值不在词表内：${c}`);
