@@ -2,7 +2,7 @@
   "dataset": "K12 教育的能力结构 (K12 Capability Structure)",
   "release": "0.1.0",
   "schemaVersion": "0.1.0",
-  "generatedAt": "2026-08-17",
+  "generatedAt": "2026-08-18",
   "counts": {
     "anchors": 3066,
     "candidates": 0,
@@ -198,60 +198,60 @@
       "sha256": "b74e224759c0fcd4a0cc9c8ff0688cd7268db3fa363fbbe538db1d5af1e01075"
     },
     "anchors/rewrite-体育与健康.jsonl": {
-      "bytes": 18785,
-      "sha256": "bc6620a0c364f6fcc8a55b3d07fa847157486bed4ce20f9f473ca52f17f99413"
+      "bytes": 20197,
+      "sha256": "725fb99ec123c5c33d0f370f3024a9bf0640eb8d96f3960a5b222b56c15ecb82"
     },
     "anchors/rewrite-信息科技.jsonl": {
-      "bytes": 18126,
-      "sha256": "ee7ed6f9f64deaa9526c91ca35530f9de32bcb0bbca4f87d9fbec0eaaf7b073e"
+      "bytes": 19587,
+      "sha256": "02b867e4c1286e9d6c780a7b94d23052c459b8b57cb3824a1a8a89d08b6e61d4"
     },
     "anchors/rewrite-劳动.jsonl": {
-      "bytes": 7580,
-      "sha256": "0107decbac3059cf94d5553133fcafbbf3e4d0a20cfb1d7d43e7c0256aa5ef75"
+      "bytes": 8089,
+      "sha256": "fd8fc376e888121c2f2a4272412ca93a080ad9a6ef4e373b3446aa44d8e77a13"
     },
     "anchors/rewrite-化学.jsonl": {
-      "bytes": 11292,
-      "sha256": "90ea131fad52bb8279dce46b894251906cddbc4f3feed76f4a6b9c78f88ba8a1"
+      "bytes": 12208,
+      "sha256": "53b1bbdab368e3b2cfb9cb182f2cecdf9b23eaa95425c8e4b84db0e27b01b83e"
     },
     "anchors/rewrite-历史.jsonl": {
-      "bytes": 26363,
-      "sha256": "c59c37ef6a0b90ea4bb2259ec33288f8d92af251eab44ec87164fabbe4b22c6e"
+      "bytes": 27836,
+      "sha256": "8e23bf69e67c257d23eeec0202b7d15748f99c097178e9efc5364c38a138e82d"
     },
     "anchors/rewrite-地理.jsonl": {
-      "bytes": 10782,
-      "sha256": "ef5501595466c6d2e61722fe8f698ef4a8598f852d65f67b9c6f3dbe7d99a4e9"
+      "bytes": 11686,
+      "sha256": "83cacbf8f95dac1baf0c41b9757af2de366db91059315c821c43020922826356"
     },
     "anchors/rewrite-数学.jsonl": {
-      "bytes": 30035,
-      "sha256": "471777353ea4f7a9f88dde81d78ab9ac1d97681c9b55622247df977ef14ae463"
+      "bytes": 32729,
+      "sha256": "f4f2f4287a9c965caddcfad8e81ac1935b79061ad20fe02d4bf73d1a134fe820"
     },
     "anchors/rewrite-物理.jsonl": {
-      "bytes": 9909,
-      "sha256": "00773f4bfd6d5e7b50aa91ed8a4d136ba42dbd10778f27603a8f20a0d1819486"
+      "bytes": 10818,
+      "sha256": "cd2c830e76f658371730f67bc11eacc2320e01491961d597339900c0c14f94dd"
     },
     "anchors/rewrite-生物学.jsonl": {
-      "bytes": 21174,
-      "sha256": "b63bb57194d41d6d12b9cc90a31c20a21b4fde55659d2c9ff7b69974273ae2e9"
+      "bytes": 22939,
+      "sha256": "64d8a73945ba7720c22cdcce740315b671517058d727ffbe66bd070d36c8a513"
     },
     "anchors/rewrite-科学.jsonl": {
-      "bytes": 54111,
-      "sha256": "28b4d8cf95883de06db66265fd4461c53abbbf3fd5f1310cb50f33fe00db5cb1"
+      "bytes": 58805,
+      "sha256": "1f24a3f62d7a839f549dd423b4c5abe9a2a918003144abb20e545cd19412e7b9"
     },
     "anchors/rewrite-艺术.jsonl": {
-      "bytes": 18822,
-      "sha256": "63aa774865c79ef0d87c81fff684318b0ec7c5c0fe8c2589c8e82cf9a26f7547"
+      "bytes": 20232,
+      "sha256": "65affabf986b35a43fb15738049b87a642c517c2ed0c8da49917cb54b0e483ee"
     },
     "anchors/rewrite-英语.jsonl": {
-      "bytes": 11366,
-      "sha256": "558946bd7eb4f9335ee8e7994f8c8cd98f392bda81e9b7a76f50b4724132bb81"
+      "bytes": 12318,
+      "sha256": "a6ff4887be1b3a100bd52267d3ec6838073c1939532588a39df29bac707d69c1"
     },
     "anchors/rewrite-语文.jsonl": {
-      "bytes": 10058,
-      "sha256": "164348472e9e6361cbf77f8846671e00169482e60cd95143da8d21360a77b936"
+      "bytes": 10786,
+      "sha256": "ca01375530e96a60d95c16cf04a5d61562e28c2c1e52087bae21bd1cd50f1fc1"
     },
     "anchors/rewrite-道德与法治.jsonl": {
-      "bytes": 25320,
-      "sha256": "a03aa7acff1125b68bf5ec77593792f919e068fa92b6da73dbc55098b7f69395"
+      "bytes": 27148,
+      "sha256": "4320d40097a1cd06b496b1e86141f4bddb1d07a6dfa3a401d31f6df7ee32f736"
     },
     "anchors/science.jsonl": {
       "bytes": 686756,
