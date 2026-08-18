@@ -182,12 +182,26 @@ for (const { rec: a, where } of anchors) {
   if ((a.crosscutting?.length ?? 0) > 2) err(where, `[${a.id}] crosscutting 最多 2 个`);
   if ((a.practice?.length ?? 0) > 2) err(where, `[${a.id}] practice 最多 2 个`);
 
-  // MATRIX 档的 topic/dimension 是复核任务，不是抽取任务 —— 机器填不出来，
-  // 强求只会逼出编造的维度。所以只对已复核的锚点强制。
-  if (a.track === 'MATRIX' && (!a.topic || !a.dimension)) {
-    const msg = `[${a.id}] MATRIX 档缺 topic/dimension（史地生政科的结构是「能力维度 × 主题」，不是链）`;
+  // MATRIX 档的结构是「能力维度 × 主题」。dimension（能力维度）现已 100% 填满
+  // 且受核心素养闭合词表约束；topic（内容主题）义务教育那批抽取时没拿到，
+  // strand 里只有「音乐」「学科内容」这种粗粒度值，拿它当主题会造出没意义的名字。
+  //
+  // ★ 这条规则原先对 expert-confirmed 报 err，那是个雷：
+  //   复核单里 165 / 410 条是缺 topic 的 MATRIX 锚点，**老师一签字 CI 就失败**。
+  //   而复核单从头到尾没问过老师 topic —— 它只给四个判定按钮。
+  //   设计假设「topic 由复核时补」，工具却从没实现过那一步。
+  //
+  //   方向要摆正：老师签的是「这条是真实、可判定的能力」，
+  //   和「它归在哪个主题下」是两个不同的断言。
+  //   **让最有价值的动作（签字）因为一个组织性字段为空而失败，是本末倒置。**
+  //   dimension 仍然强制（它有闭合词表、且已填满）；topic 降为 warn。
+  if (a.track === 'MATRIX' && !a.dimension) {
+    const msg = `[${a.id}] MATRIX 档缺 dimension（能力维度，取值须来自核心素养词表）`;
     if (a.reviewStatus === 'expert-confirmed' || a.reviewStatus === 'auto-confirmed') err(where, msg);
     else warn(where, msg + ' — 待复核时补');
+  }
+  if (a.track === 'MATRIX' && !a.topic) {
+    warn(where, `[${a.id}] MATRIX 档缺 topic（内容主题）— 组织性字段，不阻塞签字`);
   }
   // 课程类型：只有高中锚点该有，且必须在闭合词表里。
   // 它不是装饰字段 —— 档案要靠它区分「没学过」和「学了没会」。

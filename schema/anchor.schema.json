@@ -268,6 +268,70 @@
         null
       ],
       "description": "高中课程类型。**义务教育没有这个维度，而它对个人档案是本质区别**：\n必修是所有学生都该有的，选修不是。不记这一维，档案里「他没掌握 X」就分不清\n是没学过还是学了没会。义务教育锚点一律为 null。"
+    },
+    "endorsements": {
+      "type": "array",
+      "description": "教师签字记录。标「成立」并署名的复核会追加一条。\n**这是 expert-confirmed 的凭据** —— 那一档的含义是「有具体的人对这条负责」，\n所以必须留得下是谁、什么时候、说了什么。",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "by"
+        ],
+        "properties": {
+          "by": {
+            "type": "string",
+            "minLength": 1,
+            "description": "签字人，不得为空"
+          },
+          "at": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "note": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        }
+      }
+    },
+    "disputes": {
+      "type": "array",
+      "description": "复核异议记录。标「学段不对/表述要改/不该收」时追加。\n不删条目、只降级 —— 「谁在什么时候说它不对」必须查得到。",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "issue": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "note": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "by": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "at": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        }
+      }
     }
   }
 }

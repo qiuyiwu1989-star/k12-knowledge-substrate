@@ -37,7 +37,25 @@ ok('四种结论按钮齐全',
   ['data-v="ok"', 'data-v="stage"', 'data-v="wording"', 'data-v="reject"'].every((s) => html.includes(s)));
 
 // 2) 拿复核单里真实存在的 id，走一遍完整回流
-const ids = [...html.matchAll(/data-id="(ca_[A-Za-z0-9]{8})"/g)].map((m) => m[1]).slice(0, 3);
+const allIds = [...html.matchAll(/data-id="(ca_[A-Za-z0-9]{8})"/g)].map((m) => m[1]);
+// 优先挑**缺 topic 的 MATRIX 锚点**当测试对象 —— 那是最容易炸的一类，
+// 拿最安全的样本去测等于没测。
+const anchorsAll = [];
+{
+  const wk = (d) => {
+    for (const f of readdirSync(d, { withFileTypes: true })) {
+      const p2 = join(d, f.name);
+      if (f.isDirectory()) wk(p2);
+      else if (p2.endsWith('.jsonl')) for (const l of readFileSync(p2, 'utf8').split('\n')) if (l.trim()) anchorsAll.push(JSON.parse(l));
+    }
+  };
+  wk(join(ROOT, 'anchors'));
+}
+const idx = new Map(anchorsAll.map((a) => [a.id, a]));
+const risky = allIds.filter((i) => idx.get(i)?.track === 'MATRIX' && !idx.get(i)?.topic);
+const ids = [...risky, ...allIds.filter((i) => !risky.includes(i))].slice(0, 3);
+ok('测试对象里含缺 topic 的 MATRIX 锚点（最易炸的一类）', risky.length > 0,
+  `复核单里没有这类，覆盖不到`);
 ok('复核单里有可用条目', ids.length === 3, `只找到 ${ids.length} 条`);
 
 if (ids.length === 3) {
@@ -88,7 +106,23 @@ if (ids.length === 3) {
     (byId.get(ids[0])?.reviewedBy || []).some((r) => String(r).startsWith('teacher:')));
   ok('异议条目退出可用集合', byId.get(ids[2])?.reviewStatus === 'disputed');
 
-  // 4) 匿名的「成立」必须被拒
+  // 4) ★ 签字之后，数据必须仍然过 CI。
+  //    这一条比前面所有断言都重要：闭环通了但签完 CI 红，等于没通。
+  //    实测踩过 —— validate.mjs 曾对 expert-confirmed 的 MATRIX 锚点强制要求 topic，
+  //    而复核单里 165/410 条正好缺 topic，**第一个老师做完就会把 CI 炸掉**。
+  try {
+    execFileSync('node', [join(ROOT, 'scripts/manifest.mjs')],
+      { cwd: work, encoding: 'utf8', env: { ...process.env, K12_ROOT: work } });
+    execFileSync('node', [join(ROOT, 'scripts/validate.mjs')],
+      { cwd: work, encoding: 'utf8', env: { ...process.env, K12_ROOT: work } });
+    ok('签字之后数据仍然过校验', true);
+  } catch (e) {
+    const msg = String(e.stdout || '') + String(e.stderr || '');
+    ok('签字之后数据仍然过校验', false,
+      (msg.split('\n').find((l) => l.trim().startsWith('- ')) || '').trim().slice(0, 90));
+  }
+
+  // 5) 匿名的「成立」必须被拒
   const anon = join(work, 'anon.json');
   writeFileSync(anon, JSON.stringify({
     schema: 'k12-teacher-review/1', reviewer: '', reviewedAt: '2026-01-01', count: 1,
