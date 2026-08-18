@@ -9,10 +9,12 @@ cd "$(dirname "$0")/.."
 npm run check                       # 数据不过校验就不发布
 python3 tools/make_graph.py --out graph.html
 python3 tools/make_graph3d.py
+python3 tools/make_about.py
 
 rm -rf dist && mkdir -p dist/2d dist/data
 cp graph-3d.html dist/index.html    # 首页是 3D
 cp graph.html    dist/2d/index.html # /2d 是俯视版
+mkdir -p dist/about && cp about.html dist/about/index.html  # /about 是项目与方法论介绍
 cp manifest.json dist/data/
 for d in anchors edges lists mappings; do mkdir -p "dist/data/$d"; cp -r "$d"/* "dist/data/$d/"; done
 echo "✓ dist/ 就绪 — $(du -sh dist | cut -f1)，$(find dist -type f | wc -l | tr -d ' ') 个文件"

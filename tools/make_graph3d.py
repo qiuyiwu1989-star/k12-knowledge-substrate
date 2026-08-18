@@ -364,6 +364,7 @@ button.cc u{text-decoration:none;font-size:12px;color:var(--mut);margin-left:aut
   <p class="lead sub">依据教育部《义务教育课程标准（2022年版）》1,594 页原件逐页解析构建。<br>开放数据 · ODbL 1.0</p>
 </div>
 <div id="cta">
+  <a href="/about/">这是什么 · 方法论</a>
   <a href="https://github.com/qiuyiwu1989-star/k12-knowledge-substrate" target="_blank" rel="noopener">在 GitHub 上查看</a>
   <a href="/2d/">2D 视角</a>
   <em>开放数据 · ODBL 1.0</em>
