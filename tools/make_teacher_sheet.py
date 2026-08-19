@@ -31,10 +31,12 @@ OUT = ROOT / 'review-queue/teacher-sheet.html'
 # 判定选项。刻意只有四个，且**都是「哪里不对」** —— 老师的价值在挑刺。
 # 「成立」放第一个是因为多数条目应当成立，让他快速走过，把注意力留给有问题的。
 VERDICTS = [
-    ('ok', '成立', '这一条在这个学段是真实的、可判定的'),
-    ('stage', '学段不对', '内容对，但不该放在这个学段'),
-    ('wording', '表述要改', '意思对，但这句话不能直接拿去判定'),
-    ('reject', '不该收', '这不是一条学生能力，或者根本不该进底座'),
+    # tooltip 就是老师唯一会读的判据 —— 它必须是**可执行的检查项**，
+    # 不是「真实的、可判定的」这种同义反复。完整五关见 docs/review-standard.md。
+    ('ok', '成立', '五关全过：主语是学生 · 能答会不会 · 忠于课标原文 · 学段对 · 证据看得见。拿不准就别点'),
+    ('stage', '学段不对', '内容对、位置错。高中按模块不按年级 —— 高中条目标了具体年级本身就是错的'),
+    ('wording', '表述要改', '章节名 / 口号 / 内心活动（体会、感受）都不可判定；证据写得看不见也算'),
+    ('reject', '不该收', '主语是教师/学校/评价制度，或断言加了课标原文没有的内容'),
 ]
 
 
@@ -164,6 +166,28 @@ h1{{font-size:clamp(26px,5vw,34px);line-height:1.22;font-weight:680;letter-spaci
 .lede b{{color:var(--ink);font-weight:640}}
 
 /* ── 学科条 ── */
+/* 审核标准块。**必须用这份文件自己的变量名**（--accent/--ink/--surface/--rule）——
+   第一版照着图谱页写了 --ok/--fg/--line，那些变量在这里根本不存在，
+   于是 summary 拿到了 --ok 的回退值（深绿），在深色主题上几乎看不见。
+   **跨文件抄样式时，变量名不会报错，只会静默失效。** */
+.std{{background:color-mix(in srgb,var(--accent) 7%,var(--surface));
+  border:1px solid color-mix(in srgb,var(--accent) 34%,transparent);
+  border-radius:12px;padding:0;margin:22px 0 4px;overflow:hidden}}
+.std summary{{padding:14px 18px;cursor:pointer;font-weight:650;font-size:14.5px;
+  color:var(--accent);list-style:none}}
+.std summary::-webkit-details-marker{{display:none}}
+.std summary::before{{content:'▸ ';font-size:12px}}
+.std[open] summary::before{{content:'▾ '}}
+.std summary:hover{{background:color-mix(in srgb,var(--accent) 10%,transparent)}}
+.stdbody{{padding:2px 20px 18px;font-size:13.5px;line-height:1.78;color:var(--mut)}}
+.stdbody .lead{{color:var(--ink);margin-bottom:12px}}
+.stdbody ol{{margin:0 0 0 18px}}
+.stdbody li{{margin-bottom:11px}}
+.stdbody li b{{color:var(--ink)}}
+.stdbody .eg{{display:block;font-size:12.5px;color:var(--dim);margin-top:3px}}
+.stdbody .hard{{margin-top:14px;padding-top:12px;border-top:1px solid var(--rule);color:var(--ink)}}
+.stdbody .src{{margin-top:10px;font-size:12.5px;color:var(--dim)}}
+.stdbody .src a{{color:var(--mut)}}
 .sign{{background:rgba(255,255,255,.04);border:1px solid var(--line);
   border-radius:12px;padding:16px 18px;margin:20px 0 4px}}
 .sign label{{display:block;font-size:13.5px;font-weight:600;margin-bottom:9px}}
@@ -259,6 +283,35 @@ details ul{{margin:5px 0 0 18px;color:var(--mut);font-size:13px}}
     <p>你要判的只有一件事：<b>这句话能不能直接拿去对一个具体的孩子问「他会不会」。</b>
       不用逐字改写，看出哪里不对、点一下就行。每一条都能展开看课标原文和页码。</p>
     <p>做完点右下角把结果复制走，发回来即可。<b>没做完也没关系</b> —— 判过几条就交几条。</p>
+    <details class=std>
+      <summary>判断标准（五关）—— 展开看，一分钟</summary>
+      <div class=stdbody>
+        <p class=lead>只回答一个问题：<b>这一条能不能被写进一个具体孩子的档案。</b>
+          不是「这句话对不对」，是「一年后有人翻这份档案，能不能确信它当时是真的」。</p>
+        <ol>
+          <li><b>主语必须是学生。</b> 课标里混着教师、学校、评价制度的要求 ——
+            读起来都很像能力要求。问一句「这件事是谁做的」，不是孩子做的就点「不该收」。
+            <span class=eg>✗ 在条件不足的学校，也应设立信息技术实验室</span></li>
+          <li><b>能答「会 / 不会」。</b> 三种常见的不可判定：章节名（「分数的意义」）、
+            口号（「培养…能力」）、内心活动（「体会」「感受」—— 旁观者看不见就判不了）。
+            <span class=eg>⚠ 长度不是判据：「能检验溶液的酸碱性」9 个字，完全合格</span></li>
+          <li><b>忠于课标。</b> 每条都能展开看原文和页码，对一眼：
+            断言加了原文没有的具体事实、或把「知道 X」升级成「会做 X」→ 不该收。
+            <span class=eg>例外：标着「不是课标原话」的那些，本来就是我们在课标之上的主张</span></li>
+          <li><b>学段 / 课程类型。</b> 义务教育按学段（1-2/3-4/5-6/7-9），不按年级；
+            <b>高中按模块给内容，不按年级</b> —— 所以高中条目只标必修/选择性必修/选修。
+            <span class=eg>看到高中锚点标着某个具体年级，那是错的</span></li>
+          <li><b>证据看得见。</b> 下面那 1–2 条判定证据必须是旁观者能看见的行为。
+            「理解了物质分类的概念」不行，「能将氧气、空气正确归入纯净物或混合物」才行。</li>
+        </ol>
+        <p class=hard><b>拿不准就别标「成立」。</b> 空着比标错好 ——
+          误判为合格的会进孩子的档案，没标的只是还没轮到。<br>
+          <b>不用替我们改写。</b> 看出哪里不对点一下，想补一句写备注即可；
+          我们不会拿备注去自动改数据 —— 自动改会把「有人怀疑」悄悄变成「有人确认」。</p>
+        <p class=src>完整版：<a href="https://github.com/qiuyiwu1989-star/k12-knowledge-substrate/blob/main/docs/review-standard.md" target="_blank" rel="noopener">docs/review-standard.md</a>
+          —— 每一条规则都注明了它是从哪个真实错误来的。</p>
+      </div>
+    </details>
     <div class=sign>
       <label>请留个称呼（会记进数据）
         <input id=who placeholder="例：张老师 / 王明 · 初中化学" autocomplete=off></label>
