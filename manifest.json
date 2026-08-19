@@ -9,18 +9,18 @@
     "edges": 1040,
     "listItems": 6262,
     "mappings": 4,
-    "liveAnchors": 2176,
-    "deprecatedAnchors": 890,
+    "liveAnchors": 2171,
+    "deprecatedAnchors": 895,
     "byDiscipline": {
       "艺术": 117,
       "生物学": 100,
       "化学": 254,
       "语文": 231,
       "英语": 163,
-      "体育与健康": 104,
+      "体育与健康": 103,
       "俄语": 23,
-      "信息技术": 33,
-      "历史": 87,
+      "信息技术": 30,
+      "历史": 86,
       "地理": 36,
       "德语": 2,
       "思想政治": 5,
@@ -38,14 +38,14 @@
       "科学": 197
     },
     "byTrack": {
-      "MATRIX": 1495,
+      "MATRIX": 1490,
       "DAG": 469,
       "LIST": 212
     },
     "byReview": {
       "disputed": 144,
       "ai-reviewed": 404,
-      "llm-proposed": 1240,
+      "llm-proposed": 1235,
       "ai-adjudicated": 242,
       "auto-confirmed": 146
     }
@@ -53,7 +53,7 @@
   "usableAnchors": 388,
   "humanConfirmedAnchors": 0,
   "rewrittenAnchors": 217,
-  "curriculumDerivedAnchors": 1959,
+  "curriculumDerivedAnchors": 1954,
   "aiReviewedAnchors": 404,
   "disputedAnchors": 144,
   "files": {
@@ -86,24 +86,24 @@
       "sha256": "66aaa2147db19262643fc3d6318e241fdfc269e9147b51e86f4bb0ce864365f3"
     },
     "anchors/gaozhong-体育与健康.jsonl": {
-      "bytes": 26557,
-      "sha256": "b6f19adf96ad89f0304e3f91e9540f8e5a101ae54b221367e1ecdd4fa5fd570c"
+      "bytes": 25607,
+      "sha256": "311656d58af379d4b8b39adc5feaff13619c7f29d5db47ef793306c159839143"
     },
     "anchors/gaozhong-俄语.jsonl": {
       "bytes": 27273,
       "sha256": "d30717efa0f37ec183e34f9c156ea225389831cc763873f05ac6329b8c8a6237"
     },
     "anchors/gaozhong-信息技术.jsonl": {
-      "bytes": 66567,
-      "sha256": "be6ae8153a32228cc41e4c9dc785771821453ae3f7061dcd320468c11464d541"
+      "bytes": 53101,
+      "sha256": "4495b0a59f62775e0d98be49da048f1c8608be362461845a9cf641e934fa9c14"
     },
     "anchors/gaozhong-化学.jsonl": {
-      "bytes": 634225,
-      "sha256": "2019077adb2059665318598969724164d14128eb22bf4e7930124a60f3f8d8a2"
+      "bytes": 272394,
+      "sha256": "726d8bca689d4b2da31a0dfb8045456c9cbda4dfd485028d0c4e943c94d513ea"
     },
     "anchors/gaozhong-历史.jsonl": {
-      "bytes": 83034,
-      "sha256": "976bca5fdcb7a2a2de99df1e7bb0c3d55b9ad5208667648a7c94adf67dbd07f8"
+      "bytes": 43186,
+      "sha256": "eb189f8c7a69f2e7801dd749225ca183c3babe62ec945975c0359ec65f13215e"
     },
     "anchors/gaozhong-地理.jsonl": {
       "bytes": 5815,
@@ -118,8 +118,8 @@
       "sha256": "ef24083c2a0150fd0f3348fdd654746bf90c850eb87ee6306653f8c3dd211478"
     },
     "anchors/gaozhong-数学.jsonl": {
-      "bytes": 79547,
-      "sha256": "91de90bc93c932d13fb855377b7c0362b7f2030866c1e496373bd4b597b2f77a"
+      "bytes": 69090,
+      "sha256": "6f01e214909a1377b2b3d594cb8fe3e76887c277cffc98cbd7eaf80a107f8d0f"
     },
     "anchors/gaozhong-日语.jsonl": {
       "bytes": 44940,
@@ -142,24 +142,24 @@
       "sha256": "88e50dee4c65a73b573369065b2714500798dcfc23a9597819d678924af8aa84"
     },
     "anchors/gaozhong-艺术.jsonl": {
-      "bytes": 56338,
-      "sha256": "aa3dc3f472001ed1b0523e98b559f9d0ff12a18e49f3370729a4e68c38e55a15"
+      "bytes": 44797,
+      "sha256": "e0537fb4d86b6bf457fe2dffc6a6787d9d5e1768430d70c8bd951eddc1e36f9f"
     },
     "anchors/gaozhong-英语.jsonl": {
-      "bytes": 112002,
-      "sha256": "a92b0d8e52bee3f99a0f219cc9b7a21e91527299f134128f638f642be679c7d6"
+      "bytes": 111355,
+      "sha256": "97904407a5f5076384f9230621159b2437273af9a571a32837ccf8ce3d605c3d"
     },
     "anchors/gaozhong-西班牙语.jsonl": {
-      "bytes": 160400,
-      "sha256": "617b9eceb42e448771f4f37d87a4e21da829bac426363859f3eb289cd38028c5"
+      "bytes": 151260,
+      "sha256": "df2d1805c53e3cf07603f8879f265bbe732e5fc2195b9fed76a414e152a70db7"
     },
     "anchors/gaozhong-语文.jsonl": {
       "bytes": 26460,
       "sha256": "d6ce03f45851e4e727be0237addfd09560f80b731d4da0346b8836b78fe73948"
     },
     "anchors/gaozhong-通用技术.jsonl": {
-      "bytes": 570467,
-      "sha256": "3bb8cf2c61fc2673fd931388879f758d998e50fa159117648bff198bb4514bef"
+      "bytes": 213937,
+      "sha256": "903853d1f643f690749c5a49323c61cc3a598b368acd44875c1c37add6410631"
     },
     "anchors/gaozhong-音乐.jsonl": {
       "bytes": 3158,
