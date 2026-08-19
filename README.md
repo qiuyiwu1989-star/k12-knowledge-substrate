@@ -138,7 +138,7 @@ PR 无法 review、两人同改必冲突。到 15,000 规模这不是性能问�
 ```bash
 npm run check      # 自测 + 生成 manifest + 全量校验（CI 就跑这个）
 npm run validate   # 只校验
-npm run selftest   # 证明校验器真的会拦（<!--N:selftestCases-->30<!--/N--> 条不变式）
+npm run selftest   # 证明校验器真的会拦（<!--N:selftestCases-->38<!--/N--> 条不变式）
 npm run review-loop # 端到端验教师复核闭环（<!--N:reviewLoopCases-->15<!--/N--> 条断言）
 ```
 

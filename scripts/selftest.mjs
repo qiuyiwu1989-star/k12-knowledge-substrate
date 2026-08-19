@@ -9,7 +9,7 @@
  *   node scripts/selftest.mjs
  */
 import { cpSync, mkdtempSync, appendFileSync, rmSync, readFileSync, readdirSync, statSync } from 'node:fs';
-import { execFileSync } from 'node:child_process';
+import { execFileSync, spawnSync } from 'node:child_process';
 import { tmpdir } from 'node:os';
 import { join, resolve, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -103,6 +103,16 @@ const CASES = [
   ['schema 未声明的字段被拦',        'anchors/x.jsonl', A({ id: 'ca_TEST0007', 亂七八糟: 1 }), '不合 schema'],
   ['schema 里的 pattern 被执行',      'anchors/x.jsonl', A({ id: 'ca_TEST0008', reviewedBy: ['某个没有前缀的名字'] }), '不合 schema'],
   ['边多出未声明字段被拦',            'edges/x.jsonl',   E({ evidence: [{ kind: 'expert', detail: 'x' }], 亂七八糟: 1 }), '不合 edge schema'],
+  // ── 交接包 2026-08-20 的 F/W 规则（specs/001–004）─────────────────
+  //   F001/F004 现在是警告档（3,069 条边一条都还没重标），但规则照样要被证明会响。
+  ['F001 边缺 type 被报',            'edges/x.jsonl',   E({ evidence: [{ kind: 'expert', detail: '测试证据' }] }), 'F001', 'warn'],
+  ['F002 边 type 词表外被拦',        'edges/x.jsonl',   E({ type: '差不多算前置吧', evidence: [{ kind: 'expert', detail: '测试证据' }] }), 'F002'],
+  ['F003 convention 进推理图被拦',   'edges/x.jsonl',   E({ type: 'convention', inInferenceGraph: true, evidence: [{ kind: 'expert', detail: '测试证据' }] }), 'F003'],
+  ['F004 失败表征过短被报',          'edges/x.jsonl',   E({ type: 'component', failureSignature: '会出错', evidence: [{ kind: 'expert', detail: '测试证据' }] }), 'F004', 'warn'],
+  ['F005 失败表征说空话被拦',        'edges/x.jsonl',   E({ type: 'component', failureSignature: '这个孩子的基础不牢，所以做不出来', evidence: [{ kind: 'expert', detail: '测试证据' }] }), 'F005'],
+  ['W104 instrument 标 hard 被报',   'edges/x.jsonl',   E({ type: 'instrument', strength: 'hard', failureSignature: '能算出来但要一个个数，慢得多', evidence: [{ kind: 'expert', detail: '测试证据' }] }), 'W104', 'warn'],
+  ['F201 禁止字段（难度系数）被拦',  'anchors/x.jsonl', A({ id: 'ca_TEST0017', difficulty: 0.7 }), '禁止字段 difficulty'],
+  ['F203 我们的主张无理由被拦',      'anchors/x.jsonl', A({ id: 'ca_TEST0018', evidenceSource: 'capability-rewrite', reviewStatus: 'llm-proposed', provenance: { derivedFrom: S.know.id, method: 'capability-rewrite' } }), 'F203'],
   ['兜底证据冒充课标来源被拦',        'anchors/x.jsonl', A({ id: 'ca_TEST0016', evidence: ['能完成：能计算三位数减三位数的退位减法'], evidenceSource: 'curriculum-content-gaozhong' }), '不许声称来自课标'],
   ['codes-only 泄漏文本被拦',         'mappings/x.jsonl', JSON.stringify({ key: 'cn-2022:T.1', framework: 'cn-2022', code: 'T.1', discipline: '数学', stage: 'G1-2', strand: null, title: '测试', summary: '不该出现的原文', textIncluded: false, anchorIds: [], schemaVersion: '0.1.0' }), 'codes-only'],
 ];
@@ -118,21 +128,24 @@ try {
   fail++;
 }
 
-for (const [name, file, line, expect] of CASES) {
+// 第 5 项 'warn' 表示这条规则当前是**警告档**（见 validate.mjs 的 ENFORCE）：
+// 期望 exit=0 但消息出现在 --warn 输出里。
+// 处在 reporting 档的规则同样要被证明「真的会响」—— 否则等到翻成 required
+// 那天才发现规则写错了，而那时已经按错规则重标了 3,069 条边。
+for (const [name, file, line, expect, level] of CASES) {
   const dir = mkdtempSync(join(tmpdir(), 'k12-selftest-'));
   try {
     for (const d of ['anchors', 'edges', 'lists', 'mappings', 'schema']) {   // schema/ 现在是闸，不是摆设，得跟着进沙箱
       cpSync(join(ROOT, d), join(dir, d), { recursive: true });
     }
     appendFileSync(join(dir, file), line + '\n');
-    let out = '', code = 0;
-    try {
-      execFileSync(process.execPath, [V], { env: { ...process.env, K12_ROOT: dir }, stdio: 'pipe' });
-    } catch (e) {
-      code = e.status; out = (e.stdout?.toString() ?? '') + (e.stderr?.toString() ?? '');
-    }
-    if (code !== 0 && out.includes(expect)) { console.log(`✓ ${name}`); pass++; }
-    else { console.error(`✗ ${name} —— 期望命中「${expect}」，实际 exit=${code}\n${out.split('\n').slice(0, 6).join('\n')}`); fail++; }
+    // 警告走 stderr，execFileSync 只回 stdout —— 用 spawnSync 才拿得全。
+    const r = spawnSync(process.execPath, level === 'warn' ? [V, '--warn'] : [V],
+                        { env: { ...process.env, K12_ROOT: dir }, encoding: 'utf8' });
+    const code = r.status, out = (r.stdout ?? '') + (r.stderr ?? '');
+    const want = level === 'warn' ? code === 0 : code !== 0;
+    if (want && out.includes(expect)) { console.log(`✓ ${name}`); pass++; }
+    else { console.error(`✗ ${name} —— 期望${level === 'warn' ? '警告' : '致命'}命中「${expect}」，实际 exit=${code}\n${out.split('\n').slice(0, 6).join('\n')}`); fail++; }
   } finally {
     rmSync(dir, { recursive: true, force: true });
   }

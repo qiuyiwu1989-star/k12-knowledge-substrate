@@ -123,6 +123,35 @@ for (const [field, live] of [['discipline', DISCIPLINES], ['track', TRACKS], ['t
 // 它本身不违规 —— 违规的是用了它还声称证据来自课标。
 const FALLBACK_EV = /^(能在.{1,8}(课堂|作业).{0,6}情境中完成：|能完成：)/;
 
+// ── 交接包 2026-08-20 的 F/W 规则（specs/001–004）─────────────────────
+// 命名一律按 specs/000-naming.md 换算。**验收器只有这一个**，
+// 交接包带的 tools/validate.py 没有采纳为第二个 —— 两份定义迟早发散，
+// 而失配的表现是「本该拦的没拦」，不报错。
+//
+// 推进档位。新字段现在一条都还没填，所以先只计数不阻断。
+// 重标／补齐完成后把对应项改成 'required'，CI 即刻开始硬拦 —— 就改这一行。
+// **不要因为「反正现在是 reporting」就把规则写松**：规则按最终形态写，
+// 只有 err/warn 的选择受档位控制。
+const ENFORCE = {
+  edgeTyping: 'reporting',      // F001/F002/F003/F004/F005 —— specs/001 边重标
+  assessmentSpec: 'reporting',  // F202 —— specs/003 判定方法
+};
+const gate = (key) => (ENFORCE[key] === 'required' ? err : warn);
+
+const EDGE_TYPES = new Set(['component', 'instrument', 'semantic', 'convention']);
+// F005：失败表征的空泛词黑名单。命中即拒 —— 说不出具体失败，就是说不出这条边。
+const SIGNATURE_BLACKLIST = ['基础不牢', '基本功不扎实', '能力不足', '理解不深', '知识欠缺',
+  '思维能力差', '学习习惯不好', '掌握不牢', '理解不到位'];
+const SIGNATURE_MIN = 12;
+const CONVENTION_SIGNATURE = '无可观测影响';   // convention 边的唯一合法取值
+const MAX_IN_DEGREE = 8;
+// 学段带：义务教育四段 + 高中。跨两带以上的先修边多为伪边（W102）。
+const BAND = (g) => (g <= 2 ? 0 : g <= 4 ? 1 : g <= 6 ? 2 : g <= 9 ? 3 : 4);
+
+// 「可用」的唯一定义。scripts/sync-docs.mjs 里有同名集合，两处必须一致 ——
+// usableAnchors 是对外承诺的那个数字。
+const USABLE_STATUS = new Set(['auto-confirmed', 'expert-confirmed', 'ai-adjudicated']);
+
 const ID_RE = /^ca_[A-Za-z0-9]{8}$/;
 const GRADE_RE = /^G(1[0-2]|[1-9])$/;
 
@@ -141,6 +170,21 @@ for (const { rec: a, where } of anchors) {
   if (!COGNITIVE.has(a.cognitive)) err(where, `认知层级非法：${a.cognitive}`);
   if (!REVIEW.has(a.reviewStatus)) err(where, `reviewStatus 非法：${a.reviewStatus}`);
   if (a.schemaVersion !== '0.1.0') err(where, `schemaVersion 应为 0.1.0，实为 ${a.schemaVersion}`);
+
+  // ── specs/003 详情页的三条锚点规则 ────────────────────────────────
+  //   F201（禁止字段）由 schema 的 forbidden 关键字执行，见 schema-check.mjs
+  if (!a.deprecated) {
+    const usable = USABLE_STATUS.has(a.reviewStatus);
+    if (usable && !a.assessmentSpec) {
+      gate('assessmentSpec')(where,
+        `F202 [${a.id}] 可被档案引用（${a.reviewStatus}）却没有判定方法 — `
+        + `「能引用」和「说得出怎么判」必须同时成立`);
+    }
+    if (a.evidenceSource === 'capability-rewrite' && !a.provenance?.why) {
+      err(where, `F203 [${a.id}] 是我们自己的主张（capability-rewrite）却没写理由 — `
+        + `这一层不是课标转述，凭什么加这一条必须写下来`);
+    }
+  }
 
   // ★ JSON Schema —— **只校验存活锚点**。
   //   弃用记录是历史，不重写历史：后来加严的约束不该追溯到已经封存的记录上。
@@ -408,6 +452,37 @@ for (const id of byId.keys()) prereqOf.set(id, []);
 
 for (const { rec: e, where } of edges) {
   for (const msg of schemaCheck(SCHEMA['edge'], e)) err(where, `不合 edge schema ${msg}`);
+
+  // ── specs/001 边的语义分类 ────────────────────────────────────────
+  const k0 = `${e.prerequisiteId}→${e.anchorId}`;
+  const G = gate('edgeTyping');
+  if (e.type === undefined) {
+    G(where, `F001 ${k0} 缺 type — 边只有「A 排在 B 之前」一种语义，无法推理也无法证伪`);
+  } else if (!EDGE_TYPES.has(e.type)) {
+    err(where, `F002 ${k0} type 取值「${e.type}」不在词表（component/instrument/semantic/convention）`);
+  }
+  if (e.type === 'convention' && e.inInferenceGraph === true) {
+    err(where, `F003 ${k0} type=convention 却进了推理图 — 教材编排顺序不是能力依赖`);
+  }
+  if (e.type !== undefined) {
+    const fs = String(e.failureSignature ?? '');
+    if (e.type === 'convention') {
+      if (fs && fs !== CONVENTION_SIGNATURE) {
+        err(where, `F004 ${k0} convention 边的 failureSignature 只能是「${CONVENTION_SIGNATURE}」`);
+      }
+    } else if (!fs) {
+      G(where, `F004 ${k0} failureSignature 为空 — 描述不出失败表现的边不成立`);
+    } else if (fs.length < SIGNATURE_MIN) {
+      G(where, `F004 ${k0} failureSignature 只有 ${fs.length} 字（须 ≥ ${SIGNATURE_MIN}）`);
+    } else {
+      const hit = SIGNATURE_BLACKLIST.find((w) => fs.includes(w));
+      if (hit) err(where, `F005 ${k0} failureSignature 命中空泛词「${hit}」— 说不出具体失败，就是说不出这条边`);
+    }
+  }
+  // W104 instrument 是「能到但绕远路」，按定义就不该卡死
+  if (e.type === 'instrument' && e.strength === 'hard') {
+    warn(where, `W104 ${k0} instrument 边标为 hard — 可绕过的关系不应卡死`);
+  }
   const A = byId.get(e.anchorId), P = byId.get(e.prerequisiteId);
   // ★ 边只能连正式锚点。给未复核的候选建先修关系，等于把没人看过的东西写进图。
   if (!A && candIds.has(e.anchorId)) { err(where, `边指向候选 ${e.anchorId} — 候选须先复核搬入 anchors/ 才能建边`); continue; }
@@ -557,12 +632,21 @@ for (const [, { a }] of byId) {
   trackCount[a.track] = (trackCount[a.track] ?? 0) + 1;
   reviewCount[a.reviewStatus] = (reviewCount[a.reviewStatus] ?? 0) + 1;
 }
-const USABLE_STATUS = new Set(['auto-confirmed', 'expert-confirmed', 'ai-adjudicated']);
 const usableCount = [...USABLE_STATUS].reduce((s, k) => s + (reviewCount[k] ?? 0), 0);
 
-if (SHOW_WARN && warnings.length) {
+if (warnings.length) {
+  // 按 F/W 编号聚合 —— 3,069 条「缺 type」逐条打出来只会把真问题淹掉。
+  const byCode = {};
+  for (const w of warnings) {
+    const m = w.match(/\b([FW]\d{3})\b/);
+    (byCode[m ? m[1] : '其他'] ??= []).push(w);
+  }
   console.warn(`⚠ ${warnings.length} 条 warning：`);
-  for (const w of warnings) console.warn(`  - ${w}`);
+  for (const [code, list] of Object.entries(byCode).sort()) {
+    console.warn(`  ${code} × ${list.length}`);
+    for (const w of list.slice(0, SHOW_WARN ? Infinity : 2)) console.warn(`      ${w}`);
+    if (!SHOW_WARN && list.length > 2) console.warn(`      …还有 ${list.length - 2} 条，加 --warn 全看`);
+  }
   console.warn('');
 }
 if (errors.length) {

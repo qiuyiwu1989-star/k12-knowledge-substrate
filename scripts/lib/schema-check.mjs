@@ -8,7 +8,7 @@
 const KNOWN = new Set(['$schema', '$id', 'title', 'description', 'type', 'properties',
   'required', 'additionalProperties', 'items', 'enum', 'const', 'pattern',
   'minLength', 'maxLength', 'minItems', 'maxItems', 'minimum', 'maximum',
-  'default', 'format', 'examples']);
+  'default', 'format', 'examples', 'forbidden']);
 
 const typeOf = (v) => v === null ? 'null' : Array.isArray(v) ? 'array' : typeof v;
 
@@ -48,7 +48,10 @@ export function check(schema, value, path = '', out = []) {
     }
     for (const [k, v] of Object.entries(value)) {
       const sub = schema.properties?.[k];
-      if (sub) check(sub, v, `${path}.${k}`, out);
+      // forbidden: 这个字段存在本身就是错。用来表达「这三个字段的缺席是设计结论」
+      // —— 写进 schema 才不会有人「顺手加个难度系数」。
+      if (sub?.forbidden) bad(`出现禁止字段 ${k} — ${sub.description ?? ''}`);
+      else if (sub) check(sub, v, `${path}.${k}`, out);
       else if (schema.additionalProperties === false) bad(`出现 schema 未声明的字段 ${k}`);
     }
   }

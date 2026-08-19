@@ -653,6 +653,59 @@
     },
     "reviewNote": {
       "type": "string"
+    },
+    "assessmentSpec": {
+      "type": [
+        "object",
+        "null"
+      ],
+      "additionalProperties": false,
+      "description": "判定方法（specs/003）。现在几乎全空 —— **空着是对的**：用模型批量编样题会污染底座且无法追溯。空字段在详情页必须显示为「尚未定义」，不许折叠。",
+      "properties": {
+        "type": {
+          "type": "string"
+        },
+        "spec": {
+          "type": "string"
+        },
+        "passCriterion": {
+          "type": "string"
+        },
+        "decayHint": {
+          "type": "string"
+        }
+      }
+    },
+    "objections": {
+      "type": "array",
+      "description": "公开异议。只落库，不做工作流（谁看、怎么处理待定）。计数在详情页公开可见。",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "by": {
+            "type": "string"
+          },
+          "at": {
+            "type": "string"
+          },
+          "text": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "difficulty": {
+      "description": "**禁止字段**（F201）。无真实作答数据时是编的。它的缺席是设计结论，不是没来得及做。",
+      "forbidden": true
+    },
+    "averageMasteryAge": {
+      "description": "**禁止字段**（F201）。同上。它的缺席是设计结论，不是没来得及做。",
+      "forbidden": true
+    },
+    "peerPercentile": {
+      "description": "**禁止字段**（F201）。横向比较的入口，进来了拿不掉。它的缺席是设计结论，不是没来得及做。",
+      "forbidden": true
     }
   }
 }

@@ -128,6 +128,38 @@
           "type": "string"
         }
       }
+    },
+    "type": {
+      "enum": [
+        "component",
+        "instrument",
+        "semantic",
+        "convention"
+      ],
+      "description": "先修关系的语义类别（specs/001）。判据只有一条：**能否描述出，不具备前置的孩子在后继上失败时的具体、可观察的表现**。描述不出来的一律是 convention，移出推理图。\ncomponent=前置是后继的子动作，失败时某一步系统性地错、错点可定位，不可绕过\ninstrument=做后继时拿前置当手段，能到但绕远路，可绕过\nsemantic=不懂前置则后继的表述无意义，读不懂题或整片空白，不可绕过\nconvention=教材就这么排的，无可观测影响，**不进推理图**"
+    },
+    "failureSignature": {
+      "type": "string",
+      "description": "不具备前置时，后继上的具体失败表现。**这是边的判据本身**，和锚点的「能不能答会/不会」同构 ——两者都要求落到可观测。空泛词（基础不牢／能力不足／理解不深…）一律拒绝：说不出具体失败，就是说不出这条边。convention 边的唯一合法取值是「无可观测影响」。\n长度与空泛词的约束由 validate.mjs 的 F004/F005 执行，不写在这里 —— 那两条受 ENFORCE 档位控制（重标完成前是警告），schema 是形状契约，不该绕过档位直接判致命。"
+    },
+    "inInferenceGraph": {
+      "type": "boolean",
+      "description": "是否进推理图。convention 边恒为 false —— 它是教材编排顺序，不是能力依赖。"
+    },
+    "retagHash": {
+      "type": "string",
+      "description": "重标时两端断言的内容哈希。管线按它跳过未变更的边 —— 锚点涨到 10,000 时全量重跑的模型成本是线性的，增量不是优化项而是架构要求。"
+    },
+    "counterEvidenceCount": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "反例计数。知识空间理论的价值就在于先修关系可证伪：大量孩子没掌握前置却掌握了后继，这条边就是错的。**要等 L3 聚合数据，现在恒为 0 或缺省。**"
+    },
+    "retired": {
+      "type": "boolean"
+    },
+    "retiredReason": {
+      "type": "string"
     }
   }
 }

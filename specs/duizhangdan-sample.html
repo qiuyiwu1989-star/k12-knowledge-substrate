@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>课标对账单 · 样张</title>
+<style>
+  :root{
+    --paper:#F8F9F5;
+    --band:#E2ECE1;
+    --ink:#1B1F1C;
+    --ink-soft:#5C6B62;
+    --rule:#BFCCC1;
+    --rule-hair:#D8E0D8;
+    --seal:#B4322A;
+    --seal-wash:rgba(180,50,42,.08);
+    --display:"Songti SC","Noto Serif SC","Source Han Serif SC",serif;
+    --body:"PingFang SC","Hiragino Sans GB","Microsoft YaHei",system-ui,sans-serif;
+    --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  }
+  *{box-sizing:border-box}
+  html{-webkit-text-size-adjust:100%}
+  body{
+    margin:0;padding:28px 16px 72px;
+    background:#DDE2DB;
+    font-family:var(--body);color:var(--ink);
+    font-size:15px;line-height:1.65;
+  }
+  .sheet{
+    max-width:940px;margin:0 auto;background:var(--paper);
+    border:1px solid var(--rule);
+    box-shadow:0 1px 0 #fff inset, 0 8px 28px rgba(27,31,28,.13);
+    padding:0 0 40px;
+  }
+
+  /* 样张警示条 */
+  .flag{
+    background:repeating-linear-gradient(45deg,var(--seal-wash) 0 10px,transparent 10px 20px);
+    border-bottom:1px solid var(--rule);
+    padding:8px 32px;font-size:12.5px;letter-spacing:.06em;color:var(--seal);
+    font-family:var(--mono);
+  }
+
+  /* 抬头 */
+  header{padding:34px 32px 0;position:relative}
+  .org{font-size:12px;letter-spacing:.34em;color:var(--ink-soft);font-family:var(--mono)}
+  h1{
+    font-family:var(--display);font-weight:600;
+    font-size:clamp(30px,5.4vw,44px);letter-spacing:.06em;
+    margin:12px 0 4px;line-height:1.15;
+  }
+  .sub{font-size:13.5px;color:var(--ink-soft);margin:0 0 22px}
+
+  .seal{
+    position:absolute;top:44px;right:30px;
+    transform:rotate(-7deg);
+    border:2.5px solid var(--seal);outline:1px solid var(--seal);outline-offset:3px;
+    color:var(--seal);padding:11px 14px;text-align:center;
+    font-family:var(--display);letter-spacing:.14em;line-height:1.35;
+    background:var(--seal-wash);max-width:168px;
+  }
+  .seal b{display:block;font-size:17px;font-weight:600}
+  .seal span{display:block;font-size:11px;letter-spacing:.08em;font-family:var(--body)}
+
+  /* 票据信息栏 */
+  .meta{
+    display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));
+    gap:0;border-top:1.5px solid var(--ink);border-bottom:1px solid var(--rule);
+  }
+  .meta div{padding:11px 0 12px;border-right:1px solid var(--rule-hair)}
+  .meta div:last-child{border-right:0}
+  .meta dt{font-size:11px;letter-spacing:.16em;color:var(--ink-soft);margin-bottom:3px;font-family:var(--mono)}
+  .meta dd{margin:0;font-size:14.5px}
+  .meta .m{font-family:var(--mono)}
+
+  /* 结存 */
+  .tally{
+    display:grid;grid-template-columns:repeat(3,1fr);
+    margin:26px 32px 8px;border:1px solid var(--rule);background:#fff;
+  }
+  .tally div{padding:16px 18px;border-right:1px solid var(--rule-hair)}
+  .tally div:last-child{border-right:0}
+  .tally .n{font-family:var(--display);font-size:38px;line-height:1;font-weight:600}
+  .tally .zero .n{color:var(--seal)}
+  .tally .k{font-size:12.5px;color:var(--ink-soft);margin-top:7px}
+  .tally .k em{font-style:normal;color:var(--ink)}
+
+  section{padding:0 32px}
+  h2{
+    font-family:var(--display);font-size:19px;font-weight:600;letter-spacing:.08em;
+    margin:38px 0 6px;padding-bottom:8px;border-bottom:1.5px solid var(--ink);
+    display:flex;justify-content:space-between;align-items:baseline;
+  }
+  h2 small{font-family:var(--mono);font-size:11px;letter-spacing:.1em;color:var(--ink-soft);font-weight:400}
+  .lede{font-size:13.5px;color:var(--ink-soft);margin:10px 0 16px}
+
+  /* 账页 */
+  table{width:100%;border-collapse:collapse;font-size:13.5px}
+  thead th{
+    text-align:left;font-weight:400;font-family:var(--mono);
+    font-size:11px;letter-spacing:.1em;color:var(--ink-soft);
+    padding:8px 10px;border-bottom:1px solid var(--rule);white-space:nowrap;
+  }
+  tbody td{padding:11px 10px;vertical-align:top;border-bottom:1px solid var(--rule-hair)}
+  tbody tr:nth-child(odd){background:var(--band)}
+  .subj{
+    font-family:var(--display);font-size:13px;letter-spacing:.14em;
+    background:var(--ink)!important;color:var(--paper);padding:5px 10px;
+  }
+  .id{font-family:var(--mono);font-size:11.5px;color:var(--ink-soft);white-space:nowrap}
+  .claim{max-width:260px}
+  .ev{color:var(--ink-soft);max-width:250px}
+  .src{font-family:var(--mono);font-size:11px;color:var(--ink-soft);white-space:nowrap}
+  .st{white-space:nowrap;font-size:12.5px}
+  .st b{font-weight:600}
+  .dot{display:inline-block;width:9px;height:9px;border:1.5px solid var(--ink);margin-right:6px;position:relative;top:1px}
+  .dot.fill{background:var(--ink)}
+  .dot.sq{border-radius:0;border-style:dashed;border-color:var(--seal)}
+
+  /* 未达账项 */
+  .gap{border-left:3px solid var(--seal);background:#fff;padding:16px 18px;margin-top:14px}
+  .gap p{margin:0 0 8px}
+  .gap p:last-child{margin-bottom:0}
+  .gap .why{color:var(--ink-soft);font-size:13px}
+
+  /* 签字栏 */
+  .sign{margin:40px 32px 0;border-top:1.5px solid var(--ink);padding-top:20px;
+    display:grid;grid-template-columns:1fr 1fr;gap:28px}
+  .sign .line{border-bottom:1px solid var(--ink);height:44px}
+  .sign .lbl{font-size:12px;color:var(--ink-soft);font-family:var(--mono);letter-spacing:.1em;margin-top:8px}
+  .note{margin:30px 32px 0;font-size:12.5px;color:var(--ink-soft);line-height:1.85}
+  .note code{font-family:var(--mono);font-size:11.5px}
+
+  @media (max-width:720px){
+    .seal{position:static;transform:none;margin:0 0 18px;max-width:none;display:inline-block}
+    .tally{grid-template-columns:1fr}
+    .tally div{border-right:0;border-bottom:1px solid var(--rule-hair)}
+    table,thead,tbody,tr,td{display:block}
+    thead{display:none}
+    tbody tr{border-bottom:1px solid var(--rule);padding:6px 0}
+    tbody td{border:0;padding:4px 10px}
+    .claim,.ev{max-width:none}
+    .sign{grid-template-columns:1fr}
+  }
+  @media print{body{background:#fff;padding:0}.sheet{box-shadow:none;border:0}}
+</style>
+</head>
+<body>
+<div class="sheet">
+
+  <div class="flag">样张 · 学生、作品、锚点编号与页码均为虚构示例，不对应真实数据</div>
+
+  <header>
+    <div class="seal">
+      <b>未经教师签字</b>
+      <span>本单不构成掌握判定</span>
+    </div>
+    <div class="org">YONGLE · 永乐教育 &nbsp;/&nbsp; K12 能力底座 L0</div>
+    <h1>课标对账单</h1>
+    <p class="sub">一次创作，对回教育部课程标准</p>
+
+    <dl class="meta">
+      <div><dt>学生代号</dt><dd class="m">S-0417</dd></div>
+      <div><dt>学段</dt><dd>G6 · 六年级</dd></div>
+      <div><dt>作品</dt><dd>班级图书借阅小程序</dd></div>
+      <div><dt>创作用时</dt><dd>4 课时 · 3 次迭代</dd></div>
+      <div><dt>单据编号</dt><dd class="m">DZ-26081-0417</dd></div>
+    </dl>
+  </header>
+
+  <div class="tally">
+    <div><div class="n">14</div><div class="k"><em>触达</em>　过程中确实用到</div></div>
+    <div><div class="n">6</div><div class="k"><em>有表现</em>　留下了可核对的具体行为</div></div>
+    <div class="zero"><div class="n">0</div><div class="k"><em>已判定</em>　够格写进能力档案</div></div>
+  </div>
+
+  <section>
+    <p class="lede">
+      最后一栏是 0，没有写错。判定掌握需要教师核对具体表现，本单只负责把创作过程对回课标条目，
+      并留下可以被翻回原件核对的出处。<strong>触达不等于掌握</strong>——这条线不划清，这张单子就是一张更好看的成绩单。
+    </p>
+  </section>
+
+  <section>
+    <h2>逐条对账 <small>ANCHOR × EVIDENCE</small></h2>
+    <table>
+      <thead>
+        <tr><th>锚点 ID</th><th>能力断言</th><th>本次创作中的证据</th><th>状态</th><th>课标出处</th></tr>
+      </thead>
+      <tbody>
+        <tr><td class="subj" colspan="5">信息科技</td></tr>
+        <tr>
+          <td class="id">A-7f3c91</td>
+          <td class="claim">能用顺序、分支、循环三种结构描述一个具体问题的解决过程</td>
+          <td class="ev">为「逾期提醒」写了遍历借阅记录的循环，内含日期分支判断</td>
+          <td class="st"><span class="dot fill"></span><b>有表现</b></td>
+          <td class="src">信息科技 2022<br>p.28</td>
+        </tr>
+        <tr>
+          <td class="id">A-2b81e4</td>
+          <td class="claim">能对一个程序进行测试，并定位其中一处错误</td>
+          <td class="ev">把「超过 3 天」写成 &gt;3，自测借出第 3 天不提醒后改为 &ge;3，并说明了原因</td>
+          <td class="st"><span class="dot fill"></span><b>有表现</b></td>
+          <td class="src">信息科技 2022<br>p.31</td>
+        </tr>
+        <tr>
+          <td class="id">A-9c04a7</td>
+          <td class="claim">能说明数据在程序中如何被存储与读取</td>
+          <td class="ev">使用了书目数组，但结构由 AI 生成，学生未作说明</td>
+          <td class="st"><span class="dot"></span>触达</td>
+          <td class="src">信息科技 2022<br>p.26</td>
+        </tr>
+
+        <tr><td class="subj" colspan="5">数学</td></tr>
+        <tr>
+          <td class="id">A-51d7f0</td>
+          <td class="claim">能用字母表示数量关系，并据此列出关系式</td>
+          <td class="ev">用「借出天数 = 今天 − 借出日」表达逾期条件</td>
+          <td class="st"><span class="dot fill"></span><b>有表现</b></td>
+          <td class="src">数学 2022<br>p.44</td>
+        </tr>
+        <tr>
+          <td class="id">A-6e2a13</td>
+          <td class="claim">能读懂并制作简单的统计图表，说明数据反映的情况</td>
+          <td class="ev">借阅排行用文字列表呈现，回避了图表</td>
+          <td class="st"><span class="dot sq"></span>触达 · 回避</td>
+          <td class="src">数学 2022<br>p.51</td>
+        </tr>
+
+        <tr><td class="subj" colspan="5">语文</td></tr>
+        <tr>
+          <td class="id">A-c380b6</td>
+          <td class="claim">能面向特定读者写一段说明性文字，做到条理清楚</td>
+          <td class="ev">写了给同学看的使用说明，分四步，同学首次使用未提问</td>
+          <td class="st"><span class="dot fill"></span><b>有表现</b></td>
+          <td class="src">语文 2022<br>p.19</td>
+        </tr>
+        <tr>
+          <td class="id">A-4a17dc</td>
+          <td class="claim">能对他人作品提出具体的、可执行的修改意见</td>
+          <td class="ev">互评环节提出「按钮字太小」，未说明改成多大</td>
+          <td class="st"><span class="dot"></span>触达</td>
+          <td class="src">语文 2022<br>p.22</td>
+        </tr>
+
+        <tr><td class="subj" colspan="5">道德与法治</td></tr>
+        <tr>
+          <td class="id">A-8f5e02</td>
+          <td class="claim">能举例说明保护个人信息的基本做法</td>
+          <td class="ev">主动提出「同学的手机号不能存进去」，改用学号</td>
+          <td class="st"><span class="dot fill"></span><b>有表现</b></td>
+          <td class="src">道德与法治 2022<br>p.37</td>
+        </tr>
+      </tbody>
+    </table>
+    <p class="lede" style="margin-top:14px">
+      余下 6 条触达锚点见附页。本次创作触达 <strong>4 个学科</strong>——跨学科不是课程设计的说法，是这张表算出来的结果。
+    </p>
+  </section>
+
+  <section>
+    <h2>未达账项 <small>UNRECONCILED</small></h2>
+    <p class="lede">本学段应掌握、本次创作本可触达却被绕开的能力。这一栏才是对账的意义。</p>
+    <div class="gap">
+      <p><span class="id">A-6e2a13</span> &nbsp;能读懂并制作简单的统计图表，说明数据反映的情况</p>
+      <p class="why">学生用文字列表代替了图表。这是本学段的必修锚点，且其两条前置（A-3d90c2 收集整理数据 / A-51d7f0 用字母表示数量关系）在本次创作中均已有表现——<strong>说明不是学不了，是绕开了</strong>。</p>
+      <p class="why">建议：下一次迭代把「借阅排行」明确定为出图任务；这条一旦补上，可同时打开 A-77b1c5「能根据图表作出简单判断与预测」的可学边界。</p>
+    </div>
+  </section>
+
+  <div class="sign">
+    <div><div class="line"></div><div class="lbl">任课教师签字 · 核对上述「有表现」条目</div></div>
+    <div><div class="line"></div><div class="lbl">日期</div></div>
+  </div>
+
+  <p class="note">
+    对账依据：《义务教育课程方案和课程标准（2022 年版）》。每条锚点均可凭 ID 与页码翻回教育部文件原件核对。<br>
+    状态释义：<span class="dot"></span>触达 = 创作过程中用到　<span class="dot fill"></span>有表现 = 留下了可核对的具体行为　<span class="dot sq"></span>回避 = 本可触达而被绕开。<br>
+    档案写入规则：仅「有表现」且经教师签字的条目可写入学生能力档案（L3）。学生档案不出校，本单不含任何可识别个人信息。<br>
+    数据许可：L0 锚点与依赖图 ODbL 1.0 · <code>k12.yongle.school/data/</code>
+  </p>
+
+</div>
+</body>
+</html>
