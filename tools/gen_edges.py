@@ -26,7 +26,11 @@ from urllib import request, error
 ROOT = Path(__file__).resolve().parent.parent
 CACHE = Path(__file__).parent / '.cache-edges'
 
-STAGE_ORD = {'G1': 1, 'G2': 2, 'G3': 3, 'G4': 4, 'G5': 5, 'G6': 6, 'G7': 7, 'G8': 8, 'G9': 9}
+# ★ 必须含 G10–G12。少了它们，891 条高中锚点的学段是 None，
+#   「只找学段不晚于自己的」这条约束就失效 —— 而那是候选池里唯一免费且可信的结构。
+#   同一个 bug 在 make_graph 里出现过一次（高中被画在五年级位置）。
+#   **凡是硬编码学段表的地方都要一起改，漏一处就静默失效。**
+STAGE_ORD = {f'G{i}': i for i in range(1, 13)}
 
 CROSS_PROMPT = """你在为一个 K12 能力图谱标注**跨学科**先修依赖。给你一条【目标能力】和一份**别的学科**的【候选前置列表】。
 
@@ -95,13 +99,23 @@ def call(user_text, base, key, model, timeout=120, sys_prompt=None):
 
 def stage_of(a):
     sh = a.get('stageHint') or {}
-    return STAGE_ORD.get(sh.get('min'), 5), STAGE_ORD.get(sh.get('max'), 9)
+    # 默认值不能写死 5/9 —— 那是「只有 9 个学段」时代的遗留。
+    # 学段缺失时给一个**不会误导排序**的中位，而不是假装它是九年级。
+    return STAGE_ORD.get(sh.get('min'), 6), STAGE_ORD.get(sh.get('max'), 12)
+
+
+# 高中锚点的学段是 G10，初中是 G7–G9。按「学段最近」排，同为 G10 的
+# 高中锚点全排在前面，40 条的池子在到达初中之前就满了 ——
+# 结果**跨学段的边一条都建不出来**（实测高中物理 243 条边里 0 条来自初中）。
+# 而初中物理→高中物理恰恰是最真实的一类先修关系。
+# 所以给「跨学段」留一个保底名额：池子里至少留 1/3 给更早学段的锚点。
+CROSS_STAGE_QUOTA = 1 / 3
 
 
 def build_pool(target, all_in_disc, cap=40):
-    """候选前置池：同学科、学段不晚于自己、同领域优先。"""
+    """候选前置池：同学科、学段不晚于自己、同领域优先，**但给跨学段留名额**。"""
     tmin, _ = stage_of(target)
-    pool = []
+    same, earlier = [], []
     for a in all_in_disc:
         if a['id'] == target['id']:
             continue
@@ -109,9 +123,18 @@ def build_pool(target, all_in_disc, cap=40):
         if amin > tmin:              # 学段整体晚于目标 → 不可能是前置
             continue
         same_strand = (a.get('strand') and a.get('strand') == target.get('strand'))
-        pool.append((0 if same_strand else 1, tmin - amin if tmin >= amin else 99, a))
-    pool.sort(key=lambda x: (x[0], x[1]))
-    return [a for _, _, a in pool[:cap]]
+        key = (0 if same_strand else 1, tmin - amin)
+        # 「更早学段」的判据：跨了至少一个学段档（1-2/3-4/5-6/7-9/高中）
+        (earlier if tmin - amin >= 3 else same).append((key, a))
+    same.sort(key=lambda x: x[0])
+    earlier.sort(key=lambda x: x[0])
+    quota = int(cap * CROSS_STAGE_QUOTA)
+    picked = [a for _, a in same[:cap - quota]] + [a for _, a in earlier[:quota]]
+    # 一侧不足时用另一侧补满，不浪费池子
+    if len(picked) < cap:
+        rest = [a for _, a in same[cap - quota:]] + [a for _, a in earlier[quota:]]
+        picked += rest[:cap - len(picked)]
+    return picked[:cap]
 
 
 # 工具型学科：它们的能力会被别的学科现场调用。反过来极少见
