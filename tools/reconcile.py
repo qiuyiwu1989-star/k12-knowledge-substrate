@@ -6,7 +6,7 @@ AI 审查是主观判断，可判定性过滤器是确定性规则且在 CI 里�
 两者冲突时（AI 说没问题、过滤器说不可判定），以过滤器为准降级为 disputed ——
 否则会出现「数据在库里、CI 却红着」的僵局，最后必然有人去删规则而不是修数据。
 
-跑在 enrich_review 之后，让流水线自愈。
+跑在 ai_review 之后，让流水线自愈。
 """
 import json, subprocess, sys
 from pathlib import Path

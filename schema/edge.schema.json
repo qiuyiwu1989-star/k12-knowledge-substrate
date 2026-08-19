@@ -5,13 +5,30 @@
   "description": "anchorId 依赖 prerequisiteId。反向读即『解锁』。只有 DAG 档锚点允许 hard 边。",
   "type": "object",
   "additionalProperties": false,
-  "required": ["anchorId", "prerequisiteId", "strength", "reason", "evidence", "reviewStatus", "schemaVersion"],
+  "required": [
+    "anchorId",
+    "prerequisiteId",
+    "strength",
+    "reason",
+    "evidence",
+    "reviewStatus",
+    "schemaVersion"
+  ],
   "properties": {
-    "anchorId": { "type": "string", "pattern": "^ca_[A-Za-z0-9]{8}$" },
-    "prerequisiteId": { "type": "string", "pattern": "^ca_[A-Za-z0-9]{8}$" },
+    "anchorId": {
+      "type": "string",
+      "pattern": "^ca_[A-Za-z0-9]{8}$"
+    },
+    "prerequisiteId": {
+      "type": "string",
+      "pattern": "^ca_[A-Za-z0-9]{8}$"
+    },
     "strength": {
       "type": "string",
-      "enum": ["hard", "soft"],
+      "enum": [
+        "hard",
+        "soft"
+      ],
       "description": "hard = 没有它就学不了。hard 边必须有至少一条非 llm 证据——校验器强制。"
     },
     "reason": {
@@ -27,26 +44,90 @@
       "items": {
         "type": "object",
         "additionalProperties": false,
-        "required": ["kind", "detail"],
+        "required": [
+          "kind",
+          "detail"
+        ],
         "properties": {
           "kind": {
             "type": "string",
-            "enum": ["edition-order", "standard-hierarchy", "cooccurrence", "expert", "llm"],
+            "enum": [
+              "cooccurrence",
+              "edition-order",
+              "expert",
+              "llm",
+              "set-containment",
+              "standard-hierarchy"
+            ],
             "description": "edition-order=多版本教材编排共识偏序(最可信,可自动化)；standard-hierarchy=课标内在层级；cooccurrence=错题共现统计；expert=老师判断；llm=模型提议(仅兜底)"
           },
-          "detail": { "type": "string", "minLength": 2, "maxLength": 120 }
+          "detail": {
+            "type": "string",
+            "minLength": 2,
+            "maxLength": 120
+          }
         }
       }
     },
     "reviewStatus": {
       "type": "string",
-      "enum": ["llm-proposed", "auto-confirmed", "expert-confirmed", "disputed"],
+      "enum": [
+        "llm-proposed",
+        "auto-confirmed",
+        "expert-confirmed",
+        "disputed"
+      ],
       "description": "三源一致的边可直接 auto-confirmed，不占老师的复核时间。这是把 24 人×20 小时压下来的关键。"
     },
     "reviewedBy": {
       "type": "array",
-      "items": { "type": "string", "pattern": "^(teacher|editor|ai):[A-Za-z0-9_.-]+$" }
+      "items": {
+        "type": "string",
+        "pattern": "^(teacher|editor|ai):[A-Za-z0-9_.\\-\\u4e00-\\u9fff\\u3400-\\u4dbf\\u00b7]{1,40}$"
+      }
     },
-    "schemaVersion": { "type": "string", "const": "0.1.0" }
+    "schemaVersion": {
+      "type": "string",
+      "const": "0.1.0"
+    },
+    "crossDiscipline": {
+      "type": [
+        "boolean",
+        "null"
+      ],
+      "description": "跨学科边。**跨界主要不靠这个字段表达** —— 真正的跨界在 crosscutting/practice 这些横切维度上（见 mappings/crosscutting.json），先修边里的跨学科关系是少数。"
+    },
+    "note": {
+      "type": "string",
+      "maxLength": 200,
+      "description": "人读的备注，不参与任何计算。"
+    },
+    "containment": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "subsetSize",
+        "intersect",
+        "rate"
+      ],
+      "description": "集合包含证据。声称 set-containment 却没有这个字段的边，validate 直接拦 —— 「A 包含 B」是可以实测的，不许只写一句话。subset/superset 是清单 ID，早期两条边没记，不补也不编。",
+      "properties": {
+        "subsetSize": {
+          "type": "integer"
+        },
+        "intersect": {
+          "type": "integer"
+        },
+        "rate": {
+          "type": "number"
+        },
+        "subset": {
+          "type": "string"
+        },
+        "superset": {
+          "type": "string"
+        }
+      }
+    }
   }
 }

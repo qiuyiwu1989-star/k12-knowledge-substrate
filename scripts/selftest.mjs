@@ -93,6 +93,11 @@ const CASES = [
   ['自环被拦',                        'edges/x.jsonl',   E({ prerequisiteId: S.late.id }), '自环'],
   ['悬空边被拦',                      'edges/x.jsonl',   E({ prerequisiteId: 'ca_NOPE0000' }), '不存在的 prerequisiteId'],
   ['成环被拦',                        'edges/x.jsonl',   E({ anchorId: S.early.id, prerequisiteId: S.late.id, evidence: [{ kind: 'expert', detail: 'x' }] }) + '\n' + E({ anchorId: S.late.id, prerequisiteId: S.early.id, evidence: [{ kind: 'expert', detail: 'x' }] }), '环'],
+  // schema 从摆设变成闸之后，得有东西证明它真会拦。
+  // 三条覆盖三种腐烂方式：多出未声明字段、枚举漏值、约束被违反。
+  ['schema 未声明的字段被拦',        'anchors/x.jsonl', A({ id: 'ca_TEST0007', 亂七八糟: 1 }), '不合 schema'],
+  ['schema 里的 pattern 被执行',      'anchors/x.jsonl', A({ id: 'ca_TEST0008', reviewedBy: ['某个没有前缀的名字'] }), '不合 schema'],
+  ['边多出未声明字段被拦',            'edges/x.jsonl',   E({ evidence: [{ kind: 'expert', detail: 'x' }], 亂七八糟: 1 }), '不合 edge schema'],
   ['codes-only 泄漏文本被拦',         'mappings/x.jsonl', JSON.stringify({ key: 'cn-2022:T.1', framework: 'cn-2022', code: 'T.1', discipline: '数学', stage: 'G1-2', strand: null, title: '测试', summary: '不该出现的原文', textIncluded: false, anchorIds: [], schemaVersion: '0.1.0' }), 'codes-only'],
 ];
 
@@ -110,7 +115,7 @@ try {
 for (const [name, file, line, expect] of CASES) {
   const dir = mkdtempSync(join(tmpdir(), 'k12-selftest-'));
   try {
-    for (const d of ['anchors', 'edges', 'lists', 'mappings']) {
+    for (const d of ['anchors', 'edges', 'lists', 'mappings', 'schema']) {   // schema/ 现在是闸，不是摆设，得跟着进沙箱
       cpSync(join(ROOT, d), join(dir, d), { recursive: true });
     }
     appendFileSync(join(dir, file), line + '\n');

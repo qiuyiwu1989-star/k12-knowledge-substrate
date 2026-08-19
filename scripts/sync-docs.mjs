@@ -119,6 +119,12 @@ const VALUES = {
   crosscuttingPairs: crossPairsOn('crosscutting'),
   practicePairs: crossPairsOn('practice'),
   crosscuttingTagged: live.filter((a) => vals(a, 'crosscutting').length || vals(a, 'practice').length).length,
+  // 「25 条不变式」这种手打数字腐烂过一次：加了 3 条 schema 注入用例之后
+  // README 还写着 25。数字从源文件里数出来，不许手打。
+  selftestCases: (readFileSync(join(ROOT, 'scripts/selftest.mjs'), 'utf8')
+    .match(/^\s{2}\['/gm) || []).length + 1,   // +1 是基线「干净数据必须通过」
+  reviewLoopCases: (readFileSync(join(ROOT, 'scripts/review-loop-test.mjs'), 'utf8')
+    .match(/\bok\(/g) || []).length,
   reviewTable,
 };
 

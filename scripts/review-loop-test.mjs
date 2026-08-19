@@ -60,7 +60,7 @@ ok('复核单里有可用条目', ids.length === 3, `只找到 ${ids.length} 条
 
 if (ids.length === 3) {
   const work = mkdtempSync(join(tmpdir(), 'k12-review-'));
-  for (const d of ['anchors', 'edges', 'lists', 'mappings']) {
+  for (const d of ['anchors', 'edges', 'lists', 'mappings', 'schema']) {
     if (existsSync(join(ROOT, d))) cpSync(join(ROOT, d), join(work, d), { recursive: true });
   }
   const payload = join(work, 'export.json');

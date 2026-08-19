@@ -1,19 +1,34 @@
 #!/usr/bin/env python3
 """
-enrich_review.py — 一次调用干三件事：打核心素养标签 + 补 MATRIX 维度 + 学科挑错。
+ai_review.py — 让 AI 把明显错的锚点挑出来。**这不是教师复核。**
 
-**AI 复核不是教师复核。** 产出的状态是 `ai-reviewed`，不是 `expert-confirmed`，
-`usableAnchors` 依然不算它。它的价值只有两个：
-  1. 把明显错的挑出来（降级为 disputed，退出可用集合）
-  2. 给剩下的排优先级，让老师的 20 小时花在最可能有问题的条目上
+产出状态是 `ai-reviewed`（没挑出问题）或 `disputed`（挑出了问题）。
+两者都不进 `usableAnchors` —— AI 审查是**筛子，不是合格证**。
+它的全部价值是：把明显错的降下去，并给剩下的排优先级。
 
-为什么三件事合成一次调用：模型看同一条锚点时，判断「属于哪个素养」和
-「这条有没有问题」用的是同一份理解。拆成三次不会更准，只会贵三倍。
+## 2026-08-19：从 enrich_review.py 改名，并砍掉两件事
 
-核心素养是**查表不是猜** —— 2022 课标每个学科都印着官方的素养清单，
-提示词里把该学科的清单给全，模型只能从里面选。
+原来它一次干三件：打核心素养标签 + 补 MATRIX 维度 + 挑错。前两件现在都不该由它干：
 
-  python3 tools/enrich_review.py [--only 数学] [--dry-run]
+- **核心素养**已由 `tag_literacy.py` + `mappings/literacy.json` 做到 100%，
+  那是从 24 科课标原文抄下来的闭合词表。这里原本另抄了一份 14 科的硬编码词表 ——
+  **同一个概念在仓库里有两份定义，迟早发散**，而且缺 10 个高中科目。删掉。
+- **topic 不许由模型写。** 624 条缺 topic 已经查到源头（通用技术/西班牙语的高中版式
+  没有主题层级，义教那些页面本身没标注），结论是**留空**。让模型现编一个主题名，
+  就是把「查过、确实没有」偷换成「有，且来路不明」。见 docs/gaozhong.md。
+
+## 修好的一处静默失效
+
+`OPEN_AT`（各科开设年级，用来判学段是否放错）原来只到 9 年级，且缺省 (1,9)。
+高中那 883 条锚点标的是 G10–G12，模型会被告知「该学科 1–9 年级开设」，
+于是**每一条都会被判 stage 错**。跑下去就是 883 条集体降级 disputed。
+
+这和 `gen_edges` 的 `STAGE_ORD` 只到 G9 是同一个错，第三次了：
+**义务教育时代写的常量表，高中数据进来时没有一个会报错，只会静默给出错误答案。**
+
+    python3 tools/ai_review.py                    # 默认只审从没审过的（llm-proposed）
+    python3 tools/ai_review.py --status ai-reviewed --only 数学
+    python3 tools/ai_review.py --dry-run
 """
 import argparse, collections, hashlib, itertools, json, os, random, re, sys, time
 from concurrent.futures import ThreadPoolExecutor
@@ -21,58 +36,44 @@ from pathlib import Path
 from urllib import request, error
 
 ROOT = Path(__file__).resolve().parent.parent
-CACHE = Path(__file__).parent / '.cache-enrich'
+CACHE = Path(__file__).parent / '.cache-ai-review'
 
-# 《义务教育课程标准（2022年版）》各科核心素养。逐字照抄，不是归纳。
-LITERACY = {
-    '语文': ['文化自信', '语言运用', '思维能力', '审美创造'],
-    '数学': ['数感', '量感', '符号意识', '运算能力', '几何直观', '空间观念', '推理意识',
-             '数据意识', '模型意识', '应用意识', '创新意识', '抽象能力', '推理能力',
-             '数据观念', '模型观念'],
-    '英语': ['语言能力', '文化意识', '思维品质', '学习能力'],
-    '物理': ['物理观念', '科学思维', '科学探究', '科学态度与责任'],
-    '化学': ['化学观念', '科学思维', '科学探究与实践', '科学态度与责任'],
-    '生物学': ['生命观念', '科学思维', '探究实践', '态度责任'],
-    '科学': ['科学观念', '科学思维', '探究实践', '态度责任'],
-    '历史': ['唯物史观', '时空观念', '史料实证', '历史解释', '家国情怀'],
-    '地理': ['人地协调观', '综合思维', '区域认知', '地理实践力'],
-    '道德与法治': ['政治认同', '道德修养', '法治观念', '健全人格', '责任意识'],
-    '信息科技': ['信息意识', '计算思维', '数字化学习与创新', '信息社会责任'],
-    '劳动': ['劳动观念', '劳动能力', '劳动习惯和品质', '劳动精神'],
-    '艺术': ['审美感知', '艺术表现', '创意实践', '文化理解'],
-    '体育与健康': ['运动能力', '健康行为', '体育品德'],
+# 各科开设年级，用来判「学段是否可能错」。**必须覆盖到 12 年级** ——
+# 缺省值给 (1,9) 会让全部高中锚点被判 stage 错（见文件头）。
+# 没在表里的学科直接报错，不再静默走缺省。
+OPEN_AT = {
+    '语文': (1, 12), '数学': (1, 12), '英语': (3, 12), '体育与健康': (1, 12),
+    '道德与法治': (1, 9), '思想政治': (10, 12),
+    '艺术': (1, 9), '音乐': (10, 12), '美术': (10, 12),
+    '劳动': (1, 9), '科学': (1, 9),
+    '信息科技': (3, 9), '信息技术': (10, 12),
+    '历史': (7, 12), '地理': (7, 12), '生物学': (7, 12),
+    '物理': (8, 12), '化学': (9, 12),
+    '通用技术': (10, 12),
+    '日语': (10, 12), '俄语': (10, 12), '德语': (10, 12),
+    '法语': (10, 12), '西班牙语': (10, 12),
 }
-# 各科开设年级，用来判「学段是否可能错」
-OPEN_AT = {'语文': (1, 9), '数学': (1, 9), '英语': (3, 9), '道德与法治': (1, 9),
-           '体育与健康': (1, 9), '艺术': (1, 9), '劳动': (1, 9), '科学': (1, 9),
-           '信息科技': (3, 8), '历史': (7, 9), '地理': (7, 9), '生物学': (7, 9),
-           '物理': (8, 9), '化学': (9, 9)}
 
 SYS = """你是一位有二十年经验的{disc}教研员，正在审一份由 AI 从课标抽取的能力图谱。
 
-给你一条能力断言，做三件事：
+**你是来找问题的，不是来盖章的。** 逐项检查这条能力断言，有问题才报，没问题返回空数组：
 
-**一、打核心素养标签**
-从这个清单里选 1–2 个最贴切的（**只能从清单里选，不许自造**）：
-{lits}
-
-**二、给出主题与能力维度**
-- topic：这条属于哪个内容主题（如「秦汉时期」「物质的性质」「数与运算」），4–10 字
-- dimension：这条主要练的是哪种能力（通常就是上面选中的核心素养之一）
-
-**三、挑错（这是最重要的一件）**
-你是来找问题的，不是来盖章的。逐项检查，有问题才报，没问题就返回空数组：
-- `stage`：这个学段放错了吗？（该学科{open_at}才开设；内容难度与年级是否匹配）
-- `undecidable`：这条能对一个具体孩子答「会 / 不会」吗？还是一句口号或章节名？
-- `not-a-capability`：这根本不是学生能力，而是教学建议、编写说明、课程目标？
+- `stage`：学段放错了吗？（{disc}在**{open_at}**开设；内容难度与标注年级是否匹配）
+- `undecidable`：这条能对一个具体孩子答「会 / 不会」吗？还是一句口号、一个章节名？
+- `not-a-capability`：这根本不是学生能力，而是教学建议、编写说明、课程目标、办学要求？
 - `truncated`：句子被截断了、缺主干、或明显是从长句里切坏的？
 - `evidence-weak`：给的掌握证据证明不了这条能力？
 
 每条问题写清**具体哪里不对**，不要写「建议进一步完善」这种废话。
-拿不准就不报 —— 误报会浪费老师的时间，而老师的时间是这个项目最稀缺的东西。
+
+两条克制：
+1. **拿不准就不报。** 误报会浪费老师的时间，而老师的时间是这个项目最稀缺的东西。
+2. **断言短不是问题。**「能计算圆锥的体积」本来就该这么短，硬拉长是注水。
+   唯一的判据是能不能对一个具体孩子答「会 / 不会」。
 
 只输出一行 JSON，不要代码块、不要解释：
-{{"literacy":["…"],"topic":"…","dimension":"…","issues":[{{"type":"stage","detail":"实验室制取气体是九年级内容，标成一年级"}}]}}"""
+{{"issues":[{{"type":"stage","detail":"实验室制取气体是九年级内容，这里标成一年级"}}]}}
+{{"issues":[]}}"""
 
 ENDPOINTS = [("/v1/chat/completions", "openai"), ("/anthropic/v1/messages", "anthropic")]
 _rr = itertools.count()
@@ -111,6 +112,8 @@ def call(sys_prompt, user, base, key, model, timeout=120):
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument('--only', default=None)
+    ap.add_argument('--status', default='llm-proposed',
+                    help='审哪一档。默认只审从没审过的；传 all 审全部未确认的')
     ap.add_argument('--concurrency', type=int, default=12)
     ap.add_argument('--dry-run', action='store_true')
     a = ap.parse_args()
@@ -124,10 +127,20 @@ def main():
     # **AI 复审不许碰已确认的锚点。** 课标附录那批是 auto-confirmed（证据强度最高：
     # 官方来源 + 机械校验 + 判定客观），让主观的 AI 判断去覆盖它，等于自己把分级拆了。
     # 实测教训：第一次没加这条，138 条 auto-confirmed 被重判到只剩 23 条。
+    # **AI 复审不许碰已确认的锚点。** 课标附录那批是 auto-confirmed（证据强度最高：
+    # 官方来源 + 机械校验 + 判定客观），让主观的 AI 判断去覆盖它，等于自己把分级拆了。
+    # 实测教训：第一次没加这条，138 条 auto-confirmed 被重判到只剩 23 条。
     SKIP = {'auto-confirmed', 'expert-confirmed'}
+    want = None if a.status == 'all' else set(a.status.split(','))
+    if want and (want & SKIP):
+        sys.exit(f'不许审已确认的档位：{sorted(want & SKIP)}')
     targets = [(f, i, r) for f, rows in files.items() for i, r in enumerate(rows)
                if r['reviewStatus'] not in SKIP and not r.get('deprecated')
+               and (want is None or r['reviewStatus'] in want)
                and (not a.only or r['discipline'] == a.only)]
+    missing = sorted({r['discipline'] for _, _, r in targets} - set(OPEN_AT))
+    if missing:
+        sys.exit(f'OPEN_AT 缺这些学科，补上再跑（缺省值会让它们全部被判学段错）：{missing}')
     print(f"待审 {len(targets)} 条 · 并发 {a.concurrency}")
 
     edges_in = collections.defaultdict(list)
@@ -140,9 +153,8 @@ def main():
     def work(job):
         f, i, r = job
         d = r['discipline']
-        lo, hi = OPEN_AT.get(d, (1, 9))
-        sysp = SYS.format(disc=d, lits='、'.join(LITERACY.get(d, [])),
-                          open_at=f'{lo}–{hi} 年级')
+        lo, hi = OPEN_AT[d]          # 缺表就崩 —— 静默走缺省正是上一版的 bug
+        sysp = SYS.format(disc=d, open_at=f'{lo}–{hi} 年级')
         pres = [byid[p]['statement'] for p in edges_in.get(r['id'], [])[:5] if p in byid]
         user = (f"能力断言：{r['statement']}\n"
                 f"领域：{r.get('strand') or '未标注'}\n"
@@ -177,16 +189,6 @@ def main():
             if o.get('error'):
                 stat['调用失败'] += 1
             else:
-                lits = [x for x in (o.get('literacy') or []) if x in LITERACY.get(r['discipline'], [])]
-                if lits:
-                    r['literacy'] = lits[:2]; stat['补素养'] += 1
-                if r['track'] == 'MATRIX':
-                    if o.get('topic'):
-                        r['topic'] = str(o['topic'])[:40]
-                    if o.get('dimension'):
-                        r['dimension'] = str(o['dimension'])[:30]
-                    if r.get('topic') and r.get('dimension'):
-                        stat['补维度'] += 1
                 iss = [x for x in (o.get('issues') or []) if isinstance(x, dict) and x.get('type')]
                 if iss:
                     r['aiIssues'] = iss[:5]

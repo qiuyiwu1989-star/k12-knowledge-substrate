@@ -19,6 +19,7 @@ import { dirname, resolve, join, relative } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { checkDecidable } from './lib/decidability.mjs';
 import { dedupeSignature, findUnnormalized } from './lib/normalize.mjs';
+import { check as schemaCheck } from './lib/schema-check.mjs';
 
 // K12_ROOT 可指向任意数据根（selftest 与分片 CI 用）
 const ROOT = process.env.K12_ROOT
@@ -96,6 +97,28 @@ const PRACTICE = new Set(CC_VOCAB.practice.map((p) => p.id));
 // 否则同一条锚点在两处说法不同，join 就废了。
 const LIT_VOCAB = JSON.parse(readFileSync(join(ROOT, 'mappings/literacy.json'), 'utf8')).disciplines;
 
+// schema/anchor.schema.json 以前是**摆设** —— 没有任何东西校验它，于是它悄悄
+// 腐烂到「缺 9 个高中学科、缺 KNOWLEDGE 型、缺 14 个实际字段」，
+// 拿它去建模会把整个数据集判成非法。现在它真跑。
+// 校验器是自己写的（scripts/lib/schema-check.mjs），因为这个仓库零依赖是有意的。
+const SCHEMA = Object.fromEntries(['anchor', 'edge', 'list-item', 'mapping'].map((n) =>
+  [n, JSON.parse(readFileSync(join(ROOT, `schema/${n}.schema.json`), 'utf8'))]));
+const ANCHOR_SCHEMA = SCHEMA.anchor;
+
+// 枚举在两处各有一份（这里是带出处注释的权威版，schema 那份是给外部消费者读的）。
+// 两份必须一致 —— 不加这道断言，下次加学科时只改一处，另一处就又开始腐烂。
+for (const [field, live] of [['discipline', DISCIPLINES], ['track', TRACKS], ['type', TYPES],
+                             ['cognitive', COGNITIVE], ['reviewStatus', REVIEW]]) {
+  const inSchema = new Set(ANCHOR_SCHEMA.properties[field].enum ?? []);
+  const only = (a, b) => [...a].filter((x) => !b.has(x));
+  const d1 = only(live, inSchema), d2 = only(inSchema, live);
+  if (d1.length || d2.length) {
+    err('schema/anchor.schema.json', `${field} 枚举与 validate.mjs 不一致：` +
+      `${d1.length ? `schema 缺 ${d1.join('、')}` : ''}${d1.length && d2.length ? '；' : ''}` +
+      `${d2.length ? `validate 缺 ${d2.join('、')}` : ''}`);
+  }
+}
+
 const ID_RE = /^ca_[A-Za-z0-9]{8}$/;
 const GRADE_RE = /^G(1[0-2]|[1-9])$/;
 
@@ -114,6 +137,12 @@ for (const { rec: a, where } of anchors) {
   if (!COGNITIVE.has(a.cognitive)) err(where, `认知层级非法：${a.cognitive}`);
   if (!REVIEW.has(a.reviewStatus)) err(where, `reviewStatus 非法：${a.reviewStatus}`);
   if (a.schemaVersion !== '0.1.0') err(where, `schemaVersion 应为 0.1.0，实为 ${a.schemaVersion}`);
+
+  // ★ JSON Schema —— **只校验存活锚点**。
+  //   弃用记录是历史，不重写历史：后来加严的约束不该追溯到已经封存的记录上。
+  if (!a.deprecated) {
+    for (const m of schemaCheck(ANCHOR_SCHEMA, a)) err(where, `[${a.id}] 不合 schema ${m}`);
+  }
 
   // ★ 可判定性 —— 底座的分界线。
   //   disputed 的条目豁免：它们已经被标记为有问题、已退出可用集合，
@@ -360,6 +389,7 @@ const prereqOf = new Map(); // anchorId -> [prereqId]
 for (const id of byId.keys()) prereqOf.set(id, []);
 
 for (const { rec: e, where } of edges) {
+  for (const msg of schemaCheck(SCHEMA['edge'], e)) err(where, `不合 edge schema ${msg}`);
   const A = byId.get(e.anchorId), P = byId.get(e.prerequisiteId);
   // ★ 边只能连正式锚点。给未复核的候选建先修关系，等于把没人看过的东西写进图。
   if (!A && candIds.has(e.anchorId)) { err(where, `边指向候选 ${e.anchorId} — 候选须先复核搬入 anchors/ 才能建边`); continue; }
@@ -450,6 +480,7 @@ for (const { rec: e, where } of edges) {
 
 // ---------- 清单 ----------
 for (const { rec: it, where } of lists) {
+  for (const msg of schemaCheck(SCHEMA['list-item'], it)) err(where, `不合 list-item schema ${msg}`);
   if (!/^lst_[a-z0-9-]{3,40}$/.test(it.listId ?? '')) err(where, `listId 格式非法：${it.listId}`);
   if (!it.key) err(where, `清单条目缺 key`);
   // 英语词表条目是拉丁文本，套中文标点规则会把 `Britain n.` 改成 `Britain n`
@@ -470,6 +501,7 @@ for (const { rec: it, where } of lists) {
 // ---------- 课标映射 ----------
 const mapKeys = new Set();
 for (const { rec: m, where } of mappings) {
+  for (const msg of schemaCheck(SCHEMA['mapping'], m)) err(where, `不合 mapping schema ${msg}`);
   if (mapKeys.has(m.key)) err(where, `课标 key 重复：${m.key}`);
   mapKeys.add(m.key);
   if (m.key !== `${m.framework}:${m.code}`) err(where, `key 与 framework:code 不一致：${m.key}`);

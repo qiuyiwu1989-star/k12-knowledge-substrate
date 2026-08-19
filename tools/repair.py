@@ -224,7 +224,7 @@ def main():
     print(f"\n用时 {time.time()-t0:.0f}s")
     for k, v in stat.most_common():
         print(f"  {k:<22} {v:>4}")
-    print("\n  修复成功的已退回 llm-proposed，需重跑 enrich_review 复审。")
+    print("\n  修复成功的已退回 llm-proposed，需重跑 ai_review 复审。")
     print("  弃用的标了 deprecated —— 不删除，因为档案里可能已有引用。")
 
 

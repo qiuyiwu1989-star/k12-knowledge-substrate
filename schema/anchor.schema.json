@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://yongle.school/k12/schema/anchor.schema.json",
   "title": "L0 能力锚点 (Capability Anchor)",
-  "description": "底座的唯一稳定 ID 空间。一个锚点 = 一条可判定的能力断言。档案层(L3)的所有掌握记录都以 anchor.id 为谓词宾语。",
+  "description": "底座的唯一稳定 ID 空间。一个锚点 = 一条可判定的能力断言。档案层(L3)的所有掌握记录都以 anchor.id 为谓词宾语。\n\n**本 schema 由 scripts/validate.mjs 真跑**（scripts/lib/schema-check.mjs，零依赖）。\n2026-08-20 之前它是摆设：没有任何东西校验它，而它已经和数据全面对不上 ——\n缺 9 个高中学科、缺 KNOWLEDGE 型、缺 14 个实际字段，拿它去建模会把整个数据集判成非法。\n**只校验存活锚点。** 弃用记录是历史，不重写历史，因此不受后加严的约束追溯。",
   "type": "object",
   "additionalProperties": false,
   "required": [
@@ -28,22 +28,32 @@
     "discipline": {
       "type": "string",
       "enum": [
-        "语文",
-        "数学",
-        "英语",
-        "物理",
-        "化学",
-        "生物学",
-        "历史",
-        "地理",
-        "道德与法治",
-        "思想政治",
-        "科学",
+        "体育与健康",
+        "俄语",
+        "信息技术",
         "信息科技",
         "劳动",
+        "化学",
+        "历史",
+        "地理",
+        "德语",
+        "思想政治",
+        "数学",
+        "日语",
+        "法语",
+        "物理",
+        "生物学",
+        "科学",
+        "美术",
         "艺术",
-        "体育与健康"
-      ]
+        "英语",
+        "西班牙语",
+        "语文",
+        "通用技术",
+        "道德与法治",
+        "音乐"
+      ],
+      "description": "\n义务教育 15 科 + 高中特有 9 科。「信息科技」是义务教育的名字，「信息技术」是高中的 —— 两套课标各自这么印，不合并。"
     },
     "track": {
       "type": "string",
@@ -55,7 +65,10 @@
       "description": "结构档位。DAG=强先修(数理化)；LIST=清单/覆盖(语文字词篇目、英语词表)；MATRIX=能力维度×主题(史地生政科)。决定该锚点允许存在什么边——校验器强制执行。"
     },
     "strand": {
-      "type": "string",
+      "type": [
+        "string",
+        "null"
+      ],
       "minLength": 2,
       "maxLength": 30,
       "description": "课标领域，如 数与代数 / 识字与写字 / 物质的性质与应用"
@@ -85,24 +98,26 @@
     "verb": {
       "type": "string",
       "minLength": 1,
-      "maxLength": 6,
-      "description": "行为动词。与 object 共同构成去重签名。"
+      "maxLength": 20,
+      "description": "行为动词。与 object 共同构成去重签名。 复合动词（「用…描摹…并用…描述…」）允许，但吞掉整句就说明拆句失败。"
     },
     "object": {
       "type": "string",
       "minLength": 2,
-      "maxLength": 40,
+      "maxLength": 60,
       "description": "作用对象。与 verb 共同构成去重签名——防止 Marble 那种『同一个名字出现 5 次』。"
     },
     "type": {
       "type": "string",
       "enum": [
         "CONCEPTUAL",
-        "PROCEDURAL",
-        "REPRESENTATIONAL",
+        "KNOWLEDGE",
         "LANGUAGE",
-        "META"
-      ]
+        "META",
+        "PROCEDURAL",
+        "REPRESENTATIONAL"
+      ],
+      "description": "\nKNOWLEDGE 是「知道 X」型 —— 课标的忠实转述，但它本身不是能力。capability-rewrite 层就是在它之上另立一条可判定断言（见 tools/capability_rewrite.py）。"
     },
     "literacy": {
       "type": "array",
@@ -151,7 +166,7 @@
       "items": {
         "type": "string",
         "minLength": 4,
-        "maxLength": 60
+        "maxLength": 140
       },
       "description": "掌握证据。每条都必须是可观察的行为，不是感受。"
     },
@@ -179,7 +194,8 @@
       "type": "array",
       "items": {
         "type": "string",
-        "pattern": "^(teacher|editor|ai):[A-Za-z0-9_.-]+$"
+        "pattern": "^(teacher|editor|ai):[A-Za-z0-9_.\\-\\u4e00-\\u9fff\\u3400-\\u4dbf\\u00b7]{1,40}$",
+        "description": "签字人标识。**必须收中文名** —— 原来的正则只认 ASCII，「teacher:测试老师」直接被判非法。真老师签字那天才发现就晚了。"
       },
       "description": "谁复核的。老师的复核痕迹累积起来就是他自己的教学序列 IP —— 这个字段是复核者愿意干活的理由，别省。"
     },
@@ -332,6 +348,311 @@
           }
         }
       }
+    },
+    "evidenceSource": {
+      "type": "string",
+      "enum": [
+        "curriculum-content",
+        "curriculum-content-gaozhong",
+        "curriculum-appendix",
+        "curriculum-example",
+        "capability-rewrite",
+        "repaired-from-source",
+        "llm-draft",
+        "fallback"
+      ],
+      "description": "evidence 从哪来。**capability-rewrite 必须能被一眼认出**：那一层不是课标转述，是我们自己的教育判断，validate 对它有六条专门的闸。"
+    },
+    "provenance": {
+      "type": "object",
+      "description": "溯源。底座的全部价值在这条链上。",
+      "properties": {
+        "srcSubject": {
+          "type": "string"
+        },
+        "srcPage": {
+          "type": [
+            "integer",
+            "string",
+            "null"
+          ]
+        },
+        "srcPageFrom": {
+          "type": [
+            "integer",
+            "string",
+            "null"
+          ]
+        },
+        "srcPageRange": {
+          "type": "string"
+        },
+        "srcStage": {
+          "type": "string",
+          "description": "课标正文印的学段小标题。**年级区间按学科取** —— 艺术是 1-2／3-5／6-7／8-9，和别科不同（见 tools/fix_src_stages.py）。"
+        },
+        "srcText": {
+          "type": "string",
+          "description": "句子级课标引文。承重的：溯源 / 接地校验 / 模型污染闸。权利归教育部，可用 scripts/strip-srctext.mjs 一键剥离（见 PROVENANCE.md）。"
+        },
+        "srcTextFix": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "method": {
+              "type": "string"
+            },
+            "coverage": {
+              "type": [
+                "number",
+                "string"
+              ]
+            }
+          }
+        },
+        "srcTopic": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "srcCode": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "srcCourse": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "srcCourseNo": {
+          "type": [
+            "string",
+            "integer",
+            "null"
+          ]
+        },
+        "srcAgree": {
+          "type": [
+            "string",
+            "number"
+          ]
+        },
+        "method": {
+          "type": "string"
+        },
+        "seq": {
+          "type": [
+            "integer",
+            "string"
+          ]
+        },
+        "author": {
+          "type": "string"
+        },
+        "firstLine": {
+          "type": "string"
+        },
+        "itemCount": {
+          "type": "integer"
+        },
+        "declaredCount": {
+          "type": [
+            "integer",
+            "string",
+            "null"
+          ]
+        },
+        "exampleRefs": {
+          "type": "array",
+          "items": {
+            "type": [
+              "integer",
+              "string"
+            ]
+          }
+        },
+        "crosscuttingWhy": {
+          "type": "string"
+        },
+        "stageFixedFrom": {
+          "type": "string"
+        },
+        "derivedFrom": {
+          "type": "string",
+          "pattern": "^ca_[A-Za-z0-9]{8}$",
+          "description": "capability-rewrite 专用：指回源知识锚点。validate 强制同学科且源为活跃 KNOWLEDGE。"
+        },
+        "why": {
+          "type": "string"
+        },
+        "srcTextFullLen": {
+          "type": "integer",
+          "description": "被 fix_srctext.py 替换掉的原整段字数。留着是为了能看出这条修得有多狠（最长的原是 3,684 字）。"
+        }
+      },
+      "additionalProperties": false
+    },
+    "dropReason": {
+      "type": "string",
+      "minLength": 4,
+      "description": "弃用原因。与 supersededBy 二选一必填 —— 档案里的引用不能悬空且查不到原因。"
+    },
+    "aiIssues": {
+      "type": "array",
+      "description": "AI 复核挑出的问题。**AI 复核不是教师复核**，reviewStatus 最高只到 ai-reviewed。type=resolved 是异议被撤销的记录（见 tools/resolve_disputed.py）。",
+      "items": {
+        "type": "object",
+        "required": [
+          "type"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "stage",
+              "undecidable",
+              "not-a-capability",
+              "truncated",
+              "evidence-weak",
+              "resolved"
+            ]
+          },
+          "detail": {
+            "type": "string"
+          },
+          "by": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "adjudication": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "by": {
+          "type": "string"
+        },
+        "basis": {
+          "type": [
+            "string",
+            "array"
+          ]
+        },
+        "note": {
+          "type": "string"
+        },
+        "downgradedBy": {
+          "type": "string"
+        },
+        "pendingObjection": {
+          "type": "boolean"
+        }
+      },
+      "description": "AI 裁定记录。pendingObjection 标明这条是「待人工异议」，不是定论。"
+    },
+    "independentCheck": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "method": {
+          "type": "string"
+        },
+        "passed": {
+          "type": "boolean"
+        },
+        "overlap": {
+          "type": [
+            "number",
+            "string"
+          ]
+        },
+        "facts": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "description": "对抗验证：模型看不到断言、只读原文自己抽事实，再机械比对。换的是信息流不是措辞 —— 让它「再审一遍」只会确认自己。"
+    },
+    "repair": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "why": {
+          "type": "string"
+        },
+        "kind": {
+          "type": "string"
+        },
+        "grounding": {
+          "type": [
+            "number",
+            "string"
+          ]
+        },
+        "srcVerbs": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "repairAttempt": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "fixable": {
+          "type": "boolean"
+        },
+        "noop": {
+          "type": "boolean"
+        },
+        "why": {
+          "type": "string"
+        }
+      }
+    },
+    "statementBefore": {
+      "type": "string",
+      "description": "改写前的原句。改写过的锚点必须留下原样，否则无从判断改写对不对。"
+    },
+    "autoConfirmBasis": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "auto-confirmed 的依据。这一档的含义是「判定客观、根本不需要人」（字表词表这类数得清的东西），不是「AI 觉得没问题」。"
+    },
+    "triageBucket": {
+      "type": "string",
+      "enum": [
+        "READY",
+        "JUDGE",
+        "SPLIT",
+        "NO_STAGE"
+      ],
+      "description": "复核前的机械分诊桶。**分诊不是复核。**"
+    },
+    "topicFrom": {
+      "type": "string",
+      "enum": [
+        "curriculum-page-index"
+      ],
+      "description": "topic 的来源。**只允许「从课标页级目录搬运」这一种** —— 模型现编的主题名一律不收（见 docs/gaozhong.md）。"
+    },
+    "stageFix": {
+      "type": "string"
+    },
+    "reviewNote": {
+      "type": "string"
     }
   }
 }

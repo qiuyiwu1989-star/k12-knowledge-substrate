@@ -151,6 +151,7 @@
 ## 下一步
 
 assessment、建边、横切打标、srcPage、topic 都已做完（见仓库根 README 的完整度表）。
+学段那一维后来发现有静默错误（艺术的学段划分和别科不同），已修，见 [disputed.md](disputed.md)。
 剩下的只有**教师复核** —— 那是唯一能把 usableAnchors 抬起来的一步，
 而它不是技术问题。
 

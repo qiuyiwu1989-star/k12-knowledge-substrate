@@ -8,14 +8,14 @@
 数据集可直接取：[`/data/`](https://k12.yongle.school/data/)（允许跨域，不用 clone）。
 
 仓库里也有离线版：**[graph-3d.html](graph-3d.html)** / **[graph.html](graph.html)**，单文件双击即开、不联网。
-<!--N:liveAnchors-->2168<!--/N--> 条能力断言 · <!--N:edges-->3072<!--/N--> 条先修依赖 · <!--N:disciplines-->24<!--/N--> 个学科 ·
+<!--N:liveAnchors-->2161<!--/N--> 条能力断言 · <!--N:edges-->3072<!--/N--> 条先修依赖 · <!--N:disciplines-->24<!--/N--> 个学科 ·
 <!--N:listItems-->6262<!--/N--> 条清单知识点。点任意一个点，看它之前必须先掌握什么。
 
 > **<!--N:usable-->388<!--/N--> 条可被个人档案引用**（`usableAnchors`）。但这个「可用」要拆开看：
 > 一部分是机械可判定的（字表、词表这类数得清的东西），一部分是 **AI 裁定、待人工异议**。
 >
-> **教师签字数：<!--N:humanConfirmed-->0<!--/N-->。** 另有 <!--N:disputed-->144<!--/N--> 条存疑挂起、
-> <!--N:aiReviewed-->404<!--/N--> 条只过了 AI 审查（AI 审查是筛子，不是合格证）。
+> **教师签字数：<!--N:humanConfirmed-->0<!--/N-->。** 另有 <!--N:disputed-->112<!--/N--> 条存疑挂起、
+> <!--N:aiReviewed-->430<!--/N--> 条只过了 AI 审查（AI 审查是筛子，不是合格证）。
 > 完整分级见 [PROVENANCE.md](PROVENANCE.md#复核状态真实数字)。
 >
 > 上面这些数字由 `scripts/sync-docs.mjs` 从 `manifest.json` 生成，CI 核对 —— 不是手打的。
@@ -25,7 +25,7 @@
 这里曾经写着「**各学科的 AI 过审率和抽出来的数量成反比 —— 抽得最多的学科恰恰抽得最差**」，
 并附了一张表。
 
-**清理掉 <!--N:deprecatedAnchors-->898<!--/N--> 条劣质锚点之后，这个结论不成立了**：
+**清理掉 <!--N:deprecatedAnchors-->905<!--/N--> 条劣质锚点之后，这个结论不成立了**：
 数量与可用率的相关系数是 **r = +0.09**，等于没有相关。原先看到的「反比」，
 是劣质锚点在少数学科里堆积造成的假象 —— 那些学科抽得多，正因为抽得烂、没被筛掉。
 清掉之后，量和质就没关系了。
@@ -104,12 +104,12 @@ Marble 是 5.0%）。判据比同学科严得多——必须是「学这条时�
 **这 11 条两轮重跑没变，它是对的，不是漏建。** 真正的跨学科**先修**关系本来就罕见。
 
 「能力跨界融合」在本项目里由**另一层**表达 —— 横切维度（参照 NGSS 的 crosscutting
-concepts / practices，闭合词表，<!--N:crosscuttingTagged-->1529<!--/N--> 条锚点已打标）：
+concepts / practices，闭合词表，<!--N:crosscuttingTagged-->1524<!--/N--> 条锚点已打标）：
 
 | 关联类型 | 跨学科对数 |
 |---|---:|
 | 同一**横切概念**（找规律 / 结构与功能 / 尺度与比例 …7 个） | <!--N:crosscuttingPairs-->259172<!--/N--> |
-| 同一**科学实践**（论证与设计 / 分析数据 / 探究 …8 个） | <!--N:practicePairs-->374847<!--/N--> |
+| 同一**科学实践**（论证与设计 / 分析数据 / 探究 …8 个） | <!--N:practicePairs-->372137<!--/N--> |
 
 **只数跨学科的对** —— 两条语文锚点都练「找规律」不算跨界。
 练「找规律」的语文锚点和练「找规律」的数学锚点之间确实有关联，但那关联不是先修关系、
@@ -124,7 +124,7 @@ edges/<学科>/<学段>.jsonl       L0 先修边（仅 DAG/MATRIX 档）
 lists/<清单>/<学段>.jsonl       L1 字表 / 词表 / 背诵篇目
 mappings/<框架>.jsonl           L1 课标映射（自编码 + 页码 + 句子级引文）
 review-queue/*.jsonl            待人工复核的候选
-schema/*.schema.json            JSON Schema（含 L3 断言的接口契约）
+schema/*.schema.json            JSON Schema —— **校验器真跑它**（见下），不是文档
 scripts/                        校验器 / 自测 / manifest / 导入
 OWNERS.md                       每个分片的学科主编 —— 没有它就没有人 review PR
 ```
@@ -138,8 +138,8 @@ PR 无法 review、两人同改必冲突。到 15,000 规模这不是性能问�
 ```bash
 npm run check      # 自测 + 生成 manifest + 全量校验（CI 就跑这个）
 npm run validate   # 只校验
-npm run selftest   # 证明校验器真的会拦（25 条不变式）
-npm run review-loop # 端到端验教师复核闭环（14 条断言）
+npm run selftest   # 证明校验器真的会拦（<!--N:selftestCases-->28<!--/N--> 条不变式）
+npm run review-loop # 端到端验教师复核闭环（<!--N:reviewLoopCases-->15<!--/N--> 条断言）
 ```
 
 导入诗歌资产库：
@@ -160,9 +160,18 @@ node scripts/import-shige.mjs --in <poems.jsonl> --dry-run
 3. **去重签名** —— 同学科下 `(verb, object)` 不得重复（Marble 有 21 组完全同名、75 组基名冲突）
 4. **档位规则** —— LIST 不建图，MATRIX 无 hard 边
 5. **证据强度** —— hard 边必须有非 llm 证据；`codes-only` 来源不得附文本
+6. **schema 合规** —— `schema/*.schema.json` 由 `scripts/lib/schema-check.mjs`（零依赖）
+   逐条执行，字段多一个都拦。**只校验存活锚点**：弃用记录是历史，不重写历史。
+
+   2026-08-20 之前这几个 schema 是**摆设** —— 没有任何东西校验它们，于是悄悄烂到
+   「缺 9 个高中学科、缺 KNOWLEDGE 型、缺 14 个实际字段」，拿它去建模会把整个数据集
+   判成非法。接上闸的第一天就抓出一个真 bug：`reviewedBy` 的正则只认 ASCII，
+   **第一个签中文名的老师会被判非法**。
 
 `npm run selftest` 会逐条注入违规数据，证明每条不变式真的会触发。
 **没被验证过的校验器等于没有校验器。**
+
+disputed 怎么落定、以及顺出来的两个静默 bug（艺术学段划分、schema 是摆设），见 [docs/disputed.md](docs/disputed.md)。
 
 ## reviewStatus：没过审的锚点禁止被档案引用
 
@@ -171,10 +180,10 @@ node scripts/import-shige.mjs --in <poems.jsonl> --dry-run
 | `auto-confirmed` | 146 | 能 |
 | `ai-adjudicated` | 242 | 能（AI 裁定，**待人工异议**） |
 | `expert-confirmed` | 0 | 能 |
-| `ai-reviewed` | 404 | 不能 —— AI 审查是筛子不是合格证 |
-| `disputed` | 144 | 不能 |
-| `llm-proposed` | 1232 | 不能 |
-| **存活合计** | **2168** | 其中 **388** 可用 |<!--/N-->
+| `ai-reviewed` | 430 | 不能 —— AI 审查是筛子不是合格证 |
+| `disputed` | 112 | 不能 |
+| `llm-proposed` | 1231 | 不能 |
+| **存活合计** | **2161** | 其中 **388** 可用 |<!--/N-->
 
 各状态的含义：
 
