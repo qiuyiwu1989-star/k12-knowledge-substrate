@@ -12,6 +12,8 @@ python3 tools/make_graph3d.py
 python3 tools/make_about.py
 python3 tools/make_list.py
 python3 tools/make_data_index.py
+python3 tools/make_teacher_sheet.py
+python3 tools/split_teacher_sheet.py
 
 rm -rf dist && mkdir -p dist/2d dist/data
 cp graph-3d.html dist/index.html    # 首页是 3D

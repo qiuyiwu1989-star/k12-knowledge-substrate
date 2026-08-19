@@ -1,0 +1,520 @@
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>化学·课标能力复核单</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+/* 灰底带一点绿偏 —— 纯中性灰读起来像没选过。主色取 2022 课标封面那系深青。 */
+:root{
+  --ground:#f2f4f3; --surface:#fff; --sunk:#e9edeb;
+  --ink:#16211f; --mut:#5b6b66; --dim:#8a9791; --rule:#d8e0dc;
+  --accent:#0b6e5f; --accent-ink:#fff;
+  --warn:#a8641b; --crit:#9b2c2c;
+  --shadow:0 1px 2px rgba(22,33,31,.05),0 8px 24px -12px rgba(22,33,31,.14);
+}
+@media(prefers-color-scheme:dark){:root:not([data-theme=light]){
+  --ground:#0d1211; --surface:#151d1b; --sunk:#101715;
+  --ink:#e6ece9; --mut:#8b9c96; --dim:#6a7a75; --rule:#22302c;
+  --accent:#4fd1b5; --accent-ink:#08120f;
+  --warn:#d9a04e; --crit:#e08a86;
+  --shadow:0 1px 2px rgba(0,0,0,.4),0 10px 28px -14px rgba(0,0,0,.6);
+}}
+:root[data-theme=dark]{
+  --ground:#0d1211; --surface:#151d1b; --sunk:#101715;
+  --ink:#e6ece9; --mut:#8b9c96; --dim:#6a7a75; --rule:#22302c;
+  --accent:#4fd1b5; --accent-ink:#08120f;
+  --warn:#d9a04e; --crit:#e08a86;
+  --shadow:0 1px 2px rgba(0,0,0,.4),0 10px 28px -14px rgba(0,0,0,.6);
+}
+html{-webkit-text-size-adjust:100%}
+body{background:var(--ground);color:var(--ink);
+  font:16px/1.68 -apple-system,BlinkMacSystemFont,"PingFang SC","Hiragino Sans GB",
+       "Microsoft YaHei","Source Han Sans SC",sans-serif;
+  font-variant-numeric:tabular-nums;
+  padding:0 16px calc(96px + env(safe-area-inset-bottom))}
+.w{max-width:720px;margin:0 auto}
+
+/* ── 开场：说清他在判什么。脱离仓库也看得懂。 ── */
+.lede{padding:36px 0 20px}
+.eyebrow{font-size:11px;letter-spacing:.18em;color:var(--accent);font-weight:700;text-transform:uppercase}
+h1{font-size:clamp(26px,5vw,34px);line-height:1.22;font-weight:680;letter-spacing:-.022em;
+   margin:10px 0 14px;text-wrap:balance}
+.lede p{color:var(--mut);font-size:14.5px;max-width:60ch}
+.lede p+p{margin-top:9px}
+.lede b{color:var(--ink);font-weight:640}
+
+/* ── 学科条 ── */
+/* 审核标准块。**必须用这份文件自己的变量名**（--accent/--ink/--surface/--rule）——
+   第一版照着图谱页写了 --ok/--fg/--line，那些变量在这里根本不存在，
+   于是 summary 拿到了 --ok 的回退值（深绿），在深色主题上几乎看不见。
+   **跨文件抄样式时，变量名不会报错，只会静默失效。** */
+.std{background:color-mix(in srgb,var(--accent) 7%,var(--surface));
+  border:1px solid color-mix(in srgb,var(--accent) 34%,transparent);
+  border-radius:12px;padding:0;margin:22px 0 4px;overflow:hidden}
+.std summary{padding:14px 18px;cursor:pointer;font-weight:650;font-size:14.5px;
+  color:var(--accent);list-style:none}
+.std summary::-webkit-details-marker{display:none}
+.std summary::before{content:'▸ ';font-size:12px}
+.std[open] summary::before{content:'▾ '}
+.std summary:hover{background:color-mix(in srgb,var(--accent) 10%,transparent)}
+.stdbody{padding:2px 20px 18px;font-size:13.5px;line-height:1.78;color:var(--mut)}
+.stdbody .lead{color:var(--ink);margin-bottom:12px}
+.stdbody ol{margin:0 0 0 18px}
+.stdbody li{margin-bottom:11px}
+.stdbody li b{color:var(--ink)}
+.stdbody .eg{display:block;font-size:12.5px;color:var(--dim);margin-top:3px}
+.stdbody .hard{margin-top:14px;padding-top:12px;border-top:1px solid var(--rule);color:var(--ink)}
+.stdbody .src{margin-top:10px;font-size:12.5px;color:var(--dim)}
+.stdbody .src a{color:var(--mut)}
+.sign{background:rgba(255,255,255,.04);border:1px solid var(--line);
+  border-radius:12px;padding:16px 18px;margin:20px 0 4px}
+.sign label{display:block;font-size:13.5px;font-weight:600;margin-bottom:9px}
+.sign input{display:block;width:100%;max-width:340px;margin-top:7px;padding:9px 12px;
+  border-radius:8px;border:1px solid var(--line);background:var(--bg);
+  color:inherit;font:inherit;font-size:14px}
+.sign input:focus{outline:none;border-color:var(--ok)}
+.sign p{font-size:12.5px;color:var(--mut);margin:10px 0 0;line-height:1.7}
+.tabs{position:sticky;top:0;z-index:5;display:flex;gap:7px;overflow-x:auto;
+  padding:12px 0;background:linear-gradient(var(--ground) 72%,transparent);
+  scrollbar-width:none}
+.tabs::-webkit-scrollbar{display:none}
+.tab{flex:none;display:flex;align-items:baseline;gap:6px;padding:8px 14px;border-radius:99px;
+  border:1px solid var(--rule);background:var(--surface);color:var(--mut);
+  font:inherit;font-size:13.5px;cursor:pointer;transition:.15s}
+.tab em{font-style:normal;font-size:11px;color:var(--dim)}
+.tab:hover{border-color:var(--dim);color:var(--ink)}
+.tab[aria-selected=true]{background:var(--accent);border-color:var(--accent);
+  color:var(--accent-ink);font-weight:620}
+.tab[aria-selected=true] em{color:var(--accent-ink);opacity:.72}
+.tab:focus-visible,button:focus-visible,input:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+
+.paneNote{color:var(--mut);font-size:13.5px;padding:6px 0 18px}
+
+/* ── 条目卡 ── */
+.item{background:var(--surface);border:1px solid var(--rule);border-radius:13px;
+  padding:17px 18px 15px;margin-bottom:13px;box-shadow:var(--shadow);
+  transition:border-color .15s}
+.item[data-done]{border-color:var(--accent)}
+.item[data-done="reject"]{border-color:var(--crit)}
+.item[data-done="stage"],.item[data-done="wording"]{border-color:var(--warn)}
+.item header{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;
+  font-size:11.5px;color:var(--dim);margin-bottom:11px}
+.item .n{font-weight:700;color:var(--accent);font-size:12px}
+.item .lev{margin-left:auto;color:var(--mut)}
+.item .lev b{color:var(--ink);font-weight:640}
+.ask{font-size:17.5px;line-height:1.56;font-weight:560;letter-spacing:-.008em;text-wrap:pretty}
+.stmt{color:var(--mut);font-size:13.5px;margin-top:8px}
+details{margin-top:11px;font-size:13.5px}
+summary{cursor:pointer;color:var(--accent);font-size:12.5px;
+  list-style:none;display:inline-flex;align-items:center;gap:5px}
+summary::-webkit-details-marker{display:none}
+summary::before{content:"▸";font-size:10px;transition:transform .15s}
+details[open] summary::before{transform:rotate(90deg)}
+blockquote{margin-top:9px;padding:11px 13px;background:var(--sunk);border-radius:9px;
+  color:var(--mut);border-left:2px solid var(--rule)}
+.evh{margin-top:10px;color:var(--dim);font-size:12.5px}
+details ul{margin:5px 0 0 18px;color:var(--mut);font-size:13px}
+
+.verdicts{display:flex;gap:7px;flex-wrap:wrap;margin-top:14px}
+.verdicts button{flex:1 1 auto;min-width:96px;padding:9px 8px;border-radius:9px;
+  border:1px solid var(--rule);background:var(--surface);color:var(--mut);
+  font:inherit;font-size:13.5px;cursor:pointer;transition:.14s}
+.verdicts button:hover{border-color:var(--dim);color:var(--ink)}
+.verdicts button[aria-pressed=true]{background:var(--accent);border-color:var(--accent);
+  color:var(--accent-ink);font-weight:620}
+.verdicts button[data-v=reject][aria-pressed=true]{background:var(--crit);border-color:var(--crit);color:#fff}
+.verdicts button[data-v=stage][aria-pressed=true],
+.verdicts button[data-v=wording][aria-pressed=true]{background:var(--warn);border-color:var(--warn);color:#fff}
+.note{width:100%;margin-top:9px;padding:8px 11px;border-radius:8px;
+  border:1px solid var(--rule);background:var(--sunk);color:var(--ink);
+  font:inherit;font-size:13.5px}
+.note::placeholder{color:var(--dim)}
+
+/* ── 底部：进度 + 交回 ── */
+#dock{position:fixed;left:0;right:0;bottom:0;z-index:6;
+  background:color-mix(in srgb,var(--ground) 92%,transparent);
+  backdrop-filter:blur(14px);border-top:1px solid var(--rule);
+  padding:11px 16px calc(11px + env(safe-area-inset-bottom))}
+#dock .in{max-width:720px;margin:0 auto;display:flex;align-items:center;gap:14px}
+#stat{font-size:14px;font-weight:560}
+#stat span{color:var(--mut);font-weight:400;font-size:13px}
+.bar{flex:1;height:5px;border-radius:3px;background:var(--rule);overflow:hidden}
+.bar i{display:block;height:100%;background:var(--accent);width:0;transition:width .25s}
+#give{flex:none;padding:10px 18px;border-radius:9px;border:1px solid var(--accent);
+  background:var(--accent);color:var(--accent-ink);font:inherit;font-size:14px;
+  font-weight:620;cursor:pointer}
+#give[disabled]{opacity:.42;cursor:default}
+#give.done{background:var(--surface);color:var(--accent)}
+@media(max-width:560px){
+  #dock .in{flex-wrap:wrap}
+  .bar{order:3;flex-basis:100%}
+  .verdicts button{min-width:calc(50% - 4px)}
+}
+@media(prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+<div class=w>
+  <div class=lede>
+    <div class=eyebrow>教育部 2022 版课标 · 能力锚点复核</div>
+    <h1>化学：这 20 条，AI 已经审过一遍了。<br>请你来挑刺。</h1>
+    <p>每一条都是从课标原文抽出来、再由 AI 审过的能力断言。<b>AI 审查是筛子，不是合格证</b> ——
+      所以现在这批全部标着「待人工复核」，一条都还不能拿去给孩子建档案。</p>
+    <p>你要判的只有一件事：<b>这句话能不能直接拿去对一个具体的孩子问「他会不会」。</b>
+      不用逐字改写，看出哪里不对、点一下就行。每一条都能展开看课标原文和页码。</p>
+    <p>做完点右下角把结果复制走，发回来即可。<b>没做完也没关系</b> —— 判过几条就交几条。</p>
+    <details class=std>
+      <summary>判断标准（五关）—— 展开看，一分钟</summary>
+      <div class=stdbody>
+        <p class=lead>只回答一个问题：<b>这一条能不能被写进一个具体孩子的档案。</b>
+          不是「这句话对不对」，是「一年后有人翻这份档案，能不能确信它当时是真的」。</p>
+        <ol>
+          <li><b>主语必须是学生。</b> 课标里混着教师、学校、评价制度的要求 ——
+            读起来都很像能力要求。问一句「这件事是谁做的」，不是孩子做的就点「不该收」。
+            <span class=eg>✗ 在条件不足的学校，也应设立信息技术实验室</span></li>
+          <li><b>能答「会 / 不会」。</b> 三种常见的不可判定：章节名（「分数的意义」）、
+            口号（「培养…能力」）、内心活动（「体会」「感受」—— 旁观者看不见就判不了）。
+            <span class=eg>⚠ 长度不是判据：「能检验溶液的酸碱性」9 个字，完全合格</span></li>
+          <li><b>忠于课标。</b> 每条都能展开看原文和页码，对一眼：
+            断言加了原文没有的具体事实、或把「知道 X」升级成「会做 X」→ 不该收。
+            <span class=eg>例外：标着「不是课标原话」的那些，本来就是我们在课标之上的主张</span></li>
+          <li><b>学段 / 课程类型。</b> 义务教育按学段（1-2/3-4/5-6/7-9），不按年级；
+            <b>高中按模块给内容，不按年级</b> —— 所以高中条目只标必修/选择性必修/选修。
+            <span class=eg>看到高中锚点标着某个具体年级，那是错的</span></li>
+          <li><b>证据看得见。</b> 下面那 1–2 条判定证据必须是旁观者能看见的行为。
+            「理解了物质分类的概念」不行，「能将氧气、空气正确归入纯净物或混合物」才行。</li>
+        </ol>
+        <p class=hard><b>拿不准就别标「成立」。</b> 空着比标错好 ——
+          误判为合格的会进孩子的档案，没标的只是还没轮到。<br>
+          <b>不用替我们改写。</b> 看出哪里不对点一下，想补一句写备注即可；
+          我们不会拿备注去自动改数据 —— 自动改会把「有人怀疑」悄悄变成「有人确认」。</p>
+        <p class=src>完整版：<a href="https://github.com/qiuyiwu1989-star/k12-knowledge-substrate/blob/main/docs/review-standard.md" target="_blank" rel="noopener">docs/review-standard.md</a>
+          —— 每一条规则都注明了它是从哪个真实错误来的。</p>
+      </div>
+    </details>
+    <div class=sign>
+      <label>请留个称呼（会记进数据）
+        <input id=who placeholder="例：张老师 / 王明 · 初中化学" autocomplete=off></label>
+      <p>标「成立」的条目会被记成 <b>你签字确认</b>，进入可被孩子档案引用的集合。
+        <b>不署名的「成立」不算数</b> —— 那一档的含义是「有具体的人对这条负责」，
+        将来出问题查得到人。挑错不需要署名。</p>
+    </div>
+  </div>
+  <section class=pane data-d="化学"><p class=paneNote>这一科队列里共 <b>245</b> 条待复核，下面是杠杆最高的 <b>20</b> 条。做完这 20 条就已经拿走大部分收益。</p><article class=item data-id="ca_jbt8Fpra">
+  <header>
+    <span class=n>1</span>
+    <span class=meta>九年级 · DAG 档</span>
+    <span class=lev><b>9</b> 条后续能力等着它</span>
+  </header>
+  <p class=ask>孩子，你能告诉我氧气和空气分别属于哪一类物质吗？</p>
+  <p class=stmt>底座里的写法：能依据物质的组成对物质进行分类，并能识别纯净物和混合物、单质和化合物</p>
+  <details><summary>课标原文（第 27 页）</summary><blockquote>1. 能依据物质的组成对物质进行分类，并能识别纯净物和混合物、单质和化合物；</blockquote><p class=evh>我们据此写的判定证据：</p><ul><li>能将氯化钠、氧气、空气等物质正确归入纯净物或混合物，并说出判断依据</li><li>能将纯净物进一步区分为单质或化合物，并举出各一个例子</li></ul></details>
+  <div class=verdicts><button data-v="ok" title="五关全过：主语是学生 · 能答会不会 · 忠于课标原文 · 学段对 · 证据看得见。拿不准就别点">成立</button><button data-v="stage" title="内容对、位置错。高中按模块不按年级 —— 高中条目标了具体年级本身就是错的">学段不对</button><button data-v="wording" title="章节名 / 口号 / 内心活动（体会、感受）都不可判定；证据写得看不见也算">表述要改</button><button data-v="reject" title="主语是教师/学校/评价制度，或断言加了课标原文没有的内容">不该收</button></div>
+  <input class=note placeholder="想补一句就写这里（可留空）">
+</article><article class=item data-id="ca_n4gPxEFM">
+  <header>
+    <span class=n>2</span>
+    <span class=meta>九年级 · DAG 档</span>
+    <span class=lev><b>8</b> 条后续能力等着它</span>
+  </header>
+  <p class=ask>孩子，你能写出水和二氧化碳的化学式，并告诉我它们分别由什么元素组成吗？</p>
+  <p class=stmt>底座里的写法：能用化学式表示某些常见物质的组成</p>
+  <details><summary>课标原文（第 31 页）</summary><blockquote>2. 能用化学式表示某些常见物质的组成，能分析常见物质中元素的化合价；</blockquote><p class=evh>我们据此写的判定证据：</p><ul><li>能写出水、二氧化碳等常见物质的化学式</li><li>能根据化学式说出该物质由哪些元素组成</li></ul></details>
+  <div class=verdicts><button data-v="ok" title="五关全过：主语是学生 · 能答会不会 · 忠于课标原文 · 学段对 · 证据看得见。拿不准就别点">成立</button><button data-v="stage" title="内容对、位置错。高中按模块不按年级 —— 高中条目标了具体年级本身就是错的">学段不对</button><button data-v="wording" title="章节名 / 口号 / 内心活动（体会、感受）都不可判定；证据写得看不见也算">表述要改</button><button data-v="reject" title="主语是教师/学校/评价制度，或断言加了课标原文没有的内容">不该收</button></div>
+  <input class=note placeholder="想补一句就写这里（可留空）">
+</article><article class=item data-id="ca_iryMPNTf">
+  <header>
+    <span class=n>3</span>
+    <span class=meta>九年级 · DAG 档</span>
+    <span class=lev><b>7</b> 条后续能力等着它</span>
+  </header>
+  <p class=ask>孩子做实验时，有没有自己穿戴好防护装备并正确处理废弃物？</p>
+  <p class=stmt>底座里的写法：能严格遵守实验室安全规则</p>
+  <details><summary>课标原文（第 22 页）</summary><blockquote>3. 能严格遵守实验室安全规则，能识别实验室安全警示标志和常用危险化学品标志，具有预防化学实验安全事故的意识。</blockquote><p class=evh>我们据此写的判定证据：</p><ul><li>能正确佩戴护目镜和实验服进行操作</li><li>能按规范处理废液并清洗仪器</li></ul></details>
+  <div class=verdicts><button data-v="ok" title="五关全过：主语是学生 · 能答会不会 · 忠于课标原文 · 学段对 · 证据看得见。拿不准就别点">成立</button><button data-v="stage" title="内容对、位置错。高中按模块不按年级 —— 高中条目标了具体年级本身就是错的">学段不对</button><button data-v="wording" title="章节名 / 口号 / 内心活动（体会、感受）都不可判定；证据写得看不见也算">表述要改</button><button data-v="reject" title="主语是教师/学校/评价制度，或断言加了课标原文没有的内容">不该收</button></div>
+  <input class=note placeholder="想补一句就写这里（可留空）">
+</article><article class=item data-id="ca_ysq6TuHB">
+  <header>
+    <span class=n>4</span>
+    <span class=meta>九年级 · DAG 档</span>
+    <span class=lev><b>7</b> 条后续能力等着它</span>
+  </header>
+  <p class=ask>孩子，你能写出多少常见元素的符号？比如看到Mg你知道是什么元素吗？</p>
+  <p class=stmt>底座里的写法：能识记并正确书写常见元素的名称和符号</p>
+  <details><summary>课标原文（第 31 页）</summary><blockquote>1. 能对元素进行简单分类，能识记并正确书写常见元素的名称和符号，能从组成物质的元素的角度判断物质的类别，能根据原子的核电荷数判断核内质子数和核外电子数，能根据元素的原子序数在元素周期表中查到该元素的名称、符号、相对原子质量等信息。</blockquote><p class=evh>我们据此写的判定证据：</p><ul><li>能正确写出氧、铁、铜等10种常见元素的名称和符号</li><li>能根据元素符号说出对应的元素名称，如看到Na能说出钠</li></ul></details>
+  <div class=verdicts><button data-v="ok" title="五关全过：主语是学生 · 能答会不会 · 忠于课标原文 · 学段对 · 证据看得见。拿不准就别点">成立</button><button data-v="stage" title="内容对、位置错。高中按模块不按年级 —— 高中条目标了具体年级本身就是错的">学段不对</button><button data-v="wording" title="章节名 / 口号 / 内心活动（体会、感受）都不可判定；证据写得看不见也算">表述要改</button><button data-v="reject" title="主语是教师/学校/评价制度，或断言加了课标原文没有的内容">不该收</button></div>
+  <input class=note placeholder="想补一句就写这里（可留空）">
+</article><article class=item data-id="ca_zWiSsqiF">
+  <header>
+    <span class=n>5</span>
+    <span class=meta>九年级 · DAG 档</span>
+    <span class=lev><b>6</b> 条后续能力等着它</span>
+  </header>
+  <p class=ask>孩子，你能告诉我为什么冰融化是物理变化，而铁生锈是化学变化吗？</p>
+  <p class=stmt>底座里的写法：能判断常见的物理变化和化学变化，并能从宏观和微观的视角说明二者的区别</p>
+  <details><summary>课标原文（第 35 页）</summary><blockquote>1. 能判断常见的物理变化和化学变化，并能从宏观和微观的视角说明二者的区别；</blockquote><p class=evh>我们据此写的判定证据：</p><ul><li>能正确区分冰融化和铁生锈，并说明前者分子不变后者生成新物质</li><li>能用分子模型解释水蒸发和水电解的本质区别</li></ul></details>
+  <div class=verdicts><button data-v="ok" title="五关全过：主语是学生 · 能答会不会 · 忠于课标原文 · 学段对 · 证据看得见。拿不准就别点">成立</button><button data-v="stage" title="内容对、位置错。高中按模块不按年级 —— 高中条目标了具体年级本身就是错的">学段不对</button><button data-v="wording" title="章节名 / 口号 / 内心活动（体会、感受）都不可判定；证据写得看不见也算">表述要改</button><button data-v="reject" title="主语是教师/学校/评价制度，或断言加了课标原文没有的内容">不该收</button></div>
+  <input class=note placeholder="想补一句就写这里（可留空）">
+</article><article class=item data-id="ca_H76eUtzw">
+  <header>
+    <span class=n>6</span>
+    <span class=meta>九年级 · DAG 档</span>
+    <span class=lev><b>5</b> 条后续能力等着它</span>
+  </header>
+  <p class=ask>孩子，你能把铁丝燃烧的实验现象写成化学方程式吗？</p>
+  <p class=stmt>底座里的写法：能根据实验事实用文字和符号描述、表示化学变化，并正确书写常见的化学方程式</p>
+  <details><summary>课标原文（第 35 页）</summary><blockquote>能根据实验事实用文字和符号描述、表示化学变化，并正确书写常见的化学方程式。</blockquote><p class=evh>我们据此写的判定证据：</p><ul><li>能观察铁丝在氧气中燃烧的实验，写出反应的文字表达式和符号表达式</li><li>能根据实验现象，正确书写并配平镁条燃烧的化学方程式</li></ul></details>
+  <div class=verdicts><button data-v="ok" title="五关全过：主语是学生 · 能答会不会 · 忠于课标原文 · 学段对 · 证据看得见。拿不准就别点">成立</button><button data-v="stage" title="内容对、位置错。高中按模块不按年级 —— 高中条目标了具体年级本身就是错的">学段不对</button><button data-v="wording" title="章节名 / 口号 / 内心活动（体会、感受）都不可判定；证据写得看不见也算">表述要改</button><button data-v="reject" title="主语是教师/学校/评价制度，或断言加了课标原文没有的内容">不该收</button></div>
+  <input class=note placeholder="想补一句就写这里（可留空）">
+</article><article class=item data-id="ca_Zn3ndpd9">
+  <header>
+    <span class=n>7</span>
+    <span class=meta>九年级 · DAG 档</span>
+    <span class=lev><b>5</b> 条后续能力等着它</span>
+  </header>
+  <p class=ask>孩子，你能告诉我这个红色三角形标志是什么意思吗？</p>
+  <p class=stmt>底座里的写法：能识别实验室安全警示标志和常用危险化学品标志，具有预防化学实验安全事故的意识</p>
+  <details><summary>课标原文（第 22 页）</summary><blockquote>3. 能严格遵守实验室安全规则，能识别实验室安全警示标志和常用危险化学品标志，具有预防化学实验安全事故的意识。</blockquote><p class=evh>我们据此写的判定证据：</p><ul><li>能正确指出“腐蚀品”、“易燃物”等标志的位置和含义</li><li>能在模拟实验前，根据化学品标签正确说出其危险性和防护要求</li></ul></details>
+  <div class=verdicts><button data-v="ok" title="五关全过：主语是学生 · 能答会不会 · 忠于课标原文 · 学段对 · 证据看得见。拿不准就别点">成立</button><button data-v="stage" title="内容对、位置错。高中按模块不按年级 —— 高中条目标了具体年级本身就是错的">学段不对</button><button data-v="wording" title="章节名 / 口号 / 内心活动（体会、感受）都不可判定；证据写得看不见也算">表述要改</button><button data-v="reject" title="主语是教师/学校/评价制度，或断言加了课标原文没有的内容">不该收</button></div>
+  <input class=note placeholder="想补一句就写这里（可留空）">
+</article><article class=item data-id="ca_utE0MFBQ">
+  <header>
+    <span class=n>8</span>
+    <span class=meta>九年级 · MATRIX 档</span>
+    <span class=lev><b>5</b> 条后续能力等着它</span>
+  </header>
+  <p class=ask>孩子能说出物质是由分子、原子等微观粒子构成的吗？</p>
+  <p class=stmt>底座里的写法：能说出物质是由分子、原子等微观粒子构成的</p>
+  <details><summary>课标原文（第  页）</summary><blockquote>知道物质是由分子、原子等微观粒子构成的</blockquote><p class=evh>我们据此写的判定证据：</p><ul><li>问：物质是由分子、原子等微观粒子构成的是什么？能答出即为会</li><li>答案与课标原文一致，不要求逐字复述</li></ul></details>
+  <div class=verdicts><button data-v="ok" title="五关全过：主语是学生 · 能答会不会 · 忠于课标原文 · 学段对 · 证据看得见。拿不准就别点">成立</button><button data-v="stage" title="内容对、位置错。高中按模块不按年级 —— 高中条目标了具体年级本身就是错的">学段不对</button><button data-v="wording" title="章节名 / 口号 / 内心活动（体会、感受）都不可判定；证据写得看不见也算">表述要改</button><button data-v="reject" title="主语是教师/学校/评价制度，或断言加了课标原文没有的内容">不该收</button></div>
+  <input class=note placeholder="想补一句就写这里（可留空）">
+</article><article class=item data-id="ca_f6Z8kJrp">
+  <header>
+    <span class=n>9</span>
+    <span class=meta>九年级 · DAG 档</span>
+    <span class=lev><b>5</b> 条后续能力等着它</span>
+  </header>
+  <p class=ask>请孩子描述一个证明质量守恒的实验，并解释为什么反应前后原子没有变？</p>
+  <p class=stmt>底座里的写法：能选取实验证据说明质量守恒定律，并阐释其微观本质</p>
+  <details><summary>课标原文（第 35 页）</summary><blockquote>2. 能选取实验证据说明质量守恒定律，并阐释其微观本质；</blockquote><p class=evh>我们据此写的判定证据：</p><ul><li>能正确记录密闭容器中红磷燃烧前后的总质量数据，并解释原子种类和数目不变</li><li>能分析开放系统中碳酸钠与盐酸反应后质量减少的原因，并联系微观粒子运动说明气体逸散</li></ul></details>
+  <div class=verdicts><button data-v="ok" title="五关全过：主语是学生 · 能答会不会 · 忠于课标原文 · 学段对 · 证据看得见。拿不准就别点">成立</button><button data-v="stage" title="内容对、位置错。高中按模块不按年级 —— 高中条目标了具体年级本身就是错的">学段不对</button><button data-v="wording" title="章节名 / 口号 / 内心活动（体会、感受）都不可判定；证据写得看不见也算">表述要改</button><button data-v="reject" title="主语是教师/学校/评价制度，或断言加了课标原文没有的内容">不该收</button></div>
+  <input class=note placeholder="想补一句就写这里（可留空）">
+</article><article class=item data-id="ca_T8MSssvy">
+  <header>
+    <span class=n>10</span>
+    <span class=meta>九年级 · DAG 档</span>
+    <span class=lev><b>4</b> 条后续能力等着它</span>
+  </header>
+  <p class=ask>孩子，你能告诉我，你喝的矿泉水和杯子里的盐水，哪种是纯净物，哪种是混合物吗？</p>
+  <p class=stmt>底座里的写法：能从元素与分子视角辨识常见物质，结合实例区分混合物与纯净物、单质与化合物</p>
+  <details><summary>课标原文（第 44 页）</summary><blockquote>能从元素与分子视角辨识常见物质，结合实例区分混合物与纯净物、单质与化合物；</blockquote><p class=evh>我们据此写的判定证据：</p><ul><li>能正确分类标签为「空气」和「氧气」的物质，并说明氧气是单质而空气是混合物</li><li>能写出水（H₂O）的化学式，并解释它是化合物而非单质的原因</li></ul></details>
+  <div class=verdicts><button data-v="ok" title="五关全过：主语是学生 · 能答会不会 · 忠于课标原文 · 学段对 · 证据看得见。拿不准就别点">成立</button><button data-v="stage" title="内容对、位置错。高中按模块不按年级 —— 高中条目标了具体年级本身就是错的">学段不对</button><button data-v="wording" title="章节名 / 口号 / 内心活动（体会、感受）都不可判定；证据写得看不见也算">表述要改</button><button data-v="reject" title="主语是教师/学校/评价制度，或断言加了课标原文没有的内容">不该收</button></div>
+  <input class=note placeholder="想补一句就写这里（可留空）">
+</article><article class=item data-id="ca_awKKEAPV">
+  <header>
+    <span class=n>11</span>
+    <span class=meta>九年级 · DAG 档</span>
+    <span class=lev><b>4</b> 条后续能力等着它</span>
+  </header>
+  <p class=ask>你能告诉孩子水里氢和氧各是几价吗？</p>
+  <p class=stmt>底座里的写法：能分析常见物质中元素的化合价</p>
+  <details><summary>课标原文（第 31 页）</summary><blockquote>2. 能用化学式表示某些常见物质的组成，能分析常见物质中元素的化合价；</blockquote><p class=evh>我们据此写的判定证据：</p><ul><li>能正确标出H₂O中氢和氧元素的化合价</li><li>能计算并写出KClO₃中各元素的化合价</li></ul></details>
+  <div class=verdicts><button data-v="ok" title="五关全过：主语是学生 · 能答会不会 · 忠于课标原文 · 学段对 · 证据看得见。拿不准就别点">成立</button><button data-v="stage" title="内容对、位置错。高中按模块不按年级 —— 高中条目标了具体年级本身就是错的">学段不对</button><button data-v="wording" title="章节名 / 口号 / 内心活动（体会、感受）都不可判定；证据写得看不见也算">表述要改</button><button data-v="reject" title="主语是教师/学校/评价制度，或断言加了课标原文没有的内容">不该收</button></div>
+  <input class=note placeholder="想补一句就写这里（可留空）">
+</article><article class=item data-id="ca_MQ57rcRz">
+  <header>
+    <span class=n>12</span>
+    <span class=meta>九年级 · DAG 档</span>
+    <span class=lev><b>4</b> 条后续能力等着它</span>
+  </header>
+  <p class=ask>孩子，你能说说分子、原子和离子有什么不同，又有什么关系吗？</p>
+  <p class=stmt>底座里的写法：能说明分子、原子、离子的区别和联系</p>
+  <details><summary>课标原文（第 32 页）</summary><blockquote>3. 能说明分子、原子、离子的区别和联系，能用分子的观点解释生活中的某些变化或现象；</blockquote><p class=evh>我们据此写的判定证据：</p><ul><li>能正确画出水分子、钠原子和氯离子的结构示意图并标注名称</li><li>能用分子、原子、离子三种微粒解释氯化钠的形成过程</li></ul></details>
+  <div class=verdicts><button data-v="ok" title="五关全过：主语是学生 · 能答会不会 · 忠于课标原文 · 学段对 · 证据看得见。拿不准就别点">成立</button><button data-v="stage" title="内容对、位置错。高中按模块不按年级 —— 高中条目标了具体年级本身就是错的">学段不对</button><button data-v="wording" title="章节名 / 口号 / 内心活动（体会、感受）都不可判定；证据写得看不见也算">表述要改</button><button data-v="reject" title="主语是教师/学校/评价制度，或断言加了课标原文没有的内容">不该收</button></div>
+  <input class=note placeholder="想补一句就写这里（可留空）">
+</article><article class=item data-id="ca_QJ7jXWkN">
+  <header>
+    <span class=n>13</span>
+    <span class=meta>九年级 · DAG 档</span>
+    <span class=lev><b>3</b> 条后续能力等着它</span>
+  </header>
+  <p class=ask>孩子，你能告诉我为什么活性炭常被用在净水器里吗？</p>
+  <p class=stmt>底座里的写法：能举例说明物质性质的广泛应用及性质与用途的关系</p>
+  <details><summary>课标原文（第 27 页）</summary><blockquote>能举例说明物质性质的广泛应用及性质与用途的关系；</blockquote><p class=evh>我们据此写的判定证据：</p><ul><li>能举出铁易生锈的例子并说明防锈涂层的应用</li><li>能解释活性炭吸附性与净水器用途的对应关系</li></ul></details>
+  <div class=verdicts><button data-v="ok" title="五关全过：主语是学生 · 能答会不会 · 忠于课标原文 · 学段对 · 证据看得见。拿不准就别点">成立</button><button data-v="stage" title="内容对、位置错。高中按模块不按年级 —— 高中条目标了具体年级本身就是错的">学段不对</button><button data-v="wording" title="章节名 / 口号 / 内心活动（体会、感受）都不可判定；证据写得看不见也算">表述要改</button><button data-v="reject" title="主语是教师/学校/评价制度，或断言加了课标原文没有的内容">不该收</button></div>
+  <input class=note placeholder="想补一句就写这里（可留空）">
+</article><article class=item data-id="ca_FREUUGu7">
+  <header>
+    <span class=n>14</span>
+    <span class=meta>九年级 · DAG 档</span>
+    <span class=lev><b>3</b> 条后续能力等着它</span>
+  </header>
+  <p class=ask>孩子，你能用守恒或比例关系，解决一个化学计算题吗？</p>
+  <p class=stmt>底座里的写法：能基于守恒和比例关系推断化学反应的相关信息</p>
+  <details><summary>课标原文（第 35 页）</summary><blockquote>能基于守恒和比例关系推断化学反应的相关信息；</blockquote><p class=evh>我们据此写的判定证据：</p><ul><li>能根据质量守恒定律，正确计算反应前后某元素的质量</li><li>能根据化学方程式，准确计算生成物与反应物的质量比</li></ul></details>
+  <div class=verdicts><button data-v="ok" title="五关全过：主语是学生 · 能答会不会 · 忠于课标原文 · 学段对 · 证据看得见。拿不准就别点">成立</button><button data-v="stage" title="内容对、位置错。高中按模块不按年级 —— 高中条目标了具体年级本身就是错的">学段不对</button><button data-v="wording" title="章节名 / 口号 / 内心活动（体会、感受）都不可判定；证据写得看不见也算">表述要改</button><button data-v="reject" title="主语是教师/学校/评价制度，或断言加了课标原文没有的内容">不该收</button></div>
+  <input class=note placeholder="想补一句就写这里（可留空）">
+</article><article class=item data-id="ca_pBqa9Sqd">
+  <header>
+    <span class=n>15</span>
+    <span class=meta>九年级 · MATRIX 档</span>
+    <span class=lev><b>3</b> 条后续能力等着它</span>
+  </header>
+  <p class=ask>孩子能说出化学实验室安全规则和实验操作规范是必须明确的吗？</p>
+  <p class=stmt>底座里的写法：能明确化学实验室安全规则和实验操作规范</p>
+  <details><summary>课标原文（第  页）</summary><blockquote>明确化学实验室安全规则和实验操作规范。</blockquote><p class=evh>我们据此写的判定证据：</p><ul><li>学生能复述或指出实验室的安全规则和操作规范条目</li><li>学生能在实验前或实验中遵守并执行这些规则和规范</li></ul></details>
+  <div class=verdicts><button data-v="ok" title="五关全过：主语是学生 · 能答会不会 · 忠于课标原文 · 学段对 · 证据看得见。拿不准就别点">成立</button><button data-v="stage" title="内容对、位置错。高中按模块不按年级 —— 高中条目标了具体年级本身就是错的">学段不对</button><button data-v="wording" title="章节名 / 口号 / 内心活动（体会、感受）都不可判定；证据写得看不见也算">表述要改</button><button data-v="reject" title="主语是教师/学校/评价制度，或断言加了课标原文没有的内容">不该收</button></div>
+  <input class=note placeholder="想补一句就写这里（可留空）">
+</article><article class=item data-id="ca_ynNqkgVB">
+  <header>
+    <span class=n>16</span>
+    <span class=meta>九年级 · DAG 档</span>
+    <span class=lev><b>3</b> 条后续能力等着它</span>
+  </header>
+  <p class=ask>孩子，你能说说上次做实验时，先做了什么，后做了什么，它们之间是怎么联系的吗？</p>
+  <p class=stmt>底座里的写法：能结合具体探究活动说明科学探究的要素及各要素之间的关系</p>
+  <details><summary>课标原文（第 22 页）</summary><blockquote>2. 能结合具体探究活动说明科学探究的要素及各要素之间的关系；</blockquote><p class=evh>我们据此写的判定证据：</p><ul><li>能描述一次实验中提出问题、作出假设、设计实验等步骤的先后顺序</li><li>能解释实验数据如何支持或推翻最初的假设</li></ul></details>
+  <div class=verdicts><button data-v="ok" title="五关全过：主语是学生 · 能答会不会 · 忠于课标原文 · 学段对 · 证据看得见。拿不准就别点">成立</button><button data-v="stage" title="内容对、位置错。高中按模块不按年级 —— 高中条目标了具体年级本身就是错的">学段不对</button><button data-v="wording" title="章节名 / 口号 / 内心活动（体会、感受）都不可判定；证据写得看不见也算">表述要改</button><button data-v="reject" title="主语是教师/学校/评价制度，或断言加了课标原文没有的内容">不该收</button></div>
+  <input class=note placeholder="想补一句就写这里（可留空）">
+</article><article class=item data-id="ca_ABs9lGYz">
+  <header>
+    <span class=n>17</span>
+    <span class=meta>九年级 · MATRIX 档</span>
+    <span class=lev><b>3</b> 条后续能力等着它</span>
+  </header>
+  <p class=ask>孩子能说出化学反应的本质是原子的重新组合吗？</p>
+  <p class=stmt>底座里的写法：能说出化学反应的本质是原子的重新组合</p>
+  <details><summary>课标原文（第  页）</summary><blockquote>理解化学反应的本质是原子的重新组合</blockquote><p class=evh>我们据此写的判定证据：</p><ul><li>问：化学反应的本质是原子的重新组合是什么？能答出即为会</li><li>答案与课标原文一致，不要求逐字复述</li></ul></details>
+  <div class=verdicts><button data-v="ok" title="五关全过：主语是学生 · 能答会不会 · 忠于课标原文 · 学段对 · 证据看得见。拿不准就别点">成立</button><button data-v="stage" title="内容对、位置错。高中按模块不按年级 —— 高中条目标了具体年级本身就是错的">学段不对</button><button data-v="wording" title="章节名 / 口号 / 内心活动（体会、感受）都不可判定；证据写得看不见也算">表述要改</button><button data-v="reject" title="主语是教师/学校/评价制度，或断言加了课标原文没有的内容">不该收</button></div>
+  <input class=note placeholder="想补一句就写这里（可留空）">
+</article><article class=item data-id="ca_6bFgemfr">
+  <header>
+    <span class=n>18</span>
+    <span class=meta>九年级 · MATRIX 档</span>
+    <span class=lev><b>3</b> 条后续能力等着它</span>
+  </header>
+  <p class=ask>孩子能说出化学实验是进行科学探究的重要方式吗？</p>
+  <p class=stmt>底座里的写法：能说出化学实验是进行科学探究的重要方式</p>
+  <details><summary>课标原文（第  页）</summary><blockquote>知道化学实验是进行科学探究的重要方式，具备基本的化学实验技能是学习化学和进行探究活动的基础和保证。</blockquote><p class=evh>我们据此写的判定证据：</p><ul><li>问：化学实验是进行科学探究的重要方式是什么？能答出即为会</li><li>答案与课标原文一致，不要求逐字复述</li></ul></details>
+  <div class=verdicts><button data-v="ok" title="五关全过：主语是学生 · 能答会不会 · 忠于课标原文 · 学段对 · 证据看得见。拿不准就别点">成立</button><button data-v="stage" title="内容对、位置错。高中按模块不按年级 —— 高中条目标了具体年级本身就是错的">学段不对</button><button data-v="wording" title="章节名 / 口号 / 内心活动（体会、感受）都不可判定；证据写得看不见也算">表述要改</button><button data-v="reject" title="主语是教师/学校/评价制度，或断言加了课标原文没有的内容">不该收</button></div>
+  <input class=note placeholder="想补一句就写这里（可留空）">
+</article><article class=item data-id="ca_aHUYYMDq">
+  <header>
+    <span class=n>19</span>
+    <span class=meta>九年级 · DAG 档</span>
+    <span class=lev><b>2</b> 条后续能力等着它</span>
+  </header>
+  <p class=ask>孩子，你能告诉我水的化学式H₂O既代表什么宏观物质，又代表什么微观粒子吗？</p>
+  <p class=stmt>底座里的写法：能从宏观与微观、定性与定量相结合的视角说明化学式的含义</p>
+  <details><summary>课标原文（第 31 页）</summary><blockquote>能从宏观与微观、定性与定量相结合的视角说明化学式的含义；</blockquote><p class=evh>我们据此写的判定证据：</p><ul><li>能解释H₂O中每个符号代表的宏观物质和微观粒子，并说明原子个数比</li><li>能根据化学式计算物质的相对分子质量，并解释其宏观含义</li></ul></details>
+  <div class=verdicts><button data-v="ok" title="五关全过：主语是学生 · 能答会不会 · 忠于课标原文 · 学段对 · 证据看得见。拿不准就别点">成立</button><button data-v="stage" title="内容对、位置错。高中按模块不按年级 —— 高中条目标了具体年级本身就是错的">学段不对</button><button data-v="wording" title="章节名 / 口号 / 内心活动（体会、感受）都不可判定；证据写得看不见也算">表述要改</button><button data-v="reject" title="主语是教师/学校/评价制度，或断言加了课标原文没有的内容">不该收</button></div>
+  <input class=note placeholder="想补一句就写这里（可留空）">
+</article><article class=item data-id="ca_e6279rGZ">
+  <header>
+    <span class=n>20</span>
+    <span class=meta>九年级 · DAG 档</span>
+    <span class=lev><b>2</b> 条后续能力等着它</span>
+  </header>
+  <p class=ask>孩子，你能说说为什么油污要用洗洁精而水垢要用醋来清洗吗？</p>
+  <p class=stmt>底座里的写法：能基于真实问题情境，依据常见物质的性质，初步分析和解决相关的综合问题</p>
+  <details><summary>课标原文（第 28 页）</summary><blockquote>5. 能基于真实问题情境，依据常见物质的性质，初步分析和解决相关的综合问题；</blockquote><p class=evh>我们据此写的判定证据：</p><ul><li>能根据厨房中油污和水垢的不同，选择合适的清洁剂并解释原因</li><li>能解释为什么不能用铝锅长时间盛放酸性食物，并提出替代方案</li></ul></details>
+  <div class=verdicts><button data-v="ok" title="五关全过：主语是学生 · 能答会不会 · 忠于课标原文 · 学段对 · 证据看得见。拿不准就别点">成立</button><button data-v="stage" title="内容对、位置错。高中按模块不按年级 —— 高中条目标了具体年级本身就是错的">学段不对</button><button data-v="wording" title="章节名 / 口号 / 内心活动（体会、感受）都不可判定；证据写得看不见也算">表述要改</button><button data-v="reject" title="主语是教师/学校/评价制度，或断言加了课标原文没有的内容">不该收</button></div>
+  <input class=note placeholder="想补一句就写这里（可留空）">
+</article></section><div id=dock><div class=in>
+  <div id=stat>还没开始<span></span></div>
+  <div class=bar><i id=fill></i></div>
+  <button id=give disabled>复制结果</button>
+</div></div>
+<script>
+const KEY='k12-teacher-verdicts-v1:化学';
+const store=JSON.parse(localStorage.getItem(KEY)||'{}');
+const tabs=[...document.querySelectorAll('.tab')];
+const panes=[...document.querySelectorAll('.pane')];
+
+function show(d){
+  tabs.forEach(t=>t.setAttribute('aria-selected', String(t.dataset.d===d)));
+  panes.forEach(p=>p.hidden = p.dataset.d!==d);
+  tally();
+}
+tabs.forEach(t=>t.onclick=()=>show(t.dataset.d));
+
+/* 判定：点一下选中，再点一下取消 —— 误点必须能撤回，否则老师不敢点。 */
+document.addEventListener('click',e=>{
+  const b=e.target.closest('.verdicts button'); if(!b) return;
+  const item=b.closest('.item'), id=item.dataset.id, v=b.dataset.v;
+  const on=b.getAttribute('aria-pressed')==='true';
+  item.querySelectorAll('.verdicts button').forEach(x=>x.setAttribute('aria-pressed','false'));
+  if(on){ delete store[id]; item.removeAttribute('data-done'); }
+  else {
+    b.setAttribute('aria-pressed','true');
+    item.dataset.done=v;
+    store[id]={...(store[id]||{}), verdict:v, discipline:item.closest('.pane').dataset.d};
+  }
+  save(); tally();
+});
+document.addEventListener('input',e=>{
+  if(!e.target.classList.contains('note')) return;
+  const item=e.target.closest('.item'), id=item.dataset.id, t=e.target.value.trim();
+  if(!store[id]) store[id]={discipline:item.closest('.pane').dataset.d};
+  t ? store[id].note=t : delete store[id].note;
+  save();
+});
+function save(){ localStorage.setItem(KEY, JSON.stringify(store)); }
+
+/* 回填：老师可能分几次做完，刷新不该清空。 */
+for(const [id,rec] of Object.entries(store)){
+  const item=document.querySelector(`.item[data-id="${id}"]`); if(!item) continue;
+  if(rec.verdict){
+    const b=item.querySelector(`.verdicts button[data-v="${rec.verdict}"]`);
+    if(b){ b.setAttribute('aria-pressed','true'); item.dataset.done=rec.verdict; }
+  }
+  if(rec.note) item.querySelector('.note').value=rec.note;
+}
+
+function tally(){
+  const pane=panes.find(p=>!p.hidden); if(!pane) return;
+  const all=[...pane.querySelectorAll('.item')];
+  const done=all.filter(i=>i.dataset.done).length;
+  const total=Object.keys(store).filter(k=>store[k].verdict).length;
+  document.getElementById('stat').innerHTML =
+    done ? `这一科 <b>${done}</b> / ${all.length}<span>　全部已判 ${total} 条</span>`
+         : (total ? `这一科还没开始<span>　别科已判 ${total} 条</span>` : '还没开始<span></span>');
+  document.getElementById('fill').style.width = (all.length? done/all.length*100 : 0)+'%';
+  const g=document.getElementById('give');
+  g.disabled = total===0;
+  g.textContent = total ? `复制 ${total} 条结果` : '复制结果';
+  g.classList.remove('done');
+}
+
+/* 交回必须走剪贴板。旧版用 download，在微信内置浏览器和沙箱预览里静默失效 ——
+   老师点了没反应，就再也不会点第二次。 */
+document.getElementById('give').onclick=async()=>{
+  const rows=Object.entries(store).filter(([,r])=>r.verdict)
+    .map(([anchorId,r])=>({anchorId, verdict:r.verdict, note:r.note||'', discipline:r.discipline}));
+  const who=(document.getElementById('who').value||'').trim();
+  const okCount=rows.filter(r=>r.verdict==='ok').length;
+  // 标了「成立」却没署名 —— 那些条目回流时会被丢弃，得当场说清楚，
+  // 而不是等老师交回来之后石沉大海。
+  if(!who && okCount){
+    document.getElementById('who').focus();
+    document.getElementById('who').style.borderColor='#e8607d';
+    const g0=document.getElementById('give');
+    g0.textContent=`有 ${okCount} 条「成立」需要署名`;
+    setTimeout(tally, 3200);
+    return;
+  }
+  const payload=JSON.stringify({
+    schema:'k12-teacher-review/1', reviewer:who,
+    reviewedAt:new Date().toISOString().slice(0,10),
+    count:rows.length, rows}, null, 1);
+  const g=document.getElementById('give');
+  try{ await navigator.clipboard.writeText(payload); }
+  catch{
+    const ta=document.createElement('textarea');
+    ta.value=payload; ta.style.cssText='position:fixed;top:0;left:0;opacity:0';
+    document.body.appendChild(ta); ta.select();
+    try{ document.execCommand('copy'); } catch{ ta.style.opacity='1'; ta.style.cssText+=';width:100%;height:40vh;z-index:9;opacity:1'; g.textContent='请手动复制↑'; return; }
+    ta.remove();
+  }
+  g.textContent=`已复制 ${rows.length} 条 ✓`; g.classList.add('done');
+  setTimeout(tally, 2600);
+};
+if(tabs.length) show(tabs[0].dataset.d); else tally();
+</script>

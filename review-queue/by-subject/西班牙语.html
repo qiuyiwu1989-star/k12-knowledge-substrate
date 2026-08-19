@@ -1,0 +1,520 @@
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>西班牙语·课标能力复核单</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+/* 灰底带一点绿偏 —— 纯中性灰读起来像没选过。主色取 2022 课标封面那系深青。 */
+:root{
+  --ground:#f2f4f3; --surface:#fff; --sunk:#e9edeb;
+  --ink:#16211f; --mut:#5b6b66; --dim:#8a9791; --rule:#d8e0dc;
+  --accent:#0b6e5f; --accent-ink:#fff;
+  --warn:#a8641b; --crit:#9b2c2c;
+  --shadow:0 1px 2px rgba(22,33,31,.05),0 8px 24px -12px rgba(22,33,31,.14);
+}
+@media(prefers-color-scheme:dark){:root:not([data-theme=light]){
+  --ground:#0d1211; --surface:#151d1b; --sunk:#101715;
+  --ink:#e6ece9; --mut:#8b9c96; --dim:#6a7a75; --rule:#22302c;
+  --accent:#4fd1b5; --accent-ink:#08120f;
+  --warn:#d9a04e; --crit:#e08a86;
+  --shadow:0 1px 2px rgba(0,0,0,.4),0 10px 28px -14px rgba(0,0,0,.6);
+}}
+:root[data-theme=dark]{
+  --ground:#0d1211; --surface:#151d1b; --sunk:#101715;
+  --ink:#e6ece9; --mut:#8b9c96; --dim:#6a7a75; --rule:#22302c;
+  --accent:#4fd1b5; --accent-ink:#08120f;
+  --warn:#d9a04e; --crit:#e08a86;
+  --shadow:0 1px 2px rgba(0,0,0,.4),0 10px 28px -14px rgba(0,0,0,.6);
+}
+html{-webkit-text-size-adjust:100%}
+body{background:var(--ground);color:var(--ink);
+  font:16px/1.68 -apple-system,BlinkMacSystemFont,"PingFang SC","Hiragino Sans GB",
+       "Microsoft YaHei","Source Han Sans SC",sans-serif;
+  font-variant-numeric:tabular-nums;
+  padding:0 16px calc(96px + env(safe-area-inset-bottom))}
+.w{max-width:720px;margin:0 auto}
+
+/* ── 开场：说清他在判什么。脱离仓库也看得懂。 ── */
+.lede{padding:36px 0 20px}
+.eyebrow{font-size:11px;letter-spacing:.18em;color:var(--accent);font-weight:700;text-transform:uppercase}
+h1{font-size:clamp(26px,5vw,34px);line-height:1.22;font-weight:680;letter-spacing:-.022em;
+   margin:10px 0 14px;text-wrap:balance}
+.lede p{color:var(--mut);font-size:14.5px;max-width:60ch}
+.lede p+p{margin-top:9px}
+.lede b{color:var(--ink);font-weight:640}
+
+/* ── 学科条 ── */
+/* 审核标准块。**必须用这份文件自己的变量名**（--accent/--ink/--surface/--rule）——
+   第一版照着图谱页写了 --ok/--fg/--line，那些变量在这里根本不存在，
+   于是 summary 拿到了 --ok 的回退值（深绿），在深色主题上几乎看不见。
+   **跨文件抄样式时，变量名不会报错，只会静默失效。** */
+.std{background:color-mix(in srgb,var(--accent) 7%,var(--surface));
+  border:1px solid color-mix(in srgb,var(--accent) 34%,transparent);
+  border-radius:12px;padding:0;margin:22px 0 4px;overflow:hidden}
+.std summary{padding:14px 18px;cursor:pointer;font-weight:650;font-size:14.5px;
+  color:var(--accent);list-style:none}
+.std summary::-webkit-details-marker{display:none}
+.std summary::before{content:'▸ ';font-size:12px}
+.std[open] summary::before{content:'▾ '}
+.std summary:hover{background:color-mix(in srgb,var(--accent) 10%,transparent)}
+.stdbody{padding:2px 20px 18px;font-size:13.5px;line-height:1.78;color:var(--mut)}
+.stdbody .lead{color:var(--ink);margin-bottom:12px}
+.stdbody ol{margin:0 0 0 18px}
+.stdbody li{margin-bottom:11px}
+.stdbody li b{color:var(--ink)}
+.stdbody .eg{display:block;font-size:12.5px;color:var(--dim);margin-top:3px}
+.stdbody .hard{margin-top:14px;padding-top:12px;border-top:1px solid var(--rule);color:var(--ink)}
+.stdbody .src{margin-top:10px;font-size:12.5px;color:var(--dim)}
+.stdbody .src a{color:var(--mut)}
+.sign{background:rgba(255,255,255,.04);border:1px solid var(--line);
+  border-radius:12px;padding:16px 18px;margin:20px 0 4px}
+.sign label{display:block;font-size:13.5px;font-weight:600;margin-bottom:9px}
+.sign input{display:block;width:100%;max-width:340px;margin-top:7px;padding:9px 12px;
+  border-radius:8px;border:1px solid var(--line);background:var(--bg);
+  color:inherit;font:inherit;font-size:14px}
+.sign input:focus{outline:none;border-color:var(--ok)}
+.sign p{font-size:12.5px;color:var(--mut);margin:10px 0 0;line-height:1.7}
+.tabs{position:sticky;top:0;z-index:5;display:flex;gap:7px;overflow-x:auto;
+  padding:12px 0;background:linear-gradient(var(--ground) 72%,transparent);
+  scrollbar-width:none}
+.tabs::-webkit-scrollbar{display:none}
+.tab{flex:none;display:flex;align-items:baseline;gap:6px;padding:8px 14px;border-radius:99px;
+  border:1px solid var(--rule);background:var(--surface);color:var(--mut);
+  font:inherit;font-size:13.5px;cursor:pointer;transition:.15s}
+.tab em{font-style:normal;font-size:11px;color:var(--dim)}
+.tab:hover{border-color:var(--dim);color:var(--ink)}
+.tab[aria-selected=true]{background:var(--accent);border-color:var(--accent);
+  color:var(--accent-ink);font-weight:620}
+.tab[aria-selected=true] em{color:var(--accent-ink);opacity:.72}
+.tab:focus-visible,button:focus-visible,input:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+
+.paneNote{color:var(--mut);font-size:13.5px;padding:6px 0 18px}
+
+/* ── 条目卡 ── */
+.item{background:var(--surface);border:1px solid var(--rule);border-radius:13px;
+  padding:17px 18px 15px;margin-bottom:13px;box-shadow:var(--shadow);
+  transition:border-color .15s}
+.item[data-done]{border-color:var(--accent)}
+.item[data-done="reject"]{border-color:var(--crit)}
+.item[data-done="stage"],.item[data-done="wording"]{border-color:var(--warn)}
+.item header{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;
+  font-size:11.5px;color:var(--dim);margin-bottom:11px}
+.item .n{font-weight:700;color:var(--accent);font-size:12px}
+.item .lev{margin-left:auto;color:var(--mut)}
+.item .lev b{color:var(--ink);font-weight:640}
+.ask{font-size:17.5px;line-height:1.56;font-weight:560;letter-spacing:-.008em;text-wrap:pretty}
+.stmt{color:var(--mut);font-size:13.5px;margin-top:8px}
+details{margin-top:11px;font-size:13.5px}
+summary{cursor:pointer;color:var(--accent);font-size:12.5px;
+  list-style:none;display:inline-flex;align-items:center;gap:5px}
+summary::-webkit-details-marker{display:none}
+summary::before{content:"▸";font-size:10px;transition:transform .15s}
+details[open] summary::before{transform:rotate(90deg)}
+blockquote{margin-top:9px;padding:11px 13px;background:var(--sunk);border-radius:9px;
+  color:var(--mut);border-left:2px solid var(--rule)}
+.evh{margin-top:10px;color:var(--dim);font-size:12.5px}
+details ul{margin:5px 0 0 18px;color:var(--mut);font-size:13px}
+
+.verdicts{display:flex;gap:7px;flex-wrap:wrap;margin-top:14px}
+.verdicts button{flex:1 1 auto;min-width:96px;padding:9px 8px;border-radius:9px;
+  border:1px solid var(--rule);background:var(--surface);color:var(--mut);
+  font:inherit;font-size:13.5px;cursor:pointer;transition:.14s}
+.verdicts button:hover{border-color:var(--dim);color:var(--ink)}
+.verdicts button[aria-pressed=true]{background:var(--accent);border-color:var(--accent);
+  color:var(--accent-ink);font-weight:620}
+.verdicts button[data-v=reject][aria-pressed=true]{background:var(--crit);border-color:var(--crit);color:#fff}
+.verdicts button[data-v=stage][aria-pressed=true],
+.verdicts button[data-v=wording][aria-pressed=true]{background:var(--warn);border-color:var(--warn);color:#fff}
+.note{width:100%;margin-top:9px;padding:8px 11px;border-radius:8px;
+  border:1px solid var(--rule);background:var(--sunk);color:var(--ink);
+  font:inherit;font-size:13.5px}
+.note::placeholder{color:var(--dim)}
+
+/* ── 底部：进度 + 交回 ── */
+#dock{position:fixed;left:0;right:0;bottom:0;z-index:6;
+  background:color-mix(in srgb,var(--ground) 92%,transparent);
+  backdrop-filter:blur(14px);border-top:1px solid var(--rule);
+  padding:11px 16px calc(11px + env(safe-area-inset-bottom))}
+#dock .in{max-width:720px;margin:0 auto;display:flex;align-items:center;gap:14px}
+#stat{font-size:14px;font-weight:560}
+#stat span{color:var(--mut);font-weight:400;font-size:13px}
+.bar{flex:1;height:5px;border-radius:3px;background:var(--rule);overflow:hidden}
+.bar i{display:block;height:100%;background:var(--accent);width:0;transition:width .25s}
+#give{flex:none;padding:10px 18px;border-radius:9px;border:1px solid var(--accent);
+  background:var(--accent);color:var(--accent-ink);font:inherit;font-size:14px;
+  font-weight:620;cursor:pointer}
+#give[disabled]{opacity:.42;cursor:default}
+#give.done{background:var(--surface);color:var(--accent)}
+@media(max-width:560px){
+  #dock .in{flex-wrap:wrap}
+  .bar{order:3;flex-basis:100%}
+  .verdicts button{min-width:calc(50% - 4px)}
+}
+@media(prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+<div class=w>
+  <div class=lede>
+    <div class=eyebrow>教育部 2022 版课标 · 能力锚点复核</div>
+    <h1>西班牙语：这 20 条，AI 已经审过一遍了。<br>请你来挑刺。</h1>
+    <p>每一条都是从课标原文抽出来、再由 AI 审过的能力断言。<b>AI 审查是筛子，不是合格证</b> ——
+      所以现在这批全部标着「待人工复核」，一条都还不能拿去给孩子建档案。</p>
+    <p>你要判的只有一件事：<b>这句话能不能直接拿去对一个具体的孩子问「他会不会」。</b>
+      不用逐字改写，看出哪里不对、点一下就行。每一条都能展开看课标原文和页码。</p>
+    <p>做完点右下角把结果复制走，发回来即可。<b>没做完也没关系</b> —— 判过几条就交几条。</p>
+    <details class=std>
+      <summary>判断标准（五关）—— 展开看，一分钟</summary>
+      <div class=stdbody>
+        <p class=lead>只回答一个问题：<b>这一条能不能被写进一个具体孩子的档案。</b>
+          不是「这句话对不对」，是「一年后有人翻这份档案，能不能确信它当时是真的」。</p>
+        <ol>
+          <li><b>主语必须是学生。</b> 课标里混着教师、学校、评价制度的要求 ——
+            读起来都很像能力要求。问一句「这件事是谁做的」，不是孩子做的就点「不该收」。
+            <span class=eg>✗ 在条件不足的学校，也应设立信息技术实验室</span></li>
+          <li><b>能答「会 / 不会」。</b> 三种常见的不可判定：章节名（「分数的意义」）、
+            口号（「培养…能力」）、内心活动（「体会」「感受」—— 旁观者看不见就判不了）。
+            <span class=eg>⚠ 长度不是判据：「能检验溶液的酸碱性」9 个字，完全合格</span></li>
+          <li><b>忠于课标。</b> 每条都能展开看原文和页码，对一眼：
+            断言加了原文没有的具体事实、或把「知道 X」升级成「会做 X」→ 不该收。
+            <span class=eg>例外：标着「不是课标原话」的那些，本来就是我们在课标之上的主张</span></li>
+          <li><b>学段 / 课程类型。</b> 义务教育按学段（1-2/3-4/5-6/7-9），不按年级；
+            <b>高中按模块给内容，不按年级</b> —— 所以高中条目只标必修/选择性必修/选修。
+            <span class=eg>看到高中锚点标着某个具体年级，那是错的</span></li>
+          <li><b>证据看得见。</b> 下面那 1–2 条判定证据必须是旁观者能看见的行为。
+            「理解了物质分类的概念」不行，「能将氧气、空气正确归入纯净物或混合物」才行。</li>
+        </ol>
+        <p class=hard><b>拿不准就别标「成立」。</b> 空着比标错好 ——
+          误判为合格的会进孩子的档案，没标的只是还没轮到。<br>
+          <b>不用替我们改写。</b> 看出哪里不对点一下，想补一句写备注即可；
+          我们不会拿备注去自动改数据 —— 自动改会把「有人怀疑」悄悄变成「有人确认」。</p>
+        <p class=src>完整版：<a href="https://github.com/qiuyiwu1989-star/k12-knowledge-substrate/blob/main/docs/review-standard.md" target="_blank" rel="noopener">docs/review-standard.md</a>
+          —— 每一条规则都注明了它是从哪个真实错误来的。</p>
+      </div>
+    </details>
+    <div class=sign>
+      <label>请留个称呼（会记进数据）
+        <input id=who placeholder="例：张老师 / 王明 · 初中化学" autocomplete=off></label>
+      <p>标「成立」的条目会被记成 <b>你签字确认</b>，进入可被孩子档案引用的集合。
+        <b>不署名的「成立」不算数</b> —— 那一档的含义是「有具体的人对这条负责」，
+        将来出问题查得到人。挑错不需要署名。</p>
+    </div>
+  </div>
+  <section class=pane data-d="西班牙语"><p class=paneNote>这一科队列里共 <b>121</b> 条待复核，下面是杠杆最高的 <b>20</b> 条。做完这 20 条就已经拿走大部分收益。</p><article class=item data-id="ca_nQzGdtLT">
+  <header>
+    <span class=n>1</span>
+    <span class=meta>高一–高三年级 · MATRIX 档</span>
+    <span class=lev>暂无下游依赖</span>
+  </header>
+  <p class=ask>能借助说和写，达到传递信息和表达意图、观点及情感的目的</p>
+  <p class=stmt>底座里的写法：能借助说和写，达到传递信息和表达意图、观点及情感的目的</p>
+  <details><summary>课标原文（第 71 页）</summary><blockquote>内涵与表现形式素养名称 内涵 表现形式素养 1 ：语言能力外语学习的基本目标是获得运用外语语言进行交际的能力，包括听、说、读、写技能，敏锐开放的跨文化意识和灵活有效的交际能力。学生应掌握西班牙语词汇、语法、句型等知识，具备基本的西班牙语交际能力。初步体会西班牙语语感，领悟西班牙语的基本特性，了解语言与世界、文化、社会和思维之间的关系。能够根据交流情境，综合有效地运用西班牙语语言知识；通过听和读，准确解析话语意义和语篇意义，体会话语和语篇所蕴含的意图、观点和情感；借助说和写，达到传递信息和表达意图、观点及情感的目的。</blockquote><p class=evh>我们据此写的判定证据：</p><ul><li>能在西班牙语课堂或作业情境中完成：能借助说和写，达到传递信息和表达意图、观点及情感的目的</li></ul></details>
+  <div class=verdicts><button data-v="ok" title="五关全过：主语是学生 · 能答会不会 · 忠于课标原文 · 学段对 · 证据看得见。拿不准就别点">成立</button><button data-v="stage" title="内容对、位置错。高中按模块不按年级 —— 高中条目标了具体年级本身就是错的">学段不对</button><button data-v="wording" title="章节名 / 口号 / 内心活动（体会、感受）都不可判定；证据写得看不见也算">表述要改</button><button data-v="reject" title="主语是教师/学校/评价制度，或断言加了课标原文没有的内容">不该收</button></div>
+  <input class=note placeholder="想补一句就写这里（可留空）">
+</article><article class=item data-id="ca_xzJRr8u6">
+  <header>
+    <span class=n>2</span>
+    <span class=meta>高一–高三年级 · MATRIX 档</span>
+    <span class=lev>暂无下游依赖</span>
+  </header>
+  <p class=ask>能分析与比较中外文化之间的异同，进行独立的价值判断和文化阐释</p>
+  <p class=stmt>底座里的写法：能分析与比较中外文化之间的异同，进行独立的价值判断和文化阐释</p>
+  <details><summary>课标原文（第 71 页）</summary><blockquote>能够观察与思考西班牙语国家之间文化的异同，分析与比较中外文化之间的异同，进行独立的价值判断和文化阐释。素养名称 内涵 表现形式素养 3 ：思维品质语言与思维互相依存，互相促进。语言是思维的载体，思维促进语言的发展。语言学习能够培养学生的逻辑思维，使他们获得一定的逻辑思维能力。学生在学习西班牙语的过程中，可以提高分析与综合、比较与分类、抽象与概括、批判与创新的能力，进而增强运用西班牙语的缜密性和灵活性，并能综合发展逻辑性思维、批判性思维和创造性思维。</blockquote><p class=evh>我们据此写的判定证据：</p><ul><li>能在西班牙语课堂或作业情境中完成：能分析与比较中外文化之间的异同，进行独立的价值判断和文化阐释</li></ul></details>
+  <div class=verdicts><button data-v="ok" title="五关全过：主语是学生 · 能答会不会 · 忠于课标原文 · 学段对 · 证据看得见。拿不准就别点">成立</button><button data-v="stage" title="内容对、位置错。高中按模块不按年级 —— 高中条目标了具体年级本身就是错的">学段不对</button><button data-v="wording" title="章节名 / 口号 / 内心活动（体会、感受）都不可判定；证据写得看不见也算">表述要改</button><button data-v="reject" title="主语是教师/学校/评价制度，或断言加了课标原文没有的内容">不该收</button></div>
+  <input class=note placeholder="想补一句就写这里（可留空）">
+</article><article class=item data-id="ca_SpjBt3zF">
+  <header>
+    <span class=n>3</span>
+    <span class=meta>高一–高三年级 · MATRIX 档</span>
+    <span class=lev>暂无下游依赖</span>
+  </header>
+  <p class=ask>能初步具备在语篇中使用连接词</p>
+  <p class=stmt>底座里的写法：能初步具备在语篇中使用连接词</p>
+  <details><summary>课标原文（第 46 页）</summary><blockquote>初步具备在语篇中使用连接词，表达不同逻辑关系的能力。</blockquote><p class=evh>我们据此写的判定证据：</p><ul><li>能在西班牙语课堂或作业情境中完成：能初步具备在语篇中使用连接词</li></ul></details>
+  <div class=verdicts><button data-v="ok" title="五关全过：主语是学生 · 能答会不会 · 忠于课标原文 · 学段对 · 证据看得见。拿不准就别点">成立</button><button data-v="stage" title="内容对、位置错。高中按模块不按年级 —— 高中条目标了具体年级本身就是错的">学段不对</button><button data-v="wording" title="章节名 / 口号 / 内心活动（体会、感受）都不可判定；证据写得看不见也算">表述要改</button><button data-v="reject" title="主语是教师/学校/评价制度，或断言加了课标原文没有的内容">不该收</button></div>
+  <input class=note placeholder="想补一句就写这里（可留空）">
+</article><article class=item data-id="ca_KjVGEcqi">
+  <header>
+    <span class=n>4</span>
+    <span class=meta>高一–高三年级 · MATRIX 档</span>
+    <span class=lev>暂无下游依赖</span>
+  </header>
+  <p class=ask>能初步具备建构叙述、说明和议论等不同类型语篇的能力</p>
+  <p class=stmt>底座里的写法：能初步具备建构叙述、说明和议论等不同类型语篇的能力</p>
+  <details><summary>课标原文（第 74 页）</summary><blockquote>3.4 基本理解语篇的含义，能够辨别主要篇章类型的文体特征；初步具备建构叙述、说明和议论等不同类型语篇的能力。</blockquote><p class=evh>我们据此写的判定证据：</p><ul><li>能在西班牙语课堂或作业情境中完成：能初步具备建构叙述、说明和议论等不同类型语篇的能力</li></ul></details>
+  <div class=verdicts><button data-v="ok" title="五关全过：主语是学生 · 能答会不会 · 忠于课标原文 · 学段对 · 证据看得见。拿不准就别点">成立</button><button data-v="stage" title="内容对、位置错。高中按模块不按年级 —— 高中条目标了具体年级本身就是错的">学段不对</button><button data-v="wording" title="章节名 / 口号 / 内心活动（体会、感受）都不可判定；证据写得看不见也算">表述要改</button><button data-v="reject" title="主语是教师/学校/评价制度，或断言加了课标原文没有的内容">不该收</button></div>
+  <input class=note placeholder="想补一句就写这里（可留空）">
+</article><article class=item data-id="ca_izatEP7D">
+  <header>
+    <span class=n>5</span>
+    <span class=meta>高一–高三年级 · MATRIX 档</span>
+    <span class=lev>暂无下游依赖</span>
+  </header>
+  <p class=ask>能初步尝试在语境中理解词语的基本含义</p>
+  <p class=stmt>底座里的写法：能初步尝试在语境中理解词语的基本含义</p>
+  <details><summary>课标原文（第 32 页）</summary><blockquote>初步尝试在语境中理解词语的基本含义。</blockquote><p class=evh>我们据此写的判定证据：</p><ul><li>能在西班牙语课堂或作业情境中完成：能初步尝试在语境中理解词语的基本含义</li></ul></details>
+  <div class=verdicts><button data-v="ok" title="五关全过：主语是学生 · 能答会不会 · 忠于课标原文 · 学段对 · 证据看得见。拿不准就别点">成立</button><button data-v="stage" title="内容对、位置错。高中按模块不按年级 —— 高中条目标了具体年级本身就是错的">学段不对</button><button data-v="wording" title="章节名 / 口号 / 内心活动（体会、感受）都不可判定；证据写得看不见也算">表述要改</button><button data-v="reject" title="主语是教师/学校/评价制度，或断言加了课标原文没有的内容">不该收</button></div>
+  <input class=note placeholder="想补一句就写这里（可留空）">
+</article><article class=item data-id="ca_fCiXuKjg">
+  <header>
+    <span class=n>6</span>
+    <span class=meta>高一–高三年级 · MATRIX 档</span>
+    <span class=lev>暂无下游依赖</span>
+  </header>
+  <p class=ask>能判断其各自适用的语境和受众</p>
+  <p class=stmt>底座里的写法：能判断其各自适用的语境和受众</p>
+  <details><summary>课标原文（第 71 页）</summary><blockquote>能够辨别主要文体的语言特征，判断其各自适用的语境和受众；能够初步掌握建构和运用文本的能力。</blockquote><p class=evh>我们据此写的判定证据：</p><ul><li>能在西班牙语课堂或作业情境中完成：能判断其各自适用的语境和受众</li></ul></details>
+  <div class=verdicts><button data-v="ok" title="五关全过：主语是学生 · 能答会不会 · 忠于课标原文 · 学段对 · 证据看得见。拿不准就别点">成立</button><button data-v="stage" title="内容对、位置错。高中按模块不按年级 —— 高中条目标了具体年级本身就是错的">学段不对</button><button data-v="wording" title="章节名 / 口号 / 内心活动（体会、感受）都不可判定；证据写得看不见也算">表述要改</button><button data-v="reject" title="主语是教师/学校/评价制度，或断言加了课标原文没有的内容">不该收</button></div>
+  <input class=note placeholder="想补一句就写这里（可留空）">
+</article><article class=item data-id="ca_uAeMaeLi">
+  <header>
+    <span class=n>7</span>
+    <span class=meta>高一–高三年级 · MATRIX 档</span>
+    <span class=lev>暂无下游依赖</span>
+  </header>
+  <p class=ask>能判断并获取信息的要点，对事物作出理性评价</p>
+  <p class=stmt>底座里的写法：能判断并获取信息的要点，对事物作出理性评价</p>
+  <details><summary>课标原文（第 72 页）</summary><blockquote>学习语言知识时，善于质疑和辨析，养成思辨性思维模式；在运用语言表达观点或处理任务时，能够保持对信息的敏感度，判断并获取信息的要点，对事物作出理性评价。</blockquote><p class=evh>我们据此写的判定证据：</p><ul><li>能在西班牙语课堂或作业情境中完成：能判断并获取信息的要点，对事物作出理性评价</li></ul></details>
+  <div class=verdicts><button data-v="ok" title="五关全过：主语是学生 · 能答会不会 · 忠于课标原文 · 学段对 · 证据看得见。拿不准就别点">成立</button><button data-v="stage" title="内容对、位置错。高中按模块不按年级 —— 高中条目标了具体年级本身就是错的">学段不对</button><button data-v="wording" title="章节名 / 口号 / 内心活动（体会、感受）都不可判定；证据写得看不见也算">表述要改</button><button data-v="reject" title="主语是教师/学校/评价制度，或断言加了课标原文没有的内容">不该收</button></div>
+  <input class=note placeholder="想补一句就写这里（可留空）">
+</article><article class=item data-id="ca_LaCfveus">
+  <header>
+    <span class=n>8</span>
+    <span class=meta>高一–高三年级 · MATRIX 档</span>
+    <span class=lev>暂无下游依赖</span>
+  </header>
+  <p class=ask>能在体例和呈现方式上，教材的编排应符合学生的认知规律</p>
+  <p class=stmt>底座里的写法：能在体例和呈现方式上，教材的编排应符合学生的认知规律</p>
+  <details><summary>课标原文（第 64 页）</summary><blockquote>内容选择和编排建议教材的内容选择和编排应以发展和提升学生的学科核心素养为目标；应体现时代特色，并紧密围绕学科核心素养的要求展开。每个主题可包括若干话题，呈现话题的语篇应包括对话和叙述等形式，内容的难度应逐步递增。教材的内容选择和编排应有利于学生学习；应通过情境创设和语言活动，训练学生的听、说、读、写技能；应通过问题式、发现式、探究式等学习方式，帮助学生拓展思维、开阔视野，培养其实践能力和创新精神。教材的内容选择和编排应有利于教师教学，不仅要便于教师科学地设计教学情境、有效地组织教学，还应为教师调整教学内容留出空间。教材的内容选择应参照本课程标准的规定，注意容量，难度适中，以保证绝大部分学生通过努力能够基本掌握。另外，在内容的编排上应为学有余力的学生留出一定的拓展空间。教材的前言、提示和注解等内容均为教科书的重要组成部分，应精心设计，必要时还可提供术语表。在体例和呈现方式上，教材的编排应符合学生的认知规律；设计应美观大方，图文并茂，以方便学生学习；应尽量选择与教学内容紧密相关的插图。在内容的编排上，应注意将语言知识、文化知识、情境和话题有机地结合起来；应做到既尊重语言学习的规律，循序渐进，又注重语言实际运用，同时注重培养学生解决问题、完成任务的能力。在语言知识方面，教材中应明确标示主要知识点，并对知识点进行明确注释。必学词汇应是那些与学生生活相关、与主题活动相关、能保证最基本交际的词汇。其他词汇的选择应根据主题的需要，筛选频率高、实用性强的词语。语法知识的编排应具备基础性、连贯性和递进性等特点。语法要素的选择应以服务于话题和交际目的为出发点，以情境为依托，以语用任务为中心，以培养学生西班牙语语感和提升学生的思维能力为目的。在文化知识方面，教材中应包括国情文化知识和语言文化知识。国情文化知识包括中国和主要西班牙语国家的基本国情知识，如地理位置、气候、城市概貌、风俗习惯、著名人物、历史、文化艺术和交际礼仪等。语言知识中应适当安排富含语言文化信息、体现中西文化差异的词汇。在课文内容中应注意导入文化知识。在话题编排上，教材中设置的话题应植根于学生的日常生活，应尽量体现真实且丰富多样的生活场景，以便于学生灵活开展语言活动。在同一话题下，可以设计多种交际情境，让学生在完成不同交际任务的过程中，提高西班牙语语言综合运用能力和分析问题、解决问题的能力。作业安排是教材编排的重要组成部分，应与学生逐步提高的综合素质相适应。作业内容应包括预习、练习和活动等，习题应具有开放性，容量和难度应适中，避免“题海战术” 。</blockquote><p class=evh>我们据此写的判定证据：</p><ul><li>能在西班牙语课堂或作业情境中完成：能在体例和呈现方式上，教材的编排应符合学生的认知规律</li></ul></details>
+  <div class=verdicts><button data-v="ok" title="五关全过：主语是学生 · 能答会不会 · 忠于课标原文 · 学段对 · 证据看得见。拿不准就别点">成立</button><button data-v="stage" title="内容对、位置错。高中按模块不按年级 —— 高中条目标了具体年级本身就是错的">学段不对</button><button data-v="wording" title="章节名 / 口号 / 内心活动（体会、感受）都不可判定；证据写得看不见也算">表述要改</button><button data-v="reject" title="主语是教师/学校/评价制度，或断言加了课标原文没有的内容">不该收</button></div>
+  <input class=note placeholder="想补一句就写这里（可留空）">
+</article><article class=item data-id="ca_3vvwpkE5">
+  <header>
+    <span class=n>9</span>
+    <span class=meta>高一–高三年级 · MATRIX 档</span>
+    <span class=lev>暂无下游依赖</span>
+  </header>
+  <p class=ask>能在运用语言表达观点或处理任务时</p>
+  <p class=stmt>底座里的写法：能在运用语言表达观点或处理任务时</p>
+  <details><summary>课标原文（第 72 页）</summary><blockquote>学习语言知识时，善于质疑和辨析，养成思辨性思维模式；在运用语言表达观点或处理任务时，能够保持对信息的敏感度，判断并获取信息的要点，对事物作出理性评价。</blockquote><p class=evh>我们据此写的判定证据：</p><ul><li>能在西班牙语课堂或作业情境中完成：能在运用语言表达观点或处理任务时</li></ul></details>
+  <div class=verdicts><button data-v="ok" title="五关全过：主语是学生 · 能答会不会 · 忠于课标原文 · 学段对 · 证据看得见。拿不准就别点">成立</button><button data-v="stage" title="内容对、位置错。高中按模块不按年级 —— 高中条目标了具体年级本身就是错的">学段不对</button><button data-v="wording" title="章节名 / 口号 / 内心活动（体会、感受）都不可判定；证据写得看不见也算">表述要改</button><button data-v="reject" title="主语是教师/学校/评价制度，或断言加了课标原文没有的内容">不该收</button></div>
+  <input class=note placeholder="想补一句就写这里（可留空）">
+</article><article class=item data-id="ca_WeY38ZdA">
+  <header>
+    <span class=n>10</span>
+    <span class=meta>高一–高三年级 · MATRIX 档</span>
+    <span class=lev>暂无下游依赖</span>
+  </header>
+  <p class=ask>能够与他人配合组织语言实践活动，并根据活动进展适时地调整方案，合理地进行自我评价和自我调控</p>
+  <p class=stmt>底座里的写法：能够与他人配合组织语言实践活动，并根据活动进展适时地调整方案，合理地进行自我评价和自我调控</p>
+  <details><summary>课标原文（第 43 页）</summary><blockquote>能够与他人配合组织语言实践活动，并根据活动进展适时地调整方案，合理地进行自我评价和自我调控。</blockquote><p class=evh>我们据此写的判定证据：</p><ul><li>能在西班牙语课堂或作业情境中完成：能够与他人配合组织语言实践活动，并根据活动进展适时地调整方案，合理地进行自我评价</li></ul></details>
+  <div class=verdicts><button data-v="ok" title="五关全过：主语是学生 · 能答会不会 · 忠于课标原文 · 学段对 · 证据看得见。拿不准就别点">成立</button><button data-v="stage" title="内容对、位置错。高中按模块不按年级 —— 高中条目标了具体年级本身就是错的">学段不对</button><button data-v="wording" title="章节名 / 口号 / 内心活动（体会、感受）都不可判定；证据写得看不见也算">表述要改</button><button data-v="reject" title="主语是教师/学校/评价制度，或断言加了课标原文没有的内容">不该收</button></div>
+  <input class=note placeholder="想补一句就写这里（可留空）">
+</article><article class=item data-id="ca_aa6w67Fi">
+  <header>
+    <span class=n>11</span>
+    <span class=meta>高一–高三年级 · MATRIX 档</span>
+    <span class=lev>暂无下游依赖</span>
+  </header>
+  <p class=ask>能够主动尝试多种学习方法，总结学习效果，反思学习策略</p>
+  <p class=stmt>底座里的写法：能够主动尝试多种学习方法，总结学习效果，反思学习策略</p>
+  <details><summary>课标原文（第 49 页）</summary><blockquote>能够主动尝试多种学习方法，总结学习效果，反思学习策略，交流学习经验，提高学习效率。</blockquote><p class=evh>我们据此写的判定证据：</p><ul><li>能在西班牙语课堂或作业情境中完成：能够主动尝试多种学习方法，总结学习效果，反思学习策略</li></ul></details>
+  <div class=verdicts><button data-v="ok" title="五关全过：主语是学生 · 能答会不会 · 忠于课标原文 · 学段对 · 证据看得见。拿不准就别点">成立</button><button data-v="stage" title="内容对、位置错。高中按模块不按年级 —— 高中条目标了具体年级本身就是错的">学段不对</button><button data-v="wording" title="章节名 / 口号 / 内心活动（体会、感受）都不可判定；证据写得看不见也算">表述要改</button><button data-v="reject" title="主语是教师/学校/评价制度，或断言加了课标原文没有的内容">不该收</button></div>
+  <input class=note placeholder="想补一句就写这里（可留空）">
+</article><article class=item data-id="ca_j8xyTXcN">
+  <header>
+    <span class=n>12</span>
+    <span class=meta>高一–高三年级 · MATRIX 档</span>
+    <span class=lev>暂无下游依赖</span>
+  </header>
+  <p class=ask>能够从口音和表达方式上推测出说话人的身份、立场和言外之意</p>
+  <p class=stmt>底座里的写法：能够从口音和表达方式上推测出说话人的身份、立场和言外之意</p>
+  <details><summary>课标原文（第 44 页）</summary><blockquote>能够从口音和表达方式上推测出说话人的身份、立场和言外之意。</blockquote><p class=evh>我们据此写的判定证据：</p><ul><li>能在西班牙语课堂或作业情境中完成：能够从口音和表达方式上推测出说话人的身份、立场和言外之意</li></ul></details>
+  <div class=verdicts><button data-v="ok" title="五关全过：主语是学生 · 能答会不会 · 忠于课标原文 · 学段对 · 证据看得见。拿不准就别点">成立</button><button data-v="stage" title="内容对、位置错。高中按模块不按年级 —— 高中条目标了具体年级本身就是错的">学段不对</button><button data-v="wording" title="章节名 / 口号 / 内心活动（体会、感受）都不可判定；证据写得看不见也算">表述要改</button><button data-v="reject" title="主语是教师/学校/评价制度，或断言加了课标原文没有的内容">不该收</button></div>
+  <input class=note placeholder="想补一句就写这里（可留空）">
+</article><article class=item data-id="ca_W5T9ZmZp">
+  <header>
+    <span class=n>13</span>
+    <span class=meta>高一–高三年级 · MATRIX 档</span>
+    <span class=lev>暂无下游依赖</span>
+  </header>
+  <p class=ask>能够使用恰当的连接词，写出并列复合句</p>
+  <p class=stmt>底座里的写法：能够使用恰当的连接词，写出并列复合句</p>
+  <details><summary>课标原文（第 31 页）</summary><blockquote>能够使用恰当的连接词，写出并列复合句。</blockquote><p class=evh>我们据此写的判定证据：</p><ul><li>能在西班牙语课堂或作业情境中完成：能够使用恰当的连接词，写出并列复合句</li></ul></details>
+  <div class=verdicts><button data-v="ok" title="五关全过：主语是学生 · 能答会不会 · 忠于课标原文 · 学段对 · 证据看得见。拿不准就别点">成立</button><button data-v="stage" title="内容对、位置错。高中按模块不按年级 —— 高中条目标了具体年级本身就是错的">学段不对</button><button data-v="wording" title="章节名 / 口号 / 内心活动（体会、感受）都不可判定；证据写得看不见也算">表述要改</button><button data-v="reject" title="主语是教师/学校/评价制度，或断言加了课标原文没有的内容">不该收</button></div>
+  <input class=note placeholder="想补一句就写这里（可留空）">
+</article><article class=item data-id="ca_fP6ShzXt">
+  <header>
+    <span class=n>14</span>
+    <span class=meta>高一–高三年级 · MATRIX 档</span>
+    <span class=lev>暂无下游依赖</span>
+  </header>
+  <p class=ask>能够使用简单的问候语</p>
+  <p class=stmt>底座里的写法：能够使用简单的问候语</p>
+  <details><summary>课标原文（第 28 页）</summary><blockquote>能够使用简单的问候语。</blockquote><p class=evh>我们据此写的判定证据：</p><ul><li>能在西班牙语课堂或作业情境中完成：能够使用简单的问候语</li></ul></details>
+  <div class=verdicts><button data-v="ok" title="五关全过：主语是学生 · 能答会不会 · 忠于课标原文 · 学段对 · 证据看得见。拿不准就别点">成立</button><button data-v="stage" title="内容对、位置错。高中按模块不按年级 —— 高中条目标了具体年级本身就是错的">学段不对</button><button data-v="wording" title="章节名 / 口号 / 内心活动（体会、感受）都不可判定；证据写得看不见也算">表述要改</button><button data-v="reject" title="主语是教师/学校/评价制度，或断言加了课标原文没有的内容">不该收</button></div>
+  <input class=note placeholder="想补一句就写这里（可留空）">
+</article><article class=item data-id="ca_KkjgXMBG">
+  <header>
+    <span class=n>15</span>
+    <span class=meta>高一–高三年级 · MATRIX 档</span>
+    <span class=lev>暂无下游依赖</span>
+  </header>
+  <p class=ask>能够使用适当的语气表达个人情感</p>
+  <p class=stmt>底座里的写法：能够使用适当的语气表达个人情感</p>
+  <details><summary>课标原文（第 40 页）</summary><blockquote>能够使用适当的语气表达个人情感。</blockquote><p class=evh>我们据此写的判定证据：</p><ul><li>能在西班牙语课堂或作业情境中完成：能够使用适当的语气表达个人情感</li></ul></details>
+  <div class=verdicts><button data-v="ok" title="五关全过：主语是学生 · 能答会不会 · 忠于课标原文 · 学段对 · 证据看得见。拿不准就别点">成立</button><button data-v="stage" title="内容对、位置错。高中按模块不按年级 —— 高中条目标了具体年级本身就是错的">学段不对</button><button data-v="wording" title="章节名 / 口号 / 内心活动（体会、感受）都不可判定；证据写得看不见也算">表述要改</button><button data-v="reject" title="主语是教师/学校/评价制度，或断言加了课标原文没有的内容">不该收</button></div>
+  <input class=note placeholder="想补一句就写这里（可留空）">
+</article><article class=item data-id="ca_zDNmtjHz">
+  <header>
+    <span class=n>16</span>
+    <span class=meta>高一–高三年级 · MATRIX 档</span>
+    <span class=lev>暂无下游依赖</span>
+  </header>
+  <p class=ask>能够保持乐观的学习态度，积极参与西班牙语语言实践活动</p>
+  <p class=stmt>底座里的写法：能够保持乐观的学习态度，积极参与西班牙语语言实践活动</p>
+  <details><summary>课标原文（第 36 页）</summary><blockquote>能够保持乐观的学习态度，积极参与西班牙语语言实践活动。</blockquote><p class=evh>我们据此写的判定证据：</p><ul><li>能在西班牙语课堂或作业情境中完成：能够保持乐观的学习态度，积极参与西班牙语语言实践活动</li></ul></details>
+  <div class=verdicts><button data-v="ok" title="五关全过：主语是学生 · 能答会不会 · 忠于课标原文 · 学段对 · 证据看得见。拿不准就别点">成立</button><button data-v="stage" title="内容对、位置错。高中按模块不按年级 —— 高中条目标了具体年级本身就是错的">学段不对</button><button data-v="wording" title="章节名 / 口号 / 内心活动（体会、感受）都不可判定；证据写得看不见也算">表述要改</button><button data-v="reject" title="主语是教师/学校/评价制度，或断言加了课标原文没有的内容">不该收</button></div>
+  <input class=note placeholder="想补一句就写这里（可留空）">
+</article><article class=item data-id="ca_2NgPFsc2">
+  <header>
+    <span class=n>17</span>
+    <span class=meta>高一–高三年级 · MATRIX 档</span>
+    <span class=lev>暂无下游依赖</span>
+  </header>
+  <p class=ask>能够保持乐观的态度和充分的自信，敢于表达，积极应对学习中遇到的问题</p>
+  <p class=stmt>底座里的写法：能够保持乐观的态度和充分的自信，敢于表达，积极应对学习中遇到的问题</p>
+  <details><summary>课标原文（第 35 页）</summary><blockquote>能够保持乐观的态度和充分的自信，敢于表达，积极应对学习中遇到的问题。</blockquote><p class=evh>我们据此写的判定证据：</p><ul><li>能在西班牙语课堂或作业情境中完成：能够保持乐观的态度和充分的自信，敢于表达，积极应对学习中遇到的问题</li></ul></details>
+  <div class=verdicts><button data-v="ok" title="五关全过：主语是学生 · 能答会不会 · 忠于课标原文 · 学段对 · 证据看得见。拿不准就别点">成立</button><button data-v="stage" title="内容对、位置错。高中按模块不按年级 —— 高中条目标了具体年级本身就是错的">学段不对</button><button data-v="wording" title="章节名 / 口号 / 内心活动（体会、感受）都不可判定；证据写得看不见也算">表述要改</button><button data-v="reject" title="主语是教师/学校/评价制度，或断言加了课标原文没有的内容">不该收</button></div>
+  <input class=note placeholder="想补一句就写这里（可留空）">
+</article><article class=item data-id="ca_qM8PMLMP">
+  <header>
+    <span class=n>18</span>
+    <span class=meta>高一–高三年级 · MATRIX 档</span>
+    <span class=lev>暂无下游依赖</span>
+  </header>
+  <p class=ask>能够修改所写的内容</p>
+  <p class=stmt>底座里的写法：能够修改所写的内容</p>
+  <details><summary>课标原文（第 41 页）</summary><blockquote>能够修改所写的内容，比较正确地使用各种时态和语态。2. 知识词汇知识课程级别课程类型 知识描述5 级 选择性必修</blockquote><p class=evh>我们据此写的判定证据：</p><ul><li>能在西班牙语课堂或作业情境中完成：能够修改所写的内容</li></ul></details>
+  <div class=verdicts><button data-v="ok" title="五关全过：主语是学生 · 能答会不会 · 忠于课标原文 · 学段对 · 证据看得见。拿不准就别点">成立</button><button data-v="stage" title="内容对、位置错。高中按模块不按年级 —— 高中条目标了具体年级本身就是错的">学段不对</button><button data-v="wording" title="章节名 / 口号 / 内心活动（体会、感受）都不可判定；证据写得看不见也算">表述要改</button><button data-v="reject" title="主语是教师/学校/评价制度，或断言加了课标原文没有的内容">不该收</button></div>
+  <input class=note placeholder="想补一句就写这里（可留空）">
+</article><article class=item data-id="ca_YZmL3frR">
+  <header>
+    <span class=n>19</span>
+    <span class=meta>高一–高三年级 · MATRIX 档</span>
+    <span class=lev>暂无下游依赖</span>
+  </header>
+  <p class=ask>能够借助参考资料和双解工具书解决较复杂的语言疑难问题</p>
+  <p class=stmt>底座里的写法：能够借助参考资料和双解工具书解决较复杂的语言疑难问题</p>
+  <details><summary>课标原文（第 41 页）</summary><blockquote>能够借助参考资料和双解工具书解决较复杂的语言疑难问题。</blockquote><p class=evh>我们据此写的判定证据：</p><ul><li>能在西班牙语课堂或作业情境中完成：能够借助参考资料和双解工具书解决较复杂的语言疑难问题</li></ul></details>
+  <div class=verdicts><button data-v="ok" title="五关全过：主语是学生 · 能答会不会 · 忠于课标原文 · 学段对 · 证据看得见。拿不准就别点">成立</button><button data-v="stage" title="内容对、位置错。高中按模块不按年级 —— 高中条目标了具体年级本身就是错的">学段不对</button><button data-v="wording" title="章节名 / 口号 / 内心活动（体会、感受）都不可判定；证据写得看不见也算">表述要改</button><button data-v="reject" title="主语是教师/学校/评价制度，或断言加了课标原文没有的内容">不该收</button></div>
+  <input class=note placeholder="想补一句就写这里（可留空）">
+</article><article class=item data-id="ca_xbFFj926">
+  <header>
+    <span class=n>20</span>
+    <span class=meta>高一–高三年级 · MATRIX 档</span>
+    <span class=lev>暂无下游依赖</span>
+  </header>
+  <p class=ask>能够具备思维灵活性和一定的抽象概括能力，以及较好的逻辑推断能力，对事物作出理性的判断</p>
+  <p class=stmt>底座里的写法：能够具备思维灵活性和一定的抽象概括能力，以及较好的逻辑推断能力，对事物作出理性的判断</p>
+  <details><summary>课标原文（第 49 页）</summary><blockquote>能够具备思维灵活性和一定的抽象概括能力，以及较好的逻辑推断能力，对事物作出理性的判断。</blockquote><p class=evh>我们据此写的判定证据：</p><ul><li>能在西班牙语课堂或作业情境中完成：能够具备思维灵活性和一定的抽象概括能力，以及较好的逻辑推断能力，对事物作出理性的</li></ul></details>
+  <div class=verdicts><button data-v="ok" title="五关全过：主语是学生 · 能答会不会 · 忠于课标原文 · 学段对 · 证据看得见。拿不准就别点">成立</button><button data-v="stage" title="内容对、位置错。高中按模块不按年级 —— 高中条目标了具体年级本身就是错的">学段不对</button><button data-v="wording" title="章节名 / 口号 / 内心活动（体会、感受）都不可判定；证据写得看不见也算">表述要改</button><button data-v="reject" title="主语是教师/学校/评价制度，或断言加了课标原文没有的内容">不该收</button></div>
+  <input class=note placeholder="想补一句就写这里（可留空）">
+</article></section><div id=dock><div class=in>
+  <div id=stat>还没开始<span></span></div>
+  <div class=bar><i id=fill></i></div>
+  <button id=give disabled>复制结果</button>
+</div></div>
+<script>
+const KEY='k12-teacher-verdicts-v1:西班牙语';
+const store=JSON.parse(localStorage.getItem(KEY)||'{}');
+const tabs=[...document.querySelectorAll('.tab')];
+const panes=[...document.querySelectorAll('.pane')];
+
+function show(d){
+  tabs.forEach(t=>t.setAttribute('aria-selected', String(t.dataset.d===d)));
+  panes.forEach(p=>p.hidden = p.dataset.d!==d);
+  tally();
+}
+tabs.forEach(t=>t.onclick=()=>show(t.dataset.d));
+
+/* 判定：点一下选中，再点一下取消 —— 误点必须能撤回，否则老师不敢点。 */
+document.addEventListener('click',e=>{
+  const b=e.target.closest('.verdicts button'); if(!b) return;
+  const item=b.closest('.item'), id=item.dataset.id, v=b.dataset.v;
+  const on=b.getAttribute('aria-pressed')==='true';
+  item.querySelectorAll('.verdicts button').forEach(x=>x.setAttribute('aria-pressed','false'));
+  if(on){ delete store[id]; item.removeAttribute('data-done'); }
+  else {
+    b.setAttribute('aria-pressed','true');
+    item.dataset.done=v;
+    store[id]={...(store[id]||{}), verdict:v, discipline:item.closest('.pane').dataset.d};
+  }
+  save(); tally();
+});
+document.addEventListener('input',e=>{
+  if(!e.target.classList.contains('note')) return;
+  const item=e.target.closest('.item'), id=item.dataset.id, t=e.target.value.trim();
+  if(!store[id]) store[id]={discipline:item.closest('.pane').dataset.d};
+  t ? store[id].note=t : delete store[id].note;
+  save();
+});
+function save(){ localStorage.setItem(KEY, JSON.stringify(store)); }
+
+/* 回填：老师可能分几次做完，刷新不该清空。 */
+for(const [id,rec] of Object.entries(store)){
+  const item=document.querySelector(`.item[data-id="${id}"]`); if(!item) continue;
+  if(rec.verdict){
+    const b=item.querySelector(`.verdicts button[data-v="${rec.verdict}"]`);
+    if(b){ b.setAttribute('aria-pressed','true'); item.dataset.done=rec.verdict; }
+  }
+  if(rec.note) item.querySelector('.note').value=rec.note;
+}
+
+function tally(){
+  const pane=panes.find(p=>!p.hidden); if(!pane) return;
+  const all=[...pane.querySelectorAll('.item')];
+  const done=all.filter(i=>i.dataset.done).length;
+  const total=Object.keys(store).filter(k=>store[k].verdict).length;
+  document.getElementById('stat').innerHTML =
+    done ? `这一科 <b>${done}</b> / ${all.length}<span>　全部已判 ${total} 条</span>`
+         : (total ? `这一科还没开始<span>　别科已判 ${total} 条</span>` : '还没开始<span></span>');
+  document.getElementById('fill').style.width = (all.length? done/all.length*100 : 0)+'%';
+  const g=document.getElementById('give');
+  g.disabled = total===0;
+  g.textContent = total ? `复制 ${total} 条结果` : '复制结果';
+  g.classList.remove('done');
+}
+
+/* 交回必须走剪贴板。旧版用 download，在微信内置浏览器和沙箱预览里静默失效 ——
+   老师点了没反应，就再也不会点第二次。 */
+document.getElementById('give').onclick=async()=>{
+  const rows=Object.entries(store).filter(([,r])=>r.verdict)
+    .map(([anchorId,r])=>({anchorId, verdict:r.verdict, note:r.note||'', discipline:r.discipline}));
+  const who=(document.getElementById('who').value||'').trim();
+  const okCount=rows.filter(r=>r.verdict==='ok').length;
+  // 标了「成立」却没署名 —— 那些条目回流时会被丢弃，得当场说清楚，
+  // 而不是等老师交回来之后石沉大海。
+  if(!who && okCount){
+    document.getElementById('who').focus();
+    document.getElementById('who').style.borderColor='#e8607d';
+    const g0=document.getElementById('give');
+    g0.textContent=`有 ${okCount} 条「成立」需要署名`;
+    setTimeout(tally, 3200);
+    return;
+  }
+  const payload=JSON.stringify({
+    schema:'k12-teacher-review/1', reviewer:who,
+    reviewedAt:new Date().toISOString().slice(0,10),
+    count:rows.length, rows}, null, 1);
+  const g=document.getElementById('give');
+  try{ await navigator.clipboard.writeText(payload); }
+  catch{
+    const ta=document.createElement('textarea');
+    ta.value=payload; ta.style.cssText='position:fixed;top:0;left:0;opacity:0';
+    document.body.appendChild(ta); ta.select();
+    try{ document.execCommand('copy'); } catch{ ta.style.opacity='1'; ta.style.cssText+=';width:100%;height:40vh;z-index:9;opacity:1'; g.textContent='请手动复制↑'; return; }
+    ta.remove();
+  }
+  g.textContent=`已复制 ${rows.length} 条 ✓`; g.classList.add('done');
+  setTimeout(tally, 2600);
+};
+if(tabs.length) show(tabs[0].dataset.d); else tally();
+</script>
