@@ -1,0 +1,16 @@
+{
+  "_comment": "avoided 正用例。锚点 ID 与先修边均取自本仓库真实数据；边的 type/strength 由 samples/avoided-case/edges-typed.jsonl 提供（模拟 spec 001 重标管线跑完之后的状态，不改动 edges/）。期望：avoided 恰好命中 ca_dbH3sgz6 一条。",
+  "student_ref": "S-9001",
+  "stage": "G10",
+  "work_title": "校园饮用水水样检测与净化方案",
+  "sessions": 6,
+  "issued_on": "2026-08-20",
+  "items": [
+    {"anchor_id": "ca_zZdYc8ZT", "status": "evidenced", "evidence": "取用盐酸前指认了包装上的腐蚀性标识，并说明为何要戴手套", "evidence_source": "teacher_note", "by": "unclear"},
+    {"anchor_id": "ca_VJFBAS6E", "status": "evidenced", "evidence": "依据溶解性差异选择过滤而非蒸馏分离水样中的悬浮物，并写明理由", "evidence_source": "teacher_note", "by": "unclear"},
+    {"anchor_id": "ca_CPcH7FwR", "status": "evidenced", "evidence": "检验氯离子时选硝酸银并先加稀硝酸排除碳酸根干扰", "evidence_source": "code_diff", "by": "unclear"},
+    {"anchor_id": "ca_NX27FyuA", "status": "evidenced", "evidence": "对比活性炭用量时只改用量、固定水样与时间", "evidence_source": "teacher_note", "by": "unclear"},
+    {"anchor_id": "ca_8hPuC52W", "status": "evidenced", "evidence": "用离子反应说明了硝酸银与氯离子的沉淀过程", "evidence_source": "transcript", "by": "unclear"},
+    {"anchor_id": "ca_JmcMFc5K", "status": "touched", "evidence": "记录了水样浑浊、有异味，未系统归纳物理与化学性质", "evidence_source": "teacher_note", "by": "unclear"}
+  ]
+}

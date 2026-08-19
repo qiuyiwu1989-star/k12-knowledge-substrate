@@ -12,6 +12,7 @@ python3 tools/make_graph3d.py
 python3 tools/make_about.py
 python3 tools/make_list.py
 python3 tools/make_data_index.py
+python3 tools/make_anchor_pages.py            # /a/<id>/ 每条锚点一个详情页（specs/003）
 python3 tools/make_teacher_sheet.py
 python3 tools/split_teacher_sheet.py
 
@@ -21,6 +22,7 @@ cp graph.html    dist/2d/index.html # /2d 是俯视版
 mkdir -p dist/about && cp about.html dist/about/index.html  # /about 是项目与方法论介绍
 mkdir -p dist/list  && cp list.html  dist/list/index.html   # /list 是全部能力点的目录
 cp data-index.html dist/data/index.html                     # /data/ 原先是 404
+cp -r anchor-pages/a dist/a                                 # 2,158 个锚点详情页 + 共享资产
 cp manifest.json dist/data/
 for d in anchors edges lists mappings; do mkdir -p "dist/data/$d"; cp -r "$d"/* "dist/data/$d/"; done
 echo "✓ dist/ 就绪 — $(du -sh dist | cut -f1)，$(find dist -type f | wc -l | tr -d ' ') 个文件"

@@ -1,0 +1,171 @@
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--bg:#eef1f0;--card:#fff;--ink:#16201c;--mut:#5f6d67;--dim:#8a958f;--rule:#d8dedb;
+--ok:#0e6e5b;--no:#a43b4e;--rw:#7a4bb0;--cc:#8a6516;--acc:#0e6e5b}
+@media(prefers-color-scheme:dark){:root{--bg:#0d1214;--card:#141b1d;--ink:#e4eae7;--mut:#8b9995;
+--dim:#68766f;--rule:#222c2f;--ok:#4fd1ac;--no:#f0798f;--rw:#b478dc;--cc:#d9a548;--acc:#4fd1ac}}
+:root[data-theme=dark]{--bg:#0d1214;--card:#141b1d;--ink:#e4eae7;--mut:#8b9995;--dim:#68766f;
+--rule:#222c2f;--ok:#4fd1ac;--no:#f0798f;--rw:#b478dc;--cc:#d9a548;--acc:#4fd1ac}
+:root[data-theme=light]{--bg:#eef1f0;--card:#fff;--ink:#16201c;--mut:#5f6d67;--dim:#8a958f;
+--rule:#d8dedb;--ok:#0e6e5b;--no:#a43b4e;--rw:#7a4bb0;--cc:#8a6516;--acc:#0e6e5b}
+body{background:var(--bg);color:var(--ink);
+font:15px/1.7 -apple-system,"PingFang SC","Microsoft YaHei",sans-serif;-webkit-font-smoothing:antialiased}
+a{color:var(--acc)}
+:focus-visible{outline:2px solid var(--acc);outline-offset:2px;border-radius:3px}
+nav{border-bottom:1px solid var(--rule);background:var(--card)}
+nav .in{max-width:900px;margin:0 auto;padding:0 20px;display:flex;align-items:center;gap:16px;
+height:52px;overflow-x:auto}
+nav b{font-weight:800;letter-spacing:.13em;font-size:14px}
+nav a{color:var(--mut);text-decoration:none;font-size:13.5px;white-space:nowrap}
+nav a:hover{color:var(--ink)}nav .sp{margin-left:auto}
+.pg{max-width:900px;margin:0 auto;padding:24px 20px 90px}
+h1{font-size:26px;font-weight:640;letter-spacing:-.02em;line-height:1.35;margin:18px 0 8px}
+.meta{color:var(--mut);font-size:13px;margin-bottom:20px}
+code{font:12.5px ui-monospace,SFMono-Regular,Menlo,monospace;background:var(--card);
+border:1px solid var(--rule);border-radius:5px;padding:1px 6px}
+.light{border:1px solid var(--rule);border-left-width:5px;border-radius:11px;padding:13px 16px;
+background:var(--card)}
+.light b{display:block;font-size:16.5px;font-weight:660}
+.light span{display:block;color:var(--mut);font-size:13px;margin-top:4px}
+.light.ok{border-left-color:var(--ok)}.light.ok b{color:var(--ok)}
+.light.no{border-left-color:var(--no)}.light.no b{color:var(--no)}
+.light .cav{color:var(--cc)}
+.rwb{border:1px solid var(--rw);border-radius:11px;padding:13px 16px;margin:20px 0 0;background:var(--card)}
+.rwb>b{color:var(--rw);font-size:15.5px}
+/* 视图切页：radio + :checked ~，零 JS。原生 radio group 自带左右箭头切换。 */
+.vw>input{position:absolute;width:1px;height:1px;opacity:0}
+.tabs{display:flex;gap:6px;margin-top:22px;overflow-x:auto;border-bottom:1px solid var(--rule)}
+.tabs label{flex:none;cursor:pointer;padding:9px 15px 8px;border:1px solid transparent;border-bottom:0;
+border-radius:9px 9px 0 0;color:var(--mut);white-space:nowrap;text-align:center}
+.tabs label::before{display:block;font-size:14.5px;font-weight:600}
+.tabs label::after{display:block;font-size:11px;opacity:.8}
+label[for=v0]::before{content:"引用"}label[for=v0]::after{content:"开发者"}
+label[for=v1]::before{content:"判定"}label[for=v1]::after{content:"教师"}
+label[for=v2]::before{content:"成长"}label[for=v2]::after{content:"家长"}
+label[for=v3]::before{content:"溯源"}label[for=v3]::after{content:"研究者"}
+.tabs label:hover{color:var(--ink)}
+.panels>div{display:none;padding:16px 0 4px}
+#v0:checked~.tabs label[for=v0],#v1:checked~.tabs label[for=v1],
+#v2:checked~.tabs label[for=v2],#v3:checked~.tabs label[for=v3]{
+color:var(--ink);background:var(--card);border-color:var(--rule)}
+#v0:checked~.panels .p0,#v1:checked~.panels .p1,
+#v2:checked~.panels .p2,#v3:checked~.panels .p3{display:block}
+/* .tabs 是 overflow-x:auto 的滚动容器，outline 会被它切掉上下两条边，
+   只剩两根竖线 —— 焦点框改用 inset box-shadow，画在元素里面就不会被裁。 */
+#v0:focus-visible~.tabs label[for=v0],#v1:focus-visible~.tabs label[for=v1],
+#v2:focus-visible~.tabs label[for=v2],#v3:focus-visible~.tabs label[for=v3]{
+box-shadow:inset 0 0 0 2px var(--acc)}
+/* 字段。名字由 ::before 打出，空值由 :empty::after 打出「尚未定义」。 */
+i[data-k]{display:block;font-style:normal;padding:10px 0;border-bottom:1px solid var(--rule)}
+i[data-k]:last-child{border-bottom:0}
+i[data-k]::before{display:block;font-size:11.5px;letter-spacing:.06em;color:var(--dim);font-weight:600}
+i[data-k]:empty::after{content:"— 尚未定义";color:var(--no);font-size:13.5px}
+i[data-k=forbid]:empty::after{content:"— 不做。这是设计结论，不是还没做";color:var(--cc)}
+i[data-k] ul{margin:3px 0 0 19px}
+i[data-k] blockquote{color:var(--mut);border-left:2px solid var(--rule);padding-left:11px;margin-top:3px}
+.wh{display:block;font-style:normal;color:var(--dim);font-size:12.5px;margin-top:3px}
+i[data-n]{display:block;font-style:normal;color:var(--dim);font-size:12.5px;margin-bottom:10px}
+.warn{color:var(--cc);font-size:13px;margin:4px 0}
+.mo{color:var(--dim);font-size:12.5px;margin-top:4px}
+.k{display:inline-block;font-size:12px;padding:2px 10px;border-radius:99px;border:1px solid var(--rule);
+color:var(--mut);margin:4px 5px 0 0;background:var(--card)}
+.k.cc{color:var(--cc);border-color:var(--cc)}
+.sec{margin-top:32px;border-top:1px solid var(--rule);padding-top:16px}
+.sec h2,footer h2{font-size:11px;letter-spacing:.15em;color:var(--dim);font-weight:600;margin-bottom:8px}
+h2[data-h=tags]::before{content:"四套认知标签"}
+h2[data-h=li]::before{content:"挂在这一条上的清单条目"}
+h2[data-h=m]::before{content:"这一页为什么长这样"}
+.e{border:1px solid var(--rule);border-radius:11px;padding:11px 15px;margin:11px 0;background:var(--card)}
+.e h4{font-size:14.5px;font-weight:560;margin-bottom:2px;line-height:1.5}
+.e h4 code{margin-left:7px;font-size:11px}
+.dir{display:inline-block;font-size:11px;color:var(--dim);border:1px solid var(--rule);border-radius:5px;
+padding:0 6px;margin-right:7px;vertical-align:2px}
+svg.g{display:block;width:100%;height:auto;margin:4px 0 14px;background:var(--card);
+border:1px solid var(--rule);border-radius:11px}
+svg.g rect.n{fill:var(--bg);stroke:var(--rule)}
+svg.g rect.me{fill:var(--card);stroke:var(--acc);stroke-width:2}
+svg.g rect.dep{stroke-dasharray:3 3}
+svg.g text{fill:var(--ink);font:12px -apple-system,"PingFang SC",sans-serif}
+svg.g text.lb,svg.g text.mo{fill:var(--dim);font-size:11px}
+svg.g line{stroke:var(--rule);stroke-width:1.5}
+svg.g a:hover rect{stroke:var(--acc)}
+footer{margin-top:38px;border-top:1px solid var(--rule);padding-top:16px;color:var(--mut);font-size:13px}
+footer i[data-n]{font-size:13px;color:var(--mut);margin-bottom:9px}
+footer .rl{color:var(--dim);font-size:12px;margin-top:12px}
+button{font:inherit;font-size:13.5px;padding:8px 15px;border-radius:9px;border:1px solid var(--rule);
+background:var(--card);color:var(--ink);cursor:pointer;margin-top:6px}
+button:hover{border-color:var(--acc)}
+textarea{width:100%;font:inherit;font-size:13.5px;padding:9px 11px;border-radius:9px;
+border:1px solid var(--rule);background:var(--card);color:inherit;margin:8px 0}
+.done{color:var(--cc);font-size:13px;margin-top:7px;white-space:pre-wrap}
+@media(max-width:640px){h1{font-size:21px}.tabs label{padding:8px 11px}.e{padding:10px 12px}}
+i[data-k=id]::before{content:"锚点 ID（id）"}
+i[data-k=sv]::before{content:"schemaVersion"}
+i[data-k=st]::before{content:"状态（deprecated）"}
+i[data-k=sup]::before{content:"后继 ID（supersededBy）"}
+i[data-k=drop]::before{content:"弃用原因（dropReason）"}
+i[data-k=cit]::before{content:"能否被 L3 档案引用（citable）"}
+i[data-k=trk]::before{content:"结构档位（track）"}
+i[data-k=typ]::before{content:"知识类型（type）"}
+i[data-k=file]::before{content:"数据文件"}
+i[data-k=grep]::before{content:"取这一条"}
+i[data-k=api]::before{content:"逐条 API（api_endpoint）"}
+i[data-k=lic]::before{content:"许可说明（license_note）"}
+i[data-k=objn]::before{content:"公开异议数（objections）"}
+i[data-k=pmeth]::before{content:"溯源方法（provenance.method）"}
+i[data-k=claim]::before{content:"能力断言（statement）"}
+i[data-k=before]::before{content:"改写前原句（statementBefore）"}
+i[data-k=vo]::before{content:"行为动词 ／ 作用对象（verb / object）"}
+i[data-k=cog]::before{content:"认知层级（cognitive）"}
+i[data-k=ev]::before{content:"掌握证据（evidence）"}
+i[data-k=ask]::before{content:"检核问句（assessment）"}
+i[data-k=spect]::before{content:"判定方式（assessmentSpec.type）"}
+i[data-k=spec]::before{content:"判定细则（assessmentSpec.spec）"}
+i[data-k=pass]::before{content:"通过判据（assessmentSpec.passCriterion）"}
+i[data-k=decay]::before{content:"保持期（assessmentSpec.decayHint）"}
+i[data-k=mastery]::before{content:"掌握判据（mastery）"}
+i[data-k=vari]::before{content:"变式空间（variations）"}
+i[data-k=misc]::before{content:"典型错误（misconceptions）"}
+i[data-k=nonex]::before{content:"反例：什么表现算不会（non_examples）"}
+i[data-k=aiis]::before{content:"AI 复核挑出的问题（aiIssues）"}
+i[data-k=tri]::before{content:"机械分诊桶（triageBucket）"}
+i[data-k=plain]::before{content:"这一条说的是什么（大白话 plain_zh）"}
+i[data-k=ask2]::before{content:"家长可以这样问"}
+i[data-k=cog2]::before{content:"学到什么程度"}
+i[data-k=stage]::before{content:"大概哪个学段（stageHint）"}
+i[data-k=unlk]::before{content:"会了之后能开始学什么（unlocks）"}
+i[data-k=life]::before{content:"生活中的表现举例"}
+i[data-k=kid]::before{content:"孩子当前状态"}
+i[data-k=forbid]::before{content:"难度分 ／ 平均掌握年龄 ／ 同龄百分位"}
+i[data-k=quote]::before{content:"课标原文（provenance.srcText）"}
+i[data-k=src]::before{content:"出处学科 ／ 页码 ／ 学段"}
+i[data-k=course]::before{content:"课程 ／ 编号（srcCourse / srcCode）"}
+i[data-k=meth]::before{content:"抽取方法（provenance.method）"}
+i[data-k=agree]::before{content:"多次投票一致度（srcAgree）"}
+i[data-k=esrc]::before{content:"证据来源层（evidenceSource）"}
+i[data-k=derv]::before{content:"转写自哪条知识锚点（provenance.derivedFrom）"}
+i[data-k=why]::before{content:"我们为什么加这一条（provenance.why）"}
+i[data-k=tier]::before{content:"可信度档位（reviewStatus）"}
+i[data-k=acb]::before{content:"auto-confirmed 的依据（autoConfirmBasis）"}
+i[data-k=by]::before{content:"复核人（reviewedBy）"}
+i[data-k=end]::before{content:"教师签字（endorsements）"}
+i[data-k=disp]::before{content:"复核异议记录（disputes）"}
+i[data-k=adj]::before{content:"AI 裁定（adjudication）"}
+i[data-k=ick]::before{content:"对抗验证（independentCheck）"}
+i[data-k=rep]::before{content:"回修记录（repair）"}
+i[data-k=objl]::before{content:"公开异议（objections）"}
+i[data-k=et]::before{content:"关系类别（type）"}
+i[data-k=es]::before{content:"强度（strength）"}
+i[data-k=ef]::before{content:"失败表现（failureSignature）"}
+i[data-k=eg]::before{content:"进推理图（inInferenceGraph）"}
+i[data-k=er]::before{content:"理由（reason）"}
+i[data-k=ek]::before{content:"证据类型（evidence.kind）"}
+i[data-k=erv]::before{content:"边的复核档位（reviewStatus）"}
+i[data-k=ec]::before{content:"反例计数（counterEvidenceCount）"}
+i[data-k=tcog]::before{content:"课标行为动词分级（cognitive）"}
+i[data-k=tlit]::before{content:"学科核心素养（literacy）"}
+i[data-k=tcc]::before{content:"跨学科通用概念（crosscutting）"}
+i[data-k=tpr]::before{content:"科学与工程实践（practice）"}
+i[data-k=tccw]::before{content:"打这组横切标签的理由（crosscuttingWhy）"}
+i[data-k=tak]::before{content:"Bloom / A&K 知识维度映射"}
+i[data-k=li]::before{content:"清单条目数（attached_list_items）"}
+i[data-k=lt]::before{content:"分学段累计目标（stageTargets）"}

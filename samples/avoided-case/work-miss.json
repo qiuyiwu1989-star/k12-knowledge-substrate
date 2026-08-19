@@ -1,0 +1,16 @@
+{
+  "_comment": "avoided 反用例。与 work-hit.json 只差一处：ca_CPcH7FwR 由 evidenced 降为 touched，于是 ca_dbH3sgz6 的三条硬前置只有两条达到 evidenced。期望：avoided 命中 0 条。",
+  "student_ref": "S-9002",
+  "stage": "G10",
+  "work_title": "校园饮用水水样检测与净化方案（对照组）",
+  "sessions": 6,
+  "issued_on": "2026-08-20",
+  "items": [
+    {"anchor_id": "ca_zZdYc8ZT", "status": "evidenced", "evidence": "取用盐酸前指认了包装上的腐蚀性标识，并说明为何要戴手套", "evidence_source": "teacher_note", "by": "unclear"},
+    {"anchor_id": "ca_VJFBAS6E", "status": "evidenced", "evidence": "依据溶解性差异选择过滤而非蒸馏分离水样中的悬浮物，并写明理由", "evidence_source": "teacher_note", "by": "unclear"},
+    {"anchor_id": "ca_CPcH7FwR", "status": "touched", "evidence": "跟着同组同学一起做了氯离子检验，未说明为何选这支试剂、也未处理干扰", "evidence_source": "teacher_note", "by": "unclear"},
+    {"anchor_id": "ca_NX27FyuA", "status": "evidenced", "evidence": "对比活性炭用量时只改用量、固定水样与时间", "evidence_source": "teacher_note", "by": "unclear"},
+    {"anchor_id": "ca_8hPuC52W", "status": "evidenced", "evidence": "用离子反应说明了硝酸银与氯离子的沉淀过程", "evidence_source": "transcript", "by": "unclear"},
+    {"anchor_id": "ca_JmcMFc5K", "status": "touched", "evidence": "记录了水样浑浊、有异味，未系统归纳物理与化学性质", "evidence_source": "teacher_note", "by": "unclear"}
+  ]
+}

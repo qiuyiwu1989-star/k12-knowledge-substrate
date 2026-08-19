@@ -15,7 +15,8 @@ make_list.py — /list：把全部能力锚点做成能逐条翻的目录页。
   · 虚拟滚动只渲染视口内的行
   · 筛选（学科 / 学段 / 复核档 / 来源层）和搜索都在内存里做，无请求
 
-每行点开展开：课标原文 + 页码、判定证据、家长问句、核心素养、横切标签。
+每行点开展开：课标原文 + 页码、判定证据、家长问句、核心素养、横切标签，
+以及**通往 `/a/<id>/` 详情页的链接** —— 2,158 个详情页没有入口就等于不存在。
 **这些字段本来就都有，只是从来没在一个地方一起给过人看。**
 
     python3 tools/make_list.py
@@ -125,6 +126,7 @@ border:1px solid var(--line);border-radius:11px;font-size:13.5px;line-height:1.7
 border:1px solid var(--line);color:var(--mut);margin:3px 5px 0 0}}
 .det .k.cc{{color:var(--cc);border-color:rgba(201,162,39,.4)}}
 .det a{{color:var(--mut);font-size:12px}}
+    .det a.go{{display:inline-block;margin:2px 0;font-weight:600}}
 #more{{display:block;width:100%;margin:22px 0 60px;padding:13px;border-radius:11px;
 border:1px solid var(--line);background:var(--card);color:var(--fg);font:inherit;cursor:pointer}}
 #more:hover{{border-color:var(--dim)}}
@@ -202,6 +204,8 @@ function render(){{
              <span class=k>${{esc(r[13])}}</span><span class=k>${{esc(r[14])}} 档</span>
              <span class=k>${{esc(TIER_CN[r[4]])}}</span>
              ${{r[5]==='转写'?'<span class="k" style="color:var(--rw);border-color:rgba(180,120,220,.4)">不是课标原话</span>':''}}</div>
+        <h5>看这一条的详情页</h5>
+        <a class=go href="/a/${{r[0]}}/">/a/${{r[0]}}/ —— 引用 / 判定 / 成长 / 溯源 四个视图</a>
         <h5>在图谱里看</h5><a href="/#${{r[0]}}">/#${{r[0]}}</a>
       </div></article>`;
   }}).join('');

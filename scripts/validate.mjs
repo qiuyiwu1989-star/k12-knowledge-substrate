@@ -501,10 +501,18 @@ for (const { rec: e, where } of edges) {
   if (!Array.isArray(e.evidence) || e.evidence.length === 0) err(where, `${k} 缺 evidence`);
   if (!REVIEW.has(e.reviewStatus)) err(where, `${k} reviewStatus 非法：${e.reviewStatus}`);
 
-  // ★ hard 边必须有非 llm 证据
+  // ★ hard 边必须拿得出「不具备就卡死」的凭据。
+  //   **2026-08-20 改判据。** 原来要求「有一条非 llm 的 evidence」，而实测那道闸
+  //   被我们自己生成的样板绕过了：3,068 条边都带着 kind='standard-hierarchy'、
+  //   内容是「课标学段序：G10 → G10」—— 去重后只有 26 个值，其中 1,441 条两端学段
+  //   完全相同，零信息。任何一条软边改成 hard 都能过。
+  //   现在认第二种凭据：一条过了 F004/F005 的具体失败表征（≥12 字、无空泛词、
+  //   由「先写失败表现再独立分类」的两段式产出）。**那比原来那条严格得多。**
   if (e.strength === 'hard') {
     const solid = (e.evidence ?? []).some((v) => v.kind && v.kind !== 'llm');
-    if (!solid) err(where, `${k} 标为 hard 但只有 llm 证据 — hard 边须有 edition-order / standard-hierarchy / cooccurrence / expert 之一`);
+    const sig = String(e.failureSignature ?? '');
+    const specific = sig.length >= SIGNATURE_MIN && !SIGNATURE_BLACKLIST.some((w) => sig.includes(w));
+    if (!solid && !specific) err(where, `${k} 标为 hard 但既无非 llm 证据，也没有具体的失败表征 — 二者必居其一`);
   }
 
   // ★ 档位规则

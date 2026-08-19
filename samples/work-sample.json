@@ -1,0 +1,109 @@
+{
+  "_comment": "spec 004 输入契约的样例。锚点 ID 全部取自本仓库 anchors/ 真实存在的条目（G5–G6 覆盖 G6）。学生代号与作品为构造，创作过程 → 锚点的映射为人工填写，本期不存在自动 mapper。",
+  "student_ref": "S-0417",
+  "stage": "G6",
+  "work_title": "班级图书借阅小程序",
+  "sessions": 4,
+  "iterations": 3,
+  "issued_on": "2026-08-20",
+  "items": [
+    {
+      "anchor_id": "ca_MGabi85q",
+      "status": "evidenced",
+      "evidence": "为「逾期提醒」写了遍历借阅记录的循环，循环体内含日期分支判断；在自己画的流程图上标出了这两处结构",
+      "evidence_source": "code_diff",
+      "by": "unclear"
+    },
+    {
+      "anchor_id": "ca_VtRrmpGZ",
+      "status": "evidenced",
+      "evidence": "口述了「查逾期」的四步：取今天日期 → 逐条比对借出日 → 超期的挑出来 → 列成名单；每一步都说清了做什么",
+      "evidence_source": "transcript",
+      "by": "unclear"
+    },
+    {
+      "anchor_id": "ca_XPc9DrB7",
+      "status": "touched",
+      "evidence": "程序有扫码输入与名单输出，但学生未把它说成「输入—计算—输出」三个环节",
+      "evidence_source": "teacher_note",
+      "by": "unclear"
+    },
+    {
+      "anchor_id": "ca_uhwFuwyt",
+      "status": "touched",
+      "evidence": "讨论过「有人乱改借阅记录怎么办」，未落到具体做法",
+      "evidence_source": "transcript",
+      "by": "unclear"
+    },
+    {
+      "anchor_id": "ca_jb9My7E4",
+      "status": "evidenced",
+      "evidence": "主动提出「同学的手机号不能存进去」，把字段改成学号，并说明了理由",
+      "evidence_source": "transcript",
+      "by": "unclear"
+    },
+    {
+      "anchor_id": "ca_XqBrzxg6",
+      "status": "touched",
+      "evidence": "把书按「借出中／在架／逾期」分了三类，未说明分类依据来自哪些信息",
+      "evidence_source": "code_diff",
+      "by": "unclear"
+    },
+    {
+      "anchor_id": "ca_OAlPzObf",
+      "status": "evidenced",
+      "evidence": "在讨论「借阅排行怎么展示」时说出「条形图是比多少的」，据此排除了饼图",
+      "evidence_source": "transcript",
+      "by": "unclear"
+    },
+    {
+      "anchor_id": "ca_i85sHjxW",
+      "status": "evidenced",
+      "evidence": "从老师给的四张统计图里挑出了两张条形统计图，并说明为什么另外两张不是",
+      "evidence_source": "teacher_note",
+      "by": "unclear"
+    },
+    {
+      "anchor_id": "ca_Waku2y9E",
+      "status": "touched",
+      "evidence": "借阅时长用了「天」，未与其他单位作过比较",
+      "evidence_source": "code_diff",
+      "by": "unclear"
+    },
+    {
+      "anchor_id": "ca_ndCKv0OV",
+      "status": "evidenced",
+      "evidence": "写了给同学看的使用说明，分四步，两名同学首次照做未提问",
+      "evidence_source": "teacher_note",
+      "by": "unclear"
+    },
+    {
+      "anchor_id": "ca_MbHhC0ud",
+      "status": "touched",
+      "evidence": "读了图书馆的借阅规则页，复述时漏了续借条款",
+      "evidence_source": "transcript",
+      "by": "unclear"
+    },
+    {
+      "anchor_id": "ca_QQVrIxV7",
+      "status": "touched",
+      "evidence": "列了「问同学想借什么书」的调查计划，未执行",
+      "evidence_source": "teacher_note",
+      "by": "unclear"
+    },
+    {
+      "anchor_id": "ca_88cN56V3",
+      "status": "touched",
+      "evidence": "只列出「书名、作者」两项要收集的材料，未覆盖调查各阶段",
+      "evidence_source": "teacher_note",
+      "by": "unclear"
+    },
+    {
+      "anchor_id": "ca_wan5PDfY",
+      "status": "evidenced",
+      "evidence": "提出把「书损坏了怎么记」加进系统，理由是班级图书是大家的",
+      "evidence_source": "transcript",
+      "by": "unclear"
+    }
+  ]
+}

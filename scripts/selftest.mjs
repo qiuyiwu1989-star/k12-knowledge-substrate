@@ -90,7 +90,11 @@ const CASES = [
   ['MATRIX 已复核却缺 topic/dimension 被拦', 'anchors/x.jsonl', A({ id: 'ca_TEST0004', track: 'MATRIX', topic: null, dimension: null, reviewStatus: 'expert-confirmed' }), 'MATRIX 档缺'],
   ['stageHint 区间倒置被拦',          'anchors/x.jsonl', A({ id: 'ca_TEST0005', stageHint: { min: 'G5', max: 'G2' } }), '区间倒置'],
   ['弃用无去向也无原因被拦',          'anchors/x.jsonl', A({ id: 'ca_TEST0006', deprecated: true }), '既无 supersededBy 也无 dropReason'],
-  ['仅 llm 证据的 hard 边被拦',       'edges/x.jsonl',   E({ strength: 'hard' }), '只有 llm 证据'],
+  // hard 边的判据 2026-08-20 换过：原来是「有非 llm 证据」，而那道闸被自己生成的
+  // 样板绕过了（3,068 条边都带着「课标学段序：G10 → G10」）。现在认第二种凭据：
+  // 一条过了 F004/F005 的具体失败表征。这条注入两样都没有。
+  ['hard 边两种凭据都没有被拦',       'edges/x.jsonl',   E({ strength: 'hard', type: 'component' }), '既无非 llm 证据，也没有具体的失败表征'],
+  ['hard 边只有空泛的失败表征也被拦', 'edges/x.jsonl',   E({ strength: 'hard', type: 'component', failureSignature: '这孩子的基础不牢做不出来' }), 'F005'],
   ['LIST 当被修方被拦',               'edges/x.jsonl',   E({ anchorId: S.list.id, prerequisiteId: S.early.id }), 'LIST 档不能作为被修方'],
   ['声称集合包含却无 containment 被拦', 'edges/x.jsonl',   E({ anchorId: S.list.id, prerequisiteId: S.early.id, evidence: [{ kind: 'set-containment', detail: '口说无凭' }] }), '没有 containment 字段'],
   ['MATRIX 档 hard 边被拦',           'edges/x.jsonl',   E({ anchorId: S.matrix.id, prerequisiteId: S.matrix2.id, strength: 'hard', evidence: [{ kind: 'expert', detail: 'x' }] }), 'MATRIX 档不得有 hard 边'],
