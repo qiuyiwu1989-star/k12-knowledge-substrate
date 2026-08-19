@@ -9,14 +9,14 @@
     "edges": 1040,
     "listItems": 6262,
     "mappings": 4,
-    "liveAnchors": 2171,
-    "deprecatedAnchors": 895,
+    "liveAnchors": 2168,
+    "deprecatedAnchors": 898,
     "byDiscipline": {
-      "艺术": 117,
+      "艺术": 116,
       "生物学": 100,
       "化学": 254,
       "语文": 231,
-      "英语": 163,
+      "英语": 161,
       "体育与健康": 103,
       "俄语": 23,
       "信息技术": 30,
@@ -38,14 +38,14 @@
       "科学": 197
     },
     "byTrack": {
-      "MATRIX": 1490,
+      "MATRIX": 1487,
       "DAG": 469,
       "LIST": 212
     },
     "byReview": {
       "disputed": 144,
       "ai-reviewed": 404,
-      "llm-proposed": 1235,
+      "llm-proposed": 1232,
       "ai-adjudicated": 242,
       "auto-confirmed": 146
     }
@@ -53,7 +53,7 @@
   "usableAnchors": 388,
   "humanConfirmedAnchors": 0,
   "rewrittenAnchors": 217,
-  "curriculumDerivedAnchors": 1954,
+  "curriculumDerivedAnchors": 1951,
   "aiReviewedAnchors": 404,
   "disputedAnchors": 144,
   "files": {
@@ -142,12 +142,12 @@
       "sha256": "88e50dee4c65a73b573369065b2714500798dcfc23a9597819d678924af8aa84"
     },
     "anchors/gaozhong-艺术.jsonl": {
-      "bytes": 44797,
-      "sha256": "e0537fb4d86b6bf457fe2dffc6a6787d9d5e1768430d70c8bd951eddc1e36f9f"
+      "bytes": 44931,
+      "sha256": "fd39d96987251265976197bb6dda9f487586a671c2fee05719a350e9f8a9085a"
     },
     "anchors/gaozhong-英语.jsonl": {
-      "bytes": 111355,
-      "sha256": "97904407a5f5076384f9230621159b2437273af9a571a32837ccf8ce3d605c3d"
+      "bytes": 111802,
+      "sha256": "e4f7459b2f4af2ebd52175ee90b806a1bcc82eb928cd4fa2a8be1ebb6ba5b07e"
     },
     "anchors/gaozhong-西班牙语.jsonl": {
       "bytes": 151260,
