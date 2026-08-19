@@ -110,7 +110,7 @@ footer a{{color:var(--mut)}}
 @media(max-width:640px){{header{{padding:48px 0 34px}}h2{{margin-top:46px}}}}
 </style></head><body>
 <nav><div class=w><b>K12</b>
-  <a href="/">3D 图谱</a><a href="/2d/">2D 俯视</a><a href="/data/">数据集</a>
+  <a href="/">3D 图谱</a><a href="/list/">全部能力点</a><a href="/2d/">2D 俯视</a><a href="/data/">数据集</a>
   <a href="https://github.com/qiuyiwu1989-star/k12-knowledge-substrate">GitHub</a>
 </div></nav>
 
