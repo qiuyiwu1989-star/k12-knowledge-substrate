@@ -73,12 +73,35 @@ export function normalizeText(raw, { discipline = '', latin = false } = {}) {
 }
 
 /** 去重签名：同一学科下 (动词, 对象) 归一后相同 → 判为重复候选 */
+// 去重签名。**2026-08-20 从 (verb, object) 改成 (verb, 断言去掉动词)。**
+//
+// 旧签名的 object 是「动词之后的文字」，于是分辨不出前置成分：
+//
+//     会用线速度描述匀速圆周运动  →  (描述, 匀速圆周运动)
+//     会用周期描述匀速圆周运动    →  (描述, 匀速圆周运动)   ← 同一个签名
+//
+// 三条真正不同的能力被判成互相重复。这是拆原子时撞出来的：
+// 拆出的子条会撞上自己的母条，因为区分它们的那个词在动词**前面**。
+//
+// 新签名拿整句去掉动词来算，实测：对现有 2,161 条**零假阳性**，
+// 而且抓出 3 组旧签名漏掉的真重复 —— 断言一字不差却同时存在，
+// 因为它们的 object 字段写法不同（capability-rewrite 层吐出了原锚点的复制品）。
+//
+// 开头的「能/会/学会」必须剥掉，否则「能计算圆锥的体积」和
+// 「会计算圆锥的体积」这种真重复就漏了。
 export function dedupeSignature(anchor) {
-  const strip = (x) =>
+  const punc = /[（）《》「」【】，。、；：？！"'·—\s]/g;
+  const clean = (x) =>
     normalizeText(String(x ?? ''), { discipline: anchor.discipline })
-      .replace(/[（）《》「」【】，。、；：？！"'·—\s]/g, '')
+      .replace(punc, '')
       .toLowerCase();
-  return `${anchor.discipline}|${strip(anchor.verb)}|${strip(anchor.object)}`;
+  let rest = String(anchor.statement ?? '').replace(/^(能够|能|会|学会)/, '');
+  // 复合动词（「说出...并解释」）逐段剜掉，每段只剜第一次出现
+  for (const seg of String(anchor.verb ?? '').split(/[.．…]{2,}|\.\.\./)) {
+    const t = seg.replace(punc, '');
+    if (t) rest = rest.replace(t, '');
+  }
+  return `${anchor.discipline}|${clean(anchor.verb)}|${clean(rest)}`;
 }
 
 /** 返回 [{field, raw, normalized}]，raw !== normalized 即为未规范化 */

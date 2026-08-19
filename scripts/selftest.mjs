@@ -33,8 +33,10 @@ function sample() {
   });
   walk(join(ROOT, 'anchors'));
   const dag = byTrack.DAG ?? [], list = byTrack.LIST ?? [], mat = byTrack.MATRIX ?? [];
+  // statement 也要带上 —— 去重签名 2026-08-20 改成拿整句算，
+  // 夹具不带 statement 就永远构不成冲突，会误以为校验器坏了。
   const g = (a) => ({ id: a.id, verb: a.verb, object: a.object, discipline: a.discipline,
-                      stage: a.stageHint?.min });
+                      statement: a.statement, stage: a.stageHint?.min });
   // 取同学科同 DAG 档、学段**完全不重叠**的两条。
   // 「学段倒挂」是保守规则：只有前置的最早学段晚于被修的最晚学段才算倒挂
   //（跟 Marble issue #5 里那个严格版本一致）。所以夹具必须挑区间窄的，
@@ -79,7 +81,10 @@ const CASES = [
   ['转写源不存在被拦',                'anchors/x.jsonl', A({ id: 'ca_TEST0016', evidenceSource: 'capability-rewrite', reviewStatus: 'llm-proposed', provenance: { derivedFrom: 'ca_NOPE0000', method: 'capability-rewrite' } }), 'derivedFrom 指向不存在'],
   ['不可判定的 statement 被拦',      'anchors/x.jsonl', A({ statement: '分数的意义', verb: '理解', object: '分数意义' }), '不可判定'],
   ['口号句式被拦',                    'anchors/x.jsonl', A({ statement: '培养学生的数学抽象能力和推理意识', verb: '培养', object: '抽象能力' }), '口号句式'],
-  ['去重签名冲突被拦',                'anchors/x.jsonl', A({ id: 'ca_TEST0002', discipline: S.early.discipline, verb: S.early.verb, object: S.early.object }), '去重签名'],
+  ['去重签名冲突被拦',                'anchors/x.jsonl', A({ id: 'ca_TEST0002', discipline: S.early.discipline, statement: S.early.statement, verb: S.early.verb, object: S.early.object }), '去重签名'],
+  // 旧签名是 (verb, object)，object 只取动词之后的文字，于是**前置成分分辨不出来**：
+  // 同一条断言只要把 object 字段写得不一样，就能绕过去 —— 实测库里真有 3 组这样的重复。
+  ['同断言不同 object 也被拦',        'anchors/x.jsonl', A({ id: 'ca_TEST0009', discipline: S.early.discipline, statement: S.early.statement, verb: S.early.verb, object: '换个写法就绕过去了' }), '去重签名'],
   ['未规范化文本被拦',                'anchors/x.jsonl', A({ id: 'ca_TEST0003', statement: '能计算三位数减三位数的退位减法(含连续退位)', object: '连续退位减法' }), '未规范化'],
   ['ID 重复被拦',                     'anchors/x.jsonl', A({ id: S.early.id }), 'id 重复'],
   ['MATRIX 已复核却缺 topic/dimension 被拦', 'anchors/x.jsonl', A({ id: 'ca_TEST0004', track: 'MATRIX', topic: null, dimension: null, reviewStatus: 'expert-confirmed' }), 'MATRIX 档缺'],
@@ -98,6 +103,7 @@ const CASES = [
   ['schema 未声明的字段被拦',        'anchors/x.jsonl', A({ id: 'ca_TEST0007', 亂七八糟: 1 }), '不合 schema'],
   ['schema 里的 pattern 被执行',      'anchors/x.jsonl', A({ id: 'ca_TEST0008', reviewedBy: ['某个没有前缀的名字'] }), '不合 schema'],
   ['边多出未声明字段被拦',            'edges/x.jsonl',   E({ evidence: [{ kind: 'expert', detail: 'x' }], 亂七八糟: 1 }), '不合 edge schema'],
+  ['兜底证据冒充课标来源被拦',        'anchors/x.jsonl', A({ id: 'ca_TEST0016', evidence: ['能完成：能计算三位数减三位数的退位减法'], evidenceSource: 'curriculum-content-gaozhong' }), '不许声称来自课标'],
   ['codes-only 泄漏文本被拦',         'mappings/x.jsonl', JSON.stringify({ key: 'cn-2022:T.1', framework: 'cn-2022', code: 'T.1', discipline: '数学', stage: 'G1-2', strand: null, title: '测试', summary: '不该出现的原文', textIncluded: false, anchorIds: [], schemaVersion: '0.1.0' }), 'codes-only'],
 ];
 

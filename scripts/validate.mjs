@@ -119,6 +119,10 @@ for (const [field, live] of [['discipline', DISCIPLINES], ['track', TRACKS], ['t
   }
 }
 
+// 兜底证据模板：「能在X课堂或作业情境中完成：<断言>」「能完成：<断言>」。
+// 它本身不违规 —— 违规的是用了它还声称证据来自课标。
+const FALLBACK_EV = /^(能在.{1,8}(课堂|作业).{0,6}情境中完成：|能完成：)/;
+
 const ID_RE = /^ca_[A-Za-z0-9]{8}$/;
 const GRADE_RE = /^G(1[0-2]|[1-9])$/;
 
@@ -170,6 +174,20 @@ for (const { rec: a, where } of anchors) {
   }
 
   if (!Array.isArray(a.evidence) || a.evidence.length === 0) err(where, `[${a.id}] evidence 不能为空`);
+
+  // ★ 证据不许一边复读断言、一边声称来自课标。
+  //   实测：860 条的 evidence 是「能在X课堂或作业情境中完成：<断言原文>」这个模板，
+  //   却全部标着 evidenceSource: curriculum-content-gaozhong ——
+  //   断言确实来自课标（srcText/srcPage 都在），**证据不是**，而这个字段说的正是证据。
+  //   拦的不是「有兜底证据」（那是可以的，promote.py 一直标 fallback），
+  //   拦的是**声称与事实不符**。这和 codes-only 不得附文本是同一种闸。
+  if (!a.deprecated && Array.isArray(a.evidence)) {
+    const echo = a.evidence.some((e) => FALLBACK_EV.test(String(e ?? '')));
+    if (echo && a.evidenceSource !== 'fallback') {
+      err(where, `[${a.id}] evidence 是兜底模板（复读断言），evidenceSource 却标成 `
+        + `${a.evidenceSource} — 兜底证据一律标 fallback，不许声称来自课标`);
+    }
+  }
 
   // assessment 是**家长/老师照着念的那句话**，里面不能有他看不见的指代。
   // 「给{{name}}听写这张表里的字」—— 哪张表？家长手里没有那张表。

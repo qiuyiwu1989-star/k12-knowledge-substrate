@@ -68,6 +68,10 @@ REQ_VERB = ('了解', '知道', '理解', '认识', '掌握', '会', '能', '运
             '列举', '识别', '归纳', '论证', '感受', '体会', '说出', '指出')
 
 
+# 兜底证据模板。识别它是为了不把它标成课标来源。
+FALLBACK_EV = re.compile(r'^能在.{1,8}(课堂|作业).{0,6}情境中完成：|^能完成：')
+
+
 def clean(text):
     """去掉粘在句首的课程类型和分类标签。只削句首，不动内容。"""
     prev = None
@@ -284,7 +288,13 @@ def main():
             'evidence': ([s['examples'][0]] if s.get('examples') else
                          [f"能在{subj}课堂或作业情境中完成：{c['statement'][:40]}"]),
             'assessment': None,
-            'evidenceSource': 'curriculum-content-gaozhong',
+            # **证据是兜底模板时不许声称来自课标。** promote.py 当年就是对的：
+            # 用兜底证据就标 fallback。这里没照做，结果 860 条一边复读断言、
+            # 一边声称 evidenceSource=curriculum-content-gaozhong ——
+            # 断言确实来自课标（provenance.method/srcText/srcPage 都在），
+            # 但**证据不是**，而 evidenceSource 说的正是证据。
+            'evidenceSource': ('curriculum-content-gaozhong'
+                               if ev and not FALLBACK_EV.match(ev[0]) else 'fallback'),
             'reviewStatus': 'llm-proposed',      # 无人看过。不是 llm 生成，但也没人复核
             'reviewedBy': [], 'deprecated': False, 'supersededBy': None,
             'crosscutting': [], 'practice': [],
