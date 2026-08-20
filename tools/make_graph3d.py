@@ -16,6 +16,9 @@ make_graph3d.py — 3D 互动图谱（单文件，Canvas 2D 手写投影，无�
 
   python3 tools/make_graph3d.py
 """
+import sys as _sys, pathlib as _pl
+_sys.path.insert(0, str(_pl.Path(__file__).resolve().parent))
+from citable import CITABLE as CITABLE_SET   # noqa: E402
 import argparse, collections, json, math, random
 from pathlib import Path
 import sys
@@ -367,11 +370,14 @@ button.cc u{text-decoration:none;font-size:12px;color:var(--mut);margin-left:aut
 <div id="hero">
   <h1>一个孩子<br>要学的全部<i>。</i></h1>
   <p><b>__NC__</b> 条能力断言、<b>__EC__</b> 条先修依赖，从认字到方程。</p>
-  <p><b>__USE__</b> 条可被个人档案引用（带白边，来自课标附录、判定标准客观）；
-     <b>__OKN__</b> 条通过 AI 学科审查；<b>__BADN__</b> 条被审出问题（画成空心）。</p>
+  <p><b>__USE__</b> 条可被个人档案引用（带白边）—— 其中 <b>__AUTO__</b> 条判定标准客观
+     （字表词表这类数得清的），其余是 <b>AI 看过、没挑出毛病</b>，
+     <b>不是教师签字</b>：教师签字数目前是 <b>__HUMAN__</b>。</p>
+  <p><b>__BADN__</b> 条被 AI 审出问题，画成空心，不可引用。</p>
   <p>每条依赖都写明了<b>什么必须排在前面、为什么</b>。<b>点任意一个点</b>，
      看一个学习者在此之前必须掌握的全部。</p>
-  <p class="lead sub">依据教育部《义务教育课程标准（2022年版）》1,594 页原件逐页解析构建。<br>开放数据 · ODbL 1.0</p>
+  <p class="lead sub">依据教育部《义务教育课程标准（2022年版）》1,594 页
+     与《普通高中课程标准（2017年版2020年修订）》2,276 页原件解析构建。<br>开放数据 · ODbL 1.0</p>
 </div>
 <div id="cta">
   <a href="/list/">全部能力点</a>
@@ -940,10 +946,16 @@ def main():
         'o': outdeg.get(n['id'], 0), 'p': (n.get('provenance') or {}).get('srcPage', ''),
         # 家长向问句直接展示，{{name}} 换成「孩子」——占位符漏到界面上很业余
         'a': (n.get('assessment') or '').replace('{{name}}', '孩子').strip(),
-        # 0未审 1AI过审 2存疑 3可用（auto/expert-confirmed，唯一能被档案引用的）
-        'r': {'ai-reviewed': 1, 'disputed': 2,
-              'auto-confirmed': 3, 'expert-confirmed': 3,
-             'ai-adjudicated': 3}.get(n.get('reviewStatus'), 0),
+        # 0未审 1过审但不可引用 2存疑 3可引用。
+        # **可引用的定义从 mappings/citable.json 现读，不在这里写第二遍。**
+        # 2026-08-20 踩过：底座把 ai-reviewed 纳入可引用之后，这里还硬写着旧集合，
+        # 于是首页一直报 388，而 manifest 已经是 1,422 —— **最显眼的页面成了最后一个知道的**。
+        'r': (3 if n.get('reviewStatus') in CITABLE_SET
+              else 2 if n.get('reviewStatus') == 'disputed'
+              else 1 if n.get('reviewStatus') == 'ai-reviewed' else 0),
+        # 只给上面那几个统计用，序列化前会摘掉 —— 2,158 个节点各带一份多余字段
+        # 就是白占几十 KB，而首页是全站最重的一个文件。
+        '_rs': n.get('reviewStatus'),
         'q': [f"{x.get('type')}｜{x.get('detail','')[:60]}" for x in (n.get('aiIssues') or [])][:3],
         'L': n.get('literacy') or [],
         # 挂了多少清单条目 —— 半径要用它。「背诵《静夜思》」不被任何东西依赖，
@@ -960,8 +972,12 @@ def main():
         'ct': n.get('courseType') or '',
     } for k, n in enumerate(anchors)]
 
+    # 统计用完，摘掉私有字段再序列化 —— 2,158 个节点各带一份多余字段就是白占几十 KB，
+    # 而首页是全站最重的文件。
+    _slim = [{k: v for k, v in n.items() if k != '_rs'} for n in nodes]
+
     html = (HTML.replace('__TITLE__', 'K12 教育的能力结构 · 3D 图谱')
-            .replace('__NODES__', json.dumps(nodes, ensure_ascii=False, separators=(',', ':')))
+            .replace('__NODES__', json.dumps(_slim, ensure_ascii=False, separators=(',', ':')))
             .replace('__EDGES__', json.dumps([[e['prerequisiteId'], e['anchorId']] for e in edges], separators=(',', ':')))
             .replace('__COLORS__', json.dumps(COLORS, ensure_ascii=False))
             .replace('__CCV__', json.dumps(CC_VOCAB, ensure_ascii=False, separators=(',', ':')))
@@ -969,6 +985,8 @@ def main():
             .replace('__OKN__', f"{sum(1 for n in nodes if n['r'] == 1):,}")
             .replace('__BADN__', f"{sum(1 for n in nodes if n['r'] == 2):,}")
             .replace('__USE__', f"{sum(1 for n in nodes if n['r'] == 3):,}")
+            .replace('__AUTO__', f"{sum(1 for n in nodes if n.get('_rs') == 'auto-confirmed'):,}")
+            .replace('__HUMAN__', f"{sum(1 for n in nodes if n.get('_rs') == 'expert-confirmed'):,}")
             .replace('__T0__', f"{sum(1 for n in nodes if n['r'] == 0):,}")
             .replace('__T1__', f"{sum(1 for n in nodes if n['r'] == 1):,}")
             .replace('__T2__', f"{sum(1 for n in nodes if n['r'] == 2):,}")

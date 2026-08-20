@@ -30,6 +30,9 @@ ai_review.py — 让 AI 把明显错的锚点挑出来。**这不是教师复核
     python3 tools/ai_review.py --status ai-reviewed --only 数学
     python3 tools/ai_review.py --dry-run
 """
+import sys as _sys, pathlib as _pl
+_sys.path.insert(0, str(_pl.Path(__file__).resolve().parent))
+from citable import HUMAN_CONFIRMED   # noqa: E402
 import argparse, collections, hashlib, itertools, json, os, random, re, sys, time
 from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
@@ -130,7 +133,11 @@ def main():
     # **AI 复审不许碰已确认的锚点。** 课标附录那批是 auto-confirmed（证据强度最高：
     # 官方来源 + 机械校验 + 判定客观），让主观的 AI 判断去覆盖它，等于自己把分级拆了。
     # 实测教训：第一次没加这条，138 条 auto-confirmed 被重判到只剩 23 条。
-    SKIP = {'auto-confirmed', 'expert-confirmed'}
+    # 不重审「已经确认过」的：机械可判定的（auto）和人签过字的（expert）。
+    # **这不是「可引用集合」** —— ai-reviewed / ai-adjudicated 都在可引用里，
+    # 但它们该被重审。所以这里用 HUMAN_CONFIRMED 加上机械那一档，
+    # 而不是抄一份 CITABLE。判据不同，集合就该不同 —— 但两者都从一处来。
+    SKIP = HUMAN_CONFIRMED | {'auto-confirmed'}
     want = None if a.status == 'all' else set(a.status.split(','))
     if want and (want & SKIP):
         sys.exit(f'不许审已确认的档位：{sorted(want & SKIP)}')
