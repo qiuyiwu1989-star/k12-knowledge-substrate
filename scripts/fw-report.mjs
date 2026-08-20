@@ -143,9 +143,57 @@ for (const d of [...subjects].sort()) {
 }
 L.push('');
 
+// ── 近重复体检 ─────────────────────────────────────────────────────
+// 去重签名只抓「同学科 + 同动词 + 整句去掉动词后完全相同」，
+// **抓不到只差一个括号或一个副词的**：实测漏过 3 组，且两条都标着可引用 ——
+//   「以站立点为正中心（圆心），以钟表盘…」 vs 「以站立点为正中心，以钟表盘…」
+//   「宪法是国家根本法…」 vs 「能准确说出宪法是国家的根本法…」
+// 那是同一件事有了两个 ID，正是底座最该避免的（档案引了其中一个，另一个就成了
+// 同一件事的第二个坐标）。但 0.92 这个阈值**不能自动合并** ——
+// 「过去完成时 / 过去未完成时」「概率 / 条件概率」也在这个区间，它们是真不同。
+// 所以只报告，人来判。
+const tok = (t) => new Set([...t].filter((c) => /[\u4e00-\u9fff0-9a-zA-Z]/.test(c)));
+const liveAnchors = [...A.values()].filter((a) => !a.deprecated);
+const byDisc = {};
+for (const a of liveAnchors) (byDisc[a.discipline] ??= []).push(a);
+const nearDup = [];
+for (const arr of Object.values(byDisc)) {
+  for (let i = 0; i < arr.length; i++) {
+    for (let j = i + 1; j < arr.length; j++) {
+      const x = tok(arr[i].statement), y = tok(arr[j].statement);
+      if (!x.size || !y.size) continue;
+      let inter = 0;
+      for (const c of x) if (y.has(c)) inter++;
+      const jac = inter / (x.size + y.size - inter);
+      if (jac >= 0.92) nearDup.push({ jac, a: arr[i], b: arr[j] });
+    }
+  }
+}
+nearDup.sort((p, q) => q.jac - p.jac);
+const CITABLE_R = new Set(JSON.parse(readFileSync(join(ROOT, 'mappings/citable.json'), 'utf8')).citable);
+const bothCitable = nearDup.filter((d) => CITABLE_R.has(d.a.reviewStatus) && CITABLE_R.has(d.b.reviewStatus));
+L.push('## 近重复断言（只报告，不自动合并）');
+L.push('');
+L.push(`实词+拉丁+数字的 Jaccard ≥ 0.92：**${nearDup.length} 对**，`
+  + `其中 **${bothCitable.length} 对两条都可引用** —— 那是同一件事有了两个 ID，最该先看。`);
+L.push('');
+L.push('**不自动合并**：这个区间里既有真重复（只差一个括号），也有真不同');
+L.push('（「过去完成时／过去未完成时」「概率／条件概率」）。判据交给人。');
+L.push('');
+L.push('```');
+for (const d of nearDup.slice(0, 20)) {
+  const mark = CITABLE_R.has(d.a.reviewStatus) && CITABLE_R.has(d.b.reviewStatus) ? ' ★两条都可引用' : '';
+  L.push(`${d.jac.toFixed(2)}${mark}`);
+  L.push(`   ${d.a.id} [${d.a.reviewStatus}] ${d.a.statement.slice(0, 52)}`);
+  L.push(`   ${d.b.id} [${d.b.reviewStatus}] ${d.b.statement.slice(0, 52)}`);
+}
+L.push('```');
+L.push('');
+
 mkdirSync(join(ROOT, 'reports'), { recursive: true });
 writeFileSync(join(ROOT, 'reports/graph-hygiene.md'), L.join('\n'), 'utf8');
 console.log(`✓ reports/graph-hygiene.md`);
 console.log(`  W101 传递冗余 ${redundant.length} / ${inGraph.length} = ${(redundant.length / inGraph.length * 100).toFixed(0)}%`);
 console.log(`  W102 跨学段≥2 ${far.length}`);
 console.log(`  W103 入度>8   ${hiIn.length}（最高 ${Math.max(0, ...indeg.values())}）`);
+console.log(`  近重复断言    ${nearDup.length} 对（${bothCitable.length} 对两条都可引用）`);

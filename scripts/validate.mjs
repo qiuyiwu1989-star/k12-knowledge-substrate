@@ -257,6 +257,14 @@ for (const { rec: a, where } of anchors) {
   // **指代只有在句内找不到对象时才算悬空。** 第一版没看上下文，
   // 把「你能把『跑、跳、踢』这些字放在一起吗」也判成了悬空 ——
   // 那句的指代对象就在前面，改写反而改成了病句。
+  // ★ assessment 必须带 {{name}} 占位符。
+  //   它存在的全部理由就是**被替换成这个孩子的名字**念出来。
+  //   实测跑出 18 条写成「你能告诉妈妈…」的，还有一条写成「让孩子用计算器算出…」——
+  //   后者是说给家长听的指令，根本不是念给孩子的问句。
+  if (a.assessment && !a.deprecated && !a.assessment.includes('{{name}}')) {
+    err(where, `[${a.id}] assessment 缺 {{name}} 占位符 — 它是给一个具体孩子照着念的，`
+      + `「你能…吗」和「让孩子…」都不对：前者没名字，后者是说给家长的指令`);
+  }
   if (a.assessment && !a.deprecated) {
     const m = a.assessment.match(/这张表|这些字|这些词|这批|该表|上面的/);
     if (m) {

@@ -127,6 +127,7 @@ const CASES = [
   // 命中去重签名 ＝ 它顺利过了可判定闸。
   ['「其他」不算指代词，不误伤',      'anchors/x.jsonl', A({ id: 'ca_TEST0022', discipline: '生物学', statement: '能举例说明其他体液成分参与稳态的调节，如二氧化碳对呼吸运动的调节等', verb: '说明', object: '其他体液成分参与稳态的调节，如二氧化碳对呼吸运动的调节等' }), '去重签名'],
   ['起草证据标 auto-confirmed 被拦',  'anchors/x.jsonl', A({ id: 'ca_TEST0023', evidenceSource: 'evidence-drafted', reviewStatus: 'auto-confirmed', reviewedBy: [] }), '起草证据里的举例是模型选的'],
+  ['assessment 缺 {{name}} 被拦',     'anchors/x.jsonl', A({ id: 'ca_TEST0024', assessment: '你能算出五百零二减二百四十七吗？' }), '缺 {{name}} 占位符'],
   ['兜底证据冒充课标来源被拦',        'anchors/x.jsonl', A({ id: 'ca_TEST0016', evidence: ['能完成：能计算三位数减三位数的退位减法'], evidenceSource: 'curriculum-content-gaozhong' }), '不许声称来自课标'],
   ['codes-only 泄漏文本被拦',         'mappings/x.jsonl', JSON.stringify({ key: 'cn-2022:T.1', framework: 'cn-2022', code: 'T.1', discipline: '数学', stage: 'G1-2', strand: null, title: '测试', summary: '不该出现的原文', textIncluded: false, anchorIds: [], schemaVersion: '0.1.0' }), 'codes-only'],
 ];
