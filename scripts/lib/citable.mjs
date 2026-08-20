@@ -9,3 +9,4 @@ const J = JSON.parse(readFileSync(join(ROOT, 'mappings/citable.json'), 'utf8'));
 export const CITABLE = new Set(J.citable);
 export const HUMAN_CONFIRMED = new Set(J.humanConfirmed);
 export const CITABLE_DECISION = J.decision;
+export const TIERS = J.tiers;   // 图上的成色分档，和 CITABLE 是两件事

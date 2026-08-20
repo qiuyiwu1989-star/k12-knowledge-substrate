@@ -23,10 +23,40 @@
       "改的是「可引用」这条线画在哪，不是改数据本身。"
     ]
   },
-  "citable": ["auto-confirmed", "expert-confirmed", "ai-adjudicated", "ai-reviewed"],
+  "citable": [
+    "auto-confirmed",
+    "expert-confirmed",
+    "ai-adjudicated",
+    "ai-reviewed"
+  ],
   "notCitable": {
     "disputed": "AI 复核挑出了具体问题，问题没解决之前不许被引用",
     "llm-proposed": "没有任何东西看过一眼"
   },
-  "humanConfirmed": ["expert-confirmed"]
+  "humanConfirmed": [
+    "expert-confirmed"
+  ],
+  "tiers": {
+    "about": "图上的**成色分档**。和 citable 是两件事，2026-08-20 拆开的。",
+    "why": [
+      "一度把两者合成一个字段：ai-reviewed 划进最高档之后，「只过了 AI 审查」这一档变成 0 条，",
+      "1,034 条「AI 看过没挑出毛病」和 146 条「机械可判定」在图上画得一模一样 ——",
+      "而首页文案恰恰在强调这两者的区别。**用视觉把不同成色抹平，跟把 disputed 混进去是同一类错。**",
+      "现在：成色决定填充强度（淡→中→空心→实），可引用决定要不要加白边，两者独立。"
+    ],
+    "confirmed": [
+      "auto-confirmed",
+      "expert-confirmed",
+      "ai-adjudicated"
+    ],
+    "aiPassed": [
+      "ai-reviewed"
+    ],
+    "flagged": [
+      "disputed"
+    ],
+    "unseen": [
+      "llm-proposed"
+    ]
+  }
 }

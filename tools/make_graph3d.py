@@ -18,7 +18,7 @@ make_graph3d.py — 3D 互动图谱（单文件，Canvas 2D 手写投影，无�
 """
 import sys as _sys, pathlib as _pl
 _sys.path.insert(0, str(_pl.Path(__file__).resolve().parent))
-from citable import CITABLE as CITABLE_SET   # noqa: E402
+from citable import CITABLE as CITABLE_SET, TIERS   # noqa: E402
 import argparse, collections, json, math, random
 from pathlib import Path
 import sys
@@ -387,13 +387,14 @@ button.cc u{text-decoration:none;font-size:12px;color:var(--mut);margin-left:aut
   <em>开放数据 · ODBL 1.0</em>
 </div>
 <input id="q" placeholder="搜索能力…（回车定位）">
-<div id="qf"><label><input type="checkbox" id="onlyok"> 只看 AI 过审的（__OKN__ 条）</label>
+<div id="qf"><label><input type="checkbox" id="onlyok"> 只看「AI 看过没挑出毛病」的（__OKN__ 条）</label>
 <label style="margin-top:6px"><input type="checkbox" id="onlyusable"> 只看可用锚点（__USE__ 条，带白边）</label></div>
 <div id="tiers"><b>复核到哪一步了</b>
   <div><i class="t0"></i>还没有人看过<em>__T0__</em></div>
-  <div><i class="t1"></i>只过了 AI 审查<em>__T1__</em></div>
+  <div><i class="t1"></i>AI 看过、没挑出毛病 · 可引用<em>__T1__</em></div>
   <div><i class="t2"></i>AI 审出有问题，已挂起<em>__T2__</em></div>
-  <div><i class="t3"></i>可被个人档案引用<em>__T3__</em></div>
+  <div><i class="t3"></i>判定客观或 AI 裁定 · 可引用<em>__T3__</em></div>
+  <div><i class="t3"></i>合计可引用（都带白边）<em>__USE2__</em></div>
   <div><i class="rw"></i>不是课标原话，是我们的主张<em>__RW__</em></div>
 </div>
 <div id="legend"><h4>学科 · 点击开关</h4><div id="ls"></div></div>
@@ -474,7 +475,7 @@ function OFFSET() {
 function draw() {
   ctx.fillStyle = '#080a11'; ctx.fillRect(0, 0, W, H);
   project();
-  const on = k => !off.has(N[k].d) && !(onlyOK && N[k].r !== 1) && !(onlyUse && N[k].r !== 3);
+  const on = k => !off.has(N[k].d) && !(onlyOK && N[k].r !== 1) && !(onlyUse && !N[k].u);
   const zmin = -1400, zspan = 2800;
   const selColor = sel ? (COLOR[byId.get(sel).d] || '#fff') : null;
 
@@ -547,7 +548,7 @@ function draw() {
         ctx.save(); ctx.strokeStyle = 'rgba(180,120,220,.75)'; ctx.lineWidth = 1.2 * DPR;
         ctx.beginPath(); ctx.arc(px[k], py[k], r + 2.2 * DPR, 0, 7); ctx.stroke(); ctx.restore();
       }
-      if (N[k].r === 3 && r > 2 * DPR) {                            // 可用：加一圈亮边
+      if (N[k].u && r > 2 * DPR) {                                  // 可引用：加一圈亮边（r=1 和 r=3 都有）
         ctx.save(); ctx.strokeStyle = 'rgba(255,255,255,.55)'; ctx.lineWidth = 1 * DPR;
         ctx.beginPath(); ctx.arc(px[k], py[k], r + 1.6 * DPR, 0, 7); ctx.stroke(); ctx.restore();
       }
@@ -749,7 +750,7 @@ function show(n, push = true) {
       课标只要求「知道 / 了解」，这条能力要求是永乐在此之上提的判断。
       它单独统计、可单独撤掉，不计入「来自课标」的条数。</div>` : ''}
     ${n.ct ? `<div class="ctbox">${esc(n.ct)}课程${n.ct === '必修' ? ' —— 所有学生都该有' : ' —— 学生自选，没学过不等于没学会'}</div>` : ''}
-    ${n.r === 3 ? `<div class="okbox"><b>可被个人档案引用</b>
+    ${n.u ? `<div class="okbox"><b>可被个人档案引用</b>
       来自课标附录、经编号连续性机械校验、判定标准客观 —— 全库唯一不需要教师复核的一类。</div>` : ''}
     ${n.r === 2 ? `<div class="warnbox"><b>AI 学科审查认为这条有问题</b>${
       (n.q || []).map(q => `<div>· ${esc(q.split('｜')[1] || q)}</div>`).join('')}</div>` : ''}
@@ -828,7 +829,7 @@ function autoFitTween() { const z0 = zoom, X0 = panX, Y0 = panY;
 function pick(mx, my) {
   let best = -1, bd = 24 * 24;
   for (let k = 0; k < N.length; k++) {
-    if (off.has(N[k].d) || (onlyOK && N[k].r !== 1) || (onlyUse && N[k].r !== 3)) continue;
+    if (off.has(N[k].d) || (onlyOK && N[k].r !== 1) || (onlyUse && !N[k].u)) continue;
     const dx = mx * DPR - px[k], dy = my * DPR - py[k], d = dx * dx + dy * dy;
     if (d < bd) { bd = d; best = k; }
   }
@@ -950,9 +951,17 @@ def main():
         # **可引用的定义从 mappings/citable.json 现读，不在这里写第二遍。**
         # 2026-08-20 踩过：底座把 ai-reviewed 纳入可引用之后，这里还硬写着旧集合，
         # 于是首页一直报 388，而 manifest 已经是 1,422 —— **最显眼的页面成了最后一个知道的**。
-        'r': (3 if n.get('reviewStatus') in CITABLE_SET
-              else 2 if n.get('reviewStatus') == 'disputed'
-              else 1 if n.get('reviewStatus') == 'ai-reviewed' else 0),
+        # **成色（r）和「可不可引用」（c）是两件事，2026-08-20 拆开。**
+        # 一度把两者合成一个 r：ai-reviewed 划进 r=3 之后，「只过了 AI 审查」
+        # 这一档变成 0 条，1,034 条「AI 看过没挑出毛病」和 146 条「机械可判定」
+        # 在图上画得一模一样 —— 而首页文案恰恰在强调这两者的区别。
+        # **用视觉把不同成色抹平，跟当初把 disputed 混在里面是同一类错。**
+        'r': (3 if n.get('reviewStatus') in TIERS['confirmed']
+              else 2 if n.get('reviewStatus') in TIERS['flagged']
+              else 1 if n.get('reviewStatus') in TIERS['aiPassed'] else 0),
+        # 字段名叫 u 不叫 c —— **c 已经被「挂了多少清单条目」占着**，
+        # 半径公式在用它。撞名不会报错，只会让半径和过滤同时悄悄错掉（实测过）。
+        'u': 1 if n.get('reviewStatus') in CITABLE_SET else 0,
         # 只给上面那几个统计用，序列化前会摘掉 —— 2,158 个节点各带一份多余字段
         # 就是白占几十 KB，而首页是全站最重的一个文件。
         '_rs': n.get('reviewStatus'),
@@ -984,7 +993,7 @@ def main():
             .replace('__NC__', f"{len(nodes):,}").replace('__EC__', f"{len(edges):,}")
             .replace('__OKN__', f"{sum(1 for n in nodes if n['r'] == 1):,}")
             .replace('__BADN__', f"{sum(1 for n in nodes if n['r'] == 2):,}")
-            .replace('__USE__', f"{sum(1 for n in nodes if n['r'] == 3):,}")
+            .replace('__USE__', f"{sum(1 for n in nodes if n.get('u')):,}")
             .replace('__AUTO__', f"{sum(1 for n in nodes if n.get('_rs') == 'auto-confirmed'):,}")
             .replace('__HUMAN__', f"{sum(1 for n in nodes if n.get('_rs') == 'expert-confirmed'):,}")
             .replace('__T0__', f"{sum(1 for n in nodes if n['r'] == 0):,}")
@@ -992,6 +1001,7 @@ def main():
             .replace('__T2__', f"{sum(1 for n in nodes if n['r'] == 2):,}")
             .replace('__T3__', f"{sum(1 for n in nodes if n['r'] == 3):,}")
             .replace('__RW__', f"{sum(1 for n in nodes if n.get('rw')):,}")
+            .replace('__USE2__', f"{sum(1 for n in nodes if n.get('u')):,}")
             .replace('__DC__', str(len({n['d'] for n in nodes})))
             .replace('__HGT__', str(HGT))
             .replace('__SMAX__', str(STAGE_MAX - 1)))
