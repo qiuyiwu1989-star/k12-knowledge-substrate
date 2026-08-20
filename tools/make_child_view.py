@@ -19,11 +19,14 @@ make_child_view.py — 「一个孩子的视角」：底座摊到一个具体学
 
     python3 tools/make_child_view.py
 """
+import sys as _sys, pathlib as _pl
+_sys.path.insert(0, str(_pl.Path(__file__).resolve().parent))
+from citable import CITABLE as CITABLE_SET   # noqa: E402
 import collections, glob, html, json
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
-USE = {'auto-confirmed', 'expert-confirmed', 'ai-adjudicated'}
+USE = CITABLE_SET   # 定义见 mappings/citable.json，不在这里写第二遍
 BANDS = [('G1-2', 1, 2, '一二年级'), ('G3-4', 3, 4, '三四年级'),
          ('G5-6', 5, 6, '五六年级'), ('G7-9', 7, 9, '初中'),
          # 高中课标按模块给内容不按年级，所以这一档是整个高中三年。

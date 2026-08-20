@@ -12,6 +12,9 @@ make_state_page.py — 从仓库真实状态生成「现状 + 下一步」页。
 
     python3 tools/make_state_page.py
 """
+import sys as _sys, pathlib as _pl
+_sys.path.insert(0, str(_pl.Path(__file__).resolve().parent))
+from citable import CITABLE as CITABLE_SET   # noqa: E402
 import glob, html, json, subprocess
 from pathlib import Path
 
@@ -92,7 +95,7 @@ TODOS = [
 def snapshot():
     A = load_anchors()
     live = [a for a in A if not a.get('deprecated')]
-    USE = {'auto-confirmed', 'expert-confirmed', 'ai-adjudicated'}
+    USE = CITABLE_SET   # 定义见 mappings/citable.json，不在这里写第二遍
     use = [a for a in live if a['reviewStatus'] in USE]
 
     def gnum(g):

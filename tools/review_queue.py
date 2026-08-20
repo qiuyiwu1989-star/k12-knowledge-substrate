@@ -16,11 +16,14 @@ MATRIX 锚点只影响它自己。所以队列必须按杠杆排序，老师从�
 
     python3 tools/review_queue.py
 """
+import sys as _sys, pathlib as _pl
+_sys.path.insert(0, str(_pl.Path(__file__).resolve().parent))
+from citable import CITABLE as CITABLE_SET   # noqa: E402
 import collections, glob, html, json
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
-USABLE = {'auto-confirmed', 'expert-confirmed'}
+USABLE = CITABLE_SET   # 定义见 mappings/citable.json，不在这里写第二遍
 
 
 def load():

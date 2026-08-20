@@ -17,6 +17,7 @@ import { createHash } from 'node:crypto';
 import { readFileSync, readdirSync, statSync, existsSync } from 'node:fs';
 import { dirname, resolve, join, relative } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { CITABLE } from './lib/citable.mjs';
 import { checkDecidable } from './lib/decidability.mjs';
 import { dedupeSignature, findUnnormalized } from './lib/normalize.mjs';
 import { check as schemaCheck } from './lib/schema-check.mjs';
@@ -148,9 +149,9 @@ const MAX_IN_DEGREE = 8;
 // 学段带：义务教育四段 + 高中。跨两带以上的先修边多为伪边（W102）。
 const BAND = (g) => (g <= 2 ? 0 : g <= 4 ? 1 : g <= 6 ? 2 : g <= 9 ? 3 : 4);
 
-// 「可用」的唯一定义。scripts/sync-docs.mjs 里有同名集合，两处必须一致 ——
-// usableAnchors 是对外承诺的那个数字。
-const USABLE_STATUS = new Set(['auto-confirmed', 'expert-confirmed', 'ai-adjudicated']);
+// 「可用」的定义**不在这里** —— 见 mappings/citable.json，Node 与 Python 共读一份。
+// 2026-08-20 之前它散落 8 处、三种取值，是这个仓库反复栽的那一类错。
+const USABLE_STATUS = CITABLE;
 
 const ID_RE = /^ca_[A-Za-z0-9]{8}$/;
 const GRADE_RE = /^G(1[0-2]|[1-9])$/;
@@ -671,7 +672,7 @@ console.log(
   `  候选 ${candIds.size}（未复核，禁止被档案引用）：` +
     Object.entries(candByDisc).sort((a, b) => b[1] - a[1]).map(([k, v]) => `${k} ${v}`).join(' · ') + `\n` +
   `  复核 ${Object.entries(reviewCount).sort((a, b) => b[1] - a[1]).map(([k, v]) => `${k} ${v}`).join(' / ') || '—'}\n` +
-  `  可用 ${usableCount}（auto-confirmed + ai-adjudicated + expert-confirmed）· 教师签字 ${
+  `  可用 ${usableCount}（${[...USABLE_STATUS].join(' + ')}）· 教师签字 ${
     [...byId.values()].filter(({ a }) => !a.deprecated && (a.reviewedBy ?? []).some((r) => !String(r).startsWith('ai:'))).length}\n` +
   `  边 ${seenEdge.size} · 清单条目 ${lists.length} · 课标映射 ${mapKeys.size}\n` +
   `  可判定性、规范化、去重签名、无环、档位规则、codes-only 全部通过` +

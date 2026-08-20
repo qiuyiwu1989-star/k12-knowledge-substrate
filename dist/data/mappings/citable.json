@@ -1,0 +1,32 @@
+{
+  "schemaVersion": "0.1.0",
+  "about": "「可被 L3 档案引用」的唯一定义。这一份是唯一真相，Node 与 Python 全部现读，不许各写一份。",
+  "why": [
+    "2026-08-20 之前这个集合在仓库里散落 8 处、三种不同取值（有的含 ai-adjudicated 有的不含）。",
+    "同一个概念多份定义，是这个仓库反复栽跟头的那一类错 —— 重复的核心素养词表、",
+    "没人跑的 schema、各自实现的去重签名，都是同一个病。合并成一份文件，改一处即全改。"
+  ],
+  "decision": {
+    "date": "2026-08-20",
+    "by": "邱懿武（明示：「都改成不需要签字 先上」）",
+    "change": "把 ai-reviewed 纳入可引用集合。可用锚点 388 → AI 复核过且未被挑出问题的全部。",
+    "rationale": [
+      "教师签字通道本来就还没开（用户明示先不引入外部教师），388 这个数被卡在那里不是因为数据不好，",
+      "而是因为唯一能抬它的那一步不做。继续把 1,015 条 AI 复核过的锚点标成「不可引用」，",
+      "等于让底座对外没有可用规模。",
+      "被挑出问题的 disputed 和从没审过的 llm-proposed **仍然不可引用** —— 放宽的是",
+      "「AI 看过、没挑出毛病」这一档，不是全部放行。"
+    ],
+    "notKept": [
+      "**没有伪造任何教师签字。** expert-confirmed 仍是 0，reviewedBy 里没有加过一条人名。",
+      "humanConfirmedAnchors 依然如实报 0，并且仍在首页最显眼处。",
+      "改的是「可引用」这条线画在哪，不是改数据本身。"
+    ]
+  },
+  "citable": ["auto-confirmed", "expert-confirmed", "ai-adjudicated", "ai-reviewed"],
+  "notCitable": {
+    "disputed": "AI 复核挑出了具体问题，问题没解决之前不许被引用",
+    "llm-proposed": "没有任何东西看过一眼"
+  },
+  "humanConfirmed": ["expert-confirmed"]
+}

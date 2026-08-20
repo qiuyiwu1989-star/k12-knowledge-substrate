@@ -5,6 +5,7 @@
  *
  *   node scripts/manifest.mjs
  */
+import { CITABLE, HUMAN_CONFIRMED } from './lib/citable.mjs';
 import { createHash } from 'node:crypto';
 import { readFileSync, readdirSync, statSync, existsSync, writeFileSync } from 'node:fs';
 import { dirname, resolve, join, relative } from 'node:path';
@@ -61,12 +62,13 @@ const manifest = {
   // 所以「可用锚点数」= 总数 - llm-proposed 数。
   // 唯一重要的进度指标：候选不算数，llm-proposed 不算数，只有复核过的才是可用锚点
   // 唯一重要的指标：只有教师复核过（或三源证据自动确认）的才算可用。
-  // ai-reviewed 不算 —— AI 审查是筛子不是合格证。
-  // ai-adjudicated 计入可用：用户明示授权「AI 先判、人有异议再改」。
-  // 但它在 byReview 里仍单列，任何消费方都能一眼看出哪些是人签过字的。
-  usableAnchors: (byReview['expert-confirmed'] ?? 0) + (byReview['auto-confirmed'] ?? 0)
-                 + (byReview['ai-adjudicated'] ?? 0),
-  humanConfirmedAnchors: byReview['expert-confirmed'] ?? 0,
+  // **2026-08-20 起 ai-reviewed 也计入**（用户明示：「都改成不需要签字 先上」）。
+  // 放宽的是「AI 看过、没挑出毛病」这一档；disputed 和 llm-proposed 仍然不可引用。
+  // **没有伪造任何教师签字** —— humanConfirmedAnchors 依然如实报 0，
+  // byReview 里每一档仍单列，任何消费方都能一眼看出哪些是人签过字的（答案是没有）。
+  // 定义见 mappings/citable.json。
+  usableAnchors: [...CITABLE].reduce((n, k) => n + (byReview[k] ?? 0), 0),
+  humanConfirmedAnchors: [...HUMAN_CONFIRMED].reduce((n, k) => n + (byReview[k] ?? 0), 0),
   // 分子分母都要给：说「1,111 条来自课标」时，得能立刻看出其中多少不是。
   rewrittenAnchors,
   curriculumDerivedAnchors: (counts.anchors - deprecatedAnchors) - rewrittenAnchors,

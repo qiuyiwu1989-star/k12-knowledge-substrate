@@ -21,6 +21,7 @@
  * 文档里写 `<!--N:键名-->随便什么占位<!--/N-->`，然后在下面 VALUES 里加同名键。
  * 值可以是数字、字符串，或整块 markdown（表格就是这么灌的）。
  */
+import { CITABLE } from './lib/citable.mjs';
 import { readFileSync, writeFileSync, readdirSync, statSync, existsSync } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -41,7 +42,8 @@ const live = anchors.filter((a) => !a.deprecated);
 
 // 可用集合的定义只此一处。它曾经被写成「总数 − llm-proposed」，那是错的 ——
 // ai-reviewed 和 disputed 都不可用，按那个算法却算进去了。
-const USABLE = new Set(['auto-confirmed', 'expert-confirmed', 'ai-adjudicated']);
+// 定义见 mappings/citable.json —— 不在这里写第二遍
+const USABLE = CITABLE;
 const R = M.counts.byReview;
 const n = (k) => R[k] || 0;
 
@@ -87,9 +89,9 @@ const reviewTable = [
   row('auto-confirmed', null, '能'),
   row('ai-adjudicated', null, '能（AI 裁定，**待人工异议**）'),
   row('expert-confirmed', null, '能'),
-  row('ai-reviewed', null, '不能 —— AI 审查是筛子不是合格证'),
-  row('disputed', null, '不能'),
-  row('llm-proposed', null, '不能'),
+  row('ai-reviewed', null, '能（2026-08-20 起 —— **AI 看过、没挑出毛病**，不是教师签字）'),
+  row('disputed', null, '**不能** —— AI 复核挑出了具体问题'),
+  row('llm-proposed', null, '**不能** —— 没有任何东西看过一眼'),
   `| **存活合计** | **${M.counts.liveAnchors}** | 其中 **${usable}** 可用 |`,
 ].join('\n');
 
@@ -113,6 +115,8 @@ const VALUES = {
   crossPct: (cross / edges.length * 100).toFixed(1),
   autoConfirmed: n('auto-confirmed'),
   aiAdjudicated: n('ai-adjudicated'),
+  aiReviewedCount: n('ai-reviewed'),
+  humanConfirmed2: M.humanConfirmedAnchors,
   // 「reviewedBy 非空」和「教师签字」是两回事 —— 前者含 ai:extraction-pipeline。
   // PROVENANCE 里专门解释这个坑，那句里的数字也得跟着数据走。
   aiSigned: live.filter((a) => (a.reviewedBy || []).length).length,

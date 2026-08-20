@@ -18,6 +18,9 @@ profile_demo.py — 参考实现：一个产品怎么把档案写在底座上，
 
   python3 tools/profile_demo.py
 """
+import sys as _sys, pathlib as _pl
+_sys.path.insert(0, str(_pl.Path(__file__).resolve().parent))
+from citable import CITABLE as CITABLE_SET   # noqa: E402
 import collections, json, random, sys
 from pathlib import Path
 
@@ -42,7 +45,7 @@ for e in edges:
 
 # ── 只有 usable 的锚点能被档案引用。这条规则是整个底座的分界线，
 #    demo 里也必须守 —— 一旦这里放水，生产里就没人守得住。
-USABLE = {'auto-confirmed', 'expert-confirmed'}
+USABLE = CITABLE_SET   # 定义见 mappings/citable.json，不在这里写第二遍
 usable = {k: v for k, v in anchors.items() if v['reviewStatus'] in USABLE}
 print(f"可被档案引用的锚点：{len(usable)} / {len(anchors)}")
 if not usable:

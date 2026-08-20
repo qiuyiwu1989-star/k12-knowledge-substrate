@@ -102,6 +102,9 @@ manifest.json 只取版本号和日期。**没有一个手打的数** —— 手
     （家长视图里显示「需接入档案」，L3 永不进仓库）。
   · 不写 dist/ —— 主进程统一并入，本工具只产 anchor-pages/。
 """
+import sys as _sys, pathlib as _pl
+_sys.path.insert(0, str(_pl.Path(__file__).resolve().parent))
+from citable import CITABLE as CITABLE_SET   # noqa: E402
 import collections, html, json, shutil
 from pathlib import Path
 
@@ -110,7 +113,7 @@ OUT = ROOT / 'anchor-pages'
 REPO = 'https://github.com/qiuyiwu1989-star/k12-knowledge-substrate'
 
 # 交接包的 citable 在仓库里没有对应字段，由 reviewStatus 现推（specs/000-naming.md）
-CITABLE = {'auto-confirmed', 'expert-confirmed', 'ai-adjudicated'}
+CITABLE = CITABLE_SET   # 定义见 mappings/citable.json，不在这里写第二遍
 
 STATUS_CN = {
     'auto-confirmed':   ('机械可判定', '判定客观（写对／读对／数得清），根本不需要人复核'),
