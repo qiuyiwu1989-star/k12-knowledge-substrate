@@ -359,9 +359,10 @@
         "capability-rewrite",
         "repaired-from-source",
         "llm-draft",
-        "fallback"
+        "fallback",
+        "evidence-drafted"
       ],
-      "description": "evidence 从哪来。**capability-rewrite 必须能被一眼认出**：那一层不是课标转述，是我们自己的教育判断，validate 对它有六条专门的闸。"
+      "description": "evidence 从哪来。**capability-rewrite 必须能被一眼认出**：那一层不是课标转述，是我们自己的教育判断，validate 对它有六条专门的闸。\n`evidence-drafted`：**证据是模型起草的**（2026-08-20，替换 308 条兜底模板）。断言仍是课标转述、一个字没动，只有「怎么看出他会」是我们写的。「不许编原文没有的事实」这一条**没有可判定的机器闸**（试过两种实现都误伤，详见 tools/fix_fallback_evidence.py 文件头），所以这个标记是承重件：单独可查、单独统计、能一条命令撤掉，且永远够不到 auto-confirmed。"
     },
     "provenance": {
       "type": "object",

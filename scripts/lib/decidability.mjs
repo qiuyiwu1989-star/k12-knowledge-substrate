@@ -238,6 +238,25 @@ export function checkDecidable(statement) {
     reasons.push(`悬空指代「${dangling[0]}」：脱离上下文无法判断指什么，需把指代对象写进断言`);
   }
 
+  // 6b) 裸指代词。上面那条只认「这些/上述」这类，**认不出裸的「它/其/该/此」**：
+  //     「能知道它是史料中最重要的部分」—— 「它」指的是课标原文里的「文献史料」，
+  //     脱离原文这条断言什么都没说，而它一度是可引用的。
+  //
+  //     判据：指代词**前面找不到先行词**才算悬空 —— 前面有具名（引号书名号）
+  //     或够 6 个实词，就说明指代对象就在句内。
+  //     「其他/及其/尤其/极其」里的「其」不是指代词，实测这两个是仅有的假阳性。
+  const stripped = s.replace(/^(能够|能|会|学会)/, '');
+  const NOT_PRON = /其他|其它|其次|其余|尤其|极其|与其|及其|其间|何其/;
+  for (const m of stripped.matchAll(/(它们|它|其|该|此)/g)) {
+    if (NOT_PRON.test(stripped.slice(Math.max(0, m.index - 1), m.index + 2))) continue;
+    const before = stripped.slice(0, m.index);
+    if (/[「」『』《》""'']/.test(before)) break;
+    if ([...before].filter((c) => c >= '\u4e00' && c <= '\u9fff').length >= 6) break;
+    reasons.push(`悬空指代「${m[1]}」：句内找不到它指的是什么 —— 指代对象在课标原文里，`
+      + `切下来就丢了，必须写进断言`);
+    break;
+  }
+
   // 7) 真谓语是虚动词。「能在解决问题的过程中，体会解决问题的道理」——
   //    「解决」在动词表里所以过了闸，但句子真正要求的是「体会」。
   //    判据：末尾那个动词才是谓语。

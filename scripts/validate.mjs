@@ -191,6 +191,13 @@ for (const { rec: a, where } of anchors) {
       gate('assessmentSpec')(where,
         `F206 [${a.id}] 可被档案引用却拿兜底模板当证据 — 证据复读了断言，说不出凭什么判他会`);
     }
+    // 起草的证据永远够不到 auto-confirmed —— 那一档的含义是「判定客观、
+    // 根本不需要人」，而起草证据里的举例是模型选的，恰恰需要人看一眼。
+    // 和 capability-rewrite 不许标 auto-confirmed 是同一条纪律。
+    if (a.evidenceSource === 'evidence-drafted' && a.reviewStatus === 'auto-confirmed') {
+      err(where, `[${a.id}] 证据是起草的（evidence-drafted）却标 auto-confirmed — `
+        + `那一档的含义是「判定客观、不需要人」，而起草证据里的举例是模型选的`);
+    }
     if (a.evidenceSource === 'capability-rewrite' && !a.provenance?.why) {
       err(where, `F203 [${a.id}] 是我们自己的主张（capability-rewrite）却没写理由 — `
         + `这一层不是课标转述，凭什么加这一条必须写下来`);

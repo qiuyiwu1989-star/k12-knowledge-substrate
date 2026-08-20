@@ -122,6 +122,11 @@ const CASES = [
   //   顺便掩盖了动词表漏掉「指出/推测/提出/数出」这件事。修掉子串匹配才露出来。
   ['名词里的动词不算谓语',            'anchors/x.jsonl', A({ id: 'ca_TEST0019', statement: '能从人类文明发展和世界文化交流的角度', verb: '交流', object: '角度' }), '无可观察行为动词'],
   ['状语残句被拦',                    'anchors/x.jsonl', A({ id: 'ca_TEST0020', statement: '能在对都城繁荣的分析过程中进行分析过程中', verb: '分析', object: '都城繁荣' }), '残句'],
+  ['裸指代词悬空被拦',                'anchors/x.jsonl', A({ id: 'ca_TEST0021', statement: '能知道它是史料中最重要的部分', verb: '说出', object: '史料中最重要的部分' }), '悬空指代「它」'],
+  // 正对照：这句含「其他」，如果裸指代词规则误伤它，就会先报「不可判定」而不是「去重签名」。
+  // 命中去重签名 ＝ 它顺利过了可判定闸。
+  ['「其他」不算指代词，不误伤',      'anchors/x.jsonl', A({ id: 'ca_TEST0022', discipline: '生物学', statement: '能举例说明其他体液成分参与稳态的调节，如二氧化碳对呼吸运动的调节等', verb: '说明', object: '其他体液成分参与稳态的调节，如二氧化碳对呼吸运动的调节等' }), '去重签名'],
+  ['起草证据标 auto-confirmed 被拦',  'anchors/x.jsonl', A({ id: 'ca_TEST0023', evidenceSource: 'evidence-drafted', reviewStatus: 'auto-confirmed', reviewedBy: [] }), '起草证据里的举例是模型选的'],
   ['兜底证据冒充课标来源被拦',        'anchors/x.jsonl', A({ id: 'ca_TEST0016', evidence: ['能完成：能计算三位数减三位数的退位减法'], evidenceSource: 'curriculum-content-gaozhong' }), '不许声称来自课标'],
   ['codes-only 泄漏文本被拦',         'mappings/x.jsonl', JSON.stringify({ key: 'cn-2022:T.1', framework: 'cn-2022', code: 'T.1', discipline: '数学', stage: 'G1-2', strand: null, title: '测试', summary: '不该出现的原文', textIncluded: false, anchorIds: [], schemaVersion: '0.1.0' }), 'codes-only'],
 ];
