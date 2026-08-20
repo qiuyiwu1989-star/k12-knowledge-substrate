@@ -51,7 +51,28 @@ function sample() {
   const know = all.find((a) => a.type === 'KNOWLEDGE');
   const notKnow = all.find((a) => a.type !== 'KNOWLEDGE' && a.discipline === know?.discipline)
                ?? all.find((a) => a.type !== 'KNOWLEDGE');
-  return { early: g(early), late: g(late), list: g(list[0]), matrix: g(mat[0]), matrix2: g(mat[1]),
+  // 一对真实存在的 MATRIX→MATRIX 边端点。用来验「拆分边豁免 MATRIX 不得 hard」——
+  // 拿两条随便的 MATRIX 锚点会撞上学段倒挂，那个错会盖住要验的东西。
+  const allA = Object.values(byTrack).flat();
+  const byIdM = Object.fromEntries(allA.map((a) => [a.id, a]));
+  let mm = null;
+  const walkE = (d) => readdirSync(d).forEach((n) => {
+    const p2 = join(d, n);
+    if (statSync(p2).isDirectory()) return walkE(p2);
+    if (!p2.endsWith('.jsonl') || mm) return;
+    for (const l of readFileSync(p2, 'utf8').split('\n')) {
+      if (!l.trim() || mm) continue;
+      const e = JSON.parse(l);
+      if (e.retired) continue;
+      const a = byIdM[e.anchorId], p3 = byIdM[e.prerequisiteId];
+      if (a && p3 && a.track === 'MATRIX' && p3.track === 'MATRIX' && !a.deprecated && !p3.deprecated) {
+        mm = { to: e.anchorId, from: e.prerequisiteId };
+      }
+    }
+  });
+  walkE(join(ROOT, 'edges'));
+
+  return { early: g(early), late: g(late), mm, list: g(list[0]), matrix: g(mat[0]), matrix2: g(mat[1]),
            know: { ...g(know), type: know.type }, notKnow: { ...g(notKnow), type: notKnow.type } };
 }
 const S = sample();
@@ -128,6 +149,11 @@ const CASES = [
   ['「其他」不算指代词，不误伤',      'anchors/x.jsonl', A({ id: 'ca_TEST0022', discipline: '生物学', statement: '能举例说明其他体液成分参与稳态的调节，如二氧化碳对呼吸运动的调节等', verb: '说明', object: '其他体液成分参与稳态的调节，如二氧化碳对呼吸运动的调节等' }), '去重签名'],
   ['起草证据标 auto-confirmed 被拦',  'anchors/x.jsonl', A({ id: 'ca_TEST0023', evidenceSource: 'evidence-drafted', reviewStatus: 'auto-confirmed', reviewedBy: [] }), '起草证据里的举例是模型选的'],
   ['assessment 缺 {{name}} 被拦',     'anchors/x.jsonl', A({ id: 'ca_TEST0024', assessment: '你能算出五百零二减二百四十七吗？' }), '缺 {{name}} 占位符'],
+  // 拆原子：母条不弃用，子条以 component 边指向它。两条豁免各验一次 ——
+  // 豁免写错了不会报错，只会「本该拦的没拦」。
+  ['拆分边豁免 MATRIX 不得 hard',    'edges/x.jsonl',   E({ anchorId: S.mm.to, prerequisiteId: S.mm.from, strength: 'hard', type: 'component', failureSignature: '能做母条其余部分，唯独这一段做不出来，错点就落在这里', evidence: [{ kind: 'set-containment', detail: '子条文字全部来自母条原句，机器校验' }], reason: '这是拆分出来的子动作，属于母条的一部分' }), '重复边'],
+  ['非拆分的 MATRIX hard 边照拦',    'edges/x.jsonl',   E({ anchorId: S.mm.to, prerequisiteId: S.mm.from, strength: 'hard', type: 'component', failureSignature: '能做母条其余部分，唯独这一段做不出来，错点就落在这里', evidence: [{ kind: 'expert', detail: '教研员判断，不是机器校验的包含关系' }], reason: '这是拆分出来的子动作，属于母条的一部分' }), 'MATRIX 档不得有 hard 边'],
+  ['起草证据不许洗掉转写标记',        'anchors/x.jsonl', A({ id: 'ca_TEST0025', evidenceDrafted: true, reviewStatus: 'auto-confirmed', reviewedBy: [] }), '起草证据里的举例是模型选的'],
   ['兜底证据冒充课标来源被拦',        'anchors/x.jsonl', A({ id: 'ca_TEST0016', evidence: ['能完成：能计算三位数减三位数的退位减法'], evidenceSource: 'curriculum-content-gaozhong' }), '不许声称来自课标'],
   ['codes-only 泄漏文本被拦',         'mappings/x.jsonl', JSON.stringify({ key: 'cn-2022:T.1', framework: 'cn-2022', code: 'T.1', discipline: '数学', stage: 'G1-2', strand: null, title: '测试', summary: '不该出现的原文', textIncluded: false, anchorIds: [], schemaVersion: '0.1.0' }), 'codes-only'],
 ];

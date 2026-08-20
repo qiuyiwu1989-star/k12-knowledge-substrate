@@ -493,6 +493,10 @@
         "srcTextFullLen": {
           "type": "integer",
           "description": "被 fix_srctext.py 替换掉的原整段字数。留着是为了能看出这条修得有多狠（最长的原是 3,684 字）。"
+        },
+        "splitFrom": {
+          "type": "string",
+          "description": "这条原子是从哪条复合母条拆出来的（tools/atomize.py）。\n**母条不弃用** —— 它是课标自己的单位、真实存在，而且弃用会让指向它的现存边全部悬空。子条与母条之间建 component 边（子动作），母条标 composite。"
         }
       },
       "additionalProperties": false
@@ -727,10 +731,19 @@
           "evidence-weak",
           "stage",
           "topic-missing",
-          "independent-check-suspect"
+          "independent-check-suspect",
+          "composite"
         ]
       },
       "description": "**字段级**缺陷，与 reviewStatus 分开。\nreviewStatus 回答的是「这条断言成不成立」；evidence 写得弱、stage 标错，都是别的字段的毛病，不该让断言替它们背锅（2026-08-20 之前混在一起，45 条断言没问题的锚点因为证据弱被踢出了可引用集合）。\n详情页必须把它显示出来 —— 可引用不等于每个字段都好。"
+    },
+    "composite": {
+      "type": "boolean",
+      "description": "这条是**复合要求**，已拆出可分别判定的原子（子条通过 component 边指向它）。\n课标那条复合要求本来就真实存在，所以它不弃用；但档案该记原子，不该记它 ——记「会/不会」这条复合的，会出现「半会」，而半会不是一个能记录的状态。\n详情页必须提示这一点。"
+    },
+    "evidenceDrafted": {
+      "type": "boolean",
+      "description": "证据是模型起草的。**和 evidenceSource 分开记**：\nevidenceSource 说的是「这条断言从哪来」，其中 capability-rewrite 意味着**断言本身是我们自己的主张** —— 那个标记比证据来源要紧得多，不能被覆盖。\n（2026-08-20 踩过：起草工具把 28 条 capability-rewrite 覆盖成 evidence-drafted，等于把「这是我们的主张」这句话洗掉了。）"
     }
   }
 }

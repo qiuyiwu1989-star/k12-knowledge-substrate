@@ -41,10 +41,15 @@ atomize.py — 判定锚点是不是**原子**，能机械拆的拆开。
      「运用所学知识分析其特点和表现作用」的「其」指向空气。
      validate.mjs 早有一条同类检查（管 assessment 的），这里是同一个道理。
 
-## 拆出来的和母条是「组成」，不是「先修」
+## 母条不弃用 —— 这是最重要的一个决定
 
-「会写 3000」不是「会读 3000」的后继 —— 它们没有先后。所以新增一种边
-`composes`，母条由子条组成。硬塞进 prerequisite 会污染整张先修图。
+最初想「子条取代母条 → 弃用母条」，那会让**指向母条的现存边全部悬空**，
+而该改指哪个子条机械上判不出来。为这个卡了一轮。
+
+解法是换个看法：**子条不是母条的替代品，是母条的子动作。**
+而 specs/001 的 `component` 定义就是「前置是后继的子动作」—— 一字不差。
+所以建 `子 → 母` 的 component 边，母条原样活着，**一条边都不悬空**。
+母条标 `composite`，详情页提示「档案该记原子，不该记它」。
 
 ## 召回边界（说在前面）
 
@@ -310,40 +315,91 @@ FILE = {'数学': 'math', '语文': 'chinese', '英语': 'english', '物理': 'p
 
 
 def write(files, kept):
+    """落盘。**母条不弃用** —— 这是这个工具最重要的一个设计决定。
+
+    最初的设计是「母条被子条取代 → 弃用母条」。那会让**指向母条的现存先修边
+    全部悬空**，而该改指哪个子条机械上判不出来（原来那条边指的是
+    「会读 3000」还是「会写 3000」？）。为这个问题卡了一轮没做。
+
+    解法是换个看法：**子条不是母条的替代品，是母条的子动作。**
+    而 specs/001 的 `component` 类型定义正好就是「前置是后继的子动作，
+    不具备时某一步系统性地错、错点能定位」—— 一字不差。
+
+    所以：
+      · 母条原样活着，**一条边都不悬空**
+      · 子条作为新锚点入库，各自可判定
+      · 建 `子 → 母` 的 component 边，strength=hard（缺一个部件就做不成整体）
+      · 母条标 `composite`，详情页提示「记录原子而不是它」
+
+    课标那条复合要求本来就真实存在（它是课标自己的单位），
+    原子是我们加的判定粒度。两者并存，各查各的。
+
+    边的 evidence 是 **set-containment**：子条文字全部来自母条原句，
+    机器校验过。这不是模型判断，所以它有资格豁免「MATRIX 档不得有 hard 边」——
+    那条规则防的是**发明**出来的依赖，而包含关系不是发明的。
+    """
     used = load_used_ids(ROOT)
     new_rows = collections.defaultdict(list)
     new_edges = collections.defaultdict(list)
+    composite_ids = set()
     for anc, rows in kept:
         stem = FILE.get(anc['discipline'], f"gaozhong-{anc['discipline']}")
+        composite_ids.add(anc['id'])
         for p, verb, obj, v in rows:
             nid = mint_id(used)
             child = {**{k: anc[k] for k in anc if k not in
                         ('id', 'statement', 'verb', 'object', 'reviewedBy', 'aiIssues',
-                         'adjudication', 'independentCheck', 'autoConfirmBasis', 'triageBucket')},
+                         'adjudication', 'independentCheck', 'autoConfirmBasis', 'triageBucket',
+                         'fieldIssues', 'composite')},
                      'id': nid, 'statement': p, 'verb': verb, 'object': obj,
                      'reviewedBy': [],
                      # 拆出来的条**不继承母条的复核档** —— 母条被谁看过，
                      # 不等于拆出来的这条被看过。一律退回从没审过。
                      'reviewStatus': 'llm-proposed'}
+            # method 记链，不洗白：从一条 capability-rewrite 锚点拆出的原子
+            # **仍然是我们自己的主张**，改标成别的来源等于把它洗成课标转述。
+            base_m = 'capability-rewrite' if anc.get('evidenceSource') == 'capability-rewrite' else 'atomize'
             child['provenance'] = {**(anc.get('provenance') or {}), 'splitFrom': anc['id'],
-                                   'method': 'atomize/substring-recombination'}
+                                   'method': f'{base_m}/atomize-substring'}
             new_rows[stem].append(child)
-            new_edges[stem].append({'anchorId': anc['id'], 'composedOf': nid, 'kind': 'composes',
-                                    'reason': f"母条「{anc['statement'][:24]}」由若干可分别判定的原子组成",
-                                    'evidence': [{'kind': 'set-containment',
-                                                  'detail': '子条文字全部来自母条原句，机器校验'}],
-                                    'reviewStatus': 'llm-proposed', 'reviewedBy': [],
-                                    'schemaVersion': '0.1.0'})
+            # 失败表现是**机械推出来的**，不是模型写的：不会这个部件，
+            # 母条里对应那一段就做不出来，而其余部分照样能做 —— 这正是
+            # 「会做，但某一步系统性地错，错点可定位」的字面情形。
+            sig = (f'能做母条里其余部分，唯独「{p[1:] if p.startswith("能") else p}」这一段做不出来，'
+                   f'错点就落在这里')
+            new_edges[stem].append({
+                'anchorId': anc['id'], 'prerequisiteId': nid,
+                'type': 'component', 'strength': 'hard', 'inInferenceGraph': True,
+                'failureSignature': sig[:120],
+                'reason': f'「{p[:20]}」是母条「{anc["statement"][:20]}」的一个子动作',
+                'evidence': [{'kind': 'set-containment',
+                              'detail': '子条文字全部来自母条原句，机器校验（不许新增一个实词）'}],
+                # 不带 containment 字段：那个字段是给字表词表的集合包含用的
+                # （subsetSize / intersect / rate），形状对不上。
+                # 拆分的凭据在 evidence 的 set-containment 那一条里，够了。
+                'reviewStatus': 'llm-proposed', 'reviewedBy': [], 'schemaVersion': '0.1.0'})
+    # 母条打上 composite 标 —— 档案该记原子，不该记它
+    for f, rows in files.items():
+        hit = False
+        for r in rows:
+            if r['id'] in composite_ids:
+                r['composite'] = True
+                fi = set(r.get('fieldIssues') or []); fi.add('composite')
+                r['fieldIssues'] = sorted(fi)
+                hit = True
+        if hit:
+            f.write_text(''.join(json.dumps(r, ensure_ascii=False) + '\n' for r in rows), encoding='utf-8')
     for stem, rows in new_rows.items():
         with (ROOT / 'anchors' / f'{stem}.jsonl').open('a', encoding='utf-8') as fh:
             for r in rows:
                 fh.write(json.dumps(r, ensure_ascii=False) + '\n')
     for stem, rows in new_edges.items():
-        with (ROOT / 'edges' / f'{stem}-composes.jsonl').open('a', encoding='utf-8') as fh:
+        with (ROOT / 'edges' / f'{stem}.jsonl').open('a', encoding='utf-8') as fh:
             for r in rows:
                 fh.write(json.dumps(r, ensure_ascii=False) + '\n')
     print(f'写入 {sum(len(v) for v in new_rows.values())} 条原子 + '
-          f'{sum(len(v) for v in new_edges.values())} 条 composes 边')
+          f'{sum(len(v) for v in new_edges.values())} 条 component 边 · '
+          f'{len(composite_ids)} 条母条标为 composite（一条边都没有悬空）')
 
 
 if __name__ == '__main__':

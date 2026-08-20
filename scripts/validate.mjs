@@ -194,7 +194,7 @@ for (const { rec: a, where } of anchors) {
     // 起草的证据永远够不到 auto-confirmed —— 那一档的含义是「判定客观、
     // 根本不需要人」，而起草证据里的举例是模型选的，恰恰需要人看一眼。
     // 和 capability-rewrite 不许标 auto-confirmed 是同一条纪律。
-    if (a.evidenceSource === 'evidence-drafted' && a.reviewStatus === 'auto-confirmed') {
+    if ((a.evidenceSource === 'evidence-drafted' || a.evidenceDrafted) && a.reviewStatus === 'auto-confirmed') {
       err(where, `[${a.id}] 证据是起草的（evidence-drafted）却标 auto-confirmed — `
         + `那一档的含义是「判定客观、不需要人」，而起草证据里的举例是模型选的`);
     }
@@ -355,8 +355,11 @@ for (const { rec: a, where } of anchors) {
     if (!p.derivedFrom) {
       err(where, `[${a.id}] capability-rewrite 缺 provenance.derivedFrom —— 转写必须指回源锚点`);
     }
-    // 2. 不许冒充课标转述
-    if (p.method && p.method !== 'capability-rewrite') {
+    // 2. 不许冒充课标转述。
+    //    允许 `capability-rewrite/...` 这种链式 method —— 从一条转写锚点再拆出的
+    //    原子**仍然是我们自己的主张**，它的来源链要写清楚（拆分是机械的，
+    //    但被拆的那条主张不是），而不是改标成别的来源把它洗白。
+    if (p.method && !String(p.method).startsWith('capability-rewrite')) {
       err(where, `[${a.id}] capability-rewrite 的 method 是「${p.method}」—— 不得标成课标转述`);
     }
     // 3. 永远够不到 auto-confirmed。那一档的含义是「判定客观、根本不需要人」，
@@ -550,15 +553,25 @@ for (const { rec: e, where } of edges) {
   // 二级词汇表 ⊂ 三级词汇表 100%），「掌握超集」确实要求「先掌握子集」——
   // 这是客观可验的事实，不是语义上的牵强。
   // 例外必须由 set-containment 证据本身背书，不接受口头声明。
+  // 拆原子建出来的 component 边虽然也带 set-containment 证据，但它**不是**
+  // 「小表 ⊂ 大表」那种集合包含，没有包含率可落盘。下面几条 LIST 规则管的是后者。
+  const isDecomp = e.type === 'component'
+    && (e.evidence ?? []).some((v) => v.kind === 'set-containment')
+    && !!e.failureSignature;
   const isContainment = (e.evidence ?? []).some((v) => v.kind === 'set-containment');
   if (A.a.track === 'LIST' && !isContainment) {
-    err(where, `${k} LIST 档不能作为被修方 — 覆盖模型没有「学完这个才能学那个」的语义（除非有 set-containment 证据）`);
-  } else if (A.a.track === 'LIST' && isContainment && !e.containment) {
+    err(where, `${k} LIST 档不能作为被修方 — 覆盖模型没有「学完这个才能学那么」的语义（除非有 set-containment 证据）`
+      .replace('那么', '那个'));
+  } else if (A.a.track === 'LIST' && isContainment && !isDecomp && !e.containment) {
+    // 拆原子的 component 边豁免：它不声称「小表 ⊂ 大表」，没有包含率可落盘。
     err(where, `${k} 声称集合包含却没有 containment 字段 — 包含率必须落盘可核`);
   } else if (P.a.track === 'LIST' && A.a.discipline === P.a.discipline && !isContainment) {
     err(where, `${k} 同学科内 LIST 档不建先修图 — 字表词表篇目是覆盖模型，强建必产垃圾边`);
   }
-  if (e.strength === 'hard' && (A.a.track === 'MATRIX' || P.a.track === 'MATRIX')) {
+  // 拆原子建出来的 component 边豁免这条：它的证据是 set-containment
+  //（子条文字全部来自母条原句，机器校验过），**不是发明出来的依赖**。
+  // 这条 MATRIX 规则防的正是「发明」—— 包含关系不在防范范围内。
+  if (e.strength === 'hard' && !isDecomp && (A.a.track === 'MATRIX' || P.a.track === 'MATRIX')) {
     err(where, `${k} MATRIX 档不得有 hard 边 — 史地生政科的先修关系稀疏到可忽略，硬建就是「抗逆力依赖 20 以内加减法」`);
   }
   if (e.strength === 'hard' && A.a.discipline !== P.a.discipline) {

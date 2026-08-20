@@ -91,6 +91,8 @@ def zh(t):
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument('--only', default=None)
+    ap.add_argument('--all-status', action='store_true',
+                    help='连不可引用的也补（拆原子新建的那批是 llm-proposed，但它们也在列表页上）')
     ap.add_argument('--limit', type=int, default=0)
     ap.add_argument('--concurrency', type=int, default=10)
     ap.add_argument('--dry-run', action='store_true')
@@ -102,7 +104,7 @@ def main():
     files = {f: [json.loads(l) for l in f.read_text(encoding='utf-8').splitlines() if l.strip()]
              for f in sorted((ROOT / 'anchors').glob('*.jsonl'))}
     targets = [(f, i, x) for f, rows in files.items() for i, x in enumerate(rows)
-               if not x.get('deprecated') and x['reviewStatus'] in CITABLE
+               if not x.get('deprecated') and (a.all_status or x['reviewStatus'] in CITABLE)
                and any(FALLBACK.match(e or '') for e in (x.get('evidence') or []))
                and (x.get('provenance') or {}).get('srcText')
                and (not a.only or x['discipline'] == a.only)]
@@ -172,7 +174,12 @@ def main():
     for f, i, x, ev, ass in kept:
         r = files[f][i]
         r['evidence'] = ev
-        r['evidenceSource'] = 'evidence-drafted'   # 不再是 fallback，也不冒充课标来源
+        # **不覆盖 capability-rewrite** —— 那个标记说的是「这条断言是我们自己的主张」，
+        # 比「证据从哪来」要紧得多。覆盖掉等于把那句话洗了。
+        if r.get('evidenceSource') == 'capability-rewrite':
+            r['evidenceDrafted'] = True
+        else:
+            r['evidenceSource'] = 'evidence-drafted'   # 不再是 fallback，也不冒充课标来源
         if ass and not r.get('assessment'):
             r['assessment'] = ass
         touched.add(f)
