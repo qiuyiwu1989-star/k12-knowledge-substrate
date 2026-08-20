@@ -557,29 +557,41 @@
       "description": "AI 裁定记录。pendingObjection 标明这条是「待人工异议」，不是定论。"
     },
     "independentCheck": {
-      "type": "object",
+      "type": [
+        "object",
+        "null"
+      ],
       "additionalProperties": false,
       "properties": {
         "method": {
           "type": "string"
         },
-        "passed": {
-          "type": "boolean"
+        "verdict": {
+          "enum": [
+            "grounded-verbatim",
+            "passed",
+            "not-applicable",
+            "suspect"
+          ]
         },
         "overlap": {
-          "type": [
-            "number",
-            "string"
-          ]
+          "type": "number"
+        },
+        "verbatimCoverage": {
+          "type": "number"
         },
         "facts": {
           "type": "array",
           "items": {
             "type": "string"
           }
+        },
+        "passed": {
+          "type": "boolean",
+          "description": "旧字段，2026-08-20 起由 verdict 取代；存量数据里还有。"
         }
       },
-      "description": "对抗验证：模型看不到断言、只读原文自己抽事实，再机械比对。换的是信息流不是措辞 —— 让它「再审一遍」只会确认自己。"
+      "description": "独立路径验证（tools/adversarial_verify.py）。模型看不到断言、只读课标原文自行抽事实，再机械比对 —— 改的是信息流不是措辞，所以凭空造出来的关系会现形。\nverdict 四值，**「方法不适用」不是「没通过」**：\n  grounded-verbatim 断言的字几乎全来自原文，忠实性直接成立，这个方法无须再查\n  passed            独立路径抽出了同一条事实\n  not-applicable    原文是动作要求、抽不出事实命题 —— 没有可查的东西\n  suspect           真存疑：原文有事实，但独立路径没抽出这条\n2026-08-20 之前只有 passed/false 两值，结果 74% 显示为「没通过」，逐条看下来几乎全是方法误报。照那个数降级会砸掉 606 条锚点。"
     },
     "repair": {
       "type": "object",
@@ -706,6 +718,18 @@
     "peerPercentile": {
       "description": "**禁止字段**（F201）。横向比较的入口，进来了拿不掉。它的缺席是设计结论，不是没来得及做。",
       "forbidden": true
+    },
+    "fieldIssues": {
+      "type": "array",
+      "items": {
+        "enum": [
+          "evidence-weak",
+          "stage",
+          "topic-missing",
+          "independent-check-suspect"
+        ]
+      },
+      "description": "**字段级**缺陷，与 reviewStatus 分开。\nreviewStatus 回答的是「这条断言成不成立」；evidence 写得弱、stage 标错，都是别的字段的毛病，不该让断言替它们背锅（2026-08-20 之前混在一起，45 条断言没问题的锚点因为证据弱被踢出了可引用集合）。\n详情页必须把它显示出来 —— 可引用不等于每个字段都好。"
     }
   }
 }

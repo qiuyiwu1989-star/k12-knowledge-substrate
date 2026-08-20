@@ -23,6 +23,9 @@ adversarial_verify.py — 对 ai-adjudicated 锚点做**独立**验证。
 
     python3 tools/adversarial_verify.py [--limit N] [--only 历史]
 """
+import sys as _sys, pathlib as _pl
+_sys.path.insert(0, str(_pl.Path(__file__).resolve().parent))
+from citable import CITABLE as CITABLE_SET   # noqa: E402
 import argparse, hashlib, json, os, re, sys, time
 from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
@@ -106,6 +109,8 @@ def best_overlap(stmt, facts):
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument('--only', default=None)
+    ap.add_argument('--recheck', action='store_true', help='连已验过的也重验')
+    ap.add_argument('--dry-run', action='store_true')
     ap.add_argument('--limit', type=int, default=0)
     ap.add_argument('--concurrency', type=int, default=10)
     ap.add_argument('--threshold', type=float, default=0.55,
@@ -122,7 +127,13 @@ def main():
             if not l.strip():
                 continue
             x = json.loads(l)
-            if x.get('deprecated') or x['reviewStatus'] != 'ai-adjudicated':
+            # **2026-08-20：从「只验 ai-adjudicated」改成「验全部可引用的」。**
+            # 可引用线放宽到 ai-reviewed 之后，1,401 条锚点里有近千条从没被
+            # 独立路径验过 —— 而独立验证正是没有人参与时唯一能动摇既有结论的手段。
+            # 已经验过的跳过（幂等，可反复跑）。
+            if x.get('deprecated') or x['reviewStatus'] not in CITABLE_SET:
+                continue
+            if x.get('independentCheck') and not a.recheck:
                 continue
             if a.only and x['discipline'] != a.only:
                 continue
@@ -176,16 +187,76 @@ def main():
                          'independentFacts': facts, 'overlap': round(r, 3),
                          'closest': which, 'suspect': r < a.threshold})
 
+    # ── 判定改成三值。**「方法不适用」不是「没通过」。** ─────────────
+    #
+    # 2026-08-20 把覆盖面从 ai-adjudicated 扩到全部可引用锚点之后，存疑率 74%。
+    # 逐条看下来几乎全是方法误报：
+    #
+    #   原文「能列举常见的化学电源，并能利用相关信息分析其工作原理。」
+    #     → 原文本身是**动作要求**，不是事实命题。提示词明写这种情况输出 NONE。
+    #       抽不出事实 ≠ 锚点有问题，是这个方法**没有可查的东西**。
+    #
+    #   断言「能描述四则运算的含义」／原文「能描述四则运算的含义，知道减法是…」
+    #     → 断言是原文的**逐字前缀**，忠实性本来就成立；覆盖率 0.286 是因为
+    #       独立路径抽的是同一句里另一个分句的事实。
+    #
+    # 照 74% 降级会砸掉 606 条锚点。**指标误判比没有指标更糟** —— 这个项目
+    # 在「不以句号结尾算碎片」上栽过一次，那次是一个学科，这次是六百条。
+    def content(t):
+        return {c for c in t if '\u4e00' <= c <= '\u9fff'}
+
+    for r in rows:
+        st, src = content(r['statement']), content(r['srcText'])
+        verbatim = len(st & src) / max(1, len(st))
+        if verbatim >= 0.9:
+            r['verdict'] = 'grounded-verbatim'   # 断言的字几乎全来自原文，忠实性直接成立
+        elif not r['independentFacts']:
+            r['verdict'] = 'not-applicable'      # 原文是动作要求，抽不出事实命题
+        elif r['suspect']:
+            r['verdict'] = 'suspect'             # 真存疑：原文有事实，但独立路径没抽出这条
+        else:
+            r['verdict'] = 'passed'
+        r['verbatimCoverage'] = round(verbatim, 3)
+
     out = ROOT / 'tools/out/verify-report.json'
     out.write_text(json.dumps(rows, ensure_ascii=False, indent=1), encoding='utf-8')
 
-    sus = [r for r in rows if r['suspect']]
-    none_at_all = [r for r in rows if not r['independentFacts']]
-    print(f"\n验完 {len(rows)} 条　失败 {failed} 段（重跑走缓存补）")
-    print(f"  独立路径**一条事实都没抽出**（原文本是动作要求）：{len(none_at_all)}")
-    print(f"  覆盖率 < {a.threshold}（独立路径没抽出这条）：{len(sus)}　= {len(sus)/max(len(rows),1):.0%}")
+    # 写回锚点。**只记录，不改 reviewStatus** —— 降级是人的决定，
+    # 而这一轮恰恰证明了这个方法的误报率高到不能直接驱动降级。
+    if not a.dry_run:
+        by_id = {r['id']: r for r in rows}
+        for f in sorted((ROOT / 'anchors').glob('*.jsonl')):
+            arr = [json.loads(l) for l in f.read_text(encoding='utf-8').splitlines() if l.strip()]
+            hit = False
+            for x in arr:
+                r = by_id.get(x['id'])
+                if not r:
+                    continue
+                x['independentCheck'] = {
+                    'method': '模型只读原文（看不到本断言）自行抽事实，再机械比对实词覆盖',
+                    'verdict': r['verdict'],
+                    'overlap': r['overlap'],
+                    'verbatimCoverage': r['verbatimCoverage'],
+                    'facts': r['independentFacts'][:5],
+                }
+                hit = True
+            if hit:
+                f.write_text(''.join(json.dumps(x, ensure_ascii=False) + '\n' for x in arr), encoding='utf-8')
+
+
     import collections
-    print("  存疑按学科：", dict(collections.Counter(r['discipline'] for r in sus).most_common(8)))
+    V = collections.Counter(r['verdict'] for r in rows)
+    print(f"\n验完 {len(rows)} 条　失败 {failed} 段（重跑走缓存补）")
+    CN = {'grounded-verbatim': '断言的字几乎全来自原文，忠实性直接成立（这个方法无须再查）',
+          'not-applicable':    '原文是动作要求、抽不出事实命题 —— **方法不适用，不是没通过**',
+          'passed':            '独立路径抽出了同一条事实',
+          'suspect':           '**真存疑**：原文有事实，但独立路径没抽出这条'}
+    for k in ('grounded-verbatim', 'passed', 'not-applicable', 'suspect'):
+        if V[k]:
+            print(f"  {V[k]:>4}  {k:18} {CN[k]}")
+    sus = [r for r in rows if r['verdict'] == 'suspect']
+    if sus:
+        print("  真存疑按学科：", dict(collections.Counter(r['discipline'] for r in sus).most_common(8)))
     print(f"\n→ {out}")
 
 

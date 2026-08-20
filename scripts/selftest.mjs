@@ -117,6 +117,11 @@ const CASES = [
   ['W104 instrument 标 hard 被报',   'edges/x.jsonl',   E({ type: 'instrument', strength: 'hard', failureSignature: '能算出来但要一个个数，慢得多', evidence: [{ kind: 'expert', detail: '测试证据' }] }), 'W104', 'warn'],
   ['F201 禁止字段（难度系数）被拦',  'anchors/x.jsonl', A({ id: 'ca_TEST0017', difficulty: 0.7 }), '禁止字段 difficulty'],
   ['F203 我们的主张无理由被拦',      'anchors/x.jsonl', A({ id: 'ca_TEST0018', evidenceSource: 'capability-rewrite', reviewStatus: 'llm-proposed', provenance: { derivedFrom: S.know.id, method: 'capability-rewrite' } }), 'F203'],
+  // ── 可判定闸的两个洞（2026-08-20 修）─────────────────────────────
+  //   两个错互相抵消过：动词在整句里做子串匹配，让「文化交流」里的「交流」当了谓语，
+  //   顺便掩盖了动词表漏掉「指出/推测/提出/数出」这件事。修掉子串匹配才露出来。
+  ['名词里的动词不算谓语',            'anchors/x.jsonl', A({ id: 'ca_TEST0019', statement: '能从人类文明发展和世界文化交流的角度', verb: '交流', object: '角度' }), '无可观察行为动词'],
+  ['状语残句被拦',                    'anchors/x.jsonl', A({ id: 'ca_TEST0020', statement: '能在对都城繁荣的分析过程中进行分析过程中', verb: '分析', object: '都城繁荣' }), '残句'],
   ['兜底证据冒充课标来源被拦',        'anchors/x.jsonl', A({ id: 'ca_TEST0016', evidence: ['能完成：能计算三位数减三位数的退位减法'], evidenceSource: 'curriculum-content-gaozhong' }), '不许声称来自课标'],
   ['codes-only 泄漏文本被拦',         'mappings/x.jsonl', JSON.stringify({ key: 'cn-2022:T.1', framework: 'cn-2022', code: 'T.1', discipline: '数学', stage: 'G1-2', strand: null, title: '测试', summary: '不该出现的原文', textIncluded: false, anchorIds: [], schemaVersion: '0.1.0' }), 'codes-only'],
 ];

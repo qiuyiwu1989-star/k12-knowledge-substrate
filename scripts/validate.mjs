@@ -135,7 +135,7 @@ const FALLBACK_EV = /^(能在.{1,8}(课堂|作业).{0,6}情境中完成：|能�
 // 只有 err/warn 的选择受档位控制。
 const ENFORCE = {
   edgeTyping: 'reporting',      // F001/F002/F003/F004/F005 —— specs/001 边重标
-  assessmentSpec: 'reporting',  // F202 —— specs/003 判定方法
+  assessmentSpec: 'reporting',  // F206 —— 可引用锚点的兜底证据（326 条待补真证据）
 };
 const gate = (key) => (ENFORCE[key] === 'required' ? err : warn);
 
@@ -176,10 +176,20 @@ for (const { rec: a, where } of anchors) {
   //   F201（禁止字段）由 schema 的 forbidden 关键字执行，见 schema-check.mjs
   if (!a.deprecated) {
     const usable = USABLE_STATUS.has(a.reviewStatus);
-    if (usable && !a.assessmentSpec) {
+    // F202 原来查的是 assessmentSpec —— **那个字段一条都没建过**，
+    // 于是这道闸在 1,446 条上全数命中，等于没有闸。而「说得出怎么判」我们其实有：
+    // assessment 字段（家长可以这样问）覆盖 96%。闸要指向真实存在的东西。
+    if (usable && !a.assessment) {
+      err(where, `F202 [${a.id}] 可被档案引用（${a.reviewStatus}）却没有 assessment — `
+        + `「能引用」和「说得出怎么问」必须同时成立`);
+    }
+    // F206：证据不许是断言的复读。
+    //   「能在历史课堂或作业情境中完成：<断言原文>」回答不了「凭什么说他会」。
+    //   这条和 evidenceSource=fallback 那道闸是一对：那条管**别谎报来源**，
+    //   这条管**别拿它当可引用的凭据**。
+    if (usable && (a.evidence ?? []).some((e) => FALLBACK_EV.test(String(e ?? '')))) {
       gate('assessmentSpec')(where,
-        `F202 [${a.id}] 可被档案引用（${a.reviewStatus}）却没有判定方法 — `
-        + `「能引用」和「说得出怎么判」必须同时成立`);
+        `F206 [${a.id}] 可被档案引用却拿兜底模板当证据 — 证据复读了断言，说不出凭什么判他会`);
     }
     if (a.evidenceSource === 'capability-rewrite' && !a.provenance?.why) {
       err(where, `F203 [${a.id}] 是我们自己的主张（capability-rewrite）却没写理由 — `
