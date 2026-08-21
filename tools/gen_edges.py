@@ -175,6 +175,9 @@ def main():
     ap.add_argument('--src', default='anchors')
     ap.add_argument('--concurrency', type=int, default=14)
     ap.add_argument('--cross', action='store_true', help='只跑跨学科边（判据更严，最多 2 条/锚点）')
+    ap.add_argument('--split-only', action='store_true',
+                    help='只给拆原子新建的那批（provenance.splitFrom）建边。'
+                         '**候选池仍取整个学科** —— 原子的前置本来就可能来自别处。')
     ap.add_argument('--out', default=str(ROOT / 'tools/out/edges-generated.jsonl'))
     a = ap.parse_args()
 
@@ -205,6 +208,12 @@ def main():
             print(f"  跳过 {disc}（LIST 档不作为被修方）")
             continue
         for t in group:
+            # --split-only：只给这批建，但池子照样是整个学科的，
+            # 否则原子只能在原子之间找前置，那是凭空造出来的小圈子。
+            if a.split_only and not (t.get('provenance') or {}).get('splitFrom'):
+                continue
+            if t.get('deprecated'):
+                continue
             pool = (build_cross_pool(t, anchors, outdeg_seed) if a.cross
                     else build_pool(t, group))
             if pool:

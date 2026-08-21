@@ -153,6 +153,13 @@ def main():
             h = sha(pre['statement'], post['statement'])
             if not a.force_all and e.get('retagHash') == h and e.get('type'):
                 continue
+            # **拆原子建出来的 component 边不重标。** 它的类型是机械确定的
+            # （子条文字全部来自母条原句 = 部件关系），让模型重判是拿一个
+            # 主观判断去覆盖一个客观事实 —— 实测 536 条里有 224 条被改成了
+            # semantic/convention/instrument，其中 67 条还被移出了推理图。
+            if (e.get('type') == 'component'
+                    and any(v.get('kind') == 'set-containment' for v in (e.get('evidence') or []))):
+                continue
             if a.only and post['discipline'] != a.only:
                 continue
             jobs.append((f, i, e, pre, post, h))
