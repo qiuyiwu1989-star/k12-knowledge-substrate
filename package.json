@@ -14,6 +14,7 @@
     "strip-srctext": "node scripts/strip-srctext.mjs",
     "review-loop": "node scripts/review-loop-test.mjs",
     "fw-report": "node scripts/fw-report.mjs",
-    "no-dup-defs": "node scripts/no-dup-defs.mjs"
+    "no-dup-defs": "node scripts/no-dup-defs.mjs",
+    "quality-levels": "python3 tools/extract_quality_levels.py"
   }
 }
