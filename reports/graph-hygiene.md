@@ -2,18 +2,18 @@
 
 > 由 `npm run fw-report` 自动生成。**只报告，不设阈值，不给结论，不删任何边。**
 > 存活锚点 2732 · 存活边 4263
-> **推理图 3315 条**（已重标 4244 条；948 条判为 convention，教材编排顺序不是能力依赖，移出推理图）
+> **推理图 3313 条**（已重标 4262 条；950 条判为 convention，教材编排顺序不是能力依赖，移出推理图）
 > 以下三项体检**只算推理图**。
 
 ## W101 传递冗余
 
-**945 条 = 29%**（A→B→C 已经连通，A→C 是多余的一跳）
+**943 条 = 28%**（A→B→C 已经连通，A→C 是多余的一跳）
 
 | 学科 | 冗余边 | 该学科总边 | 占比 |
 |---|---:|---:|---:|
 | 化学 | 233 | 641 | 36% |
 | 数学 | 181 | 519 | 35% |
-| 西班牙语 | 108 | 313 | 35% |
+| 西班牙语 | 107 | 312 | 34% |
 | 通用技术 | 68 | 296 | 23% |
 | 艺术 | 52 | 201 | 26% |
 | 生物学 | 50 | 169 | 30% |
@@ -23,7 +23,7 @@
 | 物理 | 34 | 136 | 25% |
 | 日语 | 19 | 48 | 40% |
 | 法语 | 18 | 49 | 37% |
-| 信息科技 | 18 | 82 | 22% |
+| 信息科技 | 17 | 81 | 21% |
 | 道德与法治 | 15 | 63 | 24% |
 | 俄语 | 13 | 41 | 32% |
 | 体育与健康 | 10 | 85 | 12% |
@@ -104,70 +104,70 @@ G3–4 → G7–9  数学｜能进行整数四则混合运算（以两步为主�
 
 ## 近重复断言（只报告，不自动合并）
 
-实词+拉丁+数字的 Jaccard ≥ 0.92：**53 对**，其中 **1 对两条都可引用** —— 那是同一件事有了两个 ID，最该先看。
+实词+拉丁+数字的 Jaccard ≥ 0.92：**53 对**，其中 **15 对两条都可引用** —— 那是同一件事有了两个 ID，最该先看。
 
 **不自动合并**：这个区间里既有真重复（只差一个括号），也有真不同
 （「过去完成时／过去未完成时」「概率／条件概率」）。判据交给人。
 
 ```
 1.00
-   ca_xCLSAkdA [llm-proposed] 能举例说明重要资源的主要类型、成分和用途
+   ca_xCLSAkdA [disputed] 能举例说明重要资源的主要类型、成分和用途
    ca_Naq7e63w [disputed] 能举例说明重要资源和能源的主要类型、成分和用途
 1.00
-   ca_Nzxb9QjR [llm-proposed] 能解释原电池的工作原理
-   ca_PMTzGcMR [llm-proposed] 能解释电解池的工作原理
-1.00
+   ca_Nzxb9QjR [ai-reviewed] 能解释原电池的工作原理
+   ca_PMTzGcMR [disputed] 能解释电解池的工作原理
+1.00 ★两条都可引用
    ca_4AcQgaPb [ai-reviewed] 能熟练地使用字典、词典独立识字
-   ca_UuRKusxH [llm-proposed] 能熟练地使用词典独立识字
+   ca_UuRKusxH [ai-reviewed] 能熟练地使用词典独立识字
 1.00
-   ca_qr5RchXf [llm-proposed] 能在语篇中理解和使用动词不定式作句子中的结果状语
+   ca_qr5RchXf [disputed] 能在语篇中理解和使用动词不定式作句子中的结果状语
    ca_hCzUf94s [ai-reviewed] 能在语篇中理解和使用动词不定式作句子中的定语和结果状语
-1.00
+1.00 ★两条都可引用
    ca_NsGyU4hS [ai-reviewed] 能判断直线与圆 、圆与圆的位置关系
-   ca_AExNhvcm [llm-proposed] 能判断直线与圆的位置关系
+   ca_AExNhvcm [ai-reviewed] 能判断直线与圆的位置关系
 1.00
    ca_taC1JpOJ [disputed] 能计算一组简单数据的离差平方和、方差
-   ca_NNEhwpJC [llm-proposed] 能计算一组简单数据的离差平方和
+   ca_NNEhwpJC [disputed] 能计算一组简单数据的离差平方和
 1.00
-   ca_8fzVCSEh [llm-proposed] 能理解与运用动词的Vている语法形式
-   ca_8StDt4m3 [llm-proposed] 能理解与运用动词的Vてある语法形式
+   ca_8fzVCSEh [ai-reviewed] 能理解与运用动词的Vている语法形式
+   ca_8StDt4m3 [disputed] 能理解与运用动词的Vてある语法形式
 1.00
-   ca_8fzVCSEh [llm-proposed] 能理解与运用动词的Vている语法形式
-   ca_eU2k79E4 [llm-proposed] 能理解与运用动词的Vておく语法形式
+   ca_8fzVCSEh [ai-reviewed] 能理解与运用动词的Vている语法形式
+   ca_eU2k79E4 [disputed] 能理解与运用动词的Vておく语法形式
 1.00
-   ca_8StDt4m3 [llm-proposed] 能理解与运用动词的Vてある语法形式
-   ca_eU2k79E4 [llm-proposed] 能理解与运用动词的Vておく语法形式
+   ca_8StDt4m3 [disputed] 能理解与运用动词的Vてある语法形式
+   ca_eU2k79E4 [disputed] 能理解与运用动词的Vておく语法形式
 1.00
    ca_hymPp5rU [disputed] 能结合生物的生存条件以及动物与植物相互关系等知识，简单描述生物与生物、生物与环境之间相互依存的关系
-   ca_8ugQh2VM [llm-proposed] 能结合生物的生存条件以及动物与植物相互关系等知识，简单描述生物与环境之间相互依存的关系
+   ca_8ugQh2VM [ai-reviewed] 能结合生物的生存条件以及动物与植物相互关系等知识，简单描述生物与环境之间相互依存的关系
 0.96
    ca_U7GgVizO [ai-reviewed] 能说出3~4年级学生应调查不同环境中植物、动物的类型和数量
-   ca_fTCqXVTg [llm-proposed] 能说出3~4年级学生应调查不同环境中植物的类型和数量
+   ca_fTCqXVTg [disputed] 能说出3~4年级学生应调查不同环境中植物的类型和数量
 0.96
    ca_U7GgVizO [ai-reviewed] 能说出3~4年级学生应调查不同环境中植物、动物的类型和数量
-   ca_dv32R2fF [llm-proposed] 能说出3~4年级学生应调查不同环境中动物的类型和数量
+   ca_dv32R2fF [disputed] 能说出3~4年级学生应调查不同环境中动物的类型和数量
 0.96
-   ca_pAPgdU4g [llm-proposed] 能在运用书面语表达的过程中，对比两种语体用词和造句的差别
+   ca_pAPgdU4g [ai-reviewed] 能在运用书面语表达的过程中，对比两种语体用词和造句的差别
    ca_dNRTSPmi [disputed] 能在运用口语和书面语表达的过程中，对比两种语体用词和造句的差别
 0.96
-   ca_h4wc8imp [llm-proposed] 能在语篇中正确地理解和使用动词不定式作句子中的主语
+   ca_h4wc8imp [ai-reviewed] 能在语篇中正确地理解和使用动词不定式作句子中的主语
    ca_g5EESiuV [disputed] 能在语篇中正确地理解和使用动词不定式作句子中的主语和表语
 0.96
-   ca_sMBqcdvq [llm-proposed] 能在语篇中正确地理解和使用动词不定式作句子中的表语
+   ca_sMBqcdvq [ai-reviewed] 能在语篇中正确地理解和使用动词不定式作句子中的表语
    ca_g5EESiuV [disputed] 能在语篇中正确地理解和使用动词不定式作句子中的主语和表语
 0.96
-   ca_BWaQqit4 [llm-proposed] 能选择简明、合理的表征方式描述化学变化的本质和规律
+   ca_BWaQqit4 [ai-reviewed] 能选择简明、合理的表征方式描述化学变化的本质和规律
    ca_UQtCZ8DA [disputed] 能选择简明、合理的表征方式描述和说明化学变化的本质和规律
-0.95
+0.95 ★两条都可引用
    ca_gBE67izk [ai-reviewed] 能操作三球仪，演示出地球绕太阳公转、月球绕地球公转的相对运动
-   ca_43JQQ5wK [llm-proposed] 能操作三球仪，演示出地球绕太阳公转的相对运动
+   ca_43JQQ5wK [ai-reviewed] 能操作三球仪，演示出地球绕太阳公转的相对运动
 0.95
    ca_3Vf2N6Fj [disputed] 能掌握陈述式过去未完成时的变位规则和用法
    ca_UNSDrqMc [disputed] 能掌握陈述式过去完成时的变位规则和用法
-0.95
+0.95 ★两条都可引用
    ca_7dqYxEPA [ai-reviewed] 能运用等差数列 、等比数列解决简单的实际问题和数学问题
-   ca_C2Ew4gqL [llm-proposed] 能运用等差数列解决简单的实际问题和数学问题
-0.95
+   ca_C2Ew4gqL [ai-reviewed] 能运用等差数列解决简单的实际问题和数学问题
+0.95 ★两条都可引用
    ca_7dqYxEPA [ai-reviewed] 能运用等差数列 、等比数列解决简单的实际问题和数学问题
-   ca_MxfnZh59 [llm-proposed] 能运用等比数列解决简单的实际问题和数学问题
+   ca_MxfnZh59 [ai-reviewed] 能运用等比数列解决简单的实际问题和数学问题
 ```

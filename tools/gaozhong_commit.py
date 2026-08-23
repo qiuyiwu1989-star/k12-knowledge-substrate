@@ -95,9 +95,23 @@ def split_reqs(text):
         if not sent:
             continue
         # 「，」后紧跟要求动词 → 并列要求，切；否则保留整句
+        #
+        # ★ 2026-08-24 修：**这段代码和上面的 docstring 说反了。**
+        #   docstring 写着「通过实验，了解 A」不能切开，切开就丢了「通过实验」这个条件；
+        #   而「了解」在 REQ_VERB 里，代码见到就切 —— 实测「通过实验，了解光的折射规律」
+        #   被切成「通过实验」（不足 8 字丢弃）+「了解光的折射规律」，**条件静默消失**。
+        #
+        #   两种后果，第二种更糟：
+        #     · 只剩状语的残句（「能在对都城繁荣的分析过程中」）—— 看得出来，可判定闸后来拦住了 7 条
+        #     · 条件被丢、断言看着完全正常 —— **看不出来**，全库中招 65 条
+        #
+        #   修法：前一段若本身就是纯状语（介词起头、没有可判定的谓语），不切，并回去。
+        PREP_ONLY = re.compile(r'^(能|会)?(通过|借助|根据|依据|结合|基于|按照|围绕|针对|经过|运用|利用)')
         parts, buf = [], ''
         for seg in re.split(r'(?<=，)', sent):
-            if buf and any(seg.lstrip().startswith(v) for v in REQ_VERB):
+            starts_req = any(seg.lstrip().startswith(v) for v in REQ_VERB)
+            # buf 是纯状语时不切 —— 切开这一刀丢的是课标写明的条件
+            if buf and starts_req and not PREP_ONLY.match(buf.strip()):
                 parts.append(buf); buf = seg
             else:
                 buf += seg

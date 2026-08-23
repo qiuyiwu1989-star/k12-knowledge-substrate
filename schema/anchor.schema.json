@@ -497,6 +497,10 @@
         "splitFrom": {
           "type": "string",
           "description": "这条原子是从哪条复合母条拆出来的（tools/atomize.py）。\n**母条不弃用** —— 它是课标自己的单位、真实存在，而且弃用会让指向它的现存边全部悬空。子条与母条之间建 component 边（子动作），母条标 composite。"
+        },
+        "lostCondition": {
+          "type": "string",
+          "description": "课标原文里写明、但切句时被丢掉的条件（如「通过实验」「结合所学知识」）。\n**断言本身不改** —— claim 是仓库红线。这里记下丢的是什么，由人决定要不要补回去。\n成因见 tools/gaozhong_commit.py 的 split_reqs：代码和它自己的 docstring 说反了，「了解」在要求动词表里，于是「通过实验，了解 X」被切开，条件静默消失。工具已修（2026-08-24），存量的 65 条在这里留档。"
         }
       },
       "additionalProperties": false
@@ -732,7 +736,8 @@
           "stage",
           "topic-missing",
           "independent-check-suspect",
-          "composite"
+          "composite",
+          "condition-lost"
         ]
       },
       "description": "**字段级**缺陷，与 reviewStatus 分开。\nreviewStatus 回答的是「这条断言成不成立」；evidence 写得弱、stage 标错，都是别的字段的毛病，不该让断言替它们背锅（2026-08-20 之前混在一起，45 条断言没问题的锚点因为证据弱被踢出了可引用集合）。\n详情页必须把它显示出来 —— 可引用不等于每个字段都好。"

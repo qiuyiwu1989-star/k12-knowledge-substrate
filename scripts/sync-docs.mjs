@@ -129,13 +129,34 @@ const VALUES = {
     .match(/^\s{2}\['/gm) || []).length + 1,   // +1 是基线「干净数据必须通过」
   reviewLoopCases: (readFileSync(join(ROOT, 'scripts/review-loop-test.mjs'), 'utf8')
     .match(/\bok\(/g) || []).length,
+  // ── SPEC.md（对外引用规范）用到的键。**一个都不许手打** ──
+  //    这份文件是给外部开发者看的契约，数字腐烂的后果比内部文档严重得多：
+  //    别人照着它写的校验会在下一次快照后静默失配。
+  release: M.release ?? '0.1.0',
+  schemaVersion: M.schemaVersion ?? '0.1.0',
+  generatedAt: String(M.generatedAt ?? '').slice(0, 10),
+  anchorsAll: M.counts.anchors,
+  manifestFiles: Object.keys(M.files ?? {}).length,
+  supersededAnchors: anchors.filter((a) => a.deprecated && a.supersededBy).length,
+  droppedNoSuccessor: anchors.filter((a) => a.deprecated && !a.supersededBy).length,
+  assessmentSpecAnchors: live.filter((a) => a.assessmentSpec).length,
+  compositeAnchors: live.filter((a) => a.composite).length,
+  splitChildren: live.filter((a) => a.provenance?.splitFrom).length,
+  fieldIssueAnchors: live.filter((a) => (a.fieldIssues ?? []).length).length,
+  edgesInGraph: edges.filter((e) => e.inInferenceGraph === true).length,
+  edgesConvention: edges.filter((e) => e.type === 'convention').length,
+  edgesComponent: edges.filter((e) => e.type === 'component').length,
+  edgesUntyped: edges.filter((e) => !e.type).length,
+  edgesUnreviewed: edges.filter((e) => e.reviewStatus === 'llm-proposed').length,
+  edgesHard: edges.filter((e) => e.strength === 'hard').length,
   reviewTable,
 };
 
 const RE = /<!--N:([A-Za-z][\w-]*)-->([\s\S]*?)<!--\/N-->/g;
 let stale = 0, filled = 0, unknown = 0;
 
-for (const name of ['README.md', 'PROVENANCE.md']) {
+// SPEC.md 是对外契约，**必须一起扫** —— 不扫等于它里面的数字全是手打的。
+for (const name of ['README.md', 'PROVENANCE.md', 'SPEC.md']) {
   const p = join(ROOT, name);
   if (!existsSync(p)) continue;
   const src = readFileSync(p, 'utf8');
