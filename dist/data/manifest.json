@@ -6,7 +6,7 @@
   "counts": {
     "anchors": 3997,
     "candidates": 0,
-    "edges": 4983,
+    "edges": 6622,
     "listItems": 6262,
     "mappings": 4,
     "liveAnchors": 2971,
@@ -258,24 +258,24 @@
       "sha256": "84861392802a5fafb780f7c7486fee76edc058bd2f6cd034c9cd64800add2447"
     },
     "edges/art.jsonl": {
-      "bytes": 136087,
-      "sha256": "f28849344b1a791dc75520400e5332fb53b164e79d9e1ffb47b80795d7068e14"
+      "bytes": 170288,
+      "sha256": "d7b9207f633f27b4d57b2eaedfc9f4579bdf62e535dae1beacfef6e34840ccd7"
     },
     "edges/biology.jsonl": {
-      "bytes": 139159,
-      "sha256": "fabf717d9b0d156661a30ea60c42e4c5252f6d48e8cf3d5f7b5fa9149b323276"
+      "bytes": 234003,
+      "sha256": "5c6b700221268509bbef7fa0ea45239fb3eb42e683e1b61fa79f0bb602567fdc"
     },
     "edges/chemistry.jsonl": {
-      "bytes": 268330,
-      "sha256": "8b6cdf08a0ab0836c5cd83093f7be4fa0b7ba028093928edd11bc497f2a5443f"
+      "bytes": 683603,
+      "sha256": "bbf207e56f915316f0978be4eeb910c92a04d9b2d701494538eb649a2fcc5a5c"
     },
     "edges/chinese.jsonl": {
-      "bytes": 69687,
-      "sha256": "afd670eb202473dbd2602aeba766f5ecc7e98f82f873348083e67c789759e970"
+      "bytes": 122527,
+      "sha256": "e5894125c1993a7eed234e3acc2f941c581f02effd2910fc16d4b991d394995e"
     },
     "edges/english.jsonl": {
-      "bytes": 173132,
-      "sha256": "976ca1ec0345be19f28bceaa39e3effe01e1ffd7f52c8f7f34ae99bf991584af"
+      "bytes": 244646,
+      "sha256": "8ffdd9dd855b752b5cb802f60cc41fed3c9e87daf0137eba4d636d76cabff248"
     },
     "edges/gaozhong-俄语.jsonl": {
       "bytes": 4075,
@@ -286,16 +286,16 @@
       "sha256": "f46c07c19c7e4db43ecf9734851630cb6f4f0dcbebaaf7825b048de3d01486f7"
     },
     "edges/gaozhong-德语.jsonl": {
-      "bytes": 9304,
-      "sha256": "e1714b31158d20e6346cacf620fd4ce3b36f0d6d4918b8baa683a07a2caa0c19"
+      "bytes": 9515,
+      "sha256": "5517dd3068daa30c87eb5e84e51db54f2e339787c5b9a513c726a132282d950e"
     },
     "edges/gaozhong-思想政治.jsonl": {
       "bytes": 49411,
       "sha256": "2d1d3d1ccb41f02b4f51a8529a3a38059b97c702b9c6f29999606d8613b2222d"
     },
     "edges/gaozhong-日语.jsonl": {
-      "bytes": 16829,
-      "sha256": "4baac96de60446dc3a97b649e8890c3e4c0954accb193309b282489f88cc27e8"
+      "bytes": 17229,
+      "sha256": "fb63f78f8d7f6c162d2a6feaa81381561f521d6f1347dd20925a15df2fcbf69d"
     },
     "edges/gaozhong-法语.jsonl": {
       "bytes": 14835,
@@ -318,40 +318,40 @@
       "sha256": "6586b972626117f8f0ca2bed6411afd90a653e4fd8805aa5f51c86f143751032"
     },
     "edges/geography.jsonl": {
-      "bytes": 221602,
-      "sha256": "8089f86b3ff8c129599434294a9c97a09292f0b415e581e59b812cc144066574"
+      "bytes": 333197,
+      "sha256": "4da7094dc92110a452fb1152a0def0d2dfa9503fa205786b62b1f7c058002303"
     },
     "edges/history.jsonl": {
-      "bytes": 103369,
-      "sha256": "bd6419146ffede3b0ffbf4ccb589585f6350da0a878b0853c13470425f6e35bb"
+      "bytes": 105331,
+      "sha256": "031826d4388cd926d4cc8763bc98774240ca05bf9ffb90a915ff1d4139f01e6e"
     },
     "edges/infotech.jsonl": {
-      "bytes": 64217,
-      "sha256": "7bdfb03ffe3c0190c127a905f1befb1f671b2955f29e062b50beb47986b9763e"
+      "bytes": 99494,
+      "sha256": "366f84206cf7cdea4f024199586379800865bf3d4c9e7c8269ae01ea9297766e"
     },
     "edges/labor.jsonl": {
-      "bytes": 19145,
-      "sha256": "0c4956e6fd193ea0193e862941ec93db7269ac1a4cbafe3d2175f3c11b84657f"
+      "bytes": 23924,
+      "sha256": "cc87313a0a68575127c5eaa4d7b299721bcc27575882670a4ce9e433210c7c73"
     },
     "edges/math.jsonl": {
-      "bytes": 380382,
-      "sha256": "334792021ccd3042e0f9da26bc2cebd1cd43184c65c314bc96ee6a7c9fce0e5c"
+      "bytes": 600667,
+      "sha256": "ef181c7a2682b9d2b24fa0daee16674fa205256b868fc0db36e54aa57cd26b2a"
     },
     "edges/morality.jsonl": {
-      "bytes": 50705,
-      "sha256": "2f85b17cfb80900292b5aae1a58d7bc59f375ecfa58b2b5ef2d5e8b052101f65"
+      "bytes": 82787,
+      "sha256": "cc5537b5540306db85e131659f3a48bfe8cdbb01952a48c44657e024e21cb673"
     },
     "edges/pe.jsonl": {
-      "bytes": 65787,
-      "sha256": "2931cbf82c35b2516dc8c01caf519eec5fbc9cdb6ba8f553d0b64be54989b64d"
+      "bytes": 72063,
+      "sha256": "0ae2aa81ba6f1955adcd1ad765a85a419417dc7824a733de1d54dd2d09d981c8"
     },
     "edges/physics.jsonl": {
-      "bytes": 194836,
-      "sha256": "969a5ce8e9093b6809106b0e70b54ef4370430ed701a8e78ee6dd9518aa05efa"
+      "bytes": 289582,
+      "sha256": "17b4376590ab394c2a8b9b345b9440b10f857e39be28abc9dc3585f41caad880"
     },
     "edges/science.jsonl": {
-      "bytes": 209033,
-      "sha256": "49f932043cac0710acfc55eea780a002cb1cf4d3cdd4d618ae92c716b74f9d96"
+      "bytes": 368767,
+      "sha256": "635cd3c12a589ec898c6e51969e39afb013d8a99b0b8cc2898df5a7ba703881e"
     },
     "edges/体育与健康.jsonl": {
       "bytes": 28147,
