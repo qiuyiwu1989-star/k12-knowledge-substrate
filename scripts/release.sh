@@ -16,7 +16,10 @@ V=$(cat VERSION)
 git rev-parse "v$V" >/dev/null 2>&1 && { echo "✗ tag v$V 已存在。发布版本不可变，先动 VERSION"; exit 1; }
 
 echo "── 全量闸 ──"; npm run check >/dev/null
-echo "✓ 十三道全绿"
+# 闸的道数从 package.json 数出来，不手打 —— 上一版写死「十三道」，
+# 加了第十四道之后它就在说谎了。这个仓库专门有一道 sync-docs 拦这种事。
+N=$(node -e "console.log(require('./package.json').scripts.check.split('&&').length)")
+echo "✓ $N 道全绿"
 
 [ -f "releases/$V.json" ] || { echo "✗ 缺 releases/$V.json，先跑 npm run release-manifest -- $V"; exit 1; }
 
