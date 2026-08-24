@@ -112,6 +112,39 @@ def stage_of(a):
 CROSS_STAGE_QUOTA = 1 / 3
 
 
+def band(g):
+    """学段档。课标就是按这个分的：1-2 / 3-4 / 5-6 / 7-9 / 高中。
+    **跨没跨学段要按档比，不能按年级差比。**"""
+    return 0 if g <= 2 else 1 if g <= 4 else 2 if g <= 6 else 3 if g <= 9 else 4
+
+
+def build_bridge_pool(target, all_in_disc, cap=40):
+    """跨学段专用候选池：**只放更早学段档的锚点**，同档的一条都不放。
+
+    普通池子里同档候选永远更「近」，模型自然优先选它们 ——
+    加配额也没用，因为配额判据本身是错的（见 build_pool 里那段注释）。
+    要拿到跨学段的边，只能给一个**同档候选完全不存在**的池子。
+
+    被依赖多的优先：跨学段的真前置多半是那些「底层能力」
+    （能观察比较、能读懂图表、能列举性质），它们的出度天然高。
+    """
+    tmin, _ = stage_of(target)
+    tb = band(tmin)
+    if tb == 0:
+        return []                       # G1-2 没有更早的学段
+    pool = []
+    for a in all_in_disc:
+        if a['id'] == target['id'] or a.get('track') == 'LIST':
+            continue
+        amin, _ = stage_of(a)
+        if band(amin) >= tb:            # ★ 同档或更晚的一律不要
+            continue
+        same_strand = (a.get('strand') and a.get('strand') == target.get('strand'))
+        pool.append(((0 if same_strand else 1, -(tb - band(amin))), a))
+    pool.sort(key=lambda x: x[0])
+    return [a for _, a in pool[:cap]]
+
+
 def build_pool(target, all_in_disc, cap=40):
     """候选前置池：同学科、学段不晚于自己、同领域优先，**但给跨学段留名额**。"""
     tmin, _ = stage_of(target)
@@ -129,8 +162,13 @@ def build_pool(target, all_in_disc, cap=40):
             continue
         same_strand = (a.get('strand') and a.get('strand') == target.get('strand'))
         key = (0 if same_strand else 1, tmin - amin)
-        # 「更早学段」的判据：跨了至少一个学段档（1-2/3-4/5-6/7-9/高中）
-        (earlier if tmin - amin >= 3 else same).append((key, a))
+        # 「更早学段」的判据：**按学段档比，不按年级差比**。
+        # 原先写的是 `tmin - amin >= 3`（年级差 ≥3），而学段档是
+        # 1-2 / 3-4 / 5-6 / 7-9 / 10-12 —— G4→G5 跨了档但差只有 1，
+        # 于是相邻档的候选一条也进不了跨学段配额池。
+        # 实测后果：全库先修边 92% 在同一学段内，跨学段只有 7%，
+        # 「十二年成长路径」这个承诺撑不住。
+        (earlier if band(amin) < band(tmin) else same).append((key, a))
     same.sort(key=lambda x: x[0])
     earlier.sort(key=lambda x: x[0])
     quota = int(cap * CROSS_STAGE_QUOTA)
@@ -180,6 +218,9 @@ def main():
     ap.add_argument('--src', default='anchors')
     ap.add_argument('--concurrency', type=int, default=14)
     ap.add_argument('--cross', action='store_true', help='只跑跨学科边（判据更严，最多 2 条/锚点）')
+    ap.add_argument('--stage-bridge', action='store_true',
+                    help='只建**跨学段**的边：候选池里同档锚点一条都不放。'
+                         '普通模式下同档候选永远更近，跨学段边只占 7%。')
     ap.add_argument('--missing-only', action='store_true',
                     help='只给「一条前置边都没有」的锚点建边。**候选池仍取整个学科** —— '
                          '新锚点的前置本来就该来自已有的那些。'
@@ -243,6 +284,7 @@ def main():
             if t.get('deprecated'):
                 continue
             pool = (build_cross_pool(t, anchors, outdeg_seed) if a.cross
+                    else build_bridge_pool(t, group) if a.stage_bridge
                     else build_pool(t, group))
             if pool:
                 jobs.append((t, pool))

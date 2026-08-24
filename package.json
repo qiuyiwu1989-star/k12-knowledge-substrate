@@ -17,6 +17,7 @@
     "no-dup-defs": "node scripts/no-dup-defs.mjs",
     "quality-levels": "python3 tools/extract_quality_levels.py",
     "no-shrink": "node scripts/no-shrink.mjs",
-    "mapper-test": "python3 tools/mapper_test.py"
+    "mapper-test": "python3 tools/mapper_test.py",
+    "publish": "bash deploy/publish.sh"
   }
 }
