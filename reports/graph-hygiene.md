@@ -107,72 +107,98 @@ G1–2 → G7–9  艺术｜能说出中国传统工艺是中华民族文化艺�
 | 道德与法治 | 6 | 6 | 11 | 35 | — | 58 |
 | 音乐 | — | — | — | — | 12 | 12 |
 
+## 疑似截断：一条是另一条的子串 —— **9 对**
+
+（已排除拆原子的母子对 —— 那是设计不是缺陷。这些条已在数据里标了
+`fieldIssues: possible-truncation` 并指向更长的那条。）
+
+```
+长 能表达自己的态度、情感和观点，体现文化理解
+短 能表达自己的态度、情感和观点   ca_ftkyZRZv [ai-reviewed]
+长 能说出张仲景撰写了《伤寒杂病论》及其主要贡献
+短 能说出张仲景撰写了《伤寒杂病论》   ca_CzMuBPZt [ai-adjudicated]
+长 能说出19世纪70年代以后，列强对华侵略加剧，中华民族危机日益深重
+短 能说出19世纪70年代以后列强对华侵略加剧   ca_UT2Lu5tk [ai-reviewed]
+长 能用列表、画树状图等方法求出简单随机事件所有可能的结果以及指定随机事件发生的所有可能结果
+短 能用列表、画树状图等方法求出简单随机事件所有可能的结果   ca_wFuXYUtX [ai-reviewed]
+长 能通过预测、推断等学习策略，大体把握语篇的内容
+短 能通过预测、推断等学习策略   ca_mEka3xwJ [ai-reviewed]
+长 能分析实验中存在的误差，并能提出减小误差的方法
+短 能分析实验中存在的误差   ca_UzG7c8f9 [llm-proposed]
+长 能将简单的设计方案用二维、三维设计软件表现出来，并不断进行优化和改进
+短 能将简单的设计方案用二维、三维设计软件表现出来   ca_gYZ4vKjv [ai-reviewed]
+长 能通过实际操作掌握分析问题的方法，学会整体解决方案的设计
+短 能通过实际操作掌握分析问题的方法   ca_xqRFTtBv [llm-proposed]
+长 能说明有些力是通过接触物体施加的，有些力是不直接接触物体施加的，力可以改变物体的运动状态
+短 能说明有些力是通过接触物体施加的，有些力是不直接接触物体施加的   ca_DsgznU5s [ai-reviewed]
+```
+
 ## 近重复断言（只报告，不自动合并）
 
-实词+拉丁+数字的 Jaccard ≥ 0.92：**50 对**，其中 **50 对两条都可引用** —— 那是同一件事有了两个 ID，最该先看。
+实词+拉丁+数字的 Jaccard ≥ 0.92：**106 对**，其中 **101 对两条都可引用** —— 那是同一件事有了两个 ID，最该先看。
 
 **不自动合并**：这个区间里既有真重复（只差一个括号），也有真不同
 （「过去完成时／过去未完成时」「概率／条件概率」）。判据交给人。
 
 ```
-1.00 ★两条都可引用
-   ca_xCLSAkdA [ai-reviewed] 能举例说明重要资源的主要类型、成分和用途
-   ca_Naq7e63w [ai-reviewed] 能举例说明重要资源和能源的主要类型、成分和用途
-1.00 ★两条都可引用
-   ca_Nzxb9QjR [ai-reviewed] 能解释原电池的工作原理
-   ca_PMTzGcMR [ai-reviewed] 能解释电解池的工作原理
-1.00 ★两条都可引用
-   ca_4AcQgaPb [ai-reviewed] 能熟练地使用字典、词典独立识字
-   ca_UuRKusxH [ai-reviewed] 能熟练地使用词典独立识字
-1.00 ★两条都可引用
-   ca_qr5RchXf [ai-reviewed] 能在语篇中理解和使用动词不定式作句子中的结果状语
-   ca_hCzUf94s [ai-reviewed] 能在语篇中理解和使用动词不定式作句子中的定语和结果状语
-1.00 ★两条都可引用
-   ca_NsGyU4hS [ai-reviewed] 能判断直线与圆 、圆与圆的位置关系
-   ca_AExNhvcm [ai-reviewed] 能判断直线与圆的位置关系
-1.00 ★两条都可引用
-   ca_taC1JpOJ [ai-reviewed] 能计算一组简单数据的离差平方和、方差
-   ca_NNEhwpJC [ai-reviewed] 能计算一组简单数据的离差平方和
-1.00 ★两条都可引用
-   ca_8fzVCSEh [ai-reviewed] 能理解与运用动词的Vている语法形式
-   ca_8StDt4m3 [ai-reviewed] 能理解与运用动词的Vてある语法形式
-1.00 ★两条都可引用
-   ca_8fzVCSEh [ai-reviewed] 能理解与运用动词的Vている语法形式
-   ca_eU2k79E4 [ai-reviewed] 能理解与运用动词的Vておく语法形式
-1.00 ★两条都可引用
-   ca_8StDt4m3 [ai-reviewed] 能理解与运用动词的Vてある语法形式
-   ca_eU2k79E4 [ai-reviewed] 能理解与运用动词的Vておく语法形式
-1.00 ★两条都可引用
-   ca_hymPp5rU [ai-reviewed] 能结合生物的生存条件以及动物与植物相互关系等知识，简单描述生物与生物、生物与环境之间相互依存的关系
-   ca_8ugQh2VM [ai-reviewed] 能结合生物的生存条件以及动物与植物相互关系等知识，简单描述生物与环境之间相互依存的关系
+0.97 ★两条都可引用
+   ca_3Vf2N6Fj [ai-reviewed] 能掌握陈述式过去未完成时的变位规则和用法
+   ca_UNSDrqMc [ai-reviewed] 能掌握陈述式过去完成时的变位规则和用法
+0.97 ★两条都可引用
+   ca_TbsGjgjg [ai-reviewed] 能说出移动性技能的练习方法和动作名称
+   ca_RJjYpS7u [ai-reviewed] 能说出非移动性技能的练习方法和动作名称
+0.96 ★两条都可引用
+   ca_z2f4UFRi [ai-reviewed] 能在语篇中正确地理解和使用动词 -ing 形式作句子中的主语
+   ca_vuumhRjU [ai-reviewed] 能在语篇中正确地理解和使用动词 -ing 形式作句子中的宾语
+0.96 ★两条都可引用
+   ca_z2f4UFRi [ai-reviewed] 能在语篇中正确地理解和使用动词 -ing 形式作句子中的主语
+   ca_jKuYY4d7 [ai-reviewed] 能在语篇中正确地理解和使用动词 -ing 形式作句子中的表语
+0.96 ★两条都可引用
+   ca_vuumhRjU [ai-reviewed] 能在语篇中正确地理解和使用动词 -ing 形式作句子中的宾语
+   ca_jKuYY4d7 [ai-reviewed] 能在语篇中正确地理解和使用动词 -ing 形式作句子中的表语
 0.96 ★两条都可引用
    ca_U7GgVizO [ai-reviewed] 能说出3~4年级学生应调查不同环境中植物、动物的类型和数量
    ca_dv32R2fF [ai-reviewed] 能说出3~4年级学生应调查不同环境中动物的类型和数量
 0.96 ★两条都可引用
-   ca_pAPgdU4g [ai-reviewed] 能在运用书面语表达的过程中，对比两种语体用词和造句的差别
-   ca_dNRTSPmi [ai-reviewed] 能在运用口语和书面语表达的过程中，对比两种语体用词和造句的差别
+   ca_ViFhCEpr [ai-reviewed] 按要求独立或与他人合作编创、表现有重复和变化的节奏或旋律
+   ca_kMJGYbpW [ai-reviewed] 按要求独立或与他人合作编创有重复和变化的节奏或旋律
+0.96 ★两条都可引用
+   ca_ViFhCEpr [ai-reviewed] 按要求独立或与他人合作编创、表现有重复和变化的节奏或旋律
+   ca_H3MjYiKy [ai-reviewed] 按要求独立或与他人合作表现有重复和变化的节奏或旋律
+0.96 ★两条都可引用
+   ca_BSgdF8hx [ai-reviewed] 能在语篇中理解和使用动词 -ing形式作句子中的定语
+   ca_wygfbtVj [ai-reviewed] 能在语篇中理解和使用动词 -ing形式作句子中的状语
+0.96 ★两条都可引用
+   ca_BSgdF8hx [ai-reviewed] 能在语篇中理解和使用动词 -ing形式作句子中的定语
+   ca_muzfeTJ5 [ai-reviewed] 能在语篇中理解和使用动词 -ing形式作句子中的补语
+0.96 ★两条都可引用
+   ca_wygfbtVj [ai-reviewed] 能在语篇中理解和使用动词 -ing形式作句子中的状语
+   ca_muzfeTJ5 [ai-reviewed] 能在语篇中理解和使用动词 -ing形式作句子中的补语
 0.96 ★两条都可引用
    ca_h4wc8imp [ai-reviewed] 能在语篇中正确地理解和使用动词不定式作句子中的主语
-   ca_g5EESiuV [ai-reviewed] 能在语篇中正确地理解和使用动词不定式作句子中的主语和表语
-0.96 ★两条都可引用
    ca_sMBqcdvq [ai-reviewed] 能在语篇中正确地理解和使用动词不定式作句子中的表语
-   ca_g5EESiuV [ai-reviewed] 能在语篇中正确地理解和使用动词不定式作句子中的主语和表语
 0.96 ★两条都可引用
-   ca_BWaQqit4 [ai-reviewed] 能选择简明、合理的表征方式描述化学变化的本质和规律
-   ca_UQtCZ8DA [ai-reviewed] 能选择简明、合理的表征方式描述和说明化学变化的本质和规律
-0.95 ★两条都可引用
-   ca_gBE67izk [ai-reviewed] 能操作三球仪，演示出地球绕太阳公转、月球绕地球公转的相对运动
-   ca_43JQQ5wK [ai-reviewed] 能操作三球仪，演示出地球绕太阳公转的相对运动
-0.95 ★两条都可引用
-   ca_3Vf2N6Fj [ai-reviewed] 能掌握陈述式过去未完成时的变位规则和用法
-   ca_UNSDrqMc [ai-reviewed] 能掌握陈述式过去完成时的变位规则和用法
-0.95 ★两条都可引用
-   ca_7dqYxEPA [ai-reviewed] 能运用等差数列 、等比数列解决简单的实际问题和数学问题
-   ca_C2Ew4gqL [ai-reviewed] 能运用等差数列解决简单的实际问题和数学问题
-0.95 ★两条都可引用
-   ca_7dqYxEPA [ai-reviewed] 能运用等差数列 、等比数列解决简单的实际问题和数学问题
-   ca_MxfnZh59 [ai-reviewed] 能运用等比数列解决简单的实际问题和数学问题
-0.95 ★两条都可引用
-   ca_gYZ4vKjv [ai-reviewed] 能将简单的设计方案用二维、三维设计软件表现出来
-   ca_ETHwiQjV [ai-reviewed] 能将简单的设计方案用三维设计软件表现出来
+   ca_xMPjr3zt [ai-reviewed] 能在语篇中理解和使用动词 -ed 形式作句子中的定语
+   ca_dGkKLp8r [ai-reviewed] 能在语篇中理解和使用动词 -ed 形式作句子中的状语
+0.96 ★两条都可引用
+   ca_xMPjr3zt [ai-reviewed] 能在语篇中理解和使用动词 -ed 形式作句子中的定语
+   ca_Ngy2VFXH [ai-reviewed] 能在语篇中理解和使用动词 -ed 形式作句子中的补语
+0.96 ★两条都可引用
+   ca_dGkKLp8r [ai-reviewed] 能在语篇中理解和使用动词 -ed 形式作句子中的状语
+   ca_Ngy2VFXH [ai-reviewed] 能在语篇中理解和使用动词 -ed 形式作句子中的补语
+0.96 ★两条都可引用
+   ca_ykkasXBQ [ai-reviewed] 能探究并描述常用材料的物理、化学特征及其对加工的影响
+   ca_5HyV3iwt [ai-reviewed] 能探究并描述常用材料的物理特征及其对加工的影响
+0.96 ★两条都可引用
+   ca_ykkasXBQ [ai-reviewed] 能探究并描述常用材料的物理、化学特征及其对加工的影响
+   ca_LYmq9iFk [ai-reviewed] 能探究并描述常用材料的化学特征及其对加工的影响
+0.96 ★两条都可引用
+   ca_RpyL9Fqn [ai-reviewed] 能运用远古艺术的形式法则创造新的、有个性的艺术
+   ca_ZMXn96BD [ai-reviewed] 能运用远古艺术的元素、形式法则创造新的、有个性的艺术
+0.96 ★两条都可引用
+   ca_EL5hbPqa [auto-confirmed] 能背诵《江南》全文且不错漏
+   ca_u9THriNM [auto-confirmed] 能背诵《忆江南》全文且不错漏
+0.96 ★两条都可引用
+   ca_EL5hbPqa [auto-confirmed] 能背诵《江南》全文且不错漏
+   ca_bt57QKdS [auto-confirmed] 能背诵《江南春》全文且不错漏
 ```

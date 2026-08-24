@@ -144,34 +144,73 @@ for (const d of [...subjects].sort()) {
 L.push('');
 
 // ── 近重复体检 ─────────────────────────────────────────────────────
-// 去重签名只抓「同学科 + 同动词 + 整句去掉动词后完全相同」，
-// **抓不到只差一个括号或一个副词的**：实测漏过 3 组，且两条都标着可引用 ——
-//   「以站立点为正中心（圆心），以钟表盘…」 vs 「以站立点为正中心，以钟表盘…」
-//   「宪法是国家根本法…」 vs 「能准确说出宪法是国家的根本法…」
-// 那是同一件事有了两个 ID，正是底座最该避免的（档案引了其中一个，另一个就成了
-// 同一件事的第二个坐标）。但 0.92 这个阈值**不能自动合并** ——
-// 「过去完成时 / 过去未完成时」「概率 / 条件概率」也在这个区间，它们是真不同。
-// 所以只报告，人来判。
-const tok = (t) => new Set([...t].filter((c) => /[\u4e00-\u9fff0-9a-zA-Z]/.test(c)));
+// 去重签名只抓「同学科 + 同动词 + 整句去掉动词后完全相同」，抓不到近似的。
+//
+// **第一版用字符集 Jaccard，那个判据是错的**：
+//   「能解释**原**电池的工作原理」和「能解释**电解**池的工作原理」
+//   字符集完全相同（「原」在两边都有：原电池 / 原理），Jaccard = 1.00，
+//   而它们是两条完全不同的能力。日语的 Vている / Vてある / Vておく 同理。
+//   集合丢掉了字序，而中文里字序就是意思。
+//
+// 换成**序列相似度**（最长公共子序列比），并单独抓一类真信号：
+//   **一条是另一条的子串** —— 那是抽取截断的典型形态
+//   （「能计算离差平方和、方差」→「能计算离差平方和」）。
+//   但拆原子产生的母子对也长这样，所以要排除 splitFrom 指向对方的。
+//
+// **只报告，不自动合并** —— 短的那条也可能本身就成立。
+const norm = (t) => String(t).replace(/[\s，。、；：！？（）()《》「」]/g, '');
+const lcsRatio = (a, b) => {
+  // 经典 LCS。断言最长 60 字，3,000 条里同学科两两比，够快。
+  const n = a.length, m = b.length;
+  if (!n || !m) return 0;
+  let prev = new Uint16Array(m + 1), cur = new Uint16Array(m + 1);
+  for (let i = 1; i <= n; i++) {
+    for (let j = 1; j <= m; j++) {
+      cur[j] = a[i - 1] === b[j - 1] ? prev[j - 1] + 1 : Math.max(prev[j], cur[j - 1]);
+    }
+    [prev, cur] = [cur, prev];
+    cur.fill(0);
+  }
+  return (2 * prev[m]) / (n + m);
+};
 const liveAnchors = [...A.values()].filter((a) => !a.deprecated);
 const byDisc = {};
 for (const a of liveAnchors) (byDisc[a.discipline] ??= []).push(a);
-const nearDup = [];
+const nearDup = [], truncated = [];
 for (const arr of Object.values(byDisc)) {
   for (let i = 0; i < arr.length; i++) {
     for (let j = i + 1; j < arr.length; j++) {
-      const x = tok(arr[i].statement), y = tok(arr[j].statement);
-      if (!x.size || !y.size) continue;
-      let inter = 0;
-      for (const c of x) if (y.has(c)) inter++;
-      const jac = inter / (x.size + y.size - inter);
-      if (jac >= 0.92) nearDup.push({ jac, a: arr[i], b: arr[j] });
+      const x = norm(arr[i].statement), y = norm(arr[j].statement);
+      if (x.length < 8 || y.length < 8) continue;
+      if (Math.abs(x.length - y.length) > Math.max(x.length, y.length) * 0.5) continue;
+      const sub = x.includes(y) || y.includes(x);
+      if (sub) {
+        const [lo, hi] = x.length < y.length ? [arr[i], arr[j]] : [arr[j], arr[i]];
+        // 拆原子的母子对长得也像子串，那是设计不是缺陷
+        if (lo.provenance?.splitFrom !== hi.id) truncated.push({ lo, hi });
+        continue;
+      }
+      const r = lcsRatio(x, y);
+      if (r >= 0.92) nearDup.push({ jac: r, a: arr[i], b: arr[j] });
     }
   }
 }
 nearDup.sort((p, q) => q.jac - p.jac);
 const CITABLE_R = new Set(JSON.parse(readFileSync(join(ROOT, 'mappings/citable.json'), 'utf8')).citable);
 const bothCitable = nearDup.filter((d) => CITABLE_R.has(d.a.reviewStatus) && CITABLE_R.has(d.b.reviewStatus));
+L.push(`## 疑似截断：一条是另一条的子串 —— **${truncated.length} 对**`);
+L.push('');
+L.push('（已排除拆原子的母子对 —— 那是设计不是缺陷。这些条已在数据里标了');
+L.push('`fieldIssues: possible-truncation` 并指向更长的那条。）');
+L.push('');
+L.push('```');
+for (const t of truncated.slice(0, 15)) {
+  L.push(`长 ${t.hi.statement.slice(0, 52)}`);
+  L.push(`短 ${t.lo.statement.slice(0, 52)}   ${t.lo.id} [${t.lo.reviewStatus}]`);
+}
+L.push('```');
+L.push('');
+
 L.push('## 近重复断言（只报告，不自动合并）');
 L.push('');
 L.push(`实词+拉丁+数字的 Jaccard ≥ 0.92：**${nearDup.length} 对**，`

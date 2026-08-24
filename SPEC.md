@@ -296,7 +296,7 @@ mappings/citable.json  →  citable: ["auto-confirmed", "expert-confirmed",
 `fieldIssues` 是**字段级**缺陷（证据弱、学段可疑、缺 topic、独立验证存疑、复合未拆），
 和 `reviewStatus` 分开记：`reviewStatus` 回答「这条断言成不成立」，
 证据写得弱是别的字段的毛病，不该让断言替它背锅。
-当前 <!--N:fieldIssueAnchors-->417<!--/N--> 条存活锚点带 `fieldIssues`，其中不少是可引用的。
+当前 <!--N:fieldIssueAnchors-->427<!--/N--> 条存活锚点带 `fieldIssues`，其中不少是可引用的。
 **展示给最终用户时请把它显示出来。**
 
 ### 5.5 成色分档（`tiers`）和「可引用」是两件事
