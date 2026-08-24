@@ -12,28 +12,33 @@ mapper.py — 把别人的内容映射到底座的锚点 ID。
 别人的标注是别人的判断。混进来，底座就不再是「每条都能翻回教育部文件某一页」，
 而那是它唯一的护城河。所以这个工具**只读**锚点，产出留在调用方那边。
 
-## ⚠️ 当前状态：**召回可用，排序不可用。别拿它的排名当结论。**
+## 两段式：字面粗召回 + 模型精排
 
-原本的设计前提是「锚点断言用的是课标的词，对方的内容多半也在用同一套术语，
-字面重合本身就是强信号」。**这个前提对教研文档成立，对课堂语言不成立。**
+原本只做了前半截，排序不可信。理由是设计前提错了 ——
+我写「锚点用的是课标的词，对方的内容多半也在用同一套术语」，
+**那对教研文档成立，对课堂语言不成立**：
 
-实测：
-
-    老师写的：用竖式计算 300 减 198，讲退位怎么发生，说说为什么个位不够减要向十位借
+    老师写的：用竖式计算 300 减 198，讲退位怎么发生，个位不够减要向十位借
     课标写的：能计算两位数和三位数的加减法
-    字面共享的只有「计算」两个字 —— 真正的对应是 减法≈减、三位数≈个位/十位，
-    **那是语义，不是字面**。
+    字面只共享「计算」两个字 —— 真正的对应是 减法≈减、三位数≈个位/十位，那是语义。
 
-为此换过四种切法，每种换来一种新的失败（都记在 common_runs 上方），
-最后一种是最长公共子串 —— 它解决了噪声问题，但解决不了「根本没有字面重合」。
+为此换过四种切法，每种换来一种新失败（都记在 common_runs 上方）。
+最后一种（最长公共子串）解决了噪声，但解决不了「根本没有字面重合」。
 
-**结论：字面匹配只能当粗召回，排序必须换语义。**
-正确的架构是「字面粗召回（离线、零依赖） + 模型精排（要 API）」，
-现在只做完了前半截。所以：
+所以分两段：
 
-  · `--json` 的输出**可以**当候选池用（63 条里通常包含正确答案）
-  · **不要**用它的 rank / sortScore 做自动映射
-  · 精排那一段没写，不是忘了，是知道它必须要模型而这一轮没做
+  **粗召回**（离线、零依赖、0.15 秒）—— 最长公共子串，宁可多收。
+    实测正确答案基本都在前 60 条里。这一段**不做判断**。
+  **精排**（`--rerank`，一次模型调用）—— 把候选连同原文一起给模型，让它挑并排序。
+
+精排只发**一次**调用，不是逐条问：候选池已经把范围收到几十条，
+逐条问贵 20 倍而收益有限。代价是**候选池外的漏了就漏了** —— 这是明摆着的取舍，
+所以粗召回那一段的门槛故意放得很松。
+
+**模型只能从给定列表里挑，不许自由生成 ID。** 这条抄 gen_edges ——
+Marble 的 3,221 条边全是模型自由生成的，结果社区提了
+「抗逆力成长依赖 20 以内加减法」这种 issue。返回的 ID 逐个核对，
+不在候选池里的当场丢掉并计数。
 
 ## 打分
 
@@ -152,6 +157,72 @@ def score(q, a, disc, stage, df, n):
     return s, sorted(runs, key=lambda t: -t[1])
 
 
+RERANK_SYS = """你在把一段教学内容对应到课标的能力点上。
+
+下面给你一段内容，和一批**候选能力点**（已经按字面相似度粗筛过）。
+从候选里挑出**真正对应**的，按对应程度排序。
+
+判据：这段内容如果做完了，能不能作为「这个孩子会了这条能力」的证据？
+
+  ✅ 内容：用竖式计算 300-198，讲退位
+     候选：能计算两位数和三位数的加减法        → 对应。这就是在练这条
+  ❌ 候选：能借助计算器进行计算                → 不对应。用的是另一种手段
+  ❌ 候选：会计算长方形的面积                  → 不对应。只是都含「计算」两个字
+
+规则：
+1. **只能从候选里挑，编号必须是给定的那些。** 编不存在的编号 = 整条作废。
+2. 挑不出对应的就返回空数组 —— 硬凑一条比不给更糟。
+3. 最多挑 6 条。真正对应的通常只有 1–3 条。
+4. 每条写一句「为什么对应」，说具体：说清这段内容的哪个动作对上了这条能力的哪个要求。
+   ❌ 内容相关       ❌ 都涉及计算
+   ✅ 竖式退位减法正是「三位数减法」的具体做法
+
+只输出一行 JSON，不要代码块：
+{{"picks":[{{"n":3,"why":"…"}},{{"n":7,"why":"…"}}]}}
+{{"picks":[]}}"""
+
+
+def rerank(q, cands, base, key, model):
+    """把候选连同原文一起给模型，让它挑并排序。**一次调用，不是逐条问。**
+
+    返回 (排好的候选列表, 诊断信息)。任何一步出问题都退回粗召回的顺序 ——
+    精排失败不该让整个工具不可用。
+    """
+    import sys as _s
+    _s.path.insert(0, str(Path(__file__).resolve().parent))
+    from repair import call
+    lines = []
+    for i, (_, _, x) in enumerate(cands, 1):
+        sh = x.get('stageHint') or {}
+        lines.append(f"{i}. [{x['discipline']} {sh.get('min','?')}–{sh.get('max','?')}] {x['statement']}")
+    user = f"教学内容：\n{q[:600]}\n\n候选能力点：\n" + '\n'.join(lines)
+    try:
+        raw = call(RERANK_SYS, user, base, key, model)
+    except Exception as e:
+        return None, f'精排调用失败（{type(e).__name__}），退回粗召回顺序'
+    m = re.search(r'\{.*\}', raw or '', re.S)
+    if not m:
+        return None, '精排没吐 JSON，退回粗召回顺序'
+    try:
+        d = json.loads(m.group(0))
+    except Exception:
+        return None, '精排 JSON 解析失败，退回粗召回顺序'
+    picks, bogus = [], 0
+    seen = set()
+    for p in (d.get('picks') or []):
+        n = p.get('n')
+        # ★ 逐个核对：不在候选池里的当场丢掉。模型不许自由生成 ID
+        if not isinstance(n, int) or not (1 <= n <= len(cands)) or n in seen:
+            bogus += 1
+            continue
+        seen.add(n)
+        picks.append((cands[n - 1], str(p.get('why') or '')[:120]))
+    note = f'精排从 {len(cands)} 条候选里挑出 {len(picks)} 条'
+    if bogus:
+        note += f'（丢弃 {bogus} 个不在候选池里的编号）'
+    return picks, note
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument('--text', default=None)
@@ -161,6 +232,10 @@ def main():
     ap.add_argument('--top', type=int, default=8)
     ap.add_argument('--citable-only', action='store_true', help='只召回可被档案引用的')
     ap.add_argument('--json', action='store_true')
+    ap.add_argument('--rerank', action='store_true',
+                    help='开精排：把粗召回的候选交给模型挑并排序（一次调用）。'
+                         '不开就只有粗召回，排序不可信。')
+    ap.add_argument('--pool', type=int, default=25, help='送去精排的候选数，默认 25')
     a = ap.parse_args()
 
     q = a.text or (Path(a.file).read_text(encoding='utf-8') if a.file else None)
@@ -177,14 +252,30 @@ def main():
         if r:
             cands.append((r[0], r[1], x))
     cands.sort(key=lambda t: -t[0])
-    top = cands[:a.top]
+
+    reranked, note = None, None
+    if a.rerank:
+        import os
+        base, key = os.environ.get('MIMO_BASE'), os.environ.get('MIMO_KEY')
+        if not base or not key:
+            note = '要精排得先设 MIMO_BASE / MIMO_KEY，现在只有粗召回'
+        else:
+            reranked, note = rerank(q, cands[:a.pool], base, key,
+                                    os.environ.get('MIMO_MODEL', 'mimo-v2.5'))
+    top = ([c for c, _ in reranked] if reranked is not None else cands)[:a.top]
+    why_of = {id(c): w for c, w in (reranked or [])}
 
     out = []
-    for s, hit, x in top:
+    for cand in top:
+        s, hit, x = cand
         sh = x.get('stageHint') or {}
         why = []
         # 按 IDF 排，先说最有区分力的那几个词
-        why.append('命中 ' + '、'.join(f'「{w}」' for w, _ in hit[:5]))
+        # 精排给了理由就先说它 —— 那是「为什么对应」，字面命中只是「为什么被捞进来」
+        rw = why_of.get(id(cand))
+        if rw:
+            why.append(rw)
+        why.append('字面命中 ' + '、'.join(f'「{w}」' for w, _ in hit[:5]))
         if x.get('verb') and x['verb'] in q:
             why.append(f'动词「{x["verb"]}」对上了')
         if stage and G(sh.get('min')):
@@ -206,16 +297,20 @@ def main():
         print(json.dumps({
             'query': q[:200], 'discipline': a.discipline, 'stage': a.stage,
             'candidates': out,
-            'status': 'recall-only',
-            'disclaimer': '⚠️ **排序不可信**：字面匹配只够粗召回，精排要模型，那一段还没写。'
-                          '把 candidates 当候选池用，别用 rank/sortScore 做自动映射。'
-                          '映射结果不写回底座 —— 这是你的判断，留在你那边。'
-                          'humanConfirmed 全库目前为 0：「可引用」的含义是「AI 看过、没挑出毛病」。',
+            'status': 'reranked' if reranked is not None else 'recall-only',
+            'rerankNote': note,
+            'disclaimer': ('已过模型精排：候选是从粗召回池里挑的，**模型只能从池里选，不许自由生成 ID**，'
+                           '池外的漏了就漏了。sortScore 是粗召回的分，排名以精排为准。'
+                           if reranked is not None else
+                           '⚠️ **排序不可信**：只有字面粗召回。加 --rerank 开精排。'
+                           '现在请把 candidates 当候选池用，别用 rank 做自动映射。')
+                          + '映射结果不写回底座 —— 这是你的判断，留在你那边。'
+                            'humanConfirmed 全库目前为 0：「可引用」的含义是「AI 看过、没挑出毛病」。',
         }, ensure_ascii=False, indent=1))
         return
 
     print(f'查询：{q[:70]}{"…" if len(q) > 70 else ""}')
-    print(f'候选 {len(cands)} 条，取前 {len(out)}\n')
+    print(f'粗召回 {len(cands)} 条' + (f' · {note}' if note else '') + f' · 取前 {len(out)}\n')
     for c in out:
         tag = '✅可引用' if c['citable'] else '⚠不可引用'
         if c['reviewStatus'] == 'disputed':
@@ -225,8 +320,10 @@ def main():
         if c['fieldIssues']:
             print(f"     字段缺陷：{'、'.join(c['fieldIssues'])}")
         print()
-    print('  ⚠️ 排序不可信 —— 字面匹配只够粗召回，精排要模型，那一段还没写。')
-    print('     把这些当候选池看，别当结论。理由见 tools/mapper.py 文件头。')
+    if reranked is None:
+        print('  ⚠️ 排序不可信 —— 只有字面粗召回。加 --rerank 开精排。')
+    else:
+        print('  已过精排。模型只能从候选池里挑，池外的漏了就漏了 —— 粗召回门槛故意放得很松。')
     print('  映射结果不写回底座 —— 这是你的判断，留在你那边。')
     print(f'  教师签字数全库为 0：「可引用」= AI 看过没挑出毛病，不是有人签过字。')
 

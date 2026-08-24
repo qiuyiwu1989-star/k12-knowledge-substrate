@@ -9,13 +9,14 @@
     "validate": "node scripts/validate.mjs --warn",
     "selftest": "node scripts/lib/decidability.mjs && node scripts/selftest.mjs",
     "manifest": "node scripts/manifest.mjs",
-    "check": "npm run no-shrink && npm run no-dup-defs && npm run selftest && npm run review-loop && npm run manifest && node scripts/sync-docs.mjs --check && npm run validate && npm run fw-report",
+    "check": "npm run no-shrink && npm run no-dup-defs && npm run selftest && npm run review-loop && npm run mapper-test && npm run manifest && node scripts/sync-docs.mjs --check && npm run validate && npm run fw-report",
     "sync-docs": "node scripts/sync-docs.mjs",
     "strip-srctext": "node scripts/strip-srctext.mjs",
     "review-loop": "node scripts/review-loop-test.mjs",
     "fw-report": "node scripts/fw-report.mjs",
     "no-dup-defs": "node scripts/no-dup-defs.mjs",
     "quality-levels": "python3 tools/extract_quality_levels.py",
-    "no-shrink": "node scripts/no-shrink.mjs"
+    "no-shrink": "node scripts/no-shrink.mjs",
+    "mapper-test": "python3 tools/mapper_test.py"
   }
 }
