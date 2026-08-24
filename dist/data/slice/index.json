@@ -1,9 +1,9 @@
 {
  "schemaVersion": "0.1.0",
- "sourceCommit": "57d70592",
+ "sourceCommit": "0ad4c70c",
  "totals": {
-  "anchors": 3086,
-  "citable": 1747,
+  "anchors": 2971,
+  "citable": 2589,
   "humanConfirmed": 0
  },
  "howToCite": "引用锚点用 id（ca_ 开头，永不复用）。**引用前先看 _meta.humanConfirmed** —— 现在是 0，「可引用」的含义是「AI 看过、没挑出毛病」，不是有人签过字。",

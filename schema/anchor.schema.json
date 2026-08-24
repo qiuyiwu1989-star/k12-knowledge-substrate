@@ -600,9 +600,27 @@
         },
         "pendingObjection": {
           "type": "boolean"
+        },
+        "verdict": {
+          "enum": [
+            "overrule",
+            "uphold"
+          ],
+          "description": "overrule = 那条异议不成立，锚点退回 ai-reviewed；uphold = 异议成立，锚点弃用。"
+        },
+        "why": {
+          "type": "string"
+        },
+        "quote": {
+          "type": "string",
+          "description": "推翻异议时必须从课标原文里逐字引的一句。**引文逐字核对过是不是 srcText 的子串** —— 对不上就不算推翻。没有这道闸，模型可以凭空推翻任何异议。"
+        },
+        "method": {
+          "type": "string",
+          "description": "裁决的信息流：**裁决者看得到课标原文，当初挑错的看不到**。改的是信息流不是措辞 —— 和 adversarial_verify 同一个道理。"
         }
       },
-      "description": "AI 裁定记录。pendingObjection 标明这条是「待人工异议」，不是定论。"
+      "description": "AI 裁定记录。pendingObjection 标明这条是「待人工异议」，不是定论。\n2026-08-22 起也记 disputed 的裁决（tools/adjudicate.py）：两道硬闸 —— 引文必须逐字来自课标原文，且**不许推翻本项目自己的可判定闸**（断言可能是课标原话、同时仍然不可判定）。"
     },
     "independentCheck": {
       "type": [

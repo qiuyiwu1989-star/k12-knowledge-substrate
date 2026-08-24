@@ -25,16 +25,16 @@
 
 | | |
 |---|---|
-| 存活锚点 | <!--N:liveAnchors-->3086<!--/N--> 条 |
-| 可被档案引用（`usableAnchors`） | <!--N:usable-->1747<!--/N--> 条 |
+| 存活锚点 | <!--N:liveAnchors-->2971<!--/N--> 条 |
+| 可被档案引用（`usableAnchors`） | <!--N:usable-->2589<!--/N--> 条 |
 | **有教师签字的** | **<!--N:humanConfirmed-->0<!--/N--> 条** |
 
 **第三个数是 0，它没有写错。** 底座里没有任何一条断言经过一线教师复核。
 标为「可用」的那些，靠的是机械可判定（字表、词表这类数得清的东西）或 AI 裁定待异议 ——
 那是「没人反对」，不是「有人认可」。详见 [§5](#5-复核档可引用这条线画在哪)。
 
-先修边的情况更弱：<!--N:edges-->5307<!--/N--> 条边里
-**<!--N:edgesUnreviewed-->5304<!--/N--> 条的 `reviewStatus` 仍是 `llm-proposed`**，
+先修边的情况更弱：<!--N:edges-->4983<!--/N--> 条边里
+**<!--N:edgesUnreviewed-->4980<!--/N--> 条的 `reviewStatus` 仍是 `llm-proposed`**，
 即没有任何人看过。见 [§6](#6-边依赖关系怎么引用)。
 
 拿去做产品之前，请自己判断这个可信度够不够。我们不替你判断，也不打算把这几个数藏起来。
@@ -125,7 +125,7 @@ curl https://k12.yongle.school/data/lists/hanzi/jiben-300.jsonl
   这种切分是内部实现，会调整。**按 ID 全局查找，不要按文件建索引。**
 - **不承诺行序稳定。** JSONL 的行顺序随重算变化，不表达任何含义。
 - **不承诺锚点总数单调增。** 已经掉过一次：清理劣质锚点使
-  <!--N:deprecatedAnchors-->911<!--/N--> 条退出存活集合。累计铸出的 ID 共
+  <!--N:deprecatedAnchors-->1026<!--/N--> 条退出存活集合。累计铸出的 ID 共
   <!--N:anchorsAll-->3997<!--/N--> 个。
 - **不承诺 `usableAnchors` 单调增。** 复核可以把一条从可用降级为 `disputed`；
   降级只需一个人说不对（宁可错杀）。
@@ -152,10 +152,10 @@ curl https://k12.yongle.school/data/lists/hanzi/jiben-300.jsonl
 
 ### 4.2 实际分布：多数弃用**没有继任者**
 
-当前 <!--N:deprecatedAnchors-->911<!--/N--> 条弃用锚点里：
+当前 <!--N:deprecatedAnchors-->1026<!--/N--> 条弃用锚点里：
 
 - <!--N:supersededAnchors-->12<!--/N--> 条有 `supersededBy`（有继任者）
-- <!--N:droppedNoSuccessor-->899<!--/N--> 条只有 `dropReason`（**没有继任者**）
+- <!--N:droppedNoSuccessor-->1014<!--/N--> 条只有 `dropReason`（**没有继任者**）
 
 **这是本节最重要的一句话**：绝大多数弃用不是「换了个更好的说法」，
 而是「这条根本不该存在」—— 典型的 `dropReason` 是「AI 判定不是学生能力（教学建议/课程目标）」
@@ -208,9 +208,9 @@ if (a.deprecated && !a.supersededBy)
 | 子条 | 各自是独立锚点、有自己的 ID，`provenance.splitFrom` 指回母条。 |
 | 两者的关系 | 一条 `type: "component"` 的边：`{ "anchorId": 母条, "prerequisiteId": 子条 }`，读作**母条依赖子条**（子条是母条的一个子动作）。 |
 
-当前 <!--N:compositeAnchors-->230<!--/N--> 条母条、
-<!--N:splitChildren-->577<!--/N--> 条子条、
-<!--N:edgesComponent-->2542<!--/N--> 条 `component` 边。
+当前 <!--N:compositeAnchors-->226<!--/N--> 条母条、
+<!--N:splitChildren-->548<!--/N--> 条子条、
+<!--N:edgesComponent-->2397<!--/N--> 条 `component` 边。
 
 **母条为什么不弃用**：它是课标自己的单位，而且弃用它会让**指向它的现存边全部悬空**，
 那些边该改指哪个子条，机械上判不出来（「会读 3000」和「会写 3000」，原来那条边指的是哪个？）。
@@ -234,10 +234,10 @@ if (a.deprecated && !a.supersededBy)
 | `auto-confirmed` | 146 | 能 |
 | `ai-adjudicated` | 242 | 能（AI 裁定，**待人工异议**） |
 | `expert-confirmed` | 0 | 能 |
-| `ai-reviewed` | 1359 | 能（2026-08-20 起 —— **AI 看过、没挑出毛病**，不是教师签字） |
-| `disputed` | 977 | **不能** —— AI 复核挑出了具体问题 |
+| `ai-reviewed` | 2201 | 能（2026-08-20 起 —— **AI 看过、没挑出毛病**，不是教师签字） |
+| `disputed` | 20 | **不能** —— AI 复核挑出了具体问题 |
 | `llm-proposed` | 362 | **不能** —— 没有任何东西看过一眼 |
-| **存活合计** | **3086** | 其中 **1747** 可用 |<!--/N-->
+| **存活合计** | **2971** | 其中 **2589** 可用 |<!--/N-->
 
 各档的确切含义：
 
@@ -296,7 +296,7 @@ mappings/citable.json  →  citable: ["auto-confirmed", "expert-confirmed",
 `fieldIssues` 是**字段级**缺陷（证据弱、学段可疑、缺 topic、独立验证存疑、复合未拆），
 和 `reviewStatus` 分开记：`reviewStatus` 回答「这条断言成不成立」，
 证据写得弱是别的字段的毛病，不该让断言替它背锅。
-当前 <!--N:fieldIssueAnchors-->423<!--/N--> 条存活锚点带 `fieldIssues`，其中不少是可引用的。
+当前 <!--N:fieldIssueAnchors-->417<!--/N--> 条存活锚点带 `fieldIssues`，其中不少是可引用的。
 **展示给最终用户时请把它显示出来。**
 
 ### 5.5 成色分档（`tiers`）和「可引用」是两件事
@@ -324,7 +324,7 @@ mappings/citable.json  →  citable: ["auto-confirmed", "expert-confirmed",
 - **边没有独立 ID**，主键是 `(anchorId, prerequisiteId)` 这一对。
   不要给边建自己的外键 —— 我们不保证边的稳定性，边可以被退休（`retired: true`，
   记录移入 `retired/edges.jsonl`）。
-- 当前 <!--N:edges-->5307<!--/N--> 条边。
+- 当前 <!--N:edges-->4983<!--/N--> 条边。
 
 ### 6.2 四种关系类型，只有三种进推理图
 
@@ -336,11 +336,11 @@ mappings/citable.json  →  citable: ["auto-confirmed", "expert-confirmed",
 | `convention` | **无可观测影响**（教材就这么排的） | — | **否** |
 
 **要做路径推荐、解锁计算，只用 `inInferenceGraph === true` 的边**
-（当前 <!--N:edgesInGraph-->4073<!--/N--> 条）。
-`convention` 那 <!--N:edgesConvention-->1212<!--/N--> 条是教材编排顺序，不是能力依赖，
+（当前 <!--N:edgesInGraph-->3830<!--/N--> 条）。
+`convention` 那 <!--N:edgesConvention-->1133<!--/N--> 条是教材编排顺序，不是能力依赖，
 拿它推理会推出「不学这个就学不了那个」这种假结论。
 
-还有 <!--N:edgesUntyped-->22<!--/N--> 条边**没有 `type`**（重标管线未覆盖到）。
+还有 <!--N:edgesUntyped-->20<!--/N--> 条边**没有 `type`**（重标管线未覆盖到）。
 它们的 `inInferenceGraph` 也缺省。**按「未定级」处理，别默认当成有效依赖。**
 
 `failureSignature` 是这条边的判据本身：说不出具体、可观察的失败表现，就是说不出这条边。
@@ -349,7 +349,7 @@ mappings/citable.json  →  citable: ["auto-confirmed", "expert-confirmed",
 ### 6.3 `strength`
 
 `hard` = 没有它就学不了；`soft` = 影响没那么绝对。
-当前 <!--N:edgesHard-->1188<!--/N--> 条 `hard`。
+当前 <!--N:edgesHard-->1137<!--/N--> 条 `hard`。
 
 注意一个设计动作：MATRIX 档学科（史地生政艺外语等）的边即使模型判为 hard，
 也会被压回 `soft` 并标 `strengthCappedBy: "matrix-track"` ——
@@ -358,7 +358,7 @@ mappings/citable.json  →  citable: ["auto-confirmed", "expert-confirmed",
 
 ### 6.4 边**基本没被复核**，这一点必须说清楚
 
-<!--N:edgesUnreviewed-->5304<!--/N--> 条边的 `reviewStatus` 是 `llm-proposed`。
+<!--N:edgesUnreviewed-->4980<!--/N--> 条边的 `reviewStatus` 是 `llm-proposed`。
 边的枚举只有四值（`llm-proposed` / `auto-confirmed` / `expert-confirmed` / `disputed`），
 **没有 `ai-*` 那两档**，也就是说：`citable.json` 那条放宽线**不适用于边**。
 
@@ -379,12 +379,12 @@ mappings/citable.json  →  citable: ["auto-confirmed", "expert-confirmed",
 
 ### 6.6 跨学科：先修边极少，这不是漏建
 
-<!--N:edges-->5307<!--/N--> 条边里只有 <!--N:crossEdges-->11<!--/N--> 条跨学科
+<!--N:edges-->4983<!--/N--> 条边里只有 <!--N:crossEdges-->11<!--/N--> 条跨学科
 （<!--N:crossPct-->0.2<!--/N-->%）。真正的跨学科**先修**关系本来就罕见。
 
 「能力跨界」在本项目里由**另一层**表达：横切维度 `crosscutting`（参照 NGSS 跨学科概念，
 闭合词表）与 `practice`（科学与工程实践）。
-当前 <!--N:crosscuttingTagged-->1972<!--/N--> 条锚点已打标。
+当前 <!--N:crosscuttingTagged-->1902<!--/N--> 条锚点已打标。
 **这两个是标签，不是边** —— 练同一个横切概念的两条锚点之间有关联，
 但那关联没有方向、画不成有向边。别把它当依赖用。
 
@@ -464,7 +464,7 @@ for (const [path, { sha256 }] of Object.entries(m.files)) {
 
 ### 关于 `provenance.srcText`
 
-<!--N:srcTextAnchors-->2931<!--/N--> 条存活锚点带句子级课标引文，中位数 33 字、最长 183 字，
+<!--N:srcTextAnchors-->2816<!--/N--> 条存活锚点带句子级课标引文，中位数 33 字、最长 183 字，
 单句、不连段。项目对它的表述（照抄 PROVENANCE.md）：
 
 > **我们的判断**：单句、非连续、用于标注与核查目的的引用，按合理引用处理。
@@ -495,7 +495,7 @@ for (const [path, { sha256 }] of Object.entries(m.files)) {
 这一节和上面所有承诺一样重要。按重要性排：
 
 1. **没有教师签字。** <!--N:humanConfirmed-->0<!--/N--> 条。
-   全库 <!--N:liveAnchors-->3086<!--/N--> 条断言没有一条经过一线教师复核。
+   全库 <!--N:liveAnchors-->2971<!--/N--> 条断言没有一条经过一线教师复核。
 2. **没有判定方法。** `assessmentSpec`（题型、判定规范、通过标准、衰减提示）
    当前 <!--N:assessmentSpecAnchors-->0<!--/N--> 条有值。
    **空着是对的** —— 用模型批量编样题会污染底座且无法追溯。
