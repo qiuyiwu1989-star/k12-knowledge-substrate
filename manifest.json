@@ -6,13 +6,13 @@
   "counts": {
     "anchors": 3997,
     "candidates": 0,
-    "edges": 6622,
+    "edges": 6618,
     "listItems": 6262,
     "mappings": 4,
-    "liveAnchors": 2971,
-    "deprecatedAnchors": 1026,
+    "liveAnchors": 2969,
+    "deprecatedAnchors": 1028,
     "byDiscipline": {
-      "艺术": 159,
+      "艺术": 158,
       "生物学": 135,
       "化学": 334,
       "语文": 256,
@@ -24,7 +24,7 @@
       "地理": 157,
       "德语": 10,
       "思想政治": 45,
-      "数学": 338,
+      "数学": 337,
       "日语": 39,
       "法语": 22,
       "物理": 173,
@@ -38,24 +38,24 @@
       "科学": 252
     },
     "byTrack": {
-      "MATRIX": 2062,
-      "DAG": 680,
+      "MATRIX": 2061,
+      "DAG": 679,
       "LIST": 229
     },
     "byReview": {
-      "ai-reviewed": 2201,
-      "disputed": 20,
+      "ai-reviewed": 2203,
+      "disputed": 16,
       "ai-adjudicated": 242,
       "llm-proposed": 362,
       "auto-confirmed": 146
     }
   },
-  "usableAnchors": 2589,
+  "usableAnchors": 2591,
   "humanConfirmedAnchors": 0,
   "rewrittenAnchors": 309,
-  "curriculumDerivedAnchors": 2662,
-  "aiReviewedAnchors": 2201,
-  "disputedAnchors": 20,
+  "curriculumDerivedAnchors": 2660,
+  "aiReviewedAnchors": 2203,
+  "disputedAnchors": 16,
   "files": {
     "anchors/art.jsonl": {
       "bytes": 501445,
@@ -118,8 +118,8 @@
       "sha256": "1d0d79979af46e2831bebb40a7a4b29289efc38e5fddbd3f577274a84543d6d0"
     },
     "anchors/gaozhong-数学.jsonl": {
-      "bytes": 104909,
-      "sha256": "53e4c46b904df385fd035679015462be2c788c82c11cdf119657532771ab1a32"
+      "bytes": 105560,
+      "sha256": "882273945a6a684acd9d7f8ae4c1dbfbd03597230b9fa7a2d2d86518d71d9065"
     },
     "anchors/gaozhong-日语.jsonl": {
       "bytes": 73987,
@@ -142,8 +142,8 @@
       "sha256": "77104b3790431a741daa9bb2ac2717d0a884ad82ad8b649ba0b4a013b523598f"
     },
     "anchors/gaozhong-艺术.jsonl": {
-      "bytes": 76858,
-      "sha256": "0b497323518f2983a614cec1a621f92da22085fe821ac7e57f0cfbb8da6df24d"
+      "bytes": 77014,
+      "sha256": "fedfe68f480dbdc291db754ce814e6c0a6ff0074a2d604273d4eade6f0e0daf9"
     },
     "anchors/gaozhong-英语.jsonl": {
       "bytes": 174287,
@@ -334,8 +334,8 @@
       "sha256": "cc87313a0a68575127c5eaa4d7b299721bcc27575882670a4ce9e433210c7c73"
     },
     "edges/math.jsonl": {
-      "bytes": 600667,
-      "sha256": "ef181c7a2682b9d2b24fa0daee16674fa205256b868fc0db36e54aa57cd26b2a"
+      "bytes": 599313,
+      "sha256": "f6ddf5434e0e2ce74542a79f170e12f7440f61fc2dcdb69f48241a9a40c5f395"
     },
     "edges/morality.jsonl": {
       "bytes": 82787,
@@ -390,8 +390,8 @@
       "sha256": "c3602e2a7f84e13e537739247bc52d709381fdb3a03232a40420c9991956f773"
     },
     "edges/数学.jsonl": {
-      "bytes": 127000,
-      "sha256": "6bf808410a6a37c983a969155db31462748cb9d204d830b41902597aa0879de4"
+      "bytes": 126358,
+      "sha256": "9074b2c634d1973a584b27f49c0bb1ecc435b46c62a0b07747dc6b5b38469c66"
     },
     "edges/日语.jsonl": {
       "bytes": 36591,
@@ -418,8 +418,8 @@
       "sha256": "213f26857776a4000dcdcbc271887de416dfbd1639f647544ed26cb3d272d2e3"
     },
     "edges/艺术.jsonl": {
-      "bytes": 52363,
-      "sha256": "a3648290af42d2a8d06427eafa974438ce02d12b1f457ce8238cfef4c2fdfa42"
+      "bytes": 51521,
+      "sha256": "8df50f8f48e3c256281d4dd8bcf813ce334b65db7abe32a3153ecad6fa0dfb1b"
     },
     "edges/西班牙语.jsonl": {
       "bytes": 201103,
