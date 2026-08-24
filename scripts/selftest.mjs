@@ -154,6 +154,7 @@ const CASES = [
   ['拆分边豁免 MATRIX 不得 hard',    'edges/x.jsonl',   E({ anchorId: S.mm.to, prerequisiteId: S.mm.from, strength: 'hard', type: 'component', failureSignature: '能做母条其余部分，唯独这一段做不出来，错点就落在这里', evidence: [{ kind: 'set-containment', detail: '子条文字全部来自母条原句，机器校验' }], reason: '这是拆分出来的子动作，属于母条的一部分' }), '重复边'],
   ['非拆分的 MATRIX hard 边照拦',    'edges/x.jsonl',   E({ anchorId: S.mm.to, prerequisiteId: S.mm.from, strength: 'hard', type: 'component', failureSignature: '能做母条其余部分，唯独这一段做不出来，错点就落在这里', evidence: [{ kind: 'expert', detail: '教研员判断，不是机器校验的包含关系' }], reason: '这是拆分出来的子动作，属于母条的一部分' }), 'MATRIX 档不得有 hard 边'],
   ['起草证据不许洗掉转写标记',        'anchors/x.jsonl', A({ id: 'ca_TEST0025', evidenceDrafted: true, reviewStatus: 'auto-confirmed', reviewedBy: [] }), '起草证据里的举例是模型选的'],
+  ['verb 只做定语被拦',              'anchors/x.jsonl', A({ id: 'ca_TEST0026', statement: '能说明必做实验的基本思路与方法', verb: '实验', object: '的基本思路与方法' }), '只做定语'],
   ['兜底证据冒充课标来源被拦',        'anchors/x.jsonl', A({ id: 'ca_TEST0016', evidence: ['能完成：能计算三位数减三位数的退位减法'], evidenceSource: 'curriculum-content-gaozhong' }), '不许声称来自课标'],
   ['codes-only 泄漏文本被拦',         'mappings/x.jsonl', JSON.stringify({ key: 'cn-2022:T.1', framework: 'cn-2022', code: 'T.1', discipline: '数学', stage: 'G1-2', strand: null, title: '测试', summary: '不该出现的原文', textIncluded: false, anchorIds: [], schemaVersion: '0.1.0' }), 'codes-only'],
 ];

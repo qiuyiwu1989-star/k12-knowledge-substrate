@@ -222,6 +222,22 @@ for (const { rec: a, where } of anchors) {
   }
 
   // ★ 规范化 —— 诗歌库教训
+  // ★ verb 必须是断言里的**谓语**，不能只是名词里的两个字。
+  //   实测 18 条栽在这里：「能说明必做实验的基本思路」存的 verb 是「实验」
+  //   （从「必做实验」里切的），而真谓语是「说明」。
+  //   **verb/object 是去重签名的组成部分**，切错了签名就跟着错。
+  //   判据：verb 在断言里的每一次出现都紧跟「的」= 它只做定语，不是谓语。
+  if (!a.deprecated && a.verb && a.statement && a.statement.includes(a.verb)) {
+    let onlyModifier = true;
+    for (let i = a.statement.indexOf(a.verb); i >= 0; i = a.statement.indexOf(a.verb, i + 1)) {
+      if (a.statement[i + a.verb.length] !== '的') { onlyModifier = false; break; }
+    }
+    if (onlyModifier) {
+      err(where, `[${a.id}] verb「${a.verb}」在断言里只做定语（每次出现都紧跟「的」）—— `
+        + `那是从名词里切出来的，不是谓语。verb/object 是去重签名的组成部分，切错签名就跟着错`);
+    }
+  }
+
   const un = findUnnormalized(a, ['statement', 'object', 'strand', 'topic', 'dimension'], a.discipline);
   for (const u of un) err(where, `[${a.id}] 字段 ${u.field} 未规范化：「${u.raw}」→ 应为「${u.normalized}」`);
 

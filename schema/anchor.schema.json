@@ -540,6 +540,10 @@
             "type": "string"
           },
           "description": "课标括号里原样标的核心素养。当它标了 ≥3 个时，`literacy` 字段清空但**原话存这里** ——「标全部等于没标」这条规矩对课标自己打的标同样成立（不携带区分信息），但课标说了什么必须留得住。"
+        },
+        "verbFixedFrom": {
+          "type": "string",
+          "description": "修正前的 verb/object。原值是从名词里切出来的（「实验现象」→ verb=实验），而真谓语在别处。**和可判定闸那个「动词在名词里」的洞是同一个病**，只是 verb/object 这两个字段是独立抽的，当时没一起修。"
         }
       },
       "additionalProperties": false

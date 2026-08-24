@@ -588,7 +588,63 @@ def sec_list(a, li):
 
 
 # ── 单页 ───────────────────────────────────────────────────────────────────
-def build(a, src_file, pre_edges, suc_edges, cc_cn, lit_ok, li, rel):
+def chain_up(aid, pre_of, by_id, limit=6):
+    """从这条一路往上追前置，直到没有前置或够深。
+
+    **旧版只画前后各一跳，这是它最弱的一环** —— 一条锚点的价值有一半在它的位置上，
+    而「往上追到根」正是位置感的来源。每层挑最硬的那条边（hard 优先），
+    因为软边是「能绕过」的，不构成主链。
+    """
+    out, cur, seen = [], aid, {aid}
+    while len(out) < limit:
+        es = [e for e in pre_of.get(cur, [])
+              if e.get('type') != 'convention' and e['prerequisiteId'] in by_id
+              and not by_id[e['prerequisiteId']].get('deprecated')]
+        if not es:
+            break
+        es.sort(key=lambda z: (0 if z.get('strength') == 'hard' else 1, z.get('type') or ''))
+        e = es[0]
+        pid = e['prerequisiteId']
+        if pid in seen:
+            break
+        seen.add(pid)
+        out.append((e, by_id[pid]))
+        cur = pid
+    return list(reversed(out))          # 从根到本条
+
+
+def sec_chain(chain, me):
+    if not chain:
+        return ('<section class=sec><h2>它在图里的什么位置</h2>'
+                '<p class=none>这一条没有前置 —— 它是一条起点。'
+                '全库 955 条锚点是起点，那不是缺陷。</p></section>')
+    rungs = []
+    for e, x in chain:
+        t, st = e.get('type') or '', e.get('strength') or ''
+        rungs.append(
+            f'<div class=rung><div class=st>{esc(x["statement"])}</div>'
+            f'<div class=rel><span class="tag {t}">{esc(t) or "未标类型"}</span>'
+            f'<span class="tag {st}">{esc(st)}</span></div></div>')
+    rungs.append(f'<div class="rung self"><div class=st>{esc(me["statement"])}</div>'
+                 f'<div class=rel><span class=here>← 你在这里</span></div></div>')
+    return (f'<section class=sec><h2>它在图里的什么位置</h2>'
+            f'<p class=sub>往上追 {len(chain)} 层的前置链。每层挑最硬的那条边 —— '
+            f'软边是能绕过的，不构成主链。</p>'
+            f'<div class=ladder>{"".join(rungs)}</div></section>')
+
+
+def sec_sib(sibs, topic):
+    if not sibs:
+        return ''
+    li = ''.join(f'<div class=item><div class=st>{esc(x["statement"])}</div></div>' for x in sibs[:6])
+    more = f'<p class=more>共 {len(sibs)} 条。' if len(sibs) > 6 else '<p class=more>'
+    return (f'<section class=sec><h2>同一主题下的兄弟条 · {esc(topic)}</h2>'
+            f'<div class=pane>{li}{more}'
+            f'<strong>兄弟条之间没有先后</strong> —— 它们是同一主题下并列的要求，不是学习顺序。</p>'
+            f'</div></section>')
+
+
+def build(a, src_file, pre_edges, suc_edges, cc_cn, lit_ok, li, rel, chain=(), sibs=()):
     aid, stt = a['id'], a['reviewStatus']
     cit = stt in CITABLE
     short, mean = STATUS_CN.get(stt, (stt, ''))
@@ -614,9 +670,6 @@ def build(a, src_file, pre_edges, suc_edges, cc_cn, lit_ok, li, rel):
     meta = ' · '.join(x for x in [a['discipline'], a.get('strand') or '', a.get('topic') or '',
                                   STAGE_CN.get(sh.get('min'), ''), a.get('courseType') or '',
                                   a['track']] if x)
-    tabs = ''.join(f'<input type=radio name=v id=v{i}{" checked" if not i else ""}>' for i in range(4))
-    tabs += '<div class=tabs>' + ''.join(f'<label for=v{i}></label>' for i in range(4)) + '</div>'
-
     return f'''<!doctype html><html lang=zh-CN><head><meta charset=utf-8>
 <meta name=viewport content="width=device-width,initial-scale=1">
 <title>{esc(cut(a["statement"], 30))} · {esc(aid)}</title>
@@ -627,10 +680,13 @@ def build(a, src_file, pre_edges, suc_edges, cc_cn, lit_ok, li, rel):
 <h1>{esc(a["statement"])}</h1>
 <p class=meta><code>{esc(aid)}</code> · {esc(meta)}</p>
 {banner}
-<div class=vw>{tabs}<div class=panels><div class=p0>{panel_cite(a, src_file, cit, len(objs))}</div>\
-<div class=p1>{panel_judge(a)}</div><div class=p2>{panel_grow(a, sucs)}</div>\
-<div class=p3>{panel_trace(a, objs)}</div></div></div>
+<section class=sec><h2>怎么判断他会了没有</h2>{panel_judge(a)}</section>
+{sec_chain(chain, a)}
 {sec_rel(pre_edges, suc_edges, aid)}
+{sec_sib(sibs, a.get("topic") or "")}
+<section class=sec><h2>这一条从哪来、凭什么信</h2>{panel_trace(a, objs)}</section>
+<section class=sec><h2>开发者怎么引用它</h2>{panel_cite(a, src_file, cit, len(objs))}</section>
+<section class=sec><h2>家长视角</h2>{panel_grow(a, sucs)}</section>
 {sec_tags(a, cc_cn, lit_ok)}
 {sec_list(a, li)}
 <section class=sec><h2>异议 · 已公开 {len(objs)} 条</h2><i data-n=objway></i>
@@ -642,6 +698,33 @@ def build(a, src_file, pre_edges, suc_edges, cc_cn, lit_ok, li, rel):
 
 # ── 共享资源 ───────────────────────────────────────────────────────────────
 # 深浅色两套：跟 tools/make_state_page.py 一样，媒体查询 + data-theme 双保险。
+EXTRA_CSS = r'''
+/* ── 改版：三块结构（这条是什么 / 怎么判断 / 在图里的位置）─────────────
+   旧版按读者切四个视图（引用/判定/成长/溯源），用下来那个切法是次优的：
+   读者要的不是四个视图，是三个问题的答案。而「它在图里的什么位置」
+   是旧版最弱的一环 —— 只画了前后各一跳。 */
+.sub{font-size:13.5px;color:var(--mut);margin:-2px 0 10px}
+.ladder{display:flex;flex-direction:column;position:relative;padding-left:26px;margin-top:4px}
+.ladder::before{content:"";position:absolute;left:7px;top:14px;bottom:14px;width:2px;background:var(--line)}
+.rung{position:relative;padding:10px 0 10px 4px;display:flex;flex-direction:column;gap:4px}
+.rung::before{content:"";position:absolute;left:-23px;top:16px;width:9px;height:9px;border-radius:50%;
+  background:var(--bg);border:2px solid var(--line)}
+.rung.self::before{background:var(--acc);border-color:var(--acc);width:11px;height:11px;left:-24px}
+.rung.self .st{font-weight:600}
+.rung .st{font-size:14.5px;line-height:1.55}
+.rung .rel{display:flex;flex-wrap:wrap;gap:7px;align-items:baseline;font-size:12px;color:var(--mut)}
+.rung .here{color:var(--acc)}
+.tag{font-family:ui-monospace,Menlo,monospace;font-size:11px;padding:1px 7px;border-radius:2px;
+  border:1px solid currentColor}
+.tag.component{color:#33505F} .tag.semantic{color:var(--acc)} .tag.instrument{color:#8A6A1F}
+.tag.hard{color:var(--acc)} .tag.soft{color:#33505F}
+.pane .item{padding-bottom:9px;border-bottom:1px dashed var(--line)}
+.pane .item:last-of-type{border-bottom:none}
+.pane .item .st{font-size:14px;line-height:1.5}
+.more{font-size:13px;color:var(--mut);margin-top:9px}
+.none{font-size:14px;color:var(--mut)}
+'''
+
 CSS = r'''*{box-sizing:border-box;margin:0;padding:0}
 :root{--bg:#eef1f0;--card:#fff;--ink:#16201c;--mut:#5f6d67;--dim:#8a958f;--rule:#d8dedb;
 --ok:#0e6e5b;--no:#a43b4e;--rw:#7a4bb0;--cc:#8a6516;--acc:#0e6e5b}
@@ -843,7 +926,7 @@ def main():
     if OUT.exists():
         shutil.rmtree(OUT)
     (OUT / 'a/_assets').mkdir(parents=True)
-    css = CSS + ''.join(f'i[data-k={k}]::before{{content:"{lab}"}}\n' for k, (lab, _) in LBL.items())
+    css = CSS + EXTRA_CSS + ''.join(f'i[data-k={k}]::before{{content:"{lab}"}}\n' for k, (lab, _) in LBL.items())
     (OUT / 'a/_assets/a.css').write_text(css, encoding='utf-8')
     W = {k: n.format(**S) for k, (_, n) in LBL.items() if n}
     N = {k: v.format(**S) for k, v in NOTES.items()}
@@ -856,6 +939,12 @@ def main():
            f'数据 {esc(mf.get("generatedAt"))} · <a href="/data/">数据集</a> · '
            f'<a href="{REPO}">GitHub</a>')
 
+    # 同主题兄弟条：同学科 + 同 topic。**它们之间没有先后**，页面上要写死这句话。
+    by_topic = collections.defaultdict(list)
+    for x in live:
+        if x.get('topic'):
+            by_topic[(x['discipline'], x['topic'])].append(x)
+
     total = 0
     for a in live:
         aid = a['id']
@@ -867,9 +956,12 @@ def main():
             out.sort(key=lambda x: x[1][1])
             return out
 
+        sibs = [x for x in by_topic.get((a['discipline'], a.get('topic')), []) if x['id'] != aid] \
+            if a.get('topic') else []
         page = build(a, a['_file'], side(pre_of[aid], 'prerequisiteId'),
                      side(suc_of[aid], 'anchorId'), cc_cn, lit_ok,
-                     dict(items.get(aid) or {}), rel)
+                     dict(items.get(aid) or {}), rel,
+                     chain_up(aid, pre_of, by_id), sibs)
         d = OUT / 'a' / aid
         d.mkdir(parents=True, exist_ok=True)
         (d / 'index.html').write_text(page, encoding='utf-8')
