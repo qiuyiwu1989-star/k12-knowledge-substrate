@@ -104,10 +104,34 @@
 
 ## 怎么 pin
 
+**主路径是 git tag。**
+
 ```
-releases/<版本>.json     指纹，进 git，用来判断两个版本之间变了什么
-/data/v/<版本>/          全量数据，不可变
-/data/latest → 指针
+git checkout v1.0
 ```
 
-MCP server 启动时可指定版本；不指定则跟 latest 走。
+数据本来就在仓库里，切过去是瞬时的、可靠的、可校验的（tag 是带注释的，
+里面写着那个版本的锚点数与边数）。指纹在 `releases/<版本>.json`，
+`version-diff` 拿它判断两个版本之间变了什么。
+
+**HTTP 快照是便利品，不是主路径。**
+
+```
+https://k12.yongle.school/data/v/<版本>.tgz     # 4.4MB
+https://k12.yongle.school/data/v/index.json     # 有哪些版本
+```
+
+⚠️ **实测这条路不好走。** 2026-08-24 测得站点出网 **6 KB/s（48 kbps）**，
+4.4MB 要 12 分钟，四次尝试全部失败（TLS 握手错 35 / HTTP2 帧错 16 /
+超时 28 / 连接失败 000）。TLS 握手本身在 1.9–17.9 秒之间抖。
+
+服务器本身没问题：负载 0.95，本机回环取同一个文件 213 MB/s。
+**瓶颈只在出网那一段，不是这个项目能修的。**
+
+服务端支持 `Accept-Ranges`，所以要走这条路就带续传：
+
+```
+curl -C - --http1.1 -o k12-1.0.tgz https://k12.yongle.school/data/v/1.0.tgz
+```
+
+MCP server 直接读工作区的数据，不走网络 —— 它不受这个问题影响。
