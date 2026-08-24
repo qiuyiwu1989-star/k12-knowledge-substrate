@@ -807,7 +807,8 @@
           "independent-check-suspect",
           "composite",
           "condition-lost",
-          "possible-truncation"
+          "possible-truncation",
+          "srcText-truncated-head"
         ]
       },
       "description": "**字段级**缺陷，与 reviewStatus 分开。\nreviewStatus 回答的是「这条断言成不成立」；evidence 写得弱、stage 标错，都是别的字段的毛病，不该让断言替它们背锅（2026-08-20 之前混在一起，45 条断言没问题的锚点因为证据弱被踢出了可引用集合）。\n详情页必须把它显示出来 —— 可引用不等于每个字段都好。"
