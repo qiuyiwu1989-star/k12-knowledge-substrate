@@ -39,7 +39,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 from mint_py import load_used_ids, mint_id          # noqa: E402
 
 ROOT = Path(__file__).resolve().parent.parent
-SRC = ROOT / 'tools/out/gaozhong'
+SRC = ROOT / 'tools/out/gaozhong'   # --src 可换（gaozhong2 是五科补抽的产物）
 
 # 高中课标里 DAG 档只给这三科 —— 和义务教育一致。其余走 MATRIX。
 # LIST 档是清单覆盖模型（字表词表篇目），高中课标没有这种东西。
@@ -165,12 +165,14 @@ def node_call(script, payload_lines):
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument('--only', default=None)
+    ap.add_argument('--src', default=None, help='换抽取产物目录，如 gaozhong2')
     ap.add_argument('--dry-run', action='store_true')
     a = ap.parse_args()
 
-    files = sorted(SRC.glob('*.jsonl'))
+    src = (ROOT / 'tools/out' / a.src) if a.src else SRC
+    files = sorted(src.glob('*.jsonl'))
     if not files:
-        sys.exit('没有抽取结果。先跑 python3 tools/gaozhong_extract.py')
+        sys.exit(f'{src} 没有抽取结果')
 
     raw = []
     for f in files:
@@ -287,6 +289,9 @@ def main():
     for c in kept:
         s = c['src']
         subj = s['subject']
+        # 先算 evidence —— 下面 evidenceSource 要看它是不是兜底模板。
+        ev = ([s['examples'][0]] if s.get('examples') else
+              [f"能在{subj}课堂或作业情境中完成：{c['statement'][:40]}"])
         rows.append({
             'id': mint_id(used), 'discipline': subj,
             'track': 'DAG' if subj in DAG_SUBJECTS else 'MATRIX',
@@ -322,15 +327,29 @@ def main():
             'schemaVersion': '0.1.0',
         })
 
-    # 按学科分文件写。**追加到 anchors/gaozhong-<学科>.jsonl**，
+    # 按学科分文件写。**追加**到 anchors/gaozhong-<学科>.jsonl，
     # 不混进义务教育的文件 —— 两份课标是两个来源，分开才查得清。
+    #
+    # ⚠️ 2026-08-22 修：这里原先是 `open('w')` —— **注释写着「追加」，代码在覆盖**。
+    #    补抽五科那次跑完，德语原有的 5 条、美术 8 条、思想政治 10 条被静默冲掉，
+    #    共 29 条，是靠 validate 报「边引用不存在的 anchorId」才发现的。
+    #    注释和代码说反的 bug 今天撞到第三个（另两个：split_reqs 的条件切分、
+    #    evidenceSource 引用未定义的 ev）。**光看注释不算读过代码。**
+    #    写完加一道自检：文件行数只许涨不许缩。
     n = 0
+    before = {}
     for subj in sorted({r['discipline'] for r in rows}):
         f = ROOT / f'anchors/gaozhong-{subj}.jsonl'
-        with f.open('w', encoding='utf-8') as fh:
+        before[subj] = sum(1 for l in f.open(encoding='utf-8') if l.strip()) if f.exists() else 0
+        with f.open('a', encoding='utf-8') as fh:
             for r in rows:
                 if r['discipline'] == subj:
                     fh.write(json.dumps(r, ensure_ascii=False) + '\n'); n += 1
+    for subj, b in before.items():
+        f = ROOT / f'anchors/gaozhong-{subj}.jsonl'
+        after = sum(1 for l in f.open(encoding='utf-8') if l.strip())
+        if after < b:
+            sys.exit(f'✗ {f.name} 从 {b} 行缩到 {after} 行 —— 有数据被覆盖，立刻停')
     print(f"\n已写 {n} 条 → anchors/gaozhong-*.jsonl（{len({r['discipline'] for r in rows})} 个文件）")
     print("全部 reviewStatus=llm-proposed —— 无人看过，不计入 usableAnchors。")
     print("下一步：npm run check")

@@ -501,6 +501,45 @@
         "lostCondition": {
           "type": "string",
           "description": "课标原文里写明、但切句时被丢掉的条件（如「通过实验」「结合所学知识」）。\n**断言本身不改** —— claim 是仓库红线。这里记下丢的是什么，由人决定要不要补回去。\n成因见 tools/gaozhong_commit.py 的 split_reqs：代码和它自己的 docstring 说反了，「了解」在要求动词表里，于是「通过实验，了解 X」被切开，条件静默消失。工具已修（2026-08-24），存量的 65 条在这里留档。"
+        },
+        "srcSection": {
+          "type": "string",
+          "description": "原文所在的课标章节（内容要求 / 学业要求 / 学业质量）。不同章节的粒度差很多：学业要求是**模块级达成描述**，比内容要求粗。"
+        },
+        "srcSentence": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "拆句之前的那一整句。断言是从它切出来的，切得对不对要对着它看。"
+        },
+        "leadStripped": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "剥掉的套话前缀，如「学习本模块之后学生」。**剥套话不是改写** —— 剥完的句子每个字都还是原文的。记下来是为了能还原。"
+        },
+        "truncatedTail": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "看起来被截断的尾巴，如「（人地」（一个没写完的素养标注）。**留档不修** —— 修就是猜。带这个字段的条目该优先人看。"
+        },
+        "tailCut": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "剜掉的尾部杂质（模块简介、跨页混入的正文）。和 truncatedTail 的区别：这个是确定该去掉的，那个是拿不准的。"
+        },
+        "srcLiteracy": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "课标括号里原样标的核心素养。当它标了 ≥3 个时，`literacy` 字段清空但**原话存这里** ——「标全部等于没标」这条规矩对课标自己打的标同样成立（不携带区分信息），但课标说了什么必须留得住。"
         }
       },
       "additionalProperties": false

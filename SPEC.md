@@ -10,7 +10,7 @@
 
 **适用范围**：`release` <!--N:release-->0.1.0<!--/N--> ·
 `schemaVersion` <!--N:schemaVersion-->0.1.0<!--/N--> ·
-数据生成于 <!--N:generatedAt-->2026-08-23<!--/N-->。
+数据生成于 <!--N:generatedAt-->2026-08-24<!--/N-->。
 
 > ⚠️ **待接线**：本文里所有数字都用 `<!--N:键-->…<!--/N-->` 标记从 `manifest.json` 现读，
 > 但 `scripts/sync-docs.mjs` 目前只扫 `README.md` 与 `PROVENANCE.md`，**还没扫本文**。
@@ -25,7 +25,7 @@
 
 | | |
 |---|---|
-| 存活锚点 | <!--N:liveAnchors-->2732<!--/N--> 条 |
+| 存活锚点 | <!--N:liveAnchors-->3086<!--/N--> 条 |
 | 可被档案引用（`usableAnchors`） | <!--N:usable-->1747<!--/N--> 条 |
 | **有教师签字的** | **<!--N:humanConfirmed-->0<!--/N--> 条** |
 
@@ -126,7 +126,7 @@ curl https://k12.yongle.school/data/lists/hanzi/jiben-300.jsonl
 - **不承诺行序稳定。** JSONL 的行顺序随重算变化，不表达任何含义。
 - **不承诺锚点总数单调增。** 已经掉过一次：清理劣质锚点使
   <!--N:deprecatedAnchors-->911<!--/N--> 条退出存活集合。累计铸出的 ID 共
-  <!--N:anchorsAll-->3643<!--/N--> 个。
+  <!--N:anchorsAll-->3997<!--/N--> 个。
 - **不承诺 `usableAnchors` 单调增。** 复核可以把一条从可用降级为 `disputed`；
   降级只需一个人说不对（宁可错杀）。
 
@@ -236,8 +236,8 @@ if (a.deprecated && !a.supersededBy)
 | `expert-confirmed` | 0 | 能 |
 | `ai-reviewed` | 1359 | 能（2026-08-20 起 —— **AI 看过、没挑出毛病**，不是教师签字） |
 | `disputed` | 977 | **不能** —— AI 复核挑出了具体问题 |
-| `llm-proposed` | 8 | **不能** —— 没有任何东西看过一眼 |
-| **存活合计** | **2732** | 其中 **1747** 可用 |<!--/N-->
+| `llm-proposed` | 362 | **不能** —— 没有任何东西看过一眼 |
+| **存活合计** | **3086** | 其中 **1747** 可用 |<!--/N-->
 
 各档的确切含义：
 
@@ -398,7 +398,7 @@ mappings/citable.json  →  citable: ["auto-confirmed", "expert-confirmed",
 |---|---|---|
 | `schemaVersion` | 每条记录上 + `manifest.schemaVersion` | **字段形状契约**。字段增删改名会动它。当前 <!--N:schemaVersion-->0.1.0<!--/N-->。 |
 | `release` | `manifest.release` | 数据集发布版本。当前 <!--N:release-->0.1.0<!--/N-->。 |
-| `generatedAt` | `manifest.generatedAt` | 这份快照什么时候算出来的。当前 <!--N:generatedAt-->2026-08-23<!--/N-->。 |
+| `generatedAt` | `manifest.generatedAt` | 这份快照什么时候算出来的。当前 <!--N:generatedAt-->2026-08-24<!--/N-->。 |
 
 `schemaVersion` 在 schema 里是 `const`：**同一个快照内所有记录的 schemaVersion 必然一致**，
 不会出现混版。你可以拿它做硬门禁：读到不认识的 schemaVersion 就停下来，别猜。
@@ -464,7 +464,7 @@ for (const [path, { sha256 }] of Object.entries(m.files)) {
 
 ### 关于 `provenance.srcText`
 
-<!--N:srcTextAnchors-->2577<!--/N--> 条存活锚点带句子级课标引文，中位数 33 字、最长 183 字，
+<!--N:srcTextAnchors-->2931<!--/N--> 条存活锚点带句子级课标引文，中位数 33 字、最长 183 字，
 单句、不连段。项目对它的表述（照抄 PROVENANCE.md）：
 
 > **我们的判断**：单句、非连续、用于标注与核查目的的引用，按合理引用处理。
@@ -495,7 +495,7 @@ for (const [path, { sha256 }] of Object.entries(m.files)) {
 这一节和上面所有承诺一样重要。按重要性排：
 
 1. **没有教师签字。** <!--N:humanConfirmed-->0<!--/N--> 条。
-   全库 <!--N:liveAnchors-->2732<!--/N--> 条断言没有一条经过一线教师复核。
+   全库 <!--N:liveAnchors-->3086<!--/N--> 条断言没有一条经过一线教师复核。
 2. **没有判定方法。** `assessmentSpec`（题型、判定规范、通过标准、衰减提示）
    当前 <!--N:assessmentSpecAnchors-->0<!--/N--> 条有值。
    **空着是对的** —— 用模型批量编样题会污染底座且无法追溯。
