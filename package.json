@@ -24,6 +24,7 @@
     "version-diff": "node scripts/version-diff.mjs",
     "release": "node scripts/release-manifest.mjs",
     "mcp": "node mcp/server.mjs",
-    "mcp-test": "node mcp/selftest.mjs"
+    "mcp-test": "node mcp/selftest.mjs",
+    "usage-report": "node scripts/usage-report.mjs"
   }
 }

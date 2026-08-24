@@ -90,6 +90,37 @@ for (const rel of files) {
   });
 }
 
+// ── 计数器的单独一档 ────────────────────────────────────────────
+// scripts/usage.mjs 必须能写盘，所以它不在上面的只读名单里 ——
+// 那看起来就是给自己的闸开了个后门。所以给它单独立三条更严的：
+//   1. 只许有一处写调用
+//   2. 写入目标必须是文件顶部那个硬编码常量，且落在 var/ 下
+//   3. 一个联网原语都不许有 —— 「绝不联网」这句话得有东西守着
+const COUNTER = 'scripts/usage.mjs';
+if (existsSync(join(ROOT, COUNTER))) {
+  const src = readFileSync(join(ROOT, COUNTER), 'utf8');
+  const code = src.split('\n').map((l) => l.replace(/\/\/.*$/, '')).join('\n');
+  const writes = code.match(/\bwriteFileSync\s*\(/g) ?? [];
+  if (writes.length !== 1) {
+    console.error(`✗ ${COUNTER} 有 ${writes.length} 处写调用，只许有 1 处`);
+    bad++;
+  }
+  if (!/const FILE = join\(ROOT, 'var',/.test(code)) {
+    console.error(`✗ ${COUNTER} 的写入目标必须是硬编码常量 join(ROOT, 'var', …)`);
+    bad++;
+  }
+  if (!/writeFileSync\(FILE,/.test(code)) {
+    console.error(`✗ ${COUNTER} 的 writeFileSync 必须写 FILE 这个常量，不许写别的表达式`);
+    bad++;
+  }
+  const net = code.match(/\bfetch\s*\(|require\(['"](http|https|net|dgram)|from ['"]node:(http|https|net|dgram)|child_process|XMLHttpRequest/g);
+  if (net) {
+    console.error(`✗ ${COUNTER} 出现联网/起进程原语：${[...new Set(net)].join(' ')} —— 计数绝不联网`);
+    bad++;
+  }
+  if (!bad) console.log(`✓ ${COUNTER}：单处写入 · 目标是 var/ 下的硬编码常量 · 无联网原语`);
+}
+
 if (bad || missing) {
   if (bad) {
     console.error(`\n共 ${bad} 处。**映射结果不写回底座** —— 别人的判断混进来，`);

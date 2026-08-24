@@ -24,6 +24,10 @@ import { fileURLToPath } from 'node:url';
 import { execFileSync } from 'node:child_process';
 import { createInterface } from 'node:readline';
 import { makePresenter } from './present.mjs';
+// 计数落在 scripts/usage.mjs 里，不在 mcp/ —— 这个目录整个是只读的。
+// 那个文件被 no-writeback 单独盯着：只许一处写入、目标是 var/ 下的硬编码常量、
+// 一个联网原语都不许有。记的是「这条被碰过几次」，**不是别人认为它对应什么**。
+import { record, flush } from '../scripts/usage.mjs';
 
 const ROOT = process.env.K12_ROOT ?? resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const present = makePresenter(ROOT);
@@ -146,6 +150,8 @@ function callTool(name, args) {
       return { error: `映射器调用失败：${String(e.message).slice(0, 200)}` };
     }
     const r = JSON.parse(raw);
+    const ids = (r.candidates ?? []).map((c) => c.id);
+    record(ids);
     return {
       version: VERSION,
       query: r.query,
@@ -161,6 +167,7 @@ function callTool(name, args) {
   if (name === 'get_anchor') {
     const a = anchors.get(String(args.id ?? ''));
     if (!a) return { error: `没有这条锚点：${args.id}` };
+    record([a.id]);
     return {
       version: VERSION,
       anchor: present(a, { full: true }),
@@ -220,6 +227,8 @@ function callTool(name, args) {
 // ── JSON-RPC over stdio ────────────────────────────────────────────
 const send = (o) => process.stdout.write(JSON.stringify(o) + '\n');
 const rl = createInterface({ input: process.stdin });
+rl.on('close', flush);
+for (const sig of ['SIGINT', 'SIGTERM']) process.on(sig, () => { flush(); process.exit(0); });
 rl.on('line', (line) => {
   if (!line.trim()) return;
   let msg;
