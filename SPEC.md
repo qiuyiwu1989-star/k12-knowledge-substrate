@@ -210,7 +210,7 @@ if (a.deprecated && !a.supersededBy)
 
 当前 <!--N:compositeAnchors-->226<!--/N--> 条母条、
 <!--N:splitChildren-->548<!--/N--> 条子条、
-<!--N:edgesComponent-->3066<!--/N--> 条 `component` 边。
+<!--N:edgesComponent-->3149<!--/N--> 条 `component` 边。
 
 **母条为什么不弃用**：它是课标自己的单位，而且弃用它会让**指向它的现存边全部悬空**，
 那些边该改指哪个子条，机械上判不出来（「会读 3000」和「会写 3000」，原来那条边指的是哪个？）。
@@ -336,11 +336,11 @@ mappings/citable.json  →  citable: ["auto-confirmed", "expert-confirmed",
 | `convention` | **无可观测影响**（教材就这么排的） | — | **否** |
 
 **要做路径推荐、解锁计算，只用 `inInferenceGraph === true` 的边**
-（当前 <!--N:edgesInGraph-->4933<!--/N--> 条）。
-`convention` 那 <!--N:edgesConvention-->1542<!--/N--> 条是教材编排顺序，不是能力依赖，
+（当前 <!--N:edgesInGraph-->5051<!--/N--> 条）。
+`convention` 那 <!--N:edgesConvention-->1567<!--/N--> 条是教材编排顺序，不是能力依赖，
 拿它推理会推出「不学这个就学不了那个」这种假结论。
 
-还有 <!--N:edgesUntyped-->143<!--/N--> 条边**没有 `type`**（重标管线未覆盖到）。
+还有 <!--N:edgesUntyped-->0<!--/N--> 条边**没有 `type`**（重标管线未覆盖到）。
 它们的 `inInferenceGraph` 也缺省。**按「未定级」处理，别默认当成有效依赖。**
 
 `failureSignature` 是这条边的判据本身：说不出具体、可观察的失败表现，就是说不出这条边。
