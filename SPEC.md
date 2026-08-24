@@ -33,8 +33,8 @@
 标为「可用」的那些，靠的是机械可判定（字表、词表这类数得清的东西）或 AI 裁定待异议 ——
 那是「没人反对」，不是「有人认可」。详见 [§5](#5-复核档可引用这条线画在哪)。
 
-先修边的情况更弱：<!--N:edges-->4263<!--/N--> 条边里
-**<!--N:edgesUnreviewed-->4260<!--/N--> 条的 `reviewStatus` 仍是 `llm-proposed`**，
+先修边的情况更弱：<!--N:edges-->5057<!--/N--> 条边里
+**<!--N:edgesUnreviewed-->5054<!--/N--> 条的 `reviewStatus` 仍是 `llm-proposed`**，
 即没有任何人看过。见 [§6](#6-边依赖关系怎么引用)。
 
 拿去做产品之前，请自己判断这个可信度够不够。我们不替你判断，也不打算把这几个数藏起来。
@@ -210,7 +210,7 @@ if (a.deprecated && !a.supersededBy)
 
 当前 <!--N:compositeAnchors-->230<!--/N--> 条母条、
 <!--N:splitChildren-->577<!--/N--> 条子条、
-<!--N:edgesComponent-->2162<!--/N--> 条 `component` 边。
+<!--N:edgesComponent-->2437<!--/N--> 条 `component` 边。
 
 **母条为什么不弃用**：它是课标自己的单位，而且弃用它会让**指向它的现存边全部悬空**，
 那些边该改指哪个子条，机械上判不出来（「会读 3000」和「会写 3000」，原来那条边指的是哪个？）。
@@ -324,7 +324,7 @@ mappings/citable.json  →  citable: ["auto-confirmed", "expert-confirmed",
 - **边没有独立 ID**，主键是 `(anchorId, prerequisiteId)` 这一对。
   不要给边建自己的外键 —— 我们不保证边的稳定性，边可以被退休（`retired: true`，
   记录移入 `retired/edges.jsonl`）。
-- 当前 <!--N:edges-->4263<!--/N--> 条边。
+- 当前 <!--N:edges-->5057<!--/N--> 条边。
 
 ### 6.2 四种关系类型，只有三种进推理图
 
@@ -336,11 +336,11 @@ mappings/citable.json  →  citable: ["auto-confirmed", "expert-confirmed",
 | `convention` | **无可观测影响**（教材就这么排的） | — | **否** |
 
 **要做路径推荐、解锁计算，只用 `inInferenceGraph === true` 的边**
-（当前 <!--N:edgesInGraph-->3312<!--/N--> 条）。
-`convention` 那 <!--N:edgesConvention-->950<!--/N--> 条是教材编排顺序，不是能力依赖，
+（当前 <!--N:edgesInGraph-->3859<!--/N--> 条）。
+`convention` 那 <!--N:edgesConvention-->1149<!--/N--> 条是教材编排顺序，不是能力依赖，
 拿它推理会推出「不学这个就学不了那个」这种假结论。
 
-还有 <!--N:edgesUntyped-->1<!--/N--> 条边**没有 `type`**（重标管线未覆盖到）。
+还有 <!--N:edgesUntyped-->49<!--/N--> 条边**没有 `type`**（重标管线未覆盖到）。
 它们的 `inInferenceGraph` 也缺省。**按「未定级」处理，别默认当成有效依赖。**
 
 `failureSignature` 是这条边的判据本身：说不出具体、可观察的失败表现，就是说不出这条边。
@@ -349,7 +349,7 @@ mappings/citable.json  →  citable: ["auto-confirmed", "expert-confirmed",
 ### 6.3 `strength`
 
 `hard` = 没有它就学不了；`soft` = 影响没那么绝对。
-当前 <!--N:edgesHard-->1070<!--/N--> 条 `hard`。
+当前 <!--N:edgesHard-->1184<!--/N--> 条 `hard`。
 
 注意一个设计动作：MATRIX 档学科（史地生政艺外语等）的边即使模型判为 hard，
 也会被压回 `soft` 并标 `strengthCappedBy: "matrix-track"` ——
@@ -358,7 +358,7 @@ mappings/citable.json  →  citable: ["auto-confirmed", "expert-confirmed",
 
 ### 6.4 边**基本没被复核**，这一点必须说清楚
 
-<!--N:edgesUnreviewed-->4260<!--/N--> 条边的 `reviewStatus` 是 `llm-proposed`。
+<!--N:edgesUnreviewed-->5054<!--/N--> 条边的 `reviewStatus` 是 `llm-proposed`。
 边的枚举只有四值（`llm-proposed` / `auto-confirmed` / `expert-confirmed` / `disputed`），
 **没有 `ai-*` 那两档**，也就是说：`citable.json` 那条放宽线**不适用于边**。
 
@@ -379,8 +379,8 @@ mappings/citable.json  →  citable: ["auto-confirmed", "expert-confirmed",
 
 ### 6.6 跨学科：先修边极少，这不是漏建
 
-<!--N:edges-->4263<!--/N--> 条边里只有 <!--N:crossEdges-->11<!--/N--> 条跨学科
-（<!--N:crossPct-->0.3<!--/N-->%）。真正的跨学科**先修**关系本来就罕见。
+<!--N:edges-->5057<!--/N--> 条边里只有 <!--N:crossEdges-->11<!--/N--> 条跨学科
+（<!--N:crossPct-->0.2<!--/N-->%）。真正的跨学科**先修**关系本来就罕见。
 
 「能力跨界」在本项目里由**另一层**表达：横切维度 `crosscutting`（参照 NGSS 跨学科概念，
 闭合词表）与 `practice`（科学与工程实践）。
@@ -409,7 +409,7 @@ mappings/citable.json  →  citable: ["auto-confirmed", "expert-confirmed",
 ### 7.2 校验和：`manifest.files`
 
 `manifest.json` 的 `files` 段列出每个数据文件的 `bytes` 与 `sha256`
-（当前 <!--N:manifestFiles-->105<!--/N--> 个文件）。这是判断「有没有变」的最省事的办法：
+（当前 <!--N:manifestFiles-->107<!--/N--> 个文件）。这是判断「有没有变」的最省事的办法：
 
 ```js
 const m = await (await fetch('.../data/manifest.json')).json();

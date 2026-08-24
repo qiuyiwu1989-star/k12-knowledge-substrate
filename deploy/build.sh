@@ -13,6 +13,7 @@ python3 tools/make_about.py
 python3 tools/make_list.py
 python3 tools/make_data_index.py
 python3 tools/make_anchor_pages.py            # /a/<id>/ 每条锚点一个详情页（specs/003）
+python3 tools/make_slices.py --out dist/data/slice   # 学段片=归属 · 年级片=投影 · 学科片
 python3 tools/make_teacher_sheet.py
 python3 tools/split_teacher_sheet.py
 

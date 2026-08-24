@@ -175,6 +175,10 @@ def main():
     ap.add_argument('--src', default='anchors')
     ap.add_argument('--concurrency', type=int, default=14)
     ap.add_argument('--cross', action='store_true', help='只跑跨学科边（判据更严，最多 2 条/锚点）')
+    ap.add_argument('--missing-only', action='store_true',
+                    help='只给「一条前置边都没有」的锚点建边。**候选池仍取整个学科** —— '
+                         '新锚点的前置本来就该来自已有的那些。'
+                         '比 --split-only 通用：新落库的、原本就孤立的，一次都覆盖。')
     ap.add_argument('--split-only', action='store_true',
                     help='只给拆原子新建的那批（provenance.splitFrom）建边。'
                          '**候选池仍取整个学科** —— 原子的前置本来就可能来自别处。')
@@ -200,6 +204,15 @@ def main():
         for l in f.open(encoding='utf-8'):
             outdeg_seed[json.loads(l)['prerequisiteId']] += 1
 
+    # 谁已经有前置边了 —— --missing-only 用它跳过。
+    # 退休的边不算数：那条关系已经作废，锚点等于又没有前置了。
+    has_incoming = collections.Counter()
+    for f in sorted((ROOT / 'edges').rglob('*.jsonl')):
+        for l in f.open(encoding='utf-8'):
+            e = json.loads(l)
+            if not e.get('retired'):
+                has_incoming[e['anchorId']] += 1
+
     jobs = []
     for disc, group in by_disc.items():
         # LIST 档不建图（语文字词篇目、英语词表是覆盖模型）——跨学科时它们可以当前置，
@@ -211,6 +224,8 @@ def main():
             # --split-only：只给这批建，但池子照样是整个学科的，
             # 否则原子只能在原子之间找前置，那是凭空造出来的小圈子。
             if a.split_only and not (t.get('provenance') or {}).get('splitFrom'):
+                continue
+            if a.missing_only and has_incoming.get(t['id']):
                 continue
             if t.get('deprecated'):
                 continue
