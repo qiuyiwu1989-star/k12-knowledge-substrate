@@ -22,6 +22,7 @@
  * 值可以是数字、字符串，或整块 markdown（表格就是这么灌的）。
  */
 import { CITABLE } from './lib/citable.mjs';
+import { grainSpan } from './lib/grain.mjs';
 import { readFileSync, writeFileSync, readdirSync, statSync, existsSync } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -95,6 +96,13 @@ const reviewTable = [
   `| **存活合计** | **${M.counts.liveAnchors}** | 其中 **${usable}** 可用 |`,
 ].join('\n');
 
+
+// 粒度：定义在 scripts/lib/grain.mjs（阈值在 mappings/grain.json）。
+// 这里**只统计、不定义** —— 第一版我在这个文件里另写了一套 gspan/grainPct，
+// 那就是给粒度立了第二个定义，和 citable 当年散在 8 个文件里是同一个病。
+const grainPct = (n) => (live.length
+  ? (live.filter((a) => grainSpan(a) === n).length / live.length * 100).toFixed(1) : '0');
+
 const VALUES = {
   liveAnchors: M.counts.liveAnchors,
   deprecatedAnchors: M.counts.deprecatedAnchors,
@@ -149,6 +157,30 @@ const VALUES = {
   edgesUntyped: edges.filter((e) => !e.type).length,
   edgesUnreviewed: edges.filter((e) => e.reviewStatus === 'llm-proposed').length,
   edgesHard: edges.filter((e) => e.strength === 'hard').length,
+  // ── CONTRACT.md / GRAIN.md（对外数据契约）用到的键 ──
+  //    这两份是给调用方看的，数字腐烂的后果最严重：别人照着它写的兼容性判断会静默失配。
+  contractVersion: readFileSync(join(ROOT, 'VERSION'), 'utf8').trim(),
+  ledgerIds: (() => { try { return readFileSync(join(ROOT, 'ledger/ids.jsonl'), 'utf8')
+    .split('\n').filter((l) => l.trim()).length; } catch { return 0; } })(),
+  // 两个数量的是不同的东西，别混：
+  //   unknownProvenance —— 出处不完整（缺 srcText 或 srcPage），影响的是「能不能翻回原文」
+  //   blindIds          —— 缺 srcSubject/srcPage，no-id-reuse 判不了指向，是那道闸的盲区
+  //                        它扫 anchors + retired，所以基数比上面大
+  unknownProvenance: anchors.filter((a) => !a.provenance?.srcPage || !a.provenance?.srcText).length,
+  blindIds: (() => {
+    let n = 0;
+    for (const d of ['anchors', 'retired']) for (const f of walk(join(ROOT, d)))
+      for (const l of readFileSync(f, 'utf8').split('\n')) {
+        if (!l.trim()) continue;
+        try { const a = JSON.parse(l);
+          if (a.id && (!a.provenance?.srcSubject || !a.provenance?.srcPage)) n++; } catch { /* validate 报 */ }
+      }
+    return n;
+  })(),
+  // 粒度：一条锚点覆盖几个年级。贯穿 CONTRACT / GRAIN / 接口的粒度警告，只此一处算
+  grainSpan1: grainPct(1),
+  grainSpan3: grainPct(3),
+  grainSpanWide: live.length ? (live.filter((a) => (grainSpan(a) ?? 0) >= 4).length / live.length * 100).toFixed(1) : '0',
   reviewTable,
 };
 
@@ -156,7 +188,7 @@ const RE = /<!--N:([A-Za-z][\w-]*)-->([\s\S]*?)<!--\/N-->/g;
 let stale = 0, filled = 0, unknown = 0;
 
 // SPEC.md 是对外契约，**必须一起扫** —— 不扫等于它里面的数字全是手打的。
-for (const name of ['README.md', 'PROVENANCE.md', 'SPEC.md']) {
+for (const name of ['README.md', 'PROVENANCE.md', 'SPEC.md', 'CONTRACT.md', 'GRAIN.md']) {
   const p = join(ROOT, name);
   if (!existsSync(p)) continue;
   const src = readFileSync(p, 'utf8');
