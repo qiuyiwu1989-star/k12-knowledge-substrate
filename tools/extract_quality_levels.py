@@ -181,6 +181,11 @@ def _is_furniture(line, keep_level_marks=False):
     return any(p.match(s) for p in FURNITURE)
 
 
+# 条目末尾粘着的页码：「…方法的学习。361」「…继承。2」——
+# 句末标点之后还跟数字，那不可能是正文。
+TAIL_PAGE = re.compile(r'(?<=[。；！？])\d{1,3}$')
+
+
 def _clean(t):
     """拼回跨行的一条。"""
     t = re.sub(r'普通高中[^\n]{0,12}课程标准[^\n]*', '', t)
@@ -188,7 +193,7 @@ def _clean(t):
     t = re.sub(r'│[^│\n]*│', '', t)
     t = re.sub(r'续表', '', t)
     t = re.sub(r'\s+', '', t)
-    return t.strip()
+    return TAIL_PAGE.sub('', t.strip())
 
 
 def _header_before(joined, pos, max_lines=8):

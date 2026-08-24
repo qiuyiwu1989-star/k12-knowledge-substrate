@@ -119,6 +119,11 @@ def build_pool(target, all_in_disc, cap=40):
     for a in all_in_disc:
         if a['id'] == target['id']:
             continue
+        # 同学科的 LIST 档不能当前置 —— 字表词表篇目是覆盖模型，
+        # 「学完这个才能学那个」的语义它没有（validate 里有对应的硬闸）。
+        # 跨学科时它们可以当前置，那条路走 build_cross_pool。
+        if a.get('track') == 'LIST':
+            continue
         amin, amax = stage_of(a)
         if amin > tmin:              # 学段整体晚于目标 → 不可能是前置
             continue
@@ -216,11 +221,19 @@ def main():
     jobs = []
     for disc, group in by_disc.items():
         # LIST 档不建图（语文字词篇目、英语词表是覆盖模型）——跨学科时它们可以当前置，
-        # 但不能当被修方（覆盖模型没有「学完这个才能学那个」的语义）
-        if group[0].get('track') == 'LIST':
-            print(f"  跳过 {disc}（LIST 档不作为被修方）")
-            continue
+        # 但不能当被修方（覆盖模型没有「学完这个才能学那个」的语义）。
+        #
+        # ⚠️ 2026-08-22 修：这里原先是 `group[0].get('track') == 'LIST'` ——
+        #    **拿这一科的第一条锚点去判断整个学科**。而 anchors/ 里
+        #    英语的第一条、语文的第一条恰好都是 LIST（词表/字表排在前面），
+        #    于是这两科**整科被跳过**，它们的 183 + 94 = 277 条 MATRIX 锚点
+        #    历次建边全部漏掉，一条边都没建过。
+        #    这不是这一轮引入的，是一直如此，直到 --missing-only
+        #    报出「552 条缺前置但只跑了 334 条」才露出来。
+        #    **一条锚点的档位是它自己的属性，不是学科的属性。**
         for t in group:
+            if t.get('track') == 'LIST':
+                continue
             # --split-only：只给这批建，但池子照样是整个学科的，
             # 否则原子只能在原子之间找前置，那是凭空造出来的小圈子。
             if a.split_only and not (t.get('provenance') or {}).get('splitFrom'):

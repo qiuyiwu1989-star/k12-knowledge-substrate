@@ -52,6 +52,16 @@ def main():
         pmin, bmax = grade(a, 'min'), grade(b, 'max')
         if pmin and bmax and pmin > bmax:
             drop[(a, b)] = f'学段倒挂：先修 G{pmin}+ 晚于被修 G{bmax}'
+        # 同学科内 LIST 档不能当前置 —— 字表词表篇目是覆盖模型，
+        # 没有「学完这个才能学那个」的语义（validate 里有对应硬闸）。
+        # 2026-08-22 加：修好 gen_edges 「拿第一条锚点判整个学科」的 bug 之后，
+        # 英语/语文第一次进入建边流程，候选池里的 LIST 锚点当场撞上这条闸。
+        # 退休归它管 —— 我一度在 edges/ 里原地标 retired，而 validate 根本不看那个字段，
+        # **这个仓库的退休约定是搬进 retired/，不是原地打标**。
+        if (A.get(a, {}).get('track') == 'LIST'
+                and A.get(a, {}).get('discipline') == A.get(b, {}).get('discipline')
+                and not any(v.get('kind') == 'set-containment' for v in (e.get('evidence') or []))):
+            drop[(a, b)] = '同学科内 LIST 档当前置（覆盖模型没有先后语义）'
 
     # 去环要在前两步之后 —— 前面丢掉的边可能本来就把环拆开了
     adj = collections.defaultdict(list)
