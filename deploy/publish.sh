@@ -32,6 +32,23 @@ rm -rf /tmp/k12new && mkdir -p /tmp/k12new && tar xzf /tmp/k12-dist.tgz -C /tmp/
 test -s /tmp/k12new/index.html || { echo '✗ 远端首页空'; exit 1; }
 test \"\$(find /tmp/k12new/a -name index.html | wc -l)\" -gt 2800 || { echo '✗ 远端详情页不足'; exit 1; }
 test -f /tmp/k12new/data/slice/index.json || { echo '✗ 远端分片缺失'; exit 1; }
+# ── 历史版本必须活过整树切换 ────────────────────────────────────
+# 这个脚本是「整棵目录换掉」的，而已发布的快照就在这棵树里面 ——
+# 不搬走的话，第二次发布就把第一次的快照抹了，
+# 而 CONTRACT.md 里白纸黑字写着「每个发布版本永久可取」。
+# 这是那句承诺唯一的执行点。
+mkdir -p /tmp/k12new/data/v
+if [ -d $D/data/v ]; then sudo cp -n $D/data/v/*.tgz /tmp/k12new/data/v/ 2>/dev/null || true; fi
+for f in $D/data/v/*.tgz; do
+  [ -e \"\$f\" ] || continue
+  b=\$(basename \"\$f\")
+  test -f /tmp/k12new/data/v/\$b || { echo \"✗ 已发布版本 \$b 会在这次切换中丢失\"; exit 1; }
+done
+ls /tmp/k12new/data/v/*.tgz 2>/dev/null | xargs -n1 basename | sed 's/\.tgz\$//' | sort -V | \
+  python3 -c \"import sys,json;print(json.dumps({'versions':[l.strip() for l in sys.stdin if l.strip()]}))\" \
+  > /tmp/k12new/data/v/index.json
+echo \"  可取版本：\$(python3 -c \"import json;print(' '.join(json.load(open('/tmp/k12new/data/v/index.json'))['versions']))\")\"
+
 sudo rm -rf $D.bak
 sudo mv $D $D.bak            # 瞬间，不额外占空间；上一份 .bak 刚删掉
 sudo mv /tmp/k12new $D && sudo chown -R www-data:www-data $D

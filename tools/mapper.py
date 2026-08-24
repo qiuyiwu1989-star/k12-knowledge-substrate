@@ -64,6 +64,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from citable import CITABLE, HUMAN_CONFIRMED     # noqa: E402
+from grain import grain_of                      # noqa: E402
 
 ROOT = Path(__file__).resolve().parent.parent
 
@@ -289,6 +290,10 @@ def main():
             'citable': x['reviewStatus'] in CITABLE,
             'humanConfirmed': x['reviewStatus'] in HUMAN_CONFIRMED,
             'fieldIssues': x.get('fieldIssues') or [],
+            # 粒度警告：**每条都带**，不是可选项。
+            # 67.6% 的锚点覆盖 3 个年级 —— 映射「成功」但信息量接近于零是这个库
+            # 最容易骗到调用方的地方，所以把它摆在结果里，而不是藏在文档里。
+            'grain': grain_of(x),
             'why': why,
             'srcPage': (x.get('provenance') or {}).get('srcPage'),
         })
@@ -317,6 +322,8 @@ def main():
             tag = '⛔存疑'
         print(f"  {c['rank']}. [{tag} {c['reviewStatus']}] {c['discipline']}｜{c['statement'][:52]}")
         print(f"     {c['id']} · 课标 p{c['srcPage']} · {' · '.join(c['why'])}")
+        if c['grain'].get('warn'):
+            print(f"     ⚠ 粒度：{c['grain']['warn']}")
         if c['fieldIssues']:
             print(f"     字段缺陷：{'、'.join(c['fieldIssues'])}")
         print()

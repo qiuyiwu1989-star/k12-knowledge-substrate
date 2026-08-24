@@ -30,4 +30,15 @@ cp data-index.html dist/data/index.html                     # /data/ 原先是 4
 cp -r anchor-pages/a dist/a                                 # 2,158 个锚点详情页 + 共享资产
 cp manifest.json dist/data/
 for d in anchors edges lists mappings; do mkdir -p "dist/data/$d"; cp -r "$d"/* "dist/data/$d/"; done
+# ── 版本化快照：调用方 pin 的就是这个 ──────────────────────────────
+# 打成单个 tgz，不摊开成目录 —— 一份快照 4MB 上下，摊开是几千个小文件，
+# 服务器上要长期留十几份，inode 和 rsync 都吃不消。
+# **已发布的版本不许覆盖**：build 时如果本地已有同名快照就直接报错，
+# 逼你先动 VERSION（version-diff 那道闸会告诉你该动 major 还是 minor）。
+VER=$(cat VERSION)
+mkdir -p dist/data/v
+tar czf "dist/data/v/$VER.tgz" -C dist/data anchors edges lists mappings manifest.json slice
+echo "{\"latest\":\"$VER\"}" > dist/data/v/latest.json
+echo "✓ 快照 dist/data/v/$VER.tgz — $(du -h "dist/data/v/$VER.tgz" | cut -f1)"
+
 echo "✓ dist/ 就绪 — $(du -sh dist | cut -f1)，$(find dist -type f | wc -l | tr -d ' ') 个文件"
