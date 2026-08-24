@@ -13,13 +13,17 @@ python3 tools/make_about.py
 python3 tools/make_list.py
 python3 tools/make_data_index.py
 python3 tools/make_anchor_pages.py            # /a/<id>/ 每条锚点一个详情页（specs/003）
-python3 tools/make_slices.py --out dist/data/slice   # 学段片=归属 · 年级片=投影 · 学科片
 python3 tools/make_teacher_sheet.py
 python3 tools/split_teacher_sheet.py
 
 rm -rf dist && mkdir -p dist/2d dist/data
 cp graph-3d.html dist/index.html    # 首页是 3D
 cp graph.html    dist/2d/index.html # /2d 是俯视版
+# ⚠️ 分片必须在 `rm -rf dist` **之后**跑。第一版放在了前面，刚生成就被删掉 ——
+#    而部署脚本里的 `test -f .../slice/index.json` 闸当场拦住了切换，
+#    线上没被换成缺分片的版本。**闸比我可靠。**
+python3 tools/make_slices.py --out dist/data/slice   # 学段片=归属 · 年级片=投影 · 学科片
+
 mkdir -p dist/about && cp about.html dist/about/index.html  # /about 是项目与方法论介绍
 mkdir -p dist/list  && cp list.html  dist/list/index.html   # /list 是全部能力点的目录
 cp data-index.html dist/data/index.html                     # /data/ 原先是 404
