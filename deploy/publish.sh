@@ -16,6 +16,17 @@ ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 
 cd "$ROOT"
 [ -s dist/index.html ] || { echo "✗ dist/index.html 空 —— 先跑 deploy/build.sh"; exit 1; }
+# ── dist 必须是当前版本构建出来的 ────────────────────────────────
+# 这个脚本**不构建**。2026-08-25 我改完数据、打好 v1.1 的 tag，直接跑 publish，
+# 结果发上去的是 v1.0 时的 dist —— 全部闸都绿，因为它们检查的是
+# 「dist 完不完整」，没有一条检查「dist 是不是当前这份数据构建的」。
+# 快照文件名带着版本号，所以这一条查得很便宜。
+V=$(cat VERSION)
+[ -f "dist/data/v/$V.tgz" ] || {
+  echo "✗ dist 里没有 v$V 的快照 —— dist 是旧版本构建的，先跑 bash deploy/build.sh"
+  echo "  现有：$(ls dist/data/v/*.tgz 2>/dev/null | xargs -n1 basename 2>/dev/null | tr '\n' ' ')"
+  exit 1
+}
 N=$(find dist/a -name index.html 2>/dev/null | wc -l | tr -d ' ')
 [ "$N" -gt 2800 ] || { echo "✗ 详情页只有 $N 个，少于 2800 —— 构建没跑全"; exit 1; }
 [ -f dist/data/slice/index.json ] || { echo "✗ 分片缺失 —— make_slices 没跑或被 rm -rf dist 删了"; exit 1; }
