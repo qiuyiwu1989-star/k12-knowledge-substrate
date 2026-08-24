@@ -9,7 +9,7 @@
     "validate": "node scripts/validate.mjs --warn",
     "selftest": "node scripts/lib/decidability.mjs && node scripts/selftest.mjs",
     "manifest": "node scripts/manifest.mjs",
-    "check": "npm run no-shrink && npm run no-id-reuse && npm run no-writeback && npm run version-diff && npm run no-dup-defs && npm run selftest && npm run review-loop && npm run mapper-test && npm run mcp-test && npm run manifest && node scripts/sync-docs.mjs --check && npm run validate && npm run fw-report",
+    "check": "npm run no-shrink && npm run no-id-reuse && npm run no-writeback && npm run version-diff && npm run no-dup-defs && npm run manifest && npm run selftest && npm run review-loop && npm run mapper-test && npm run mcp-test && node scripts/sync-docs.mjs --check && npm run validate && npm run fw-report",
     "sync-docs": "node scripts/sync-docs.mjs",
     "strip-srctext": "node scripts/strip-srctext.mjs",
     "review-loop": "node scripts/review-loop-test.mjs",

@@ -135,7 +135,10 @@ const FALLBACK_EV = /^(能在.{1,8}(课堂|作业).{0,6}情境中完成：|能�
 // 只有 err/warn 的选择受档位控制。
 const ENFORCE = {
   edgeTyping: 'reporting',      // F001/F002/F003/F004/F005 —— specs/001 边重标
-  assessmentSpec: 'reporting',  // F206 —— 可引用锚点的兜底证据（326 条待补真证据）
+  // 2026-08-25 升为 required：F206 清零（326 → 0）。
+  // 从此任何一条「可引用却拿兜底模板当证据」的锚点都会当场红 CI，
+  // 而不是躺在 1832 条 warning 里没人看。
+  assessmentSpec: 'required',   // F206 —— 可引用锚点的兜底证据
 };
 const gate = (key) => (ENFORCE[key] === 'required' ? err : warn);
 

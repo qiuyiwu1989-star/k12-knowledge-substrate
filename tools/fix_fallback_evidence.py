@@ -96,6 +96,9 @@ def main():
     ap.add_argument('--limit', type=int, default=0)
     ap.add_argument('--concurrency', type=int, default=10)
     ap.add_argument('--dry-run', action='store_true')
+    ap.add_argument('--refresh', action='store_true',
+                    help='绕过缓存重新问。缓存键是提示词，所以一个「能解析但过不了后面两道闸」的'
+                         '回答同样会被永久钉住——「失败不进缓存」只堵了一半。')
     a = ap.parse_args()
     base, key = os.environ['MIMO_BASE'], os.environ['MIMO_KEY']
     model = os.environ.get('MIMO_MODEL', 'mimo-v2.5')
@@ -119,7 +122,7 @@ def main():
         sysp = SYS.format(stmt=x['statement'], src=src)
         h = hashlib.sha256(sysp.encode()).hexdigest()[:24]
         cf = CACHE / f'{h}.json'
-        if cf.exists():
+        if cf.exists() and not a.refresh:
             return job, json.loads(cf.read_text(encoding='utf-8'))
         try:
             raw = call(sysp, '写。', base, key, model)
@@ -130,7 +133,13 @@ def main():
             d = json.loads(m.group(0)) if m else {'err': '没吐 JSON'}
         except Exception:
             d = {'err': 'JSON 解析失败'}
-        cf.write_text(json.dumps(d, ensure_ascii=False), encoding='utf-8')
+        # **失败不进缓存。** 原先成功和失败走同一条写缓存的路，于是 11 条
+        # 「JSON 解析失败」被永久钉住 —— 每次重跑都在重放同一批错误，
+        # 数字一次比一次好看不了，看起来像「这些数据没救了」，
+        # 其实只是缓存把一次偶发的截断变成了永久事实。
+        # 缓存是为了省钱，不是为了固化错误。
+        if 'err' not in d:
+            cf.write_text(json.dumps(d, ensure_ascii=False), encoding='utf-8')
         return job, d
 
     res = []
