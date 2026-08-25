@@ -199,10 +199,31 @@ HTML = r"""<!doctype html><html lang="zh-CN"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1"><title>__TITLE__</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
+/* 深色是这张图的主设计（几千个发光的点需要暗底），浅色是显式覆盖。
+   ★ 画布不能只吃 CSS —— canvas 的底色、连线色、白边都是 JS 画的，
+   所以它们必须也是变量，由 JS 在切换时重读。少一个，切到浅色就会
+   出现「深色的点画在浅色的底上、外面套着一圈白边」这种半吊子状态。 */
 :root{--bg:#080a11;--fg:#eceaf0;--mut:#7d8496;--dim:#565d6e;--line:#1c2130;--card:rgba(13,16,25,.94);
+--chip:rgba(20,24,36,.9);--edge-rgb:158,176,214;--ring:255,255,255;--ring-a:.55;
+--seal:#e8607d;
 /* 横切维度专用色。刻意**不用**任何学科色 —— 横切是横跨学科的东西，
    借用某一科的颜色会读成「这是那一科的」。 */
 --cc:#c9a227}
+:root[data-theme="light"]{
+  --bg:#F6F6F3;--fg:#14161B;--mut:#5C6372;--dim:#8B92A1;--line:#DEE0E5;
+  --card:rgba(252,252,250,.97);--chip:rgba(255,255,255,.92);
+  /* 连线在浅底上要压暗、白边要变成暗边，否则点全糊在一起 */
+  --edge-rgb:96,110,140;--ring:20,22,28;--ring-a:.5;--cc:#8A6A10;--seal:#C0344F;
+}
+@media (prefers-color-scheme:light){:root:not([data-theme="dark"]):not([data-theme="light"]){
+  --bg:#F6F6F3;--fg:#14161B;--mut:#5C6372;--dim:#8B92A1;--line:#DEE0E5;
+  --card:rgba(252,252,250,.97);--chip:rgba(255,255,255,.92);
+  --edge-rgb:96,110,140;--ring:20,22,28;--ring-a:.5;--cc:#8A6A10;--seal:#C0344F;
+}}
+#theme{position:fixed;right:26px;bottom:26px;z-index:8;width:34px;height:34px;border-radius:50%;
+  border:1px solid var(--line);background:var(--chip);color:var(--mut);font-size:14px;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;line-height:1}
+#theme:hover{color:var(--fg);border-color:var(--dim)}
 body{background:var(--bg);color:var(--fg);font:15px/1.62 -apple-system,"PingFang SC","Microsoft YaHei",sans-serif;overflow:hidden}
 canvas{display:block;cursor:grab}canvas.drag{cursor:grabbing}
 /* 左栏是一根 flex 轨道：logo / hero+cta / 图例 各占一段，由 flex 分配空间。
@@ -215,12 +236,16 @@ canvas{display:block;cursor:grab}canvas.drag{cursor:grabbing}
 #logo span{color:var(--mut);font-weight:500;letter-spacing:.1em;font-size:11.5px;display:block;margin-top:5px}
 #hero{margin-top:auto;pointer-events:none}
 #hero h1{font-size:clamp(40px,4.6vw,64px);line-height:1.02;font-weight:600;letter-spacing:-.03em;margin-bottom:26px}
-#hero h1 i{color:#e8607d;font-style:normal}
+#hero h1 i{color:var(--seal);font-style:normal}
 #hero p{color:var(--mut);font-size:13.5px;margin-bottom:11px;max-width:352px}
 #hero b{color:var(--fg);font-weight:600}
-#hero .sub{color:var(--dim);font-size:12.5px}
+#hero .sub{color:var(--dim);font-size:12px;line-height:1.55}
+/* 教师签字那句单独成行、带竖线 —— 它是全站唯一一句「我们还差什么」，
+   埋在三行小字里等于没写。 */
+#hero .note{color:var(--mut);font-size:12.5px;border-left:2px solid var(--seal);
+  padding-left:10px;margin:16px 0 14px}
 #cta{display:flex;gap:12px;align-items:center;flex-wrap:wrap}
-#cta a{font-size:12.5px;color:var(--fg);background:rgba(20,24,36,.9);border:1px solid var(--line);border-radius:99px;padding:8px 16px;text-decoration:none}
+#cta a{font-size:12.5px;color:var(--fg);background:var(--chip);border:1px solid var(--line);border-radius:99px;padding:8px 16px;text-decoration:none}
 #cta a:hover{border-color:var(--dim)}
 #cta em{font-style:normal;font-size:10.5px;letter-spacing:.13em;color:var(--dim)}
 /* 左栏是一根 flex 轨道。**新加的块必须自己声明会不会抢空间** ——
@@ -369,22 +394,20 @@ button.cc u{text-decoration:none;font-size:12px;color:var(--mut);margin-left:aut
 <div id="logo">K12 教育的能力结构<span>YONGLE · 永乐教育</span></div>
 <div id="hero">
   <h1>一个孩子<br>要学的全部<i>。</i></h1>
-  <p><b>__NC__</b> 条能力断言、<b>__EC__</b> 条先修依赖，从认字到方程。</p>
-  <p><b>__USE__</b> 条可被个人档案引用（带白边）—— 其中 <b>__AUTO__</b> 条判定标准客观
-     （字表词表这类数得清的），其余是 <b>AI 看过、没挑出毛病</b>，
-     <b>不是教师签字</b>：教师签字数目前是 <b>__HUMAN__</b>。</p>
-  <p><b>__BADN__</b> 条被 AI 审出问题，画成空心，不可引用。</p>
-  <p>每条依赖都写明了<b>什么必须排在前面、为什么</b>。<b>点任意一个点</b>，
-     看一个学习者在此之前必须掌握的全部。</p>
-  <p class="lead sub">依据教育部《义务教育课程标准（2022年版）》1,594 页
-     与《普通高中课程标准（2017年版2020年修订）》2,276 页原件解析构建。<br>开放数据 · ODbL 1.0</p>
+  <p><b>__NC__</b> 条能力断言、<b>__EC__</b> 条先修依赖，从认字到方程。<br>
+     每一条都能翻回教育部课标的某一页。</p>
+  <p><b>点任意一个点</b>，看一个学习者在此之前必须掌握的全部。</p>
+  <p class="note">教师签字 <b>__HUMAN__</b>。「可引用」的意思是
+     <b>AI 看过、没挑出毛病</b> —— 不是有人签过字。</p>
+  <p class="sub">《义务教育课程标准（2022年版）》1,594 页 ·
+     《普通高中课程标准（2017年版2020年修订）》2,276 页 · 原件解析构建</p>
 </div>
 <div id="cta">
   <a href="/list/">全部能力点</a>
   <a href="/about/">这是什么 · 方法论</a>
   <a href="https://github.com/qiuyiwu1989-star/k12-knowledge-substrate" target="_blank" rel="noopener">在 GitHub 上查看</a>
   <a href="/2d/">2D 视角</a>
-  <em>开放数据 · ODBL 1.0</em>
+  <em>开放数据 · ODbL 1.0</em>
 </div>
 <input id="q" placeholder="搜索能力…（回车定位）">
 <div id="qf"><label><input type="checkbox" id="onlyok"> 只看「AI 看过没挑出毛病」的（__OKN__ 条）</label>
@@ -403,6 +426,7 @@ button.cc u{text-decoration:none;font-size:12px;color:var(--mut);margin-left:aut
 或点<b style="color:var(--cc)">「练的是同一件事」</b>看哪些别科在练同一种能力</div>
 <div id="panel"><button id="close">×</button><div id="pc"></div></div>
 <div id="marks"><span id="mn"></span><button onclick="exportMarks()">导出</button><button onclick="clearMarks()">清空</button></div>
+<button id="theme" title="切换深浅" aria-label="切换深色/浅色">◐</button>
 <div id="tip"></div>
 <script>
 const N = __NODES__, E = __EDGES__, COLOR = __COLORS__, HGT = __HGT__, CCV = __CCV__;
@@ -416,6 +440,38 @@ for (const n of N) for (const c of (n.cc || [])) {
   ccIndex.get(c).push(n.i);
 }
 const cv = document.getElementById('cv'), ctx = cv.getContext('2d', { alpha: false });
+// 画布的颜色也走 CSS 变量，切主题时重读一次就够 —— 每帧读 getComputedStyle 很贵。
+let SK = {};
+function reskin() {
+  const cs = getComputedStyle(document.documentElement);
+  const v = (k) => cs.getPropertyValue(k).trim();
+  SK = { bg: v('--bg'), edge: v('--edge-rgb'), ring: v('--ring'), ringA: v('--ring-a') || '.55',
+         cc: v('--cc'), seal: v('--seal') };
+}
+reskin();
+// 主题切换。记住用户的显式选择；没选过就跟系统走（那时 data-theme 不落，
+// 由 prefers-color-scheme 的媒体查询接管）。切完必须 reskin + 重画 ——
+// 画布不会自己跟着 CSS 变。
+(function () {
+  const root = document.documentElement, KEY = 'k12-theme';
+  const saved = localStorage.getItem(KEY);
+  if (saved === 'light' || saved === 'dark') root.setAttribute('data-theme', saved);
+  const cur = () => root.getAttribute('data-theme')
+    || (matchMedia('(prefers-color-scheme:light)').matches ? 'light' : 'dark');
+  const btn = document.getElementById('theme');
+  const paint = () => { btn.textContent = cur() === 'light' ? '☾' : '☀'; };
+  paint();
+  btn.onclick = () => {
+    const next = cur() === 'light' ? 'dark' : 'light';
+    root.setAttribute('data-theme', next);
+    localStorage.setItem(KEY, next);
+    paint(); reskin(); draw();
+  };
+  // 没有显式选择时，跟着系统实时变
+  matchMedia('(prefers-color-scheme:light)').addEventListener('change', () => {
+    if (!localStorage.getItem(KEY)) { paint(); reskin(); draw(); }
+  });
+})();
 const DPR = Math.min(2, devicePixelRatio || 1);
 let W, H, yaw = .5, pitch = -.18, zoom = 1, sel = null, hi = null, auto = true, dragging = null;
 let panX = 0, panY = 0, tw = null, popT = 0;      // 视角平移 + 选中动画状态
@@ -473,7 +529,7 @@ function OFFSET() {
   return (PAD_L() + W) / 2 - W / 2;
 }
 function draw() {
-  ctx.fillStyle = '#080a11'; ctx.fillRect(0, 0, W, H);
+  ctx.fillStyle = SK.bg; ctx.fillRect(0, 0, W, H);
   project();
   const on = k => !off.has(N[k].d) && !(onlyOK && N[k].r !== 1) && !(onlyUse && !N[k].u);
   const zmin = -1400, zspan = 2800;
@@ -498,7 +554,7 @@ function draw() {
     const al = hi ? [.035, .022, .013] : [.34, .22, .13];
     for (let i = 0; i < 3; i++) {
       if (!bk[i].length) continue;
-      ctx.strokeStyle = `rgba(158,176,214,${al[i]})`; ctx.lineWidth = .8 * DPR;
+      ctx.strokeStyle = `rgba(${SK.edge},${al[i]})`; ctx.lineWidth = .8 * DPR;
       ctx.beginPath();
       for (const [a, b] of bk[i]) { ctx.moveTo(px[a], py[a]); ctx.lineTo(px[b], py[b]); }
       ctx.stroke();
@@ -527,11 +583,20 @@ function draw() {
      「过了 AI 审查」在图上长得一模一样 —— 那是用视觉掩盖数据质量，
      跟当初把 disputed 混在里面是同一类错误。
      四档：无人看过最淡 → AI 过审中等 → 存疑空心 → 可用最实 + 白边。 */
-  const TIER_ALPHA = [0.34, 0.62, 1, 1];   // r = 0 / 1 / 2 / 3
+  /* 档位差必须留着（那是数据成色，不是装饰），但整体要更实。
+     旧值 [0.34,0.62,1,1] × 深度衰减最多 0.52 —— 而「AI 看过没挑出毛病」
+     这一档占全图 74%，最深处只有 0.32 不透明度，整张图看着是虚的。
+     抬底不抬顶：档位的相对次序一个不动，只是都往实里推。
+     可引用那一档另有白边兜着，所以顶部收窄不影响它读得出来。 */
+  const TIER_ALPHA = [0.46, 0.84, 1, 1];   // r = 0 / 1 / 2 / 3
   for (const g of groups.values()) {
-    const a = (g.lit ? TIER_ALPHA[g.q] ?? 1 : .07) * (1 - g.b * .16);
+    // 深度衰减从 .16 降到 .08：抬的是**底**，不动档位之间的相对差。
+    // tier1（2,203 条）和 tier3（388 条）之间只剩 alpha 一个区分信号
+    // —— 两档都带「可引用」白边，白边区分不了它们。
+    // 所以 0.84 vs 1.0 这个差不能再压，否则就是用视觉掩盖数据成色。
+    const a = (g.lit ? TIER_ALPHA[g.q] ?? 1 : .09) * (1 - g.b * .08);
     ctx.globalAlpha = a; ctx.fillStyle = COLOR[g.d] || '#888';
-    ctx.strokeStyle = '#080a11'; ctx.lineWidth = 1.1 * DPR;
+    ctx.strokeStyle = SK.bg; ctx.lineWidth = 1.1 * DPR;   // 描边用底色，点与点之间留一圈缝
     for (const k of g.it) {
       // 半径 = 基础 + √被依赖次数 + √清单条目数。
       // 原公式只看被依赖次数，孤立点（35%）一律取最小值 0.85 → 画成针尖。
@@ -549,8 +614,10 @@ function draw() {
         ctx.beginPath(); ctx.arc(px[k], py[k], r + 2.2 * DPR, 0, 7); ctx.stroke(); ctx.restore();
       }
       if (N[k].u && r > 2 * DPR) {                                  // 可引用：加一圈亮边（r=1 和 r=3 都有）
-        ctx.save(); ctx.strokeStyle = 'rgba(255,255,255,.55)'; ctx.lineWidth = 1 * DPR;
-        ctx.beginPath(); ctx.arc(px[k], py[k], r + 1.6 * DPR, 0, 7); ctx.stroke(); ctx.restore();
+        ctx.save(); ctx.strokeStyle = `rgba(${SK.ring},${SK.ringA})`; ctx.lineWidth = 1 * DPR;
+        // 亮边贴紧一点（1.6 → 1.1）：离得远时它读成一圈独立的环，
+        // 点本身反而显得空 —— 87% 的点都有这圈边，所以这个「空」是整片的。
+        ctx.beginPath(); ctx.arc(px[k], py[k], r + 1.1 * DPR, 0, 7); ctx.stroke(); ctx.restore();
       }
     }
   }

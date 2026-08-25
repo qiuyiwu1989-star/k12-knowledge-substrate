@@ -2,7 +2,7 @@
   "dataset": "K12 教育的能力结构 (K12 Capability Structure)",
   "release": "0.1.0",
   "schemaVersion": "0.1.0",
-  "generatedAt": "2026-08-24",
+  "generatedAt": "2026-08-25",
   "counts": {
     "anchors": 3997,
     "candidates": 0,

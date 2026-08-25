@@ -117,7 +117,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 # ★ 拆句规则只有一份。不许在这里复制 split_reqs —— 复制必漂移，且漂移不报错。
 from gaozhong_commit import (  # noqa: E402
-    clean, ensure_neng, node_call, opener_ok, split_reqs,
+    REQ_VERB, clean, ensure_neng, node_call, split_reqs,
 )
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -149,6 +149,45 @@ PAREN_TRUNC = re.compile(r'[（(]([^（()）]*?)(?=[●·•]|$)')
 LIT_ITEM_STRIP = re.compile(r'^素养\s*\d*\s*|[“”"\'‘’《》\s　]')
 
 SENT_END = re.compile(r'(?<=[。？！])')
+
+# ── 句级内容预筛：这批料是**混来源的散文**，不是编号条目 ──────────────────────
+#
+# 本工序的输入是【学业要求】整段，段里混着教学建议、学业质量内涵、表格行
+# （「实施环节 活动内容 阶段目标 学科核心素养」），抽取阶段分不开。所以这里需要
+# 一道「这句是不是对学生的能力要求」的预筛 —— 判据落在句首。
+#
+# ⚠️ 这张表以前叫 `GOOD_OPENER`，住在 gaozhong_commit.py，注释说自己是**碎片
+#    过滤器**（防跨页截断）。那是两回事，而且那边根本不需要它：编号条目的碎片
+#    问题已经由 head_truncated / strip_truncated_head 按截断本身来判了。
+#    表留在这里，名字改成它真正干的事，**并且补上漏掉的词**：
+#      · 「根据」「借助」在表里，「依据」不在 —— 纯属漏词，实测丢了
+#        「依据解决问题的需要，设计和表示简单算法」（信息技术 p23，计算思维）。
+#      · 一个艺术类动词都没有 —— 学唱 / 识读 / 排演 / 编创 / 鉴赏 全不在，
+#        和 decidability.mjs 的 ACTION_VERBS 是同一处漏（那边漏了「编创」，
+#        而音乐课标用「编创」18 次、「创编」0 次）。
+#      · 思想政治·历史爱用的 阐释 / 阐明 / 解析 / 辨析 / 简述 也不在。
+#
+#    **这张表只负责「像不像一条要求」，不负责「可不可判定」** —— 后者是闸的活。
+#    过了这一关不等于能落库；口号句、虚动词句照样会被闸拒掉，那是对的。
+REQUIREMENT_LEAD = REQ_VERB + (
+    '能', '会', '通过', '根据', '依据', '在', '用', '利用', '结合', '尝试', '初步',
+    '正确', '独立', '主动', '积极', '进一步', '学会', '学习', '熟悉', '关注', '养成',
+    '选择', '收集', '整理', '观察', '发现', '完成', '参与', '合作', '遵守',
+    '针对', '围绕', '以', '从', '对', '把', '将', '借助', '基于', '按照',
+    # 说理科（思想政治·历史·地理）的常用起头
+    '阐释', '阐明', '解析', '辨析', '简述', '概述', '综述', '引述', '明确',
+    '具备', '懂得', '感悟', '确信', '树立', '坚定', '继承', '展现', '重视',
+    # 艺术类（音乐·美术·艺术）的可观察动作 —— 原表一个都没有
+    '聆听', '欣赏', '鉴赏', '赏析', '演唱', '演奏', '学唱', '视唱', '听辨',
+    '识读', '视谱', '排演', '编创', '创编', '编排', '编配', '谱曲', '伴奏',
+    '临摹', '仿写', '模仿', '表演', '朗诵', '创作', '设计', '绘制', '制作',
+)
+
+
+def requirement_lead(s):
+    """句首像不像一条对学生的能力要求。**不判可判定性** —— 那是闸的活。"""
+    return s.startswith(REQUIREMENT_LEAD)
+
 
 # 章节标题标记：出现即说明当前小节已经结束，后面是串进来的下一节正文。
 TAIL_CUT = re.compile(
@@ -368,13 +407,14 @@ def main():
                     s = clean(s).strip().strip(LEAD_PUNCT)
                     if not s:
                         continue
-                    if not opener_ok(s):
+                    if not requirement_lead(s):
                         rejected.append({
                             'stage': 'split', 'discipline': subj, 'page': seg['page'],
                             'course': seg.get('course'), 'statement': s,
                             'literacy': lits, 'srcText': seg['text'],
-                            'reasons': ['开头不完整：不以要求动词或状语引导词起头，'
-                                        '多半是跨页截断留下的半句'],
+                            'reasons': ['句首不像一条对学生的能力要求：本段混着'
+                                        '教学建议·学业质量内涵·表格行，判据见'
+                                        'REQUIREMENT_LEAD 上方注释'],
                         })
                         continue
                     reqs.append(s)
@@ -391,7 +431,7 @@ def main():
     print(f"段尾截断：{sum(1 for r in rejected if r['stage'] == 'tail-cut')} 段串进了下一节，已在标题标记处截掉")
     print(f"状语合并：{stat['merged']} 处被 split_reqs 切飞的状语合回了同句的下一条")
     frag = sum(1 for r in rejected if r['stage'] == 'split')
-    print(f"拆成 {len(cand)} 条候选（另丢弃 {frag} 条开头不完整的碎片）")
+    print(f"拆成 {len(cand)} 条候选（另拒 {frag} 条句首不像能力要求的，见 REQUIREMENT_LEAD）")
 
     if not cand:
         sys.exit('没有候选，不写盘。')

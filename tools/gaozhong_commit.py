@@ -81,6 +81,41 @@ def clean(text):
     return text.strip()
 
 
+# 介词性动词：既能当状语标记，又能当谓语。**判「还是不是纯状语」时必须把它们排除**，
+# 否则「运用示意图，」会被当成「已经有谓语了」—— 见 split_reqs 里 2026-08-25 那段。
+PREP_VERBS = ('通过', '借助', '根据', '依据', '结合', '基于', '按照',
+              '围绕', '针对', '经过', '运用', '利用')
+PREP_ONLY = re.compile(r'^(能|会)?(' + '|'.join(PREP_VERBS) + r')')
+# 砍段尾状语时用宽表：句首白名单里的介词（以/在/从）也算状语标记
+PREP_WIDE = re.compile(r'^(能|会)?(' + '|'.join(PREP_VERBS) + r'|以|在|从)')
+# 判谓语用的动词表 = 要求动词表减去介词性动词
+PRED_VERB = tuple(v for v in REQ_VERB if v not in PREP_VERBS)
+# 护栏里判谓语要用**宽表**：REQ_VERB 没收「进行/完成/学会/选择…」，
+# 只用它的话「根据物质的组成和性质可以对物质进行分类」「结合当地学生的学习情况进行命题」
+# 会被当成纯状语砍掉 —— 砍掉的正是能力本身。宽表**只用于判谓语，不作为切点**，
+# 切点仍旧只认 REQ_VERB，免得动到 20 科的切法。
+PRED_VERB_WIDE = PRED_VERB + (
+    '学会', '尝试', '选择', '确定', '完成', '创作', '制作', '绘制', '拍摄',
+    '临摹', '区分', '辨析', '认知', '知晓', '搜集', '收集', '进行')
+
+
+def has_predicate(text, verbs=PRED_VERB):
+    """text 里有没有一个**当谓语用**的能力动词。「…的分析…」里那种不算。"""
+    for v in verbs:
+        i = text.find(v)
+        while i >= 0:
+            if text[i + len(v):i + len(v) + 1] != '的':
+                return True
+            i = text.find(v, i + 1)
+    return False
+
+
+def is_pure_adverbial(text, prep=PREP_ONLY, verbs=PRED_VERB):
+    """text 整个还只是个状语：介词标记起头，**剥掉标记之后没有谓语**。"""
+    m = prep.match(text.strip())
+    return bool(m) and not has_predicate(text.strip()[m.end():], verbs)
+
+
 def split_reqs(text):
     """把一个条目拆成若干条要求。**只切，不补、不改。**
 
@@ -106,36 +141,165 @@ def split_reqs(text):
         #     · 条件被丢、断言看着完全正常 —— **看不出来**，全库中招 65 条
         #
         #   修法：前一段若本身就是纯状语（介词起头、没有可判定的谓语），不切，并回去。
-        PREP_ONLY = re.compile(r'^(能|会)?(通过|借助|根据|依据|结合|基于|按照|围绕|针对|经过|运用|利用)')
+        #
+        # ★ 2026-08-25 再修：上面那一版**只看了 buf 的开头**，判据写成
+        #   `PREP_ONLY.match(buf)` —— 于是整句一旦以 通过/运用/根据 起头，
+        #   该句后面**所有**切点被永久抑制，哪怕 buf 里早已装进一整条要求。
+        #   实测被抑制的切点：地理 87/120、美术 16/30、物理 53/96、通用技术 54/167、
+        #   化学 39/186，全库 245/1039 = 24%。粘成的长句再被可判定闸以「过长：超过 60 字」
+        #   拒掉 —— 美术 65 条候选里 28 条死在这上面，是第一大拒因。
+        #
+        #   两处要一起改，缺一个就换一种错法：
+        #     1) 判据看的是 **buf 当前是不是还只是个状语**，不是 buf 开头长什么样；
+        #     2) 判谓语时要**排除介词性动词本身**。运用/利用 既在 PREP_VERBS 也在
+        #        REQ_VERB，不排除的话「运用示意图，」自带「谓语」，照切 ——
+        #        「运用示意图，说明地球的圈层结构」当场变成「说明地球的圈层结构」，
+        #        **条件又没了**，正好绕回 2026-08-24 要防的那个错。地理全科都是这个句式。
         parts, buf = [], ''
         for seg in re.split(r'(?<=，)', sent):
             starts_req = any(seg.lstrip().startswith(v) for v in REQ_VERB)
-            # buf 是纯状语时不切 —— 切开这一刀丢的是课标写明的条件
-            if buf and starts_req and not PREP_ONLY.match(buf.strip()):
+            # buf 还是纯状语时不切 —— 切开这一刀丢的是课标写明的条件
+            if buf and starts_req and not is_pure_adverbial(buf):
                 parts.append(buf); buf = seg
             else:
                 buf += seg
         if buf:
             parts.append(buf)
-        for p in parts:
-            p = p.strip().strip('，；')
+
+        # 反向护栏：防「留下条件、丢了断言」这个镜像错误。
+        # **判据同样是「有没有谓语」，不是「开头长什么样」** ——
+        # 按开头判会把「能运用变量控制的方法探究影响化学反应速率的因素」
+        # 「能根据物质的性质分析…某些常见问题」这种真能力整条删掉（实测化学、
+        # 信息技术、物理各有中招）。有谓语的一律留。
+        for idx, p in enumerate(parts):
+            # 段尾光秃秃的状语小句砍掉 —— 它是下一条的引子，粘在这儿只会把句子撑过 60 字
+            segs = [x for x in re.split(r'(?<=，)', p) if x.strip()]
+            while len(segs) > 1 and is_pure_adverbial(
+                    segs[-1].strip().strip('，。；'), PREP_WIDE, PRED_VERB_WIDE):
+                segs = segs[:-1]
+            p = ''.join(segs).strip().strip('，；')
+            # 整段只是个条件、后面还有别的段 → 丢。
+            # 「如油画、版画和年画等」是同位语不算独立小句，不剔掉它，
+            # 「能选择某一画种，如…等」就会被当成两段而躲过这一条。
+            body = [x for x in re.split(r'(?<=，)', p)
+                    if x.strip() and not x.lstrip().startswith(('如', '例如', '包括'))]
+            if (idx != len(parts) - 1 and len(body) == 1
+                    and is_pure_adverbial(re.sub(r'^(能够|能|会)', '', p),
+                                          PREP_WIDE, PRED_VERB_WIDE)):
+                continue
             if len(p) >= 8:
                 out.append(p)
     return out
 
 
-# 断言必须以这些词起头。**这是碎片过滤器**：抽取阶段的跨页截断会留下
-# 「赛的基本规则，并能够在比赛中遵守规则」这种从半个词开始的句子（实测真出过），
-# 而它照样能过可判定闸 —— 闸看的是有没有动词，不看开头是否完整。
-GOOD_OPENER = REQ_VERB + (
-    '能', '会', '通过', '根据', '在', '用', '利用', '结合', '尝试', '初步',
-    '正确', '独立', '主动', '积极', '进一步', '学会', '熟悉', '关注', '养成',
-    '选择', '收集', '整理', '观察', '发现', '完成', '参与', '合作', '遵守',
-    '针对', '围绕', '以', '从', '对', '把', '将', '借助')
+# ── 碎片过滤：**测截断，不测开头** ────────────────────────────────────────
+#
+# ★ 2026-08-25 重写。原先这里是一张句首白名单（GOOD_OPENER = 要求动词 + 状语引导
+#   词），注释写着「碎片过滤器」，实际干的是「凡不以我认识的词起头的一律当碎片」。
+#   两件事不是一回事，而白名单里一个艺术类动词都没有，于是高中音乐 76 条分句里
+#   23 条完整句子被当碎片丢掉 —— 包括「学唱我国戏曲唱段及中外歌剧选段。」
+#   「识读和运用乐谱，包括简谱或五线谱。」。表里有「根据」「借助」，没有「依据」，
+#   也纯属漏词。**开头长什么样，和它是不是截断残片，本来就是两个问题。**
+#
+# 现在测真正的那个：**这一条是不是跨页截断留下的下半截。**
+#
+# 截断长什么样（实测，tools/out/gaozhong/体育与健康.jsonl）：抽取把条目的第一行
+# 误当成了主题标题，于是 topicName 收走上半截、text 里剩下半截，从半个词开始 ——
+#
+#     topicName = '了解任意球、罚球点球、掷界外球、球门球和角球等足球比'
+#     text      = '赛的基本规则，并能够在比赛中遵守规则，服从裁判。'
+#                  ↑ 「比赛」被劈成两半，「赛的基本规则」就是那半个词
+#
+# 判据两条，都可判定，不靠读句子：
+#
+#   1. 条目认出了自己的编号（code）→ 抽取是从条目起点开始收的，不可能是下半截。
+#      gaozhong2 的 370/380 条都有 code —— 它们**根本不需要过这道过滤**。
+#   2. 没有 code 时看 topicName：真标题短（全库实测最长 22 字：「化学科学在材料
+#      科学、人类健康等方面的重要作用」），被误当标题的正文折行**顶到抽取的折行
+#      宽度**，全部落在 25~29 字。24 是这两堆之间的空档，取它当界。
+#
+# 命中之后**只砍第一个小句** —— 截断只伤到接缝处那一句。接缝后面的
+# 「知道心理健康的内容和特征」是完整要求，砍整句就又是一次误杀。
+LINE_WIDTH = 24        # 抽取折行宽度的下界。判据见上；改之前先跑 fragment_selftest()
+
+# 连词起头的小句不可能是条目的开头 —— 它接的是被砍掉的那半句，一起砍。
+CONT_LEAD = ('并', '且', '以及', '和', '或', '也', '还', '同时', '进而', '从而')
 
 
-def opener_ok(s):
-    return any(s.startswith(w) for w in GOOD_OPENER)
+def head_truncated(item):
+    """源条目本身是不是跨页截断留下的**下半截**。"""
+    if item.get('code'):
+        return False
+    return len((item.get('topicName') or '').strip()) >= LINE_WIDTH
+
+
+# 接缝落在小句边界上（上半截正好以「，」「；」收尾）→ 下半截从一个完整小句起头，
+# 一个字都不用砍。不判这一条就是过砍：实测信息技术 p39「…作品开发方案，」+
+# 「描述作品各组成部分及其功能作用，…」——「描述…」是完整的一条要求，砍掉是误杀。
+SEAM_CLEAN = ('，', '；', '。', '、', '：', '？', '！')
+
+
+def strip_truncated_head(text, topic_name=''):
+    """砍掉接缝处那半句。返回 (剩下的正文, 砍掉的残片列表)。
+
+    **只砍到小句为止，不砍整句。** 砍掉的是「赛的基本规则」这种半个词起头的
+    残片，以及紧跟其后、以连词起头的续句 —— 那些续的也是上一页那半句。
+    """
+    if (topic_name or '').rstrip().endswith(SEAM_CLEAN):
+        return text, []
+    segs = [x for x in re.split(r'(?<=[，；。？！])', text) if x.strip()]
+    cut = []
+    while segs:
+        cut.append(segs.pop(0).strip().strip('，；'))
+        if not segs or not segs[0].lstrip().startswith(CONT_LEAD):
+            break
+    return ''.join(segs), [c for c in cut if c]
+
+
+# 碎片过滤的自测用例。**全部抄自真实抽取产物**，不是想出来的
+# （文件名见每条的注释）。改 LINE_WIDTH / SEAM_CLEAN / CONT_LEAD 之前先跑：
+#
+#     python3 tools/gaozhong_commit.py --selftest
+FRAGMENT_FIXTURES = [
+    # (topicName, code, text, 期望砍掉的残片)
+    # ↓ gaozhong/体育与健康 p33：「足球比|赛」被劈成两半
+    ('了解任意球、罚球点球、掷界外球、球门球和角球等足球比', None,
+     '赛的基本规则，并能够在比赛中遵守规则，服从裁判。',
+     ['赛的基本规则', '并能够在比赛中遵守规则']),
+    # ↓ gaozhong/体育与健康 p25：接缝在「身体健康|同等重要」，只砍这一小句；
+    #   后面「知道心理健康的内容和特征」是完整要求，砍整句就是误杀
+    ('提高增进心理健康的意识和能力，理解心理健康与身体健康', None,
+     '同等重要，知道心理健康的内容和特征，掌握和运用提高心理健康水平的方法；',
+     ['同等重要']),
+    # ↓ gaozhong/信息技术 p39：上半截以「，」收尾 = 接缝落在小句边界，一个字都不砍
+    ('基于事物特征的分析，设计基于开源硬件的作品开发方案，', None,
+     '描述作品各组成部分及其功能作用，明确各组成部分之间的调用关系。', []),
+    # ↓ gaozhong/生物学：大概念标题本来就是整句，但条目认出了自己的编号 → 不是下半截
+    ('各种细胞具有相似的基本结构，但在形态与功能上有所差异', '1.1',
+     '说明细胞的结构。', []),
+    # ↓ gaozhong/化学 p20：真标题短，text 从条目开头起
+    ('化学实验', None,
+     '初步学会物质检验、分离、提纯和溶液配制等化学实验基础知识和基本技能。', []),
+    # ↓ gaozhong/地理 p20：24 字，全库真标题最长 22 字 —— 界就画在这两堆之间
+    ('结合近些年发生的海洋争端事件，了解钓鱼岛及其附属', None,
+     '岛屿、南海诸岛属于中国的立场和依据，说明维护国家领土主权和海洋权益的重要性。',
+     ['岛屿、南海诸岛属于中国的立场和依据']),
+]
+
+
+def fragment_selftest():
+    bad = 0
+    for tn, code, text, want in FRAGMENT_FIXTURES:
+        item = {'topicName': tn, 'code': code}
+        got = strip_truncated_head(text, tn)[1] if head_truncated(item) else []
+        flag = '✓' if got == want else '✗'
+        if got != want:
+            bad += 1
+        print(f"  {flag} 截断={head_truncated(item)!s:<5} 砍={got}")
+        if got != want:
+            print(f"      期望={want}")
+    print('\n✗ %d 个用例不符' % bad if bad else '\n✓ 碎片过滤自测全部通过')
+    return bad
 
 
 def ensure_neng(s):
@@ -153,13 +317,23 @@ def cognitive_of(s):
     return '了解'
 
 
-def node_call(script, payload_lines):
+def node_call(script, payload_lines, raw=False):
+    """raw=True 时按原样返回每行（signature-stdin.mjs 吐的是裸字符串，不是 JSON）。
+
+    **行数必须对齐**：这些脚本都会跳过空行，掉一行就是整批错位，
+    而错位不报错 —— 表现成「张三的判定安到了李四头上」。归一那一步早就在
+    对齐上栽过一次，这里索性所有 node 调用统一断言。
+    """
     p = subprocess.run(['node', str(ROOT / 'scripts/lib' / script)],
                        input='\n'.join(payload_lines), capture_output=True,
                        text=True, timeout=300)
     if p.returncode != 0:
         raise RuntimeError(f'{script} 失败：{(p.stderr or "")[:200]}')
-    return [json.loads(l) for l in p.stdout.splitlines() if l.strip()]
+    lines = p.stdout.splitlines()
+    if len(lines) != len(payload_lines):
+        raise RuntimeError(f'{script} 返回 {len(lines)} 行，送进去 {len(payload_lines)} 行'
+                           f'—— 对齐坏了，不敢往下走')
+    return lines if raw else [json.loads(l) for l in lines]
 
 
 def main():
@@ -167,7 +341,11 @@ def main():
     ap.add_argument('--only', default=None)
     ap.add_argument('--src', default=None, help='换抽取产物目录，如 gaozhong2')
     ap.add_argument('--dry-run', action='store_true')
+    ap.add_argument('--selftest', action='store_true', help='只跑碎片过滤自测')
     a = ap.parse_args()
+
+    if a.selftest:
+        sys.exit(1 if fragment_selftest() else 0)
 
     src = (ROOT / 'tools/out' / a.src) if a.src else SRC
     files = sorted(src.glob('*.jsonl'))
@@ -185,18 +363,22 @@ def main():
                     raw.append(r)
     print(f"读入 {len(raw)} 条内容要求（{len({r['subject'] for r in raw})} 科）")
 
-    # 拆句
-    cand, frag_drop = [], []
+    # 拆句。碎片过滤在**拆之前**：截断伤的是条目正文的接缝，不是某一条分句的开头。
+    cand, frag_drop, trunc_items = [], [], 0
     for r in raw:
         base = clean(r['text'])
-        for s in split_reqs(base):
-            if not opener_ok(s):
-                frag_drop.append(s)
+        if head_truncated(r):
+            trunc_items += 1
+            base, cut = strip_truncated_head(base, r.get('topicName') or '')
+            frag_drop.extend(cut)
+            if not base.strip():
                 continue
+        for s in split_reqs(base):
             cand.append({'src': r, 'statement': ensure_neng(s)})
-    print(f"拆成 {len(cand)} 条候选（另丢弃 {len(frag_drop)} 条开头不完整的碎片）")
+    print(f"拆成 {len(cand)} 条候选"
+          f"（{trunc_items} 个条目是跨页截断的下半截，砍掉接缝处 {len(frag_drop)} 条残片）")
     if frag_drop:
-        print("    碎片样本：" + ' ／ '.join(x[:22] for x in frag_drop[:3]))
+        print("    残片样本：" + ' ／ '.join(x[:22] for x in frag_drop[:3]))
 
     # 归一（必须在过闸之前 —— 闸检查的必须就是要落盘的字符串）
     norm = node_call('normalize-stdin.mjs',
@@ -232,26 +414,46 @@ def main():
     for k, n in rejected.most_common(6):
         print(f"    拒 {n:>4}  {k}")
 
-    # 去重：同学科下 (verb, object) 不得重复。object 取动词之后的部分。
-    used_sig = set()
+    # 去重：签名**一律问 scripts/lib/signature-stdin.mjs 要**，不在这儿自己搭一套。
+    #
+    # ★ 2026-08-25 修：这里原先自建 (discipline, verb, object) 元组，而
+    #   normalize.mjs 的 dedupeSignature 看的是 statement 剜掉动词之后的**整句**。
+    #   两套确实不一样，signature-stdin.mjs 的开头就写着「Python 工具不许自己再实现一遍」。
+    #   分歧方向实测是**误杀**：object 只取动词之后那一截，遇到
+    #   「能理解软件在信息系统中的作用，借助软件工具与平台开发网络应用软件」
+    #   会退化成 object='软件'，于是同科所有 verb 相同、object 也退化成「软件」的
+    #   条目互撞。拿现有 2969 条在册锚点回测：python 元组判出 11 条「重复」，
+    #   而 js 签名判定它们互不相同 —— 那 11 条是被白白丢掉的真锚点。
+    #   反方向（python 漏拦、js 拦得住）0 条。
+    #
+    #   object 字段照旧要落盘（schema 里有），只是**不再拿它当签名**。
+    def object_of(stmt, verb):
+        i = stmt.find(verb)
+        o = stmt[i + len(verb):].strip('，。；、 ') if i >= 0 else stmt
+        return o[:60] or stmt[:60]
+
+    existing = []
     for f in sorted((ROOT / 'anchors').glob('*.jsonl')):
         for l in f.open(encoding='utf-8'):
             if l.strip():
                 x = json.loads(l)
                 if not x.get('deprecated'):
-                    used_sig.add((x['discipline'], x.get('verb'), x.get('object')))
+                    existing.append({'discipline': x['discipline'], 'verb': x.get('verb'),
+                                     'statement': x.get('statement')})
+    used_sig = set(node_call('signature-stdin.mjs',
+                             [json.dumps(x, ensure_ascii=False) for x in existing],
+                             raw=True)) if existing else set()
+    new_sig = node_call('signature-stdin.mjs',
+                        [json.dumps({'discipline': c['src']['subject'], 'verb': c['verb'],
+                                     'statement': c['statement']}, ensure_ascii=False)
+                         for c in passed], raw=True) if passed else []
     kept, dup = [], 0
-    for c in passed:
-        verb = c['verb']
-        i = c['statement'].find(verb)
-        obj = c['statement'][i + len(verb):].strip('，。；、 ') if i >= 0 else c['statement']
-        obj = obj[:60] or c['statement'][:60]
-        sig = (c['src']['subject'], verb, obj)
+    for c, sig in zip(passed, new_sig):
         if sig in used_sig:
             dup += 1
             continue
         used_sig.add(sig)
-        c['object'] = obj
+        c['object'] = object_of(c['statement'], c['verb'])
         kept.append(c)
     print(f"去重后 {len(kept)}（撞签名丢弃 {dup}）")
 
