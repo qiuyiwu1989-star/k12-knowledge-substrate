@@ -72,7 +72,10 @@ const DISCIPLINES = new Set([
   '信息技术', '通用技术', '音乐', '美术', '日语', '俄语', '德语', '法语', '西班牙语',
 ]);
 // 高中课程类型。义务教育没有这个维度，一律 null。
-const COURSE_TYPES = new Set(['必修', '选择性必修', '选修']);
+// 「必修必学 / 必修选学」是**体育与健康课标自己的**课程类型划分（p18），
+// 那一科根本不用「必修/选择性必修」这套词。原来的三值枚举是从别科归纳的，
+// 遇到第 21 份课标就不够用了 —— 词表从课标来，不从我们的归纳来。
+const COURSE_TYPES = new Set(['必修', '选择性必修', '选修', '必修必学', '必修选学']);
 const TRACKS = new Set(['DAG', 'LIST', 'MATRIX']);
 // KNOWLEDGE：事实性知识（「已知最早的汉字是甲骨文」）。史地生政这类知识型学科
 // 的【内容要求】几乎全是这一类，先前没有对应类型，它们只能硬塞进 CONCEPTUAL。
@@ -318,7 +321,18 @@ for (const { rec: a, where } of anchors) {
         + ` — MATRIX 的能力维度取的就是核心素养`);
     }
   }
-  if ((a.literacy?.length ?? 0) > 2) err(where, `[${a.id}] literacy 最多 2 个 —— 标全部等于没标`);
+  // 「最多 2 个」防的是**我们**乱贴标签（标全部等于没标）。
+  // 但课标自己就给某些条目标了三个素养（音乐/美术条目尾部的「（素养N）」、
+  // 艺术表头的维度名），照抄三个比砍成两个更忠实 —— 砍才是编辑课标。
+  // 判据：provenance.srcLiteracy 在，且 literacy 就是它 → 课标原标，不限个数。
+  const srcLit = a.provenance?.srcLiteracy;
+  const copiedFromSource = Array.isArray(srcLit)
+    && srcLit.length === (a.literacy?.length ?? -1)
+    && (a.literacy ?? []).every((x, i) => x === srcLit[i]);
+  if ((a.literacy?.length ?? 0) > 2 && !copiedFromSource) {
+    err(where, `[${a.id}] literacy 最多 2 个 —— 标全部等于没标`
+      + `（课标自己标的除外，那种要同时写进 provenance.srcLiteracy）`);
+  }
 
   for (const c of a.crosscutting ?? []) {
     if (!CROSSCUTTING.has(c)) err(where, `[${a.id}] crosscutting 取值不在词表内：${c}`);
@@ -354,7 +368,7 @@ for (const { rec: a, where } of anchors) {
   // 它不是装饰字段 —— 档案要靠它区分「没学过」和「学了没会」。
   if (a.courseType != null) {
     if (!COURSE_TYPES.has(a.courseType)) {
-      err(where, `[${a.id}] courseType「${a.courseType}」不在 必修/选择性必修/选修 之内`);
+      err(where, `[${a.id}] courseType「${a.courseType}」不在词表内（${[...COURSE_TYPES].join('/')}）`);
     }
     const g = +String(a.stageHint?.min ?? '').slice(1);
     if (g && g < 10) err(where, `[${a.id}] 标了 courseType 却是 G${g} —— 课程类型只存在于高中`);

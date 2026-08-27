@@ -85,6 +85,9 @@ def clean(text):
 # 否则「运用示意图，」会被当成「已经有谓语了」—— 见 split_reqs 里 2026-08-25 那段。
 PREP_VERBS = ('通过', '借助', '根据', '依据', '结合', '基于', '按照',
               '围绕', '针对', '经过', '运用', '利用')
+# 认哪些章节。改这里要同步 DECISIONS.md —— 它决定了整个库的来源边界。
+SECTIONS = ('内容要求', '学业质量')
+
 PREP_ONLY = re.compile(r'^(能|会)?(' + '|'.join(PREP_VERBS) + r')')
 # 砍段尾状语时用宽表：句首白名单里的介词（以/在/从）也算状语标记
 PREP_WIDE = re.compile(r'^(能|会)?(' + '|'.join(PREP_VERBS) + r'|以|在|从)')
@@ -359,7 +362,12 @@ def main():
         for l in f.open(encoding='utf-8'):
             if l.strip():
                 r = json.loads(l)
-                if r['section'] == '内容要求' and (not a.only or r['subject'] == a.only):
+                # 【五、学业质量】也是合法来源 —— 2026-08-27 邱懿武明示确认（原话：「确认」），
+                # 见 DECISIONS.md。此前这里只收「内容要求」，导致 20 科里 17 科
+                # 从没碰过那一章：德语的真断言全在那儿（它的课程内容章是教学设计散文）、
+                # 美术整本没有【学业要求】、音乐的内容要求 62 条只出得了 4 条锚点
+                # 而学业质量 121 条出得了 86 条。**过滤器的形状一直在替课标说话。**
+                if r['section'] in SECTIONS and (not a.only or r['subject'] == a.only):
                     raw.append(r)
     print(f"读入 {len(raw)} 条内容要求（{len({r['subject'] for r in raw})} 科）")
 
@@ -502,7 +510,16 @@ def main():
             'dimension': None,
             'statement': c['statement'], 'verb': c['verb'], 'object': c['object'],
             'type': 'KNOWLEDGE' if cognitive_of(c['statement']) == '了解' else 'CONCEPTUAL',
-            'literacy': [], 'cognitive': cognitive_of(c['statement']),
+            # literacy 用课标自己标的（音乐/美术/德语的「（素养N）」、地理的「（综合思维）」），
+            # 没标就空着 —— **不替课标贴标签**。
+            # 课标标了 ≥4 个素养时视为「全标」——**全标等于没标**，
+            # 这正是 validate 那条规则的原话，只不过这次是课标自己这么标的
+            # （美术 p50 三条被标了全部 5 个核心素养）。
+            # 处理：provenance.srcLiteracy 忠实留下课标标了什么，
+            # 锚点的 literacy 置空 —— 一个不构成区分度的标签不该当属性用。
+            'literacy': ([] if len(s.get('literacy') or []) >= 4
+                         else list(s.get('literacy') or [])),
+            'cognitive': cognitive_of(c['statement']),
             # 高中课标按模块给内容，不按年级。**不发明年级精度。**
             'stageHint': {'min': 'G10', 'max': 'G12'},
             'courseType': s.get('course'),
@@ -524,7 +541,17 @@ def main():
                 'srcCode': s.get('code'), 'srcTopic': s.get('topicName'),
                 'srcCourse': s.get('course'), 'srcCourseNo': s.get('courseNo'),
                 'srcText': s['text'],
-                'method': 'gaozhong-textlayer-split',
+                # 水平号只作**出处坐标**放在 provenance，不做锚点属性 ——
+                # 跨学科的水平号互不等价（日语「四级」/法语「三级」/德语「G2」/化学「水平2」），
+                # 见 mappings/quality-levels.json 的文件头。放这里是为了能翻回那一格表，
+                # 不是为了比较。
+                **({'srcLevel': s['level']} if s.get('level') is not None else {}),
+                # 标明这批素养标签是**课标自己标的**（条目尾部的「（素养N）」、
+                # 地理的「（综合思维）」、艺术的表头维度名），不是我们贴的。
+                # validate 的「literacy 最多 2 个」是防我们乱贴，对课标原标不适用。
+                **({'srcLiteracy': list(s['literacy'])} if s.get('literacy') else {}),
+                'method': ('gaozhong-xueye-split' if s.get('section') == '学业质量'
+                           else 'gaozhong-textlayer-split'),
             },
             'schemaVersion': '0.1.0',
         })
