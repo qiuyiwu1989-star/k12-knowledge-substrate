@@ -935,9 +935,14 @@ def main():
         + ',N=' + json.dumps(N, ensure_ascii=False, separators=(',', ':')) + ';' + JS_TAIL,
         encoding='utf-8')
 
-    rel = (f'K12 教育的能力结构 · release {esc(mf.get("release"))} · '
-           f'数据 {esc(mf.get("generatedAt"))} · <a href="/data/">数据集</a> · '
-           f'<a href="{REPO}">GitHub</a>')
+    # 页脚盖的是**数据版本**，不是构建时间。
+    # 原来盖 manifest.generatedAt —— 那是构建时刻，跑一次构建就变一次，
+    # 于是每次 build 都产出「2,969 files changed」而实际改动只有一个日期。
+    # 真正要改锚点内容的那次提交（20 科一起变）会被这堆噪音埋掉。
+    # VERSION 只在数据变了才动，正是这里该盖的东西。
+    ver = (ROOT / 'VERSION').read_text(encoding='utf-8').strip()
+    rel = (f'K12 教育的能力结构 · 数据版本 v{esc(ver)} · '
+           f'<a href="/data/">数据集</a> · <a href="{REPO}">GitHub</a>')
 
     # 同主题兄弟条：同学科 + 同 topic。**它们之间没有先后**，页面上要写死这句话。
     by_topic = collections.defaultdict(list)
