@@ -15,6 +15,25 @@ D=/var/www/k12.yongle.school
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 
 cd "$ROOT"
+# ── 全量闸必须绿 ────────────────────────────────────────────────
+# 我在两天里两次把 check 红着的版本发了出去。第一次是文档日期不一致、
+# 第二次也是 —— 都无害，但**同一个缺口踩两次就不是偶然**：
+# publish 从来不跑 check，而人在部署那一刻是最不想再等的。
+# 这一道会让每次发布慢几十秒，那是它该有的成本。
+# 明确要跳过时：SKIP_CHECK=1 npm run publish（会打印出来，不会静默）
+if [ "${SKIP_CHECK:-0}" = "1" ]; then
+  echo "⚠ 已跳过全量闸（SKIP_CHECK=1）—— 你自己知道在做什么"
+else
+  echo "── 全量闸 ──"
+  npm run check >/tmp/k12-publish-check.log 2>&1 || {
+    echo "✗ check 没过，不发。日志：/tmp/k12-publish-check.log"
+    grep -E "^✗" /tmp/k12-publish-check.log | head -5
+    exit 1
+  }
+  N=$(node -e "console.log(require('./package.json').scripts.check.split('&&').length)")
+  echo "✓ $N 道全绿"
+fi
+
 [ -s dist/index.html ] || { echo "✗ dist/index.html 空 —— 先跑 deploy/build.sh"; exit 1; }
 # ── dist 必须是当前版本构建出来的 ────────────────────────────────
 # 这个脚本**不构建**。2026-08-25 我改完数据、打好 v1.1 的 tag，直接跑 publish，
