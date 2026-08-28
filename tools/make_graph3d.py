@@ -269,7 +269,10 @@ canvas{display:block;cursor:grab}canvas.drag{cursor:grabbing}
    给这两块 flex-shrink:1 + min-height 地板之后，空间不够时它们按比例内缩、
    各自出现滚动条，谁都不会消失。滚轮只在指针悬在图例上时滚它，
    不影响画布的滚轮缩放。 */
-#tiers{flex:0 1 auto;min-height:78px;overflow-y:auto}
+/* 「怎么看这张图」是**读图钥匙，四条缺一不可** —— 缺一条就有一种视觉编码
+   没人解释。所以它的地板要够放下四行；而学科图例 24 行本来就必然要滚，
+   由它去吃最小值。两者的优先级不同，地板也就不该一样。 */
+#tiers{flex:0 1 auto;min-height:128px;overflow-y:auto}
 #tiers b{display:block;font-size:10px;letter-spacing:.16em;color:var(--dim);
   margin-bottom:6px;font-weight:600}
 #tiers div{display:flex;align-items:center;gap:9px}
@@ -416,33 +419,32 @@ button.cc u{text-decoration:none;font-size:12px;color:var(--mut);margin-left:aut
 <div id="logo">K12 教育的能力结构<span>YONGLE · 永乐教育</span></div>
 <div id="hero">
   <h1>一个孩子<br>要学的全部<i>。</i></h1>
-  <p><b>__NC__</b> 条能力断言、<b>__EC__</b> 条先修依赖，从认字到方程。<br>
-     每一条都能翻回教育部课标的某一页。</p>
-  <p><b>点任意一个点</b>，看一个学习者在此之前必须掌握的全部。</p>
-  <p class="note">教师签字 <b>__HUMAN__</b>。「可引用」的意思是
-     <b>AI 看过、没挑出毛病</b> —— 不是有人签过字。</p>
+  <p><b>__NC__</b> 条能力断言 · <b>__EC__</b> 条先修依赖。
+     从「能认读万以内的数」到「能用二分法求方程近似解」，
+     每一条都<b>逐字取自教育部课程标准</b>，可翻回原文页码。
+     <b>点任意一个点</b>，看一个学习者在够到它之前必须先站住哪些位置。</p>
+  <p class="note">这是一份<b>公开数据集</b>，不是评估工具。每条断言的出处都核对过，
+     但<b>尚未经教师逐条签署</b> —— 可以用它定位，不要用它给孩子下结论。</p>
   <p class="sub">《义务教育课程标准（2022年版）》1,594 页 ·
      《普通高中课程标准（2017年版2020年修订）》2,276 页 · 原件解析构建</p>
 </div>
 <div id="cta">
   <a href="/list/">全部能力点</a>
-  <a href="/about/">这是什么 · 方法论</a>
-  <a href="https://github.com/qiuyiwu1989-star/k12-knowledge-substrate" target="_blank" rel="noopener">在 GitHub 上查看</a>
+  <a href="/about/">方法论</a>
+  <a href="https://github.com/qiuyiwu1989-star/k12-knowledge-substrate" target="_blank" rel="noopener">GitHub</a>
   <a href="/2d/">2D 视角</a>
-  <em>开放数据 · ODbL 1.0</em>
+  <em>ODbL 1.0</em>
 </div>
 <input id="q" placeholder="搜索能力…（回车定位）">
-<div id="qf"><label><input type="checkbox" id="onlyok"> 只看「AI 看过没挑出毛病」的（__OKN__ 条）</label>
-<label style="margin-top:6px"><input type="checkbox" id="onlyusable"> 只看可用锚点（__USE__ 条，带白边）</label></div>
-<div id="tiers"><b>复核到哪一步了</b>
-  <div><i class="t0"></i>还没有人看过<em>__T0__</em></div>
-  <div><i class="t1"></i>AI 看过、没挑出毛病 · 可引用<em>__T1__</em></div>
-  <div><i class="t2"></i>AI 审出有问题，已挂起<em>__T2__</em></div>
-  <div><i class="t3"></i>判定客观或 AI 裁定 · 可引用<em>__T3__</em></div>
-  <div><i class="t3"></i>合计可引用（都带白边）<em>__USE2__</em></div>
-  <div><i class="rw"></i>不是课标原话，是我们的主张<em>__RW__</em></div>
+<div id="qf"><label><input type="checkbox" id="onlyusable"> 只看核对过出处的（__USE__ 条）</label>
+<label style="display:none"><input type="checkbox" id="onlyok"></label></div>
+<div id="tiers"><b>怎么看这张图</b>
+  <div><i class="t3"></i><b>颜色</b>＝学科　<b>大小</b>＝被多少条依赖<em></em></div>
+  <div><i class="t1"></i><b>深浅</b>＝核对程度，最淡的没人读过<em>__T0__</em></div>
+  <div><i class="t2"></i><b>空心</b>＝出处存疑，已挂起<em>__T2__</em></div>
+  <div><i class="rw"></i><b>紫圈</b>＝我们的推导，非课标原话<em>__RW__</em></div>
 </div>
-<div id="legend"><h4>学科 · 点击开关</h4><div id="ls"></div></div>
+<div id="legend"><h4>学科 · 点一下开关</h4><div id="ls"></div></div>
 </div>
 <div id="hint"><b>拖动</b>旋转 · <b>滚轮</b>缩放 · <b>点一个点</b>，顺着前置往回走，
 或点<b style="color:var(--cc)">「练的是同一件事」</b>看哪些别科在练同一种能力</div>
@@ -1080,7 +1082,6 @@ def main():
             .replace('__COLORS__', json.dumps(COLORS, ensure_ascii=False))
             .replace('__CCV__', json.dumps(CC_VOCAB, ensure_ascii=False, separators=(',', ':')))
             .replace('__NC__', f"{len(nodes):,}").replace('__EC__', f"{len(edges):,}")
-            .replace('__OKN__', f"{sum(1 for n in nodes if n['r'] == 1):,}")
             .replace('__BADN__', f"{sum(1 for n in nodes if n['r'] == 2):,}")
             .replace('__USE__', f"{sum(1 for n in nodes if n.get('u')):,}")
             .replace('__AUTO__', f"{sum(1 for n in nodes if n.get('_rs') == 'auto-confirmed'):,}")
@@ -1090,7 +1091,6 @@ def main():
             .replace('__T2__', f"{sum(1 for n in nodes if n['r'] == 2):,}")
             .replace('__T3__', f"{sum(1 for n in nodes if n['r'] == 3):,}")
             .replace('__RW__', f"{sum(1 for n in nodes if n.get('rw')):,}")
-            .replace('__USE2__', f"{sum(1 for n in nodes if n.get('u')):,}")
             .replace('__DC__', str(len({n['d'] for n in nodes})))
             .replace('__HGT__', str(HGT))
             .replace('__SMAX__', str(STAGE_MAX - 1)))
