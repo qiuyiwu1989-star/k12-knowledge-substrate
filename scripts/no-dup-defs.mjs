@@ -21,7 +21,11 @@ const TRUTH = ['mappings/citable.json', 'scripts/lib/citable.mjs', 'tools/citabl
                'scripts/no-dup-defs.mjs'];
 const STATUSES = ['auto-confirmed', 'expert-confirmed', 'ai-adjudicated', 'ai-reviewed'];
 const SKIP_DIR = new Set(['node_modules', '.git', 'dist', 'tools/out', 'anchors', 'edges',
-                          'lists', 'candidates', 'reports', 'anchor-pages', 'fixtures', 'examples']);
+                          'lists', 'candidates', 'reports', 'anchor-pages', 'fixtures', 'examples',
+                          // ★ git worktree 里是整个仓库的副本。TRUTH 白名单按相对路径写，
+                          // 副本里同一个文件路径不同，于是合法定义被当成第二份 —— 任何人开
+                          // worktree 都会中。2026-08-29 撞到（另一个会话开了 worktree 跑清理任务）。
+                          '.claude', '.git', 'worktrees']);
 
 const bad = [];
 const walk = (d) => {

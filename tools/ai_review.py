@@ -47,7 +47,14 @@ CACHE = Path(__file__).parent / '.cache-ai-review'
 OPEN_AT = {
     '语文': (1, 12), '数学': (1, 12), '英语': (3, 12), '体育与健康': (1, 12),
     '道德与法治': (1, 9), '思想政治': (10, 12),
-    '艺术': (1, 9), '音乐': (10, 12), '美术': (10, 12),
+    # ★ 2026-08-29：艺术从 (1,9) 改成 (1,12)。
+    #   《普通高中艺术课程标准》是真实存在的独立文档 —— 库里有
+    #   anchors/gaozhong-艺术.jsonl，61 条标 G10–G12，srcCourse 是必修/选择性必修。
+    #   常量表说「艺术只开到 9 年级」，于是复核时 34 条里 32 条被误判成学段错。
+    #   音乐/美术保持 (10,12) 是对的：义务教育只有综合的「艺术」，高中才分科。
+    #   这是同一类错的第四次（文件头第 22 行记着前几次），根子都是
+    #   **常量表是按义务教育写的，加高中之后没人回头对**。
+    '艺术': (1, 12), '音乐': (10, 12), '美术': (10, 12),
     '劳动': (1, 9), '科学': (1, 9),
     '信息科技': (3, 9), '信息技术': (10, 12),
     '历史': (7, 12), '地理': (7, 12), '生物学': (7, 12),
@@ -178,13 +185,31 @@ def main():
         except Exception as e:
             return f, i, {'error': str(e)[:50]}
         m = re.search(r'\{.*\}', txt, re.S)
-        obj = {}
-        if m:
+        # ★ 2026-08-29 修两个洞，第二个能凭空造出一条「AI 看过」。
+        #
+        # 洞一：原来 `obj = {}` 在 if 之前初始化，回复里找不到 '{' 时 obj 保持空。
+        #   空对象既没有 error 也没有 issues → 主循环走 else 分支 → iss 为空
+        #   → **静默升成 ai-reviewed**。一次网络截断就伪造出一条「AI 看过」，
+        #   而整个项目对外的说法就压在这个状态上（「AI 看过、没挑出毛病」）。
+        #   现在：没吐 JSON 一律记成 error，绝不当成「没挑出问题」。
+        #
+        # 洞二：失败也写进缓存。缓存里躺着 10 条 {"error":"解析失败"}，
+        #   每次重跑都被当成「调用失败」重放，那 10 条永远审不到。
+        #   和 fix_fallback_evidence.py 是同一个病（2026-08-25 修过一次）——
+        #   **缓存是为了省钱，不是为了固化错误。**
+        if not m:
+            obj = {'error': '没吐 JSON'}
+        else:
             try:
                 obj = json.loads(m.group(0))
             except Exception:
                 obj = {'error': '解析失败'}
-        cf.write_text(json.dumps(obj, ensure_ascii=False))
+        # 结构完整才算数：**「没挑出问题」必须来自一个有 issues 键的回答**，
+        # 不能来自一个碰巧没有 error 的残缺对象。
+        if 'error' not in obj and not isinstance(obj.get('issues'), list):
+            obj = {'error': '回答里没有 issues 字段'}
+        if 'error' not in obj:
+            cf.write_text(json.dumps(obj, ensure_ascii=False))
         return f, i, obj
 
     t0 = time.time()
