@@ -248,6 +248,12 @@ canvas{display:block;cursor:grab}canvas.drag{cursor:grabbing}
 #cta a{font-size:12.5px;color:var(--fg);background:var(--chip);border:1px solid var(--line);border-radius:99px;padding:8px 16px;text-decoration:none}
 #cta a:hover{border-color:var(--dim)}
 #cta em{font-style:normal;font-size:10.5px;letter-spacing:.13em;color:var(--dim)}
+/* 矮屏让位顺序（先让最不要紧的）：课标来源说明 → 正文字号与轨道间距 → 大标题。
+   教师签字那条竖线**不参与让位** —— 它是全站唯一一句「我们还差什么」。 */
+@media (max-height:860px){#hero .sub{display:none}}
+@media (max-height:800px){#rail{gap:12px}#hero h1{margin-bottom:18px}#hero .note{margin:12px 0 10px}}
+@media (max-height:790px){#hero h1{font-size:clamp(32px,3.4vw,42px);margin-bottom:12px}
+  #hero p{font-size:12.5px;margin-bottom:8px}}
 /* 左栏是一根 flex 轨道。**新加的块必须自己声明会不会抢空间** ——
    把复核图例塞进 #qf 之后，#legend 被压成 0 高，学科图例和 hero 一起没了。
    现在 #qf 和 #tiers 都是 flex:none，只有 #legend 吃剩下的空间并可滚。 */
@@ -256,6 +262,14 @@ canvas{display:block;cursor:grab}canvas.drag{cursor:grabbing}
 /* 复核档位图例。这四档是本项目最重要的一条信息 ——
    「有多少条其实还没人看过」比「一共有多少条」重要得多。 */
 #tiers{margin-top:14px;font-size:11.5px;color:var(--mut);line-height:1.9;flex:none}
+/* ★ 复核图例和学科图例都**能缩、能内部滚、有地板**。
+   #rail>* 给了所有块 flex:none —— 谁都不肯让步，于是溢出全部由排在最后的
+   那一块承担，被顶出轨道底部。这就是学科图例两次消失的机械原因：
+   **不是它特别脆弱，是它排在最后。**
+   给这两块 flex-shrink:1 + min-height 地板之后，空间不够时它们按比例内缩、
+   各自出现滚动条，谁都不会消失。滚轮只在指针悬在图例上时滚它，
+   不影响画布的滚轮缩放。 */
+#tiers{flex:0 1 auto;min-height:78px;overflow-y:auto}
 #tiers b{display:block;font-size:10px;letter-spacing:.16em;color:var(--dim);
   margin-bottom:6px;font-weight:600}
 #tiers div{display:flex;align-items:center;gap:9px}
@@ -267,7 +281,15 @@ canvas{display:block;cursor:grab}canvas.drag{cursor:grabbing}
 #tiers em{font-style:normal;color:var(--dim);margin-left:auto;font-variant-numeric:tabular-nums}
 #qf input{accent-color:#e8607d}
 /* 学科图例吃剩余空间。24 个学科装不下时自己滚，不去挤别人。 */
-#legend{min-height:0;flex:1 1 auto;overflow-y:auto}
+/* ★ 学科图例有**硬地板**，不许被压没。
+   上一次修这个 bug 给的是 `min-height:0;flex:1 1 auto` —— 那是「可以伸缩」，
+   不是「不许消失」，所以空间一紧它就合法地缩到 0，学科图例整块不见。
+   2026-08-28 又犯了一次（我加的「教师签字」竖线块把内容顶出 75px）。
+   颜色代表哪一科是这张图最基本的读图钥匙，没有它 3,671 个彩色点
+   就是一团没有含义的颜色 —— **它是全栏优先级最高的块，不是最低的。**
+   高度不够时让 hero 的说明文字先走（见下面的 max-height 媒体查询），
+   图例最后才动，而且只会内部滚动，不会消失。 */
+#legend{flex:0 1 auto;min-height:96px;overflow-y:auto}
 #legend h4{font-size:10px;letter-spacing:.17em;color:var(--dim);margin-bottom:11px;font-weight:600}
 .li{display:flex;align-items:center;gap:11px;padding:2.5px 0;cursor:pointer;font-size:12.5px;width:290px;color:var(--mut);transition:color .2s,opacity .2s}
 .li .dot{width:8px;height:8px;border-radius:50%;flex:none;transition:opacity .2s}
