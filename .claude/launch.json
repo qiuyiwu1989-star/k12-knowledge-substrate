@@ -1,0 +1,8 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    { "name": "k12-live", "runtimeExecutable": "python3",
+      "runtimeArgs": ["-m","http.server","8742","--directory","/private/tmp/claude-501/-Users-qiu-Documents/b12cd2ef-e387-4206-a1b0-5a4144871447/scratchpad"],
+      "port": 8742 }
+  ]
+}

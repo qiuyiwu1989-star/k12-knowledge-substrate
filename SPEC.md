@@ -10,7 +10,7 @@
 
 **适用范围**：`release` <!--N:release-->0.1.0<!--/N--> ·
 `schemaVersion` <!--N:schemaVersion-->0.1.0<!--/N--> ·
-数据生成于 <!--N:generatedAt-->2026-08-27<!--/N-->。
+数据生成于 <!--N:generatedAt-->2026-08-28<!--/N-->。
 
 > ⚠️ **待接线**：本文里所有数字都用 `<!--N:键-->…<!--/N-->` 标记从 `manifest.json` 现读，
 > 但 `scripts/sync-docs.mjs` 目前只扫 `README.md` 与 `PROVENANCE.md`，**还没扫本文**。
@@ -398,7 +398,7 @@ mappings/citable.json  →  citable: ["auto-confirmed", "expert-confirmed",
 |---|---|---|
 | `schemaVersion` | 每条记录上 + `manifest.schemaVersion` | **字段形状契约**。字段增删改名会动它。当前 <!--N:schemaVersion-->0.1.0<!--/N-->。 |
 | `release` | `manifest.release` | 数据集发布版本。当前 <!--N:release-->0.1.0<!--/N-->。 |
-| `generatedAt` | `manifest.generatedAt` | 这份快照什么时候算出来的。当前 <!--N:generatedAt-->2026-08-27<!--/N-->。 |
+| `generatedAt` | `manifest.generatedAt` | 这份快照什么时候算出来的。当前 <!--N:generatedAt-->2026-08-28<!--/N-->。 |
 
 `schemaVersion` 在 schema 里是 `const`：**同一个快照内所有记录的 schemaVersion 必然一致**，
 不会出现混版。你可以拿它做硬门禁：读到不认识的 schemaVersion 就停下来，别猜。
