@@ -85,14 +85,14 @@ footer a{color:var(--mut)}
   <div><em>6,644</em><span>先修依赖</span></div>
   <div><em>2,116</em><span>高中锚点</span></div>
   <div><em>3,516</em><span>带课标原文引文</span></div>
-  <div><em>2589</em><span>可被档案引用</span></div>
+  <div><em>2,589</em><span>核对过出处</span></div>
   <div><em>0</em><span>教师签字</span></div>
 </div>
 
 <div class="card warn">
 <b>最后一个数字是 0，它没有写错。</b>
 <p style="margin-bottom:0">底座里有 3,671 条，但<b>没有任何一条经过教师复核</b>。
-其中 2589 条标为「可用」，靠的是机械可判定（字表词表这类数得清的东西）
+其中 2,589 条标为「可用」，靠的是机械可判定（字表词表这类数得清的东西）
 或 AI 裁定待异议 —— 那是「没人反对」，不是「有人认可」。
 这个数字放在最显眼的位置，是因为把它藏起来太容易了。</p>
 </div>
@@ -184,14 +184,19 @@ A 家的「理解分数」和 B 家的「分数的意义」，没有任何办法
 <p class=sub>把没验过的和验过的画成一样，就是用视觉掩盖数据质量</p>
 
 <div class=tw><table>
-<tr><th>状态</th><th class=n>条数</th><th>能否被档案引用</th></tr>
-<tr><td>还没有人看过</td><td class=n>1,066</td><td class=dim>不能</td></tr>
-<tr><td>只过了 AI 审查</td><td class=n>2,201</td><td class=dim>不能 —— AI 审查是筛子，不是合格证</td></tr>
-<tr><td>AI 审出有问题，已挂起</td><td class=n>16</td><td class=dim>不能</td></tr>
-<tr><td>机械可判定</td><td class=n>146</td><td>能</td></tr>
-<tr><td>AI 裁定，待人工异议</td><td class=n>242</td><td>能（前提是「没人反对」）</td></tr>
-<tr><td><b>教师签字</b></td><td class=n><b>0</b></td><td>能</td></tr>
+<tr><th>核对到哪一步</th><th class=n>条数</th><th>能不能拿去引用</th></tr>
+<tr><td>还没有人读过</td><td class=n>1,066</td><td class=dim>不能</td></tr>
+<tr><td>AI 读过，没挑出毛病</td><td class=n>2,201</td><td>能 —— 但含义是「没人挑出毛病」，不是「有人认可」</td></tr>
+<tr><td>AI 挑出了毛病，已挂起</td><td class=n>16</td><td class=dim>不能</td></tr>
+<tr><td>判定标准客观（字表词表这类数得清的）</td><td class=n>146</td><td>能</td></tr>
+<tr><td>有过异议，已裁决</td><td class=n>242</td><td>能 —— 有过异议，已裁决</td></tr>
+<tr><td><b>教师逐条签署</b></td><td class=n><b>0</b></td><td>能 —— 唯一一档「有人认可」</td></tr>
 </table></div>
+<p class=sub>「能引用」这一栏<b>不是这里写死的</b>，是从 <code>mappings/citable.json</code>
+读出来的 —— 那份文件是全项目唯一定义可引用集合的地方。
+这一页曾经把「AI 读过没挑出毛病」写死成「不能」，而口径早在 2026-08-20 就改了，
+于是首页说 2,589 条可引用、这一页说其中 2,201 条不能，
+<b>同一个站的两页互相打架</b>。散文里的判断迟早和数据分家，除非它根本不由散文来写。</p>
 
 <p>这五档在图谱上用<b>填充深浅</b>区分，不是只标出有问题的那一档。
 1,066 条「一个人都没看过」如果和「过了 AI 审查」长得一样，
@@ -215,9 +220,18 @@ A 家的「理解分数」和 B 家的「分数的意义」，没有任何办法
 <p class=dim>不发明年级精度。「必修 1 就是高一」是教学惯例，不是课标条文。</p>
 
 <h2>怎么用</h2>
-<pre>数据集直取（允许跨域，不用 clone）
+<pre>接进你的 AI 应用（MCP，只读）
+  npx --yes degit qiuyiwu1989-star/k12-knowledge-substrate k12 && node k12/mcp/server.mjs
+  四个工具：查锚点 / 取全文与出处 / 走前置链 / 取分片
+  每个返回都带课标出处、核对程度、粒度警告
+
+数据集直取（允许跨域，不用 clone）
   https://k12.yongle.school/data/manifest.json
   https://k12.yongle.school/data/anchors/*.jsonl
+
+固定到某个版本（数据只增不改，ID 永不复用）
+  git clone … && git checkout v1.2
+  已发布：v1.0 · v1.1 · v1.2
 
 许可
   L0 锚点 + 依赖图、L1 映射    ODbL 1.0

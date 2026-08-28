@@ -50,8 +50,40 @@ const walk = (d) => {
     if (hits.length) bad.push([rel, [...new Set(hits)]]);
   }
 };
+// ── 第二条判据：对外页面里不许把「能不能引用」写成常量 ──────────────
+//
+// 2026-08-28 撞到的：tools/make_about.py 里有一行
+//     <tr><td>只过了 AI 审查</td>…{byReview['ai-reviewed']}…<td>不能 —— AI 审查是筛子</td></tr>
+// 而 citable.json 早在 2026-08-20 就把 ai-reviewed 纳入了可引用。
+// 结果**同一个站的两页互相打架**：首页说 2,589 条可引用，
+// /about/ 说其中 2,201 条不能，在线上错了一个多星期。
+//
+// 上面那条判据抓不到它 —— 那一行只有**一个**档位字面量，中间隔着散文。
+// 失效方式不同：不是「列了第二份集合」，是**散文直接下了可引用的判断**。
+// 一句散文和一份 JSON 迟早分家，除非那句判断根本不由散文来写。
+const verdictBad = [];
+for (const rel of ['tools/make_about.py', 'tools/make_graph3d.py',
+                   'tools/make_anchor_pages.py', 'tools/make_data_index.py']) {
+  let src;
+  try { src = readFileSync(join(ROOT, rel), 'utf8'); } catch { continue; }
+  src.split('\n').forEach((line, i) => {
+    if (/^\s*(#|\/\/)/.test(line)) return;                 // 注释里讲历史是允许的
+    const st = STATUSES.find((x) => line.includes(`'${x}'`) || line.includes(`"${x}"`));
+    if (!st) return;
+    // 同一行里既点名了档位，又硬写了「能/不能」的判断
+    const m = line.match(/>\s*(不能|能)(\s|—|<|$)/);
+    if (m) verdictBad.push(`${rel}:${i + 1}  「${st}」旁边硬写了「${m[1]}」`);
+  });
+}
+
 walk(ROOT);
 
+if (verdictBad.length) {
+  console.error(`✗ ${verdictBad.length} 处把「能不能引用」写成了常量：`);
+  for (const x of verdictBad) console.error(`   ${x}`);
+  console.error('\n  可引用性只有 mappings/citable.json 说了算。页面生成器要现读，不许自己判断。');
+  process.exit(1);
+}
 if (bad.length) {
   console.error('✗ 这些文件在本地重建「可引用档位」集合 —— 定义只许有一份：');
   for (const [f, hits] of bad) console.error(`  ${f}  含 ${hits.join(' / ')}`);
