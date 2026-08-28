@@ -146,7 +146,7 @@ footer a{{color:var(--mut)}}
   <div><em>{c['edges']:,}</em><span>先修依赖</span></div>
   <div><em>{gz:,}</em><span>高中锚点</span></div>
   <div><em>{src:,}</em><span>带课标原文引文</span></div>
-  <div><em>{M['usableAnchors']:,}</em><span>核对过出处</span></div>
+  <div><em>{M['usableAnchors']:,}</em><span>已复核</span></div>
   <div><em>{M['humanConfirmedAnchors']}</em><span>教师签字</span></div>
 </div>
 

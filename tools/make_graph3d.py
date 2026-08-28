@@ -423,7 +423,7 @@ button.cc u{text-decoration:none;font-size:12px;color:var(--mut);margin-left:aut
      从「能认读万以内的数」到「能用二分法求方程近似解」，
      每一条都<b>逐字取自教育部课程标准</b>，可翻回原文页码。
      <b>点任意一个点</b>，看一个学习者在够到它之前必须先站住哪些位置。</p>
-  <p class="note">这是一份<b>公开数据集</b>，不是评估工具。每条断言的出处都核对过，
+  <p class="note">这是一份<b>公开数据集</b>，不是评估工具。每条断言都能翻回课标原文的页码，
      但<b>尚未经教师逐条签署</b> —— 可以用它定位，不要用它给孩子下结论。</p>
   <p class="sub">《义务教育课程标准（2022年版）》1,594 页 ·
      《普通高中课程标准（2017年版2020年修订）》2,276 页 · 原件解析构建</p>
@@ -436,11 +436,11 @@ button.cc u{text-decoration:none;font-size:12px;color:var(--mut);margin-left:aut
   <em>ODbL 1.0</em>
 </div>
 <input id="q" placeholder="搜索能力…（回车定位）">
-<div id="qf"><label><input type="checkbox" id="onlyusable"> 只看核对过出处的（__USE__ 条）</label>
+<div id="qf"><label><input type="checkbox" id="onlyusable"> 只看已复核的（__USE__ 条）</label>
 <label style="display:none"><input type="checkbox" id="onlyok"></label></div>
 <div id="tiers"><b>怎么看这张图</b>
   <div><i class="t3"></i><b>颜色</b>＝学科　<b>大小</b>＝被多少条依赖<em></em></div>
-  <div><i class="t1"></i><b>深浅</b>＝核对程度，最淡的没人读过<em>__T0__</em></div>
+  <div><i class="t1"></i><b>深浅</b>＝复核到哪一步，最淡的没人读过<em>__T0__</em></div>
   <div><i class="t2"></i><b>空心</b>＝出处存疑，已挂起<em>__T2__</em></div>
   <div><i class="rw"></i><b>紫圈</b>＝我们的推导，非课标原话<em>__RW__</em></div>
 </div>
