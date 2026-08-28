@@ -8,7 +8,13 @@ import { resolve, dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..');
-const srv = spawn('node', [join(ROOT, 'mcp', 'server.mjs')], { stdio: ['pipe', 'pipe', 'inherit'] });
+// ★ K12_USAGE=0：自测**绝不能**计进调用计数。
+// 那个计数是整个转向的唯一验收标准（「命中数变成非零」），而 mcp-test 挂在
+// npm run check 上，跑一次 check 就伪造一次命中 —— 两天跑十几次之后它读 112，
+// 而真实外部调用是 0。**我把自己定的那个真相指标污染了。**
+// 一个会被自家 CI 刷高的指标，比没有指标更糟：它会让人以为赌赢了。
+const srv = spawn('node', [join(ROOT, 'mcp', 'server.mjs')],
+  { stdio: ['pipe', 'pipe', 'inherit'], env: { ...process.env, K12_USAGE: '0' } });
 let buf = '';
 const waiting = new Map();
 srv.stdout.on('data', (d) => {
