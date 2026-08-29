@@ -10,7 +10,7 @@
 
 **适用范围**：`release` <!--N:release-->0.1.0<!--/N--> ·
 `schemaVersion` <!--N:schemaVersion-->0.1.0<!--/N--> ·
-数据生成于 <!--N:generatedAt-->2026-08-28<!--/N-->。
+数据生成于 <!--N:generatedAt-->2026-08-29<!--/N-->。
 
 > ⚠️ **待接线**：本文里所有数字都用 `<!--N:键-->…<!--/N-->` 标记从 `manifest.json` 现读，
 > 但 `scripts/sync-docs.mjs` 目前只扫 `README.md` 与 `PROVENANCE.md`，**还没扫本文**。
@@ -26,7 +26,7 @@
 | | |
 |---|---|
 | 存活锚点 | <!--N:liveAnchors-->3671<!--/N--> 条 |
-| 可被档案引用（`usableAnchors`） | <!--N:usable-->2589<!--/N--> 条 |
+| 可被档案引用（`usableAnchors`） | <!--N:usable-->2866<!--/N--> 条 |
 | **有教师签字的** | **<!--N:humanConfirmed-->0<!--/N--> 条** |
 
 **第三个数是 0，它没有写错。** 底座里没有任何一条断言经过一线教师复核。
@@ -234,10 +234,10 @@ if (a.deprecated && !a.supersededBy)
 | `auto-confirmed` | 146 | 能 |
 | `ai-adjudicated` | 242 | 能（AI 裁定，**待人工异议**） |
 | `expert-confirmed` | 0 | 能 |
-| `ai-reviewed` | 2201 | 能（2026-08-20 起 —— **AI 看过、没挑出毛病**，不是教师签字） |
-| `disputed` | 16 | **不能** —— AI 复核挑出了具体问题 |
-| `llm-proposed` | 1066 | **不能** —— 没有任何东西看过一眼 |
-| **存活合计** | **3671** | 其中 **2589** 可用 |<!--/N-->
+| `ai-reviewed` | 2478 | 能（2026-08-20 起 —— **AI 看过、没挑出毛病**，不是教师签字） |
+| `disputed` | 553 | **不能** —— AI 复核挑出了具体问题 |
+| `llm-proposed` | 252 | **不能** —— 没有任何东西看过一眼 |
+| **存活合计** | **3671** | 其中 **2866** 可用 |<!--/N-->
 
 各档的确切含义：
 
@@ -296,7 +296,7 @@ mappings/citable.json  →  citable: ["auto-confirmed", "expert-confirmed",
 `fieldIssues` 是**字段级**缺陷（证据弱、学段可疑、缺 topic、独立验证存疑、复合未拆），
 和 `reviewStatus` 分开记：`reviewStatus` 回答「这条断言成不成立」，
 证据写得弱是别的字段的毛病，不该让断言替它背锅。
-当前 <!--N:fieldIssueAnchors-->440<!--/N--> 条存活锚点带 `fieldIssues`，其中不少是可引用的。
+当前 <!--N:fieldIssueAnchors-->692<!--/N--> 条存活锚点带 `fieldIssues`，其中不少是可引用的。
 **展示给最终用户时请把它显示出来。**
 
 ### 5.5 成色分档（`tiers`）和「可引用」是两件事
@@ -398,7 +398,7 @@ mappings/citable.json  →  citable: ["auto-confirmed", "expert-confirmed",
 |---|---|---|
 | `schemaVersion` | 每条记录上 + `manifest.schemaVersion` | **字段形状契约**。字段增删改名会动它。当前 <!--N:schemaVersion-->0.1.0<!--/N-->。 |
 | `release` | `manifest.release` | 数据集发布版本。当前 <!--N:release-->0.1.0<!--/N-->。 |
-| `generatedAt` | `manifest.generatedAt` | 这份快照什么时候算出来的。当前 <!--N:generatedAt-->2026-08-28<!--/N-->。 |
+| `generatedAt` | `manifest.generatedAt` | 这份快照什么时候算出来的。当前 <!--N:generatedAt-->2026-08-29<!--/N-->。 |
 
 `schemaVersion` 在 schema 里是 `const`：**同一个快照内所有记录的 schemaVersion 必然一致**，
 不会出现混版。你可以拿它做硬门禁：读到不认识的 schemaVersion 就停下来，别猜。
