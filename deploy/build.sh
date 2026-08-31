@@ -41,4 +41,10 @@ tar czf "dist/data/v/$VER.tgz" -C dist/data anchors edges lists mappings manifes
 echo "{\"latest\":\"$VER\"}" > dist/data/v/latest.json
 echo "✓ 快照 dist/data/v/$VER.tgz — $(du -h "dist/data/v/$VER.tgz" | cut -f1)"
 
+# 统计脚本注入所有页面。片段只存 deploy/analytics.html —— 5 种模板 + 3,671 个
+# 详情页，贴 N 份就是同一个东西有 N 份定义，正是 no-dup-defs 拦的那个病。
+# 注入 dist/ 而非源码：仓库里的 html 保持干净，本地预览也不打点。
+# 工具自己核对数量 —— 漏一个页面就是漏一块数据，**而漏了不会有任何报错**。
+python3 tools/inject_analytics.py
+
 echo "✓ dist/ 就绪 — $(du -sh dist | cut -f1)，$(find dist -type f | wc -l | tr -d ' ') 个文件"
