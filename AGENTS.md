@@ -21,3 +21,6 @@
 ## 档位与部署
 G3：持久化服务需验证输入、会话隔离、协议和实际 UI。
 本任务负责 /workbench/ 发布，STATE.md 是实际状态。原静态图谱保留，不执行旧发布脚本覆盖全站。
+
+## 已完成阶段
+005 于 2026-09-06 完成。后续从 TASKS.md Next 与 docs/primary-science-plan.md 继续；线上精确版本和备份以 STATE.md 为准。
