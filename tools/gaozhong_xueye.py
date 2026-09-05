@@ -222,7 +222,27 @@ START_OVERRIDE = {'数学': re.compile(r'（一）\s*学业质量内涵')}
 TABLE_HEAD = re.compile(r'^(水平|序号|等级)\s*质量描述$|^质量描述$|^水平$|^序号$')
 SEC_HEAD = re.compile(r'^（[一二三四]）\s*学业质量(内涵|水平)?.*$')
 CHAP_HEAD = re.compile(r'^五、\s*学业质量$')
-TABLE_CAPTION = re.compile(r'^表\s*\d+\s*学业质量水平表$')
+# 表题：「表 8 日语课程的学业质量水平」「表 12 高中英语学业质量水平一」。
+TABLE_CAPTION = re.compile(r'^表\s*\d+\s*[^。；]{0,26}(?:学业质量|水平)[^。；]{0,10}$')
+# 水平标题行。**这三种写法都得认，而且它们在续页顶部会重印**：
+#   英语「水平一」+「表 12 高中英语学业质量水平一」  日语「四级」  俄语「水平 1」
+# 早先把它们当普通行，结果整行被接到上一条尾巴上（日语 4-3 末尾粘着「五级」）；
+# 当噪声直接跳过又会把下一水平的前言散文接到上一条上。所以按「分组」处理：
+# 水平变了就 flush，没变（续页重印）就跳过。
+LEVEL_HEAD = re.compile(r'^(?:表\s*\d+\s*[^。；]{0,24}?水平\s*([一二三四五六])'
+                        r'|水平\s*([一二三四五六]|\d)'
+                        r'|([一二三四五六])级)$')
+DE_STAGE_HEAD = re.compile(r'^(初中|高中)阶段$')
+CN_LEVEL = {'一': 1, '二': 2, '三': 3, '四': 4, '五': 5, '六': 6}
+
+
+def level_head(b, m, page):
+    v = m.group(1) or m.group(2) or m.group(3)
+    return dict(level=CN_LEVEL.get(v, v if not v.isdigit() else int(v)))
+
+
+def de_stage_head(b, m, page):
+    return dict(topic=f'{m.group(1)}阶段')
 
 
 def furniture(t):
@@ -369,7 +389,9 @@ class Builder:
         if re.search(r'（\s*素养', body) and self.subject in LITERACY:
             self.unclaimed.append(f"素养标记不在条目末尾: {c['code']} {text[-50:]}")
         c['text'] = text
-        c['literacy'] = lit
+        # 艺术的素养标签不写在条目尾巴上，而是整张表的表头（「1. 艺术感知」），
+        # 由分组塞进 ctx，这里兜底取出来。
+        c['literacy'] = lit or list(c['ctx'].get('_literacy') or [])
         self.rows.append(c)
 
 
@@ -418,7 +440,12 @@ def _accept_code(b, lvl, n):
 def walk_code(ch, b, groups=()):
     """A 族（水平写在编号里）和 D 族（模块 × 水平）共用。"""
     for page, x, t in ch.lines:
-        if furniture(t) or SEC_HEAD.match(t):
+        if furniture(t):
+            # 表头「水平 质量描述」在每一张续页顶部都会重印。
+            # **绝不能顺手 flush**——地理 4-2 跨 p37/p38，p38 顶上就是这行表头，
+            # flush 会把条目砍在「分析岩」三个字上。当版式噪声跳过即可。
+            continue
+        if SEC_HEAD.match(t):
             b.flush()
             continue
         upd = None
@@ -467,7 +494,12 @@ def walk_cell_level(ch, b, item_pat):
     这两族的水平只写在左侧那个裸数字格里，剜掉就拼不回来了。
     """
     for page, x, t in ch.lines:
-        if furniture(t) or SEC_HEAD.match(t):
+        if furniture(t):
+            # 表头「水平 质量描述」在每一张续页顶部都会重印。
+            # **绝不能顺手 flush**——地理 4-2 跨 p37/p38，p38 顶上就是这行表头，
+            # flush 会把条目砍在「分析岩」三个字上。当版式噪声跳过即可。
+            continue
+        if SEC_HEAD.match(t):
             b.flush()
             continue
         m = LEVEL_CELL.fullmatch(t)
@@ -509,20 +541,28 @@ def walk_art(ch, b):
     选择性必修格是裸数字水平 + 五行「模块名：正文」。两种都要认。
     """
     for page, x, t in ch.lines:
-        if furniture(t) or SEC_HEAD.match(t):
+        if furniture(t):
+            # 表头「水平 质量描述」在每一张续页顶部都会重印。
+            # **绝不能顺手 flush**——地理 4-2 跨 p37/p38，p38 顶上就是这行表头，
+            # flush 会把条目砍在「分析岩」三个字上。当版式噪声跳过即可。
+            continue
+        if SEC_HEAD.match(t):
             b.flush()
             continue
         m = ART_DIM.match(t)
         if m:
             b.flush()
-            b.ctx.update(topic=m.group(2), course=None, courseNo='',
-                         topicName=None, subTopic=None, level=None)
+            # 艺术的四个维度就是它的四个学科核心素养（课标 p12：
+            # 「艺术学科核心素养主要包括四个方面：艺术感知、创意表达、审美情趣、文化理解」），
+            # 所以维度即官方素养标签，不是我们贴的。
+            b.ctx.update(topicName=m.group(2), _literacy=[m.group(2)], topic=None,
+                         course=None, courseNo='', subTopic=None, level=None)
             continue
         m = ART_COURSE.match(t)
         if m:
             b.flush()
-            b.ctx.update(course=m.group(2), courseNo='', topicName=None,
-                         subTopic=None, level=None)
+            # 注意别把 topicName（维度名）清掉——课程类型是维度下面的一层。
+            b.ctx.update(course=m.group(2), courseNo='', subTopic=None, level=None)
             continue
         m = LEVEL_CELL.fullmatch(t)
         if m:
@@ -537,15 +577,14 @@ def walk_art(ch, b):
         if m and b.ctx.get('course') == '选择性必修':
             lvl = b.ctx.get('level')
             b.ctx['subTopic'] = m.group(1)
-            b.start(page, f"{b.ctx.get('topic')}-{b.ctx.get('course')}-{lvl}-{m.group(1)}",
-                    lvl, m.group(2))
+            b.start(page, str(lvl), lvl, m.group(2))
             continue
         m = ART_LEVEL_TEXT.match(t)
         if m and b.ctx.get('course') == '必修':
             lvl = int(m.group(1))
             b.ctx['level'] = lvl
             b.ctx['subTopic'] = None
-            b.start(page, f"{b.ctx.get('topic')}-必修-{lvl}", lvl, t[m.end():])
+            b.start(page, str(lvl), lvl, t[m.end():])
             continue
         if b.cont(page, t):
             continue
@@ -573,7 +612,12 @@ def walk_math(ch, b):
     base = {p: c.most_common(1)[0][0] for p, c in per_page.items()}
     n = 0
     for page, x, t in ch.lines:
-        if furniture(t) or SEC_HEAD.match(t):
+        if furniture(t):
+            # 表头「水平 质量描述」在每一张续页顶部都会重印。
+            # **绝不能顺手 flush**——地理 4-2 跨 p37/p38，p38 顶上就是这行表头，
+            # flush 会把条目砍在「分析岩」三个字上。当版式噪声跳过即可。
+            continue
+        if SEC_HEAD.match(t):
             b.flush()
             continue
         m = MATH_LEVEL.fullmatch(t)
@@ -706,7 +750,7 @@ SPECS = {
     '体育与健康': ('15-体育与健康.pdf', 'code', ((PE_PART, pe_part), (PE_MODULE, pe_module))),
     '日语':       ('16-日语.pdf', 'code', ()),
     '俄语':       ('17-俄语.pdf', 'code', ()),
-    '德语':       ('18-德语.pdf', 'code', ((DE_STAGE, de_stage),)),
+    '德语':       ('18-德语.pdf', 'code', ((DE_STAGE_HEAD, de_stage_head), (DE_STAGE, de_stage))),
     '法语':       ('19-法语.pdf', 'code', ()),
     '西班牙语':   ('20-西班牙语.pdf', 'dot', ()),
 }
@@ -714,7 +758,7 @@ SPECS = {
 
 def build_groups(subject, groups):
     out = []
-    for pat, fn in groups:
+    for pat, fn in tuple(groups) + ((LEVEL_HEAD, level_head),):
         if fn == 'module:need':
             fn = module_group(subject, True)
         elif fn == 'module:have':
@@ -793,9 +837,75 @@ def sanity(subject, rows):
             warn.append(f"{subject} p{r['page']} {r['code']} 正文混入版式噪声: {r['text'][:50]}")
         if len(r['text']) < 8:
             warn.append(f"{subject} p{r['page']} {r['code']} 条目过短: {r['text']!r}")
+        if not re.search(r'[。；？！）」』.]\s*$', r['text']):
+            # 实测这一条抓出 4 个学科的截断：地理 4-2 被砍在「分析岩」，
+            # 日语 4-3 尾巴上粘着下一格的「五级」。留着当常设闸门。
+            warn.append(f"{subject} p{r['page']} {r['code']} 不以句末标点收尾（疑似截断或粘连）: …{r['text'][-30:]}")
         if len(r['text']) > 1000:
             warn.append(f"{subject} p{r['page']} {r['code']} 条目过长({len(r['text'])}): {r['text'][:40]}")
     return warn
+
+
+# ─────────────────────────── 复核清单 ───────────────────────────
+
+FAMILY = {'code': 'A 水平×编号 L-N', 'code+': 'D 模块×水平，编号 L-N',
+          'paren': 'B 编号（N），水平在左格', 'dot': 'C 编号 N.，水平在左格',
+          'art': 'E 维度×课程×水平', 'math': 'F 无编号，靠段首缩进'}
+# 德语和体育的分组不是「模块」，单独标注，免得表里写错。
+FAMILY_OVERRIDE = {'德语': 'A′ 阶段 C1~C5/G1~G5 × 水平',
+                   '体育与健康': 'D 必修必学/必修选学 × 模块 × 水平'}
+
+
+def write_readme(stats):
+    """产物清单页。**表里的数字全部由本函数从产物现算**，不手打——
+    手打的数字过半年一定是假的。"""
+    lines = ['# 高中课标【五、学业质量】抽取候选',
+             '',
+             '`python3 tools/gaozhong_xueye.py` 生成。**这是候选，不是 anchors**，',
+             '复核通过之前不要往 `anchors/` 里写。',
+             '',
+             '每条都过了逐字校验：正文按来源页切段，每段必须是该页 pypdf 原始取字',
+             '（只做全角数字归一，不剜任何东西）的连续子串，且同一页内各段位置严格递增。',
+             '校验不过就不写盘。',
+             '',
+             '## 一览',
+             '',
+             '| 学科 | 条数 | 源页 | 版式 | 水平 | 官方素养标注 | 课程类型 |',
+             '| --- | ---: | --- | --- | --- | --- | --- |']
+    for st in stats:
+        levels = '/'.join(str(k) for k in sorted(st['levels']))
+        lit = f"{st['lit']}/{st['n']}" if st['lit'] else '—'
+        courses = '、'.join(str(c) for c in st['courses'] if c) or '—'
+        lines.append(f"| {st['subject']} | {st['n']} | p{st['span'][0]}–p{st['span'][1]} | "
+                     f"{FAMILY_OVERRIDE.get(st['subject'], FAMILY[st['kind']])} | "
+                     f"{levels} | {lit} | {courses} |")
+    lines += ['', f"合计 **{sum(st['n'] for st in stats)}** 条。", '',
+              '## 复核时重点看什么',
+              '',
+              '1. **课程类型**：音乐的模块标题里没有课程类型，是拿模块名回',
+              '   `tools/out/gaozhong2/音乐.jsonl` 查出来的；美术/体育/艺术是章内自带的标题。',
+              '   美术的 5 个选修模块在内容要求里没有编号条目，只在学业质量里有，属正常。',
+              '2. **素养标注**：音乐/美术/德语来自条目尾部的「（素养N）」，地理来自「（综合思维）」这类',
+              '   直接写名字的括号，艺术来自表头的维度名——**都是课标自己标的，不是我们贴的**。',
+              '   其余 15 科的条目上没有标注；但化学、物理、生物学等在「（一）学业质量内涵」里用散文',
+              '   写了「序号 N 侧重对应素养 M」的对应关系，那是另一道工序，本工具没抽。',
+              '3. **粒度**：语文/思想政治/化学这类一条 200~340 字、里面串着五六个分号的条目，',
+              '   是一条还是该再切成能力断言，是下一道工序（切分）的事，本工具只负责逐字转写。',
+              '4. **数学**：页面上没有任何编号，12 条是按段首缩进切的，每级水平 4 段。',
+              '   这 4 段依次对应课标前面列的「情境与问题 / 知识与技能 / 思维与表达 / 交流与反思」，',
+              '   但页面上**没有印这四个小标题**，所以产物里没有写 dimension——那是推断不是转写。',
+              '5. **体育与健康**：必修选学只印了 6 个模块的第一学年要求（足球/跳远/健身健美操/',
+              '   蛙泳/防身术/花样跳绳），课标正文说共 10 个模块分三个学年，其余没印在这一章里。',
+              '',
+              '## 字段',
+              '',
+              '在 `tools/out/gaozhong*/` 的字段基础上加了三个：',
+              '',
+              '- `level`：水平（整数）。',
+              '- `literacy`：课标自带的素养标签，没有就是 `[]`。',
+              '- `pages`：跨页条目的来源页列表（`page` 仍是首页，与既有产物一致）。',
+              '']
+    (OUT / 'README.md').write_text('\n'.join(lines), encoding='utf-8')
 
 
 # ─────────────────────────── 主程序 ───────────────────────────
@@ -813,7 +923,7 @@ def main():
     if not args.report:
         OUT.mkdir(parents=True, exist_ok=True)
 
-    all_warn, failed, total = [], [], 0
+    all_warn, failed, total, stats = [], [], 0, []
     for subject in targets:
         STUCK_HEAD.clear()
         ch, b, rows = extract(subject)
@@ -840,6 +950,11 @@ def main():
                 print(f'      {x}')
             continue
         print('   ✓ 逐字校验通过')
+        stats.append({'subject': subject, 'n': len(rows), 'span': ch.span,
+                      'kind': SPECS[subject][1] + ('+' if SPECS[subject][2] else ''),
+                      'levels': {r['level'] for r in rows},
+                      'lit': sum(1 for r in rows if r['literacy']),
+                      'courses': sorted({r['course'] for r in rows}, key=str)})
         if not args.report:
             path = OUT / f'{subject}.jsonl'
             with path.open('w', encoding='utf-8') as f:
@@ -851,6 +966,8 @@ def main():
     print(f'\n合计 {total} 条')
     if not args.report:
         (OUT / 'warnings.txt').write_text('\n'.join(all_warn) + '\n', encoding='utf-8')
+        if len(stats) == len(SPECS):
+            write_readme(stats)
     if failed:
         print(f'✗ 逐字校验未通过，未写盘：{"、".join(failed)}')
         return 1
