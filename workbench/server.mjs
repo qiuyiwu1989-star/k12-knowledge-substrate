@@ -8,7 +8,9 @@ import { createStore } from './store.mjs';
 
 const PREFIX = '/workbench';
 const assets = new Map([['/', ['index.html', 'text/html']], ['/app.js', ['app.js', 'text/javascript']],
-  ['/style.css', ['style.css', 'text/css']], ['/integration.html', ['integration.html', 'text/html']]]);
+  ['/style.css', ['style.css', 'text/css']],
+  ['/example.html', ['example.html', 'text/html']], ['/example.js', ['example.js', 'text/javascript']],
+  ['/example.css', ['example.css', 'text/css']], ['/dissolving-example.json', ['dissolving-example.json', 'application/json']], ['/integration.html', ['integration.html', 'text/html']]]);
 const uuid = /^[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}$/;
 async function readBody(req) {
   let size = 0, data = '';

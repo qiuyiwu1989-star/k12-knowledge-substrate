@@ -257,3 +257,19 @@ try {
   $('node-count').textContent = meta.count; $('version').textContent = `底座 ${meta.datasetVersion} · 教师复核 ${meta.humanReviewed} 条`;
   $('scope-count').textContent = '底座已连接 · 适用年级会严格筛选';
 } catch (error) { $('scope-count').textContent = '连接暂不可用'; announce(`连接失败：${error.message}。请刷新页面重试。`, true); }
+
+// Load a public, reviewed-for-demonstration snapshot as an unsaved private copy.
+if (new URLSearchParams(location.search).get('example') === 'dissolving') {
+  setBusy(true);
+  try {
+    const response = await fetch('./dissolving-example.json');
+    if (!response.ok) throw new Error('案例文件暂不可用');
+    const example = await response.json();
+    state.project = await api('validate', example.project);
+    state.id = null; state.revision = 0; state.task = 0; state.candidate = 0;
+    state.dirty = true; state.stale = false;
+    fillForm(state.project); render();
+    announce('已载入溶解实验模拟案例：3 条模拟确认关系。你可以查看、修改，再保存到当前会话；这些判断尚未经教师审阅。');
+  } catch (error) { announce(`案例载入失败：${error.message}。可返回完整案例页查看。`, true); }
+  finally { setBusy(false); }
+}

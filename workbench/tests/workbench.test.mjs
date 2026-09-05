@@ -95,6 +95,13 @@ test('005: actual HTTP mapping / import validation / session ownership / CSRF / 
       headers: { 'Content-Type': 'application/json', Origin: origin, ...headers }, body: JSON.stringify(body) });
     assert.equal((await get('health')).status, 200);
     const page = await fetch(`${app.url}/`); assert.equal(page.status, 200); assert.match(await page.text(), /应用映射工作台/);
+    const demoPage = await fetch(`${app.url}/example.html`); assert.equal(demoPage.status, 200);
+    assert.match(await demoPage.text(), /一键载入工作台/);
+    const sample = await (await fetch(`${app.url}/dissolving-example.json`)).json();
+    const checked = await post('validate', sample.project); assert.equal(checked.status, 200);
+    const decisions = (await checked.json()).tasks.flatMap(t => t.candidates).filter(c => c.status === 'confirmed');
+    assert.equal(decisions.length, 3); assert.equal(new Set(decisions.map(c => c.anchor.id)).size, 2);
+    assert.equal(decisions.filter(c => c.relation === 'observes').length, 1);
     const mapped = await post('map', input); assert.equal(mapped.status, 200); const project = await mapped.json();
     const session = await get('projects'), cookie = session.headers.get('set-cookie').split(';')[0];
     assert.match(session.headers.get('set-cookie'), /HttpOnly/);

@@ -1,0 +1,1048 @@
+{
+  "schemaVersion": "workbench-export/1",
+  "project": {
+    "schemaVersion": "mapping/1",
+    "datasetVersion": "1.4",
+    "datasetFingerprint": "5cadfc2a0f971ff601be3e3f1d53e2a109722ac095d7b1ff0ca15cf306d53baa",
+    "scope": "primary-science",
+    "title": "模拟案例｜三年级溶解实验室",
+    "grade": 3,
+    "ranking": "lexical-recall",
+    "notice": "字面召回只提供候选，需人工核对。映射确认不等于教师审定，也不代表学生掌握。",
+    "tasks": [
+      {
+        "id": "stir",
+        "text": "准备两杯水量、水温相同的水，分别加入等量食盐，一杯搅拌、一杯不搅拌，通过对比实验观察并记录食盐在水中溶解快慢的差异。",
+        "candidates": [
+          {
+            "anchor": {
+              "id": "ca_VKU9hc8E",
+              "statement": "能通过对比实验说明搅拌对物质在水中溶解快慢的影响",
+              "discipline": "科学",
+              "stage": {
+                "min": "G3",
+                "max": "G4"
+              },
+              "track": "MATRIX",
+              "provenance": {
+                "document": "义务教育科学课程标准（2022年版）",
+                "subject": "科学",
+                "page": 36,
+                "stage": null,
+                "course": null,
+                "text": "④知道是否搅拌和温度高低是影响物质在水中溶解快慢的常见因素。",
+                "derivedFrom": "ca_cvPPJHbz"
+              },
+              "verifiedBy": "ai",
+              "citable": true,
+              "grain": {
+                "years": 2,
+                "band": "stage",
+                "warning": "这条覆盖 2 个年级，是学段级的坐标刻度，不是某一节课的目标。"
+              },
+              "deprecated": null,
+              "verb": "实验",
+              "object": "说明搅拌对物质在水中溶解快慢的影响",
+              "assessment": "{{name}}能自己设计对比实验，看看搅拌和温度对溶解快慢的影响吗？",
+              "evidence": [
+                "学生设计并执行了对比实验，分别改变搅拌条件和温度条件，观察并记录了溶解时间",
+                "学生根据实验数据，得出了搅拌和升温能加快溶解的结论"
+              ],
+              "topic": "物质科学",
+              "reviewStatusRaw": "ai-reviewed",
+              "dimension": "探究实践",
+              "literacy": [
+                "探究实践"
+              ],
+              "evidenceSource": "capability-rewrite",
+              "sourceKind": "standard",
+              "detailUrl": "https://k12.yongle.school/a/ca_VKU9hc8E/"
+            },
+            "status": "confirmed",
+            "relation": "trains",
+            "note": "模拟审阅：任务让孩子实际比较搅拌与不搅拌，保持其他条件相同，并记录溶解快慢，直接提供训练该能力的机会。",
+            "excerpt": "准备两杯水量、水温相同的水，分别加入等量食盐，一杯搅拌、一杯不搅拌，通过对比实验观察并记录食盐在水中溶解快慢的差异。",
+            "terms": [
+              "在水中溶解快慢的",
+              "通过对比实验",
+              "搅拌"
+            ],
+            "origin": "lexical-recall",
+            "reason": "共同出现：在水中溶解快慢的、通过对比实验、搅拌。仅为召回依据。"
+          },
+          {
+            "anchor": {
+              "id": "ca_d2XpK8Ar",
+              "statement": "能通过对比实验说明温度高低对物质在水中溶解快慢的影响",
+              "discipline": "科学",
+              "stage": {
+                "min": "G3",
+                "max": "G4"
+              },
+              "track": "MATRIX",
+              "provenance": {
+                "document": "义务教育科学课程标准（2022年版）",
+                "subject": "科学",
+                "page": 36,
+                "stage": null,
+                "course": null,
+                "text": "④知道是否搅拌和温度高低是影响物质在水中溶解快慢的常见因素。",
+                "derivedFrom": "ca_cvPPJHbz"
+              },
+              "verifiedBy": "ai",
+              "citable": true,
+              "grain": {
+                "years": 2,
+                "band": "stage",
+                "warning": "这条覆盖 2 个年级，是学段级的坐标刻度，不是某一节课的目标。"
+              },
+              "deprecated": null,
+              "verb": "实验",
+              "object": "说明温度高低对物质在水中溶解快慢的影响",
+              "assessment": "{{name}}能自己设计对比实验，看看搅拌和温度对溶解快慢的影响吗？",
+              "evidence": [
+                "学生设计并执行了对比实验，分别改变搅拌条件和温度条件，观察并记录了溶解时间",
+                "学生根据实验数据，得出了搅拌和升温能加快溶解的结论"
+              ],
+              "topic": "物质科学",
+              "reviewStatusRaw": "ai-reviewed",
+              "dimension": "探究实践",
+              "literacy": [
+                "探究实践"
+              ],
+              "evidenceSource": "capability-rewrite",
+              "sourceKind": "standard",
+              "detailUrl": "https://k12.yongle.school/a/ca_d2XpK8Ar/"
+            },
+            "status": "rejected",
+            "relation": null,
+            "note": "模拟审阅：本任务聚焦搅拌的影响，水温作为控制条件或干扰变量出现，没有独立探究温度影响。",
+            "excerpt": "准备两杯水量、水温相同的水，分别加入等量食盐，一杯搅拌、一杯不搅拌，通过对比实验观察并记录食盐在水中溶解快慢的差异。",
+            "terms": [
+              "在水中溶解快慢的",
+              "通过对比实验"
+            ],
+            "origin": "lexical-recall",
+            "reason": "共同出现：在水中溶解快慢的、通过对比实验。仅为召回依据。"
+          },
+          {
+            "anchor": {
+              "id": "ca_nCCmJWwZ",
+              "statement": "能通过对比实验，说明搅拌和温度高低对物质在水中溶解快慢的影响",
+              "discipline": "科学",
+              "stage": {
+                "min": "G3",
+                "max": "G4"
+              },
+              "track": "MATRIX",
+              "provenance": {
+                "document": "能力转写（由课标锚点推导，非课标原话）",
+                "subject": "科学",
+                "page": 36,
+                "stage": null,
+                "course": null,
+                "text": "④知道是否搅拌和温度高低是影响物质在水中溶解快慢的常见因素。",
+                "derivedFrom": "ca_cvPPJHbz"
+              },
+              "verifiedBy": "ai",
+              "citable": true,
+              "grain": {
+                "years": 2,
+                "band": "stage",
+                "warning": "这条覆盖 2 个年级，是学段级的坐标刻度，不是某一节课的目标。"
+              },
+              "deprecated": null,
+              "fieldIssues": [
+                "composite"
+              ],
+              "verb": "说明",
+              "object": "搅拌和温度高低对物质在水中溶解快慢的影响",
+              "assessment": "{{name}}能自己设计对比实验，看看搅拌和温度对溶解快慢的影响吗？",
+              "evidence": [
+                "学生设计并执行了对比实验，分别改变搅拌条件和温度条件，观察并记录了溶解时间",
+                "学生根据实验数据，得出了搅拌和升温能加快溶解的结论"
+              ],
+              "topic": "物质科学",
+              "reviewStatusRaw": "ai-reviewed",
+              "dimension": "探究实践",
+              "literacy": [
+                "探究实践"
+              ],
+              "evidenceSource": "capability-rewrite",
+              "sourceKind": "derived",
+              "detailUrl": "https://k12.yongle.school/a/ca_nCCmJWwZ/"
+            },
+            "status": "rejected",
+            "relation": null,
+            "note": "模拟审阅：这条同时覆盖搅拌和温度，范围更宽。本任务采用直接对应单个变量的细节点，避免重复计入。",
+            "excerpt": "准备两杯水量、水温相同的水，分别加入等量食盐，一杯搅拌、一杯不搅拌，通过对比实验观察并记录食盐在水中溶解快慢的差异。",
+            "terms": [
+              "在水中溶解快慢的",
+              "通过对比实验",
+              "搅拌"
+            ],
+            "origin": "lexical-recall",
+            "reason": "共同出现：在水中溶解快慢的、通过对比实验、搅拌。仅为召回依据。"
+          },
+          {
+            "anchor": {
+              "id": "ca_cvPPJHbz",
+              "statement": "能说出是否搅拌和温度高低是影响物质在水中溶解快慢的常见因素",
+              "discipline": "科学",
+              "stage": {
+                "min": "G3",
+                "max": "G4"
+              },
+              "track": "MATRIX",
+              "provenance": {
+                "document": "义务教育科学课程标准（2022年版）",
+                "subject": "科学",
+                "page": 36,
+                "stage": null,
+                "course": null,
+                "text": "④知道是否搅拌和温度高低是影响物质在水中溶解快慢的常见因素。",
+                "derivedFrom": null
+              },
+              "verifiedBy": "ai",
+              "citable": true,
+              "grain": {
+                "years": 2,
+                "band": "stage",
+                "warning": "这条覆盖 2 个年级，是学段级的坐标刻度，不是某一节课的目标。"
+              },
+              "deprecated": null,
+              "verb": "说出",
+              "object": "是否搅拌和温度高低是影响物质在水中溶解快慢的常见因素",
+              "assessment": "{{name}}能说出是否搅拌和温度高低是影响物质在水中溶解快慢的常见因素吗？",
+              "evidence": [
+                "问：是否搅拌和温度高低是影响物质在水中溶解快慢的常见因素是什么？能答出即为会",
+                "答案与课标原文一致，不要求逐字复述"
+              ],
+              "topic": "物质科学",
+              "reviewStatusRaw": "ai-adjudicated",
+              "dimension": "探究实践",
+              "literacy": [
+                "探究实践"
+              ],
+              "evidenceSource": "curriculum-content",
+              "sourceKind": "standard",
+              "detailUrl": "https://k12.yongle.school/a/ca_cvPPJHbz/"
+            },
+            "status": "rejected",
+            "relation": null,
+            "note": "模拟审阅：“说出影响因素”与“通过实验说明影响”要求不同。本任务强调实验和证据，选择后者作为主要映射。",
+            "excerpt": "准备两杯水量、水温相同的水，分别加入等量食盐，一杯搅拌、一杯不搅拌，通过对比实验观察并记录食盐在水中溶解快慢的差异。",
+            "terms": [
+              "在水中溶解快慢的",
+              "搅拌"
+            ],
+            "origin": "lexical-recall",
+            "reason": "共同出现：在水中溶解快慢的、搅拌。仅为召回依据。"
+          },
+          {
+            "anchor": {
+              "id": "ca_1Gjv3P0f",
+              "statement": "能测量并记录一天中不同时刻的物体影长",
+              "discipline": "科学",
+              "stage": {
+                "min": "G3",
+                "max": "G4"
+              },
+              "track": "MATRIX",
+              "provenance": {
+                "document": "义务教育科学课程标准（2022年版）",
+                "subject": "科学",
+                "page": 84,
+                "stage": null,
+                "course": null,
+                "text": "3～4年级：测量并记录一天中不同时刻的物体影长。",
+                "derivedFrom": null
+              },
+              "verifiedBy": "ai",
+              "citable": true,
+              "grain": {
+                "years": 2,
+                "band": "stage",
+                "warning": "这条覆盖 2 个年级，是学段级的坐标刻度，不是某一节课的目标。"
+              },
+              "deprecated": null,
+              "verb": "测量",
+              "object": "一天中不同时刻的物体影长",
+              "assessment": "{{name}}能说出一天中不同时刻物体的影长是不同的吗？",
+              "evidence": [
+                "学生使用尺子测量了上午10点和下午2点同一物体的影子长度，并将数据记录在表格中",
+                "学生连续观察并记录了从早晨到傍晚，同一物体影子长度的变化情况"
+              ],
+              "topic": null,
+              "reviewStatusRaw": "ai-reviewed",
+              "dimension": "探究实践",
+              "literacy": [
+                "探究实践"
+              ],
+              "evidenceSource": "curriculum-content",
+              "sourceKind": "standard",
+              "detailUrl": "https://k12.yongle.school/a/ca_1Gjv3P0f/"
+            },
+            "status": "rejected",
+            "relation": null,
+            "note": "模拟审阅：记录影长属于光与影的观察，任务没有测量影长；共同的“记录”等词不足以支持映射。",
+            "excerpt": "准备两杯水量、水温相同的水，分别加入等量食盐，一杯搅拌、一杯不搅拌，通过对比实验观察并记录食盐在水中溶解快慢的差异。",
+            "terms": [
+              "并记录"
+            ],
+            "origin": "lexical-recall",
+            "reason": "共同出现：并记录。仅为召回依据。"
+          },
+          {
+            "anchor": {
+              "id": "ca_fcC35IDz",
+              "statement": "能观察并分析常见的生物，对其进行排序和分类",
+              "discipline": "科学",
+              "stage": {
+                "min": "G3",
+                "max": "G4"
+              },
+              "track": "MATRIX",
+              "provenance": {
+                "document": "义务教育科学课程标准（2022年版）",
+                "subject": "科学",
+                "page": 61,
+                "stage": null,
+                "course": null,
+                "text": "3～4年级，可让学生根据观察和分析，对常见的生物进行排序和分类",
+                "derivedFrom": null
+              },
+              "verifiedBy": "ai",
+              "citable": true,
+              "grain": {
+                "years": 2,
+                "band": "stage",
+                "warning": "这条覆盖 2 个年级，是学段级的坐标刻度，不是某一节课的目标。"
+              },
+              "deprecated": null,
+              "verb": "观察 / 分析",
+              "object": "常见的生物",
+              "assessment": "{{name}}能说出3~4年级学生应能对常见的生物进行排序和分类吗？",
+              "evidence": [
+                "学生观察一种常见的植物或动物，并根据其特征进行分类",
+                "学生分析不同生物的特点，并按照一定顺序进行排列"
+              ],
+              "topic": null,
+              "reviewStatusRaw": "ai-reviewed",
+              "dimension": "科学思维",
+              "literacy": [
+                "科学思维"
+              ],
+              "evidenceSource": "curriculum-content",
+              "sourceKind": "standard",
+              "detailUrl": "https://k12.yongle.school/a/ca_fcC35IDz/"
+            },
+            "status": "rejected",
+            "relation": null,
+            "note": "模拟审阅：对生物排序分类与溶解实验无直接关系，任务没有要求生物分类。",
+            "excerpt": "准备两杯水量、水温相同的水，分别加入等量食盐，一杯搅拌、一杯不搅拌，通过对比实验观察并记录食盐在水中溶解快慢的差异。",
+            "terms": [
+              "观察并"
+            ],
+            "origin": "lexical-recall",
+            "reason": "共同出现：观察并。仅为召回依据。"
+          }
+        ]
+      },
+      {
+        "id": "temperature",
+        "text": "保持水量、食盐用量和搅拌条件相同，只改变水温，通过对比实验说明温度高低对物质在水中溶解快慢的影响。",
+        "candidates": [
+          {
+            "anchor": {
+              "id": "ca_d2XpK8Ar",
+              "statement": "能通过对比实验说明温度高低对物质在水中溶解快慢的影响",
+              "discipline": "科学",
+              "stage": {
+                "min": "G3",
+                "max": "G4"
+              },
+              "track": "MATRIX",
+              "provenance": {
+                "document": "义务教育科学课程标准（2022年版）",
+                "subject": "科学",
+                "page": 36,
+                "stage": null,
+                "course": null,
+                "text": "④知道是否搅拌和温度高低是影响物质在水中溶解快慢的常见因素。",
+                "derivedFrom": "ca_cvPPJHbz"
+              },
+              "verifiedBy": "ai",
+              "citable": true,
+              "grain": {
+                "years": 2,
+                "band": "stage",
+                "warning": "这条覆盖 2 个年级，是学段级的坐标刻度，不是某一节课的目标。"
+              },
+              "deprecated": null,
+              "verb": "实验",
+              "object": "说明温度高低对物质在水中溶解快慢的影响",
+              "assessment": "{{name}}能自己设计对比实验，看看搅拌和温度对溶解快慢的影响吗？",
+              "evidence": [
+                "学生设计并执行了对比实验，分别改变搅拌条件和温度条件，观察并记录了溶解时间",
+                "学生根据实验数据，得出了搅拌和升温能加快溶解的结论"
+              ],
+              "topic": "物质科学",
+              "reviewStatusRaw": "ai-reviewed",
+              "dimension": "探究实践",
+              "literacy": [
+                "探究实践"
+              ],
+              "evidenceSource": "capability-rewrite",
+              "sourceKind": "standard",
+              "detailUrl": "https://k12.yongle.school/a/ca_d2XpK8Ar/"
+            },
+            "status": "confirmed",
+            "relation": "trains",
+            "note": "模拟审阅：只改变水温，保持水量、盐量和搅拌条件相同，通过实验比较溶解快慢，对应温度影响这一能力。",
+            "excerpt": "保持水量、食盐用量和搅拌条件相同，只改变水温，通过对比实验说明温度高低对物质在水中溶解快慢的影响。",
+            "terms": [
+              "通过对比实验说明温度高低对物质在水中溶解快慢的影响"
+            ],
+            "origin": "lexical-recall",
+            "reason": "共同出现：通过对比实验说明温度高低对物质在水中溶解快慢的影响。仅为召回依据。"
+          },
+          {
+            "anchor": {
+              "id": "ca_nCCmJWwZ",
+              "statement": "能通过对比实验，说明搅拌和温度高低对物质在水中溶解快慢的影响",
+              "discipline": "科学",
+              "stage": {
+                "min": "G3",
+                "max": "G4"
+              },
+              "track": "MATRIX",
+              "provenance": {
+                "document": "能力转写（由课标锚点推导，非课标原话）",
+                "subject": "科学",
+                "page": 36,
+                "stage": null,
+                "course": null,
+                "text": "④知道是否搅拌和温度高低是影响物质在水中溶解快慢的常见因素。",
+                "derivedFrom": "ca_cvPPJHbz"
+              },
+              "verifiedBy": "ai",
+              "citable": true,
+              "grain": {
+                "years": 2,
+                "band": "stage",
+                "warning": "这条覆盖 2 个年级，是学段级的坐标刻度，不是某一节课的目标。"
+              },
+              "deprecated": null,
+              "fieldIssues": [
+                "composite"
+              ],
+              "verb": "说明",
+              "object": "搅拌和温度高低对物质在水中溶解快慢的影响",
+              "assessment": "{{name}}能自己设计对比实验，看看搅拌和温度对溶解快慢的影响吗？",
+              "evidence": [
+                "学生设计并执行了对比实验，分别改变搅拌条件和温度条件，观察并记录了溶解时间",
+                "学生根据实验数据，得出了搅拌和升温能加快溶解的结论"
+              ],
+              "topic": "物质科学",
+              "reviewStatusRaw": "ai-reviewed",
+              "dimension": "探究实践",
+              "literacy": [
+                "探究实践"
+              ],
+              "evidenceSource": "capability-rewrite",
+              "sourceKind": "derived",
+              "detailUrl": "https://k12.yongle.school/a/ca_nCCmJWwZ/"
+            },
+            "status": "rejected",
+            "relation": null,
+            "note": "模拟审阅：这条同时覆盖搅拌和温度，范围更宽。本任务采用直接对应单个变量的细节点，避免重复计入。",
+            "excerpt": "保持水量、食盐用量和搅拌条件相同，只改变水温，通过对比实验说明温度高低对物质在水中溶解快慢的影响。",
+            "terms": [
+              "温度高低对物质在水中溶解快慢的影响",
+              "通过对比实验",
+              "搅拌",
+              "说明"
+            ],
+            "origin": "lexical-recall",
+            "reason": "共同出现：温度高低对物质在水中溶解快慢的影响、通过对比实验、搅拌、说明。仅为召回依据。"
+          },
+          {
+            "anchor": {
+              "id": "ca_VKU9hc8E",
+              "statement": "能通过对比实验说明搅拌对物质在水中溶解快慢的影响",
+              "discipline": "科学",
+              "stage": {
+                "min": "G3",
+                "max": "G4"
+              },
+              "track": "MATRIX",
+              "provenance": {
+                "document": "义务教育科学课程标准（2022年版）",
+                "subject": "科学",
+                "page": 36,
+                "stage": null,
+                "course": null,
+                "text": "④知道是否搅拌和温度高低是影响物质在水中溶解快慢的常见因素。",
+                "derivedFrom": "ca_cvPPJHbz"
+              },
+              "verifiedBy": "ai",
+              "citable": true,
+              "grain": {
+                "years": 2,
+                "band": "stage",
+                "warning": "这条覆盖 2 个年级，是学段级的坐标刻度，不是某一节课的目标。"
+              },
+              "deprecated": null,
+              "verb": "实验",
+              "object": "说明搅拌对物质在水中溶解快慢的影响",
+              "assessment": "{{name}}能自己设计对比实验，看看搅拌和温度对溶解快慢的影响吗？",
+              "evidence": [
+                "学生设计并执行了对比实验，分别改变搅拌条件和温度条件，观察并记录了溶解时间",
+                "学生根据实验数据，得出了搅拌和升温能加快溶解的结论"
+              ],
+              "topic": "物质科学",
+              "reviewStatusRaw": "ai-reviewed",
+              "dimension": "探究实践",
+              "literacy": [
+                "探究实践"
+              ],
+              "evidenceSource": "capability-rewrite",
+              "sourceKind": "standard",
+              "detailUrl": "https://k12.yongle.school/a/ca_VKU9hc8E/"
+            },
+            "status": "rejected",
+            "relation": null,
+            "note": "模拟审阅：本任务保持搅拌条件相同，只比较水温，没有直接比较搅拌的影响。",
+            "excerpt": "保持水量、食盐用量和搅拌条件相同，只改变水温，通过对比实验说明温度高低对物质在水中溶解快慢的影响。",
+            "terms": [
+              "对物质在水中溶解快慢的影响",
+              "通过对比实验说明",
+              "搅拌"
+            ],
+            "origin": "lexical-recall",
+            "reason": "共同出现：对物质在水中溶解快慢的影响、通过对比实验说明、搅拌。仅为召回依据。"
+          },
+          {
+            "anchor": {
+              "id": "ca_cvPPJHbz",
+              "statement": "能说出是否搅拌和温度高低是影响物质在水中溶解快慢的常见因素",
+              "discipline": "科学",
+              "stage": {
+                "min": "G3",
+                "max": "G4"
+              },
+              "track": "MATRIX",
+              "provenance": {
+                "document": "义务教育科学课程标准（2022年版）",
+                "subject": "科学",
+                "page": 36,
+                "stage": null,
+                "course": null,
+                "text": "④知道是否搅拌和温度高低是影响物质在水中溶解快慢的常见因素。",
+                "derivedFrom": null
+              },
+              "verifiedBy": "ai",
+              "citable": true,
+              "grain": {
+                "years": 2,
+                "band": "stage",
+                "warning": "这条覆盖 2 个年级，是学段级的坐标刻度，不是某一节课的目标。"
+              },
+              "deprecated": null,
+              "verb": "说出",
+              "object": "是否搅拌和温度高低是影响物质在水中溶解快慢的常见因素",
+              "assessment": "{{name}}能说出是否搅拌和温度高低是影响物质在水中溶解快慢的常见因素吗？",
+              "evidence": [
+                "问：是否搅拌和温度高低是影响物质在水中溶解快慢的常见因素是什么？能答出即为会",
+                "答案与课标原文一致，不要求逐字复述"
+              ],
+              "topic": "物质科学",
+              "reviewStatusRaw": "ai-adjudicated",
+              "dimension": "探究实践",
+              "literacy": [
+                "探究实践"
+              ],
+              "evidenceSource": "curriculum-content",
+              "sourceKind": "standard",
+              "detailUrl": "https://k12.yongle.school/a/ca_cvPPJHbz/"
+            },
+            "status": "rejected",
+            "relation": null,
+            "note": "模拟审阅：“说出影响因素”与“通过实验说明影响”要求不同。本任务强调实验和证据，选择后者作为主要映射。",
+            "excerpt": "保持水量、食盐用量和搅拌条件相同，只改变水温，通过对比实验说明温度高低对物质在水中溶解快慢的影响。",
+            "terms": [
+              "物质在水中溶解快慢的",
+              "温度高低",
+              "搅拌",
+              "影响"
+            ],
+            "origin": "lexical-recall",
+            "reason": "共同出现：物质在水中溶解快慢的、温度高低、搅拌、影响。仅为召回依据。"
+          },
+          {
+            "anchor": {
+              "id": "ca_xryQqMe6",
+              "statement": "能举例说明一个化学变化中物质性质的改变和新物质的生成",
+              "discipline": "科学",
+              "stage": {
+                "min": "G1",
+                "max": "G6"
+              },
+              "track": "MATRIX",
+              "provenance": {
+                "document": "能力转写（由课标锚点推导，非课标原话）",
+                "subject": "科学",
+                "page": 35,
+                "stage": null,
+                "course": null,
+                "text": "化学变化是物质的性质发生了改变，有新物质生成",
+                "derivedFrom": "ca_xmROhvzD"
+              },
+              "verifiedBy": "ai",
+              "citable": true,
+              "grain": {
+                "years": 6,
+                "band": "wide",
+                "warning": "这条覆盖 6 个年级、跨越学段，只能用来定位大方向，不能用来判断某个孩子此刻会不会。"
+              },
+              "deprecated": null,
+              "verb": "举例说明",
+              "object": "化学变化中物质性质的改变和新物质的生成",
+              "assessment": "{{name}}能举例说明铁生锈或蜡烛燃烧这类化学变化中，物质性质的改变和新物质的生成吗？",
+              "evidence": [
+                "学生能描述铁生锈过程中铁的性质改变并生成了铁锈",
+                "学生能解释蜡烛燃烧后蜡的性质改变并生成了二氧化碳和水"
+              ],
+              "topic": "物质科学",
+              "reviewStatusRaw": "ai-reviewed",
+              "dimension": "科学观念",
+              "literacy": [
+                "科学观念"
+              ],
+              "evidenceSource": "capability-rewrite",
+              "sourceKind": "derived",
+              "detailUrl": "https://k12.yongle.school/a/ca_xryQqMe6/"
+            },
+            "status": "rejected",
+            "relation": null,
+            "note": "模拟审阅：任务没有要求判断新物质生成或说明化学变化，不能因为提到物质就映射到这一能力。",
+            "excerpt": "保持水量、食盐用量和搅拌条件相同，只改变水温，通过对比实验说明温度高低对物质在水中溶解快慢的影响。",
+            "terms": [
+              "改变",
+              "说明",
+              "物质"
+            ],
+            "origin": "lexical-recall",
+            "reason": "共同出现：改变、说明、物质。仅为召回依据。"
+          },
+          {
+            "anchor": {
+              "id": "ca_g7CDvcXQ",
+              "statement": "能比较两个物体运动快慢，相同时间比路程或相同路程比时间",
+              "discipline": "科学",
+              "stage": {
+                "min": "G1",
+                "max": "G6"
+              },
+              "track": "MATRIX",
+              "provenance": {
+                "document": "义务教育科学课程标准（2022年版）",
+                "subject": "科学",
+                "page": 49,
+                "stage": null,
+                "course": null,
+                "text": "开展比较两个物体运动快慢的活动，相同时间比路程或相同路程比时间",
+                "derivedFrom": null
+              },
+              "verifiedBy": "ai",
+              "citable": true,
+              "grain": {
+                "years": 6,
+                "band": "wide",
+                "warning": "这条覆盖 6 个年级、跨越学段，只能用来定位大方向，不能用来判断某个孩子此刻会不会。"
+              },
+              "deprecated": null,
+              "verb": "比较",
+              "object": "两个物体运动快慢",
+              "assessment": "{{name}}能说出比较两个物体运动快慢的方法是相同时间比路程或相同路程比时间吗？",
+              "evidence": [
+                "学生能设计并执行一个实验，测量两个物体在相同时间内通过的路程并比较",
+                "学生能设计并执行一个实验，测量两个物体通过相同路程所用的时间并比较"
+              ],
+              "topic": null,
+              "reviewStatusRaw": "ai-reviewed",
+              "dimension": "科学思维",
+              "literacy": [
+                "科学思维"
+              ],
+              "evidenceSource": "curriculum-content",
+              "sourceKind": "standard",
+              "detailUrl": "https://k12.yongle.school/a/ca_g7CDvcXQ/"
+            },
+            "status": "rejected",
+            "relation": null,
+            "note": "模拟审阅：物体运动快慢与物质溶解快慢是不同问题，共同出现“快慢”不足以建立映射。",
+            "excerpt": "保持水量、食盐用量和搅拌条件相同，只改变水温，通过对比实验说明温度高低对物质在水中溶解快慢的影响。",
+            "terms": [
+              "相同",
+              "快慢"
+            ],
+            "origin": "lexical-recall",
+            "reason": "共同出现：相同、快慢。仅为召回依据。"
+          }
+        ]
+      },
+      {
+        "id": "explain",
+        "text": "根据刚才的实验记录，独立解释搅拌对物质在水中溶解快慢的影响，并指出支持解释的对比实验记录；如果同时改变水温，说明为什么不能单独判断搅拌的影响。",
+        "candidates": [
+          {
+            "anchor": {
+              "id": "ca_VKU9hc8E",
+              "statement": "能通过对比实验说明搅拌对物质在水中溶解快慢的影响",
+              "discipline": "科学",
+              "stage": {
+                "min": "G3",
+                "max": "G4"
+              },
+              "track": "MATRIX",
+              "provenance": {
+                "document": "义务教育科学课程标准（2022年版）",
+                "subject": "科学",
+                "page": 36,
+                "stage": null,
+                "course": null,
+                "text": "④知道是否搅拌和温度高低是影响物质在水中溶解快慢的常见因素。",
+                "derivedFrom": "ca_cvPPJHbz"
+              },
+              "verifiedBy": "ai",
+              "citable": true,
+              "grain": {
+                "years": 2,
+                "band": "stage",
+                "warning": "这条覆盖 2 个年级，是学段级的坐标刻度，不是某一节课的目标。"
+              },
+              "deprecated": null,
+              "verb": "实验",
+              "object": "说明搅拌对物质在水中溶解快慢的影响",
+              "assessment": "{{name}}能自己设计对比实验，看看搅拌和温度对溶解快慢的影响吗？",
+              "evidence": [
+                "学生设计并执行了对比实验，分别改变搅拌条件和温度条件，观察并记录了溶解时间",
+                "学生根据实验数据，得出了搅拌和升温能加快溶解的结论"
+              ],
+              "topic": "物质科学",
+              "reviewStatusRaw": "ai-reviewed",
+              "dimension": "探究实践",
+              "literacy": [
+                "探究实践"
+              ],
+              "evidenceSource": "capability-rewrite",
+              "sourceKind": "standard",
+              "detailUrl": "https://k12.yongle.school/a/ca_VKU9hc8E/"
+            },
+            "status": "confirmed",
+            "relation": "observes",
+            "note": "模拟审阅：独立解释并引用自己的对比实验记录，可用于观察孩子能否用证据说明搅拌的影响；目前仅定义观察机会，没有采集学生表现。",
+            "excerpt": "根据刚才的实验记录，独立解释搅拌对物质在水中溶解快慢的影响，并指出支持解释的对比实验记录；如果同时改变水温，说明为什么不能单独判断搅拌的影响。",
+            "terms": [
+              "搅拌对物质在水中溶解快慢的影响",
+              "对比实验",
+              "说明"
+            ],
+            "origin": "lexical-recall",
+            "reason": "共同出现：搅拌对物质在水中溶解快慢的影响、对比实验、说明。仅为召回依据。"
+          },
+          {
+            "anchor": {
+              "id": "ca_nCCmJWwZ",
+              "statement": "能通过对比实验，说明搅拌和温度高低对物质在水中溶解快慢的影响",
+              "discipline": "科学",
+              "stage": {
+                "min": "G3",
+                "max": "G4"
+              },
+              "track": "MATRIX",
+              "provenance": {
+                "document": "能力转写（由课标锚点推导，非课标原话）",
+                "subject": "科学",
+                "page": 36,
+                "stage": null,
+                "course": null,
+                "text": "④知道是否搅拌和温度高低是影响物质在水中溶解快慢的常见因素。",
+                "derivedFrom": "ca_cvPPJHbz"
+              },
+              "verifiedBy": "ai",
+              "citable": true,
+              "grain": {
+                "years": 2,
+                "band": "stage",
+                "warning": "这条覆盖 2 个年级，是学段级的坐标刻度，不是某一节课的目标。"
+              },
+              "deprecated": null,
+              "fieldIssues": [
+                "composite"
+              ],
+              "verb": "说明",
+              "object": "搅拌和温度高低对物质在水中溶解快慢的影响",
+              "assessment": "{{name}}能自己设计对比实验，看看搅拌和温度对溶解快慢的影响吗？",
+              "evidence": [
+                "学生设计并执行了对比实验，分别改变搅拌条件和温度条件，观察并记录了溶解时间",
+                "学生根据实验数据，得出了搅拌和升温能加快溶解的结论"
+              ],
+              "topic": "物质科学",
+              "reviewStatusRaw": "ai-reviewed",
+              "dimension": "探究实践",
+              "literacy": [
+                "探究实践"
+              ],
+              "evidenceSource": "capability-rewrite",
+              "sourceKind": "derived",
+              "detailUrl": "https://k12.yongle.school/a/ca_nCCmJWwZ/"
+            },
+            "status": "rejected",
+            "relation": null,
+            "note": "模拟审阅：这条同时覆盖搅拌和温度，范围更宽。本任务采用直接对应单个变量的细节点，避免重复计入。",
+            "excerpt": "根据刚才的实验记录，独立解释搅拌对物质在水中溶解快慢的影响，并指出支持解释的对比实验记录；如果同时改变水温，说明为什么不能单独判断搅拌的影响。",
+            "terms": [
+              "对物质在水中溶解快慢的影响",
+              "对比实验",
+              "，说明",
+              "搅拌"
+            ],
+            "origin": "lexical-recall",
+            "reason": "共同出现：对物质在水中溶解快慢的影响、对比实验、，说明、搅拌。仅为召回依据。"
+          },
+          {
+            "anchor": {
+              "id": "ca_d2XpK8Ar",
+              "statement": "能通过对比实验说明温度高低对物质在水中溶解快慢的影响",
+              "discipline": "科学",
+              "stage": {
+                "min": "G3",
+                "max": "G4"
+              },
+              "track": "MATRIX",
+              "provenance": {
+                "document": "义务教育科学课程标准（2022年版）",
+                "subject": "科学",
+                "page": 36,
+                "stage": null,
+                "course": null,
+                "text": "④知道是否搅拌和温度高低是影响物质在水中溶解快慢的常见因素。",
+                "derivedFrom": "ca_cvPPJHbz"
+              },
+              "verifiedBy": "ai",
+              "citable": true,
+              "grain": {
+                "years": 2,
+                "band": "stage",
+                "warning": "这条覆盖 2 个年级，是学段级的坐标刻度，不是某一节课的目标。"
+              },
+              "deprecated": null,
+              "verb": "实验",
+              "object": "说明温度高低对物质在水中溶解快慢的影响",
+              "assessment": "{{name}}能自己设计对比实验，看看搅拌和温度对溶解快慢的影响吗？",
+              "evidence": [
+                "学生设计并执行了对比实验，分别改变搅拌条件和温度条件，观察并记录了溶解时间",
+                "学生根据实验数据，得出了搅拌和升温能加快溶解的结论"
+              ],
+              "topic": "物质科学",
+              "reviewStatusRaw": "ai-reviewed",
+              "dimension": "探究实践",
+              "literacy": [
+                "探究实践"
+              ],
+              "evidenceSource": "capability-rewrite",
+              "sourceKind": "standard",
+              "detailUrl": "https://k12.yongle.school/a/ca_d2XpK8Ar/"
+            },
+            "status": "rejected",
+            "relation": null,
+            "note": "模拟审阅：本任务聚焦搅拌的影响，水温作为控制条件或干扰变量出现，没有独立探究温度影响。",
+            "excerpt": "根据刚才的实验记录，独立解释搅拌对物质在水中溶解快慢的影响，并指出支持解释的对比实验记录；如果同时改变水温，说明为什么不能单独判断搅拌的影响。",
+            "terms": [
+              "对物质在水中溶解快慢的影响",
+              "对比实验",
+              "说明"
+            ],
+            "origin": "lexical-recall",
+            "reason": "共同出现：对物质在水中溶解快慢的影响、对比实验、说明。仅为召回依据。"
+          },
+          {
+            "anchor": {
+              "id": "ca_cvPPJHbz",
+              "statement": "能说出是否搅拌和温度高低是影响物质在水中溶解快慢的常见因素",
+              "discipline": "科学",
+              "stage": {
+                "min": "G3",
+                "max": "G4"
+              },
+              "track": "MATRIX",
+              "provenance": {
+                "document": "义务教育科学课程标准（2022年版）",
+                "subject": "科学",
+                "page": 36,
+                "stage": null,
+                "course": null,
+                "text": "④知道是否搅拌和温度高低是影响物质在水中溶解快慢的常见因素。",
+                "derivedFrom": null
+              },
+              "verifiedBy": "ai",
+              "citable": true,
+              "grain": {
+                "years": 2,
+                "band": "stage",
+                "warning": "这条覆盖 2 个年级，是学段级的坐标刻度，不是某一节课的目标。"
+              },
+              "deprecated": null,
+              "verb": "说出",
+              "object": "是否搅拌和温度高低是影响物质在水中溶解快慢的常见因素",
+              "assessment": "{{name}}能说出是否搅拌和温度高低是影响物质在水中溶解快慢的常见因素吗？",
+              "evidence": [
+                "问：是否搅拌和温度高低是影响物质在水中溶解快慢的常见因素是什么？能答出即为会",
+                "答案与课标原文一致，不要求逐字复述"
+              ],
+              "topic": "物质科学",
+              "reviewStatusRaw": "ai-adjudicated",
+              "dimension": "探究实践",
+              "literacy": [
+                "探究实践"
+              ],
+              "evidenceSource": "curriculum-content",
+              "sourceKind": "standard",
+              "detailUrl": "https://k12.yongle.school/a/ca_cvPPJHbz/"
+            },
+            "status": "rejected",
+            "relation": null,
+            "note": "模拟审阅：“说出影响因素”与“通过实验说明影响”要求不同。本任务强调实验和证据，选择后者作为主要映射。",
+            "excerpt": "根据刚才的实验记录，独立解释搅拌对物质在水中溶解快慢的影响，并指出支持解释的对比实验记录；如果同时改变水温，说明为什么不能单独判断搅拌的影响。",
+            "terms": [
+              "物质在水中溶解快慢的",
+              "搅拌",
+              "影响"
+            ],
+            "origin": "lexical-recall",
+            "reason": "共同出现：物质在水中溶解快慢的、搅拌、影响。仅为召回依据。"
+          },
+          {
+            "anchor": {
+              "id": "ca_NS7Fzf83",
+              "statement": "能判断给定的变化是否属于物理变化，并说明理由",
+              "discipline": "科学",
+              "stage": {
+                "min": "G1",
+                "max": "G6"
+              },
+              "track": "MATRIX",
+              "provenance": {
+                "document": "能力转写（由课标锚点推导，非课标原话）",
+                "subject": "科学",
+                "page": 35,
+                "stage": null,
+                "course": null,
+                "text": "物理变化是物质的状态发生了改变，没有新物质生成",
+                "derivedFrom": "ca_iUmSmYcB"
+              },
+              "verifiedBy": "ai",
+              "citable": true,
+              "grain": {
+                "years": 6,
+                "band": "wide",
+                "warning": "这条覆盖 6 个年级、跨越学段，只能用来定位大方向，不能用来判断某个孩子此刻会不会。"
+              },
+              "deprecated": null,
+              "fieldIssues": [
+                "independent-check-suspect"
+              ],
+              "verb": "判断",
+              "object": "给定的变化是否属于物理变化",
+              "assessment": "{{name}}能判断冰融化成水是物理变化，并说出理由吗？",
+              "evidence": [
+                "学生能正确判断冰融化成水是物理变化，并指出状态改变且无新物质生成",
+                "学生能正确判断铁生锈不是物理变化，并指出有新物质生成"
+              ],
+              "topic": "物质科学",
+              "reviewStatusRaw": "ai-reviewed",
+              "dimension": "科学思维",
+              "literacy": [
+                "科学思维"
+              ],
+              "evidenceSource": "capability-rewrite",
+              "sourceKind": "derived",
+              "detailUrl": "https://k12.yongle.school/a/ca_NS7Fzf83/"
+            },
+            "status": "rejected",
+            "relation": null,
+            "note": "模拟审阅：任务要求解释实验变量的影响，没有要求判断物理变化类型。",
+            "excerpt": "根据刚才的实验记录，独立解释搅拌对物质在水中溶解快慢的影响，并指出支持解释的对比实验记录；如果同时改变水温，说明为什么不能单独判断搅拌的影响。",
+            "terms": [
+              "，并",
+              "说明",
+              "判断"
+            ],
+            "origin": "lexical-recall",
+            "reason": "共同出现：，并、说明、判断。仅为召回依据。"
+          },
+          {
+            "anchor": {
+              "id": "ca_PEJuSJi2",
+              "statement": "能说出人的生命起点是受精卵，并指出其在母体内的发育场所",
+              "discipline": "科学",
+              "stage": {
+                "min": "G1",
+                "max": "G6"
+              },
+              "track": "MATRIX",
+              "provenance": {
+                "document": "能力转写（由课标锚点推导，非课标原话）",
+                "subject": "科学",
+                "page": 25,
+                "stage": null,
+                "course": null,
+                "text": "8.3 人的生命是从受精卵开始的",
+                "derivedFrom": "ca_Np0vMe02"
+              },
+              "verifiedBy": "ai",
+              "citable": true,
+              "grain": {
+                "years": 6,
+                "band": "wide",
+                "warning": "这条覆盖 6 个年级、跨越学段，只能用来定位大方向，不能用来判断某个孩子此刻会不会。"
+              },
+              "deprecated": null,
+              "fieldIssues": [
+                "independent-check-suspect"
+              ],
+              "verb": "说出、指出",
+              "object": "人的生命起点是受精卵及其发育场所",
+              "assessment": "{{name}}能说出人的生命是从受精卵开始的，并指出它在母体子宫内发育吗？",
+              "evidence": [
+                "学生能正确回答‘人的生命是从受精卵开始的’",
+                "学生能指出受精卵在母体子宫内发育"
+              ],
+              "topic": "核心概念",
+              "reviewStatusRaw": "ai-reviewed",
+              "dimension": "科学观念",
+              "literacy": [
+                "科学观念"
+              ],
+              "evidenceSource": "capability-rewrite",
+              "sourceKind": "derived",
+              "detailUrl": "https://k12.yongle.school/a/ca_PEJuSJi2/"
+            },
+            "status": "rejected",
+            "relation": null,
+            "note": "模拟审阅：人体发育与本任务无关，属于应排除的词面误召回。",
+            "excerpt": "根据刚才的实验记录，独立解释搅拌对物质在水中溶解快慢的影响，并指出支持解释的对比实验记录；如果同时改变水温，说明为什么不能单独判断搅拌的影响。",
+            "terms": [
+              "，并指出"
+            ],
+            "origin": "lexical-recall",
+            "reason": "共同出现：，并指出。仅为召回依据。"
+          }
+        ]
+      }
+    ]
+  }
+}

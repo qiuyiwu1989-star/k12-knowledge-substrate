@@ -1,5 +1,5 @@
 <!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>开发者接入 · 永乐 K12</title><link rel="stylesheet" href="./style.css"></head><body>
-<header class="site-header"><a class="brand" href="/">永乐<span>K12 能力底座</span></a><nav aria-label="主导航"><a href="./">映射工作台</a><a href="/">全景图谱 ↗</a><a href="./integration.html" aria-current="page">开发者接入</a></nav></header>
+<header class="site-header"><a class="brand" href="/">永乐<span>K12 能力底座</span></a><nav aria-label="主导航"><a href="./">映射工作台</a><a href="./example.html">完整案例</a><a href="/">全景图谱 ↗</a><a href="./integration.html" aria-current="page">开发者接入</a></nav></header>
 <main class="integration"><p class="eyebrow">应用共用的能力坐标</p><h1>一次定义，<span>三种接入方式。</span></h1><p>网页、HTTP 和本地 MCP 使用同一套小学科学映射核心。返回的是待确认候选，映射判断保留在应用层，不回写课标底座。</p>
 <h2>HTTP · 直接映射任务</h2><p>公开只读接口，不保存提交的任务内容。目标年级 1–6，每次 1–8 个任务，每项 4–400 字。每分钟最多 20 次写方法请求；忙碌时返回 503，可稍后重试。</p>
 <pre><code>curl https://k12.yongle.school/workbench/api/map \
