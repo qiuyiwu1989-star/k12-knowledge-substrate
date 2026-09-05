@@ -24,3 +24,5 @@ G3：持久化服务需验证输入、会话隔离、协议和实际 UI。
 
 ## 已完成阶段
 005 于 2026-09-06 完成。后续从 TASKS.md Next 与 docs/primary-science-plan.md 继续；线上精确版本和备份以 STATE.md 为准。
+
+006 已发布公开案例，更新能力数据时需同步检查 workbench/public/dissolving-example.json 的指纹及人工模拟理由，不能跳过 validate 校验。

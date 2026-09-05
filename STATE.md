@@ -9,11 +9,11 @@
 
 ## 本次发布
 - 分支 feat/primary-science-mapping-workbench。
-- 线上运行提交 b490caa025e57fb30728dd4ad76fe47b19401bf2；后续仅交付文档更新不改变运行代码。
+- 线上运行提交 1baaa94a4e0f9dd7c4aba9f04a7a795a2334f5a7；后续仅交付文档更新不改变运行代码。
 - /opt/k12-workbench/current 指向同名 releases 目录。
 - systemd 单元 k12-workbench，回环 127.0.0.1:3412；独立 PostgreSQL 数据库 k12_workbench，系统/数据库角色 k12-workbench，通过 peer 连接。
-- 发布包 SHA256：db4279ca3b311aef77a0a43a31498d350704a5acd556a13d5da018d18852c4e5。
-- 备份 /var/backups/k12-workbench/20260905T154515Z：nginx.conf、index.html、service、previous-release、database.sql。
+- 发布包 SHA256：4e3130db57bcc3109f95865504b8a34f32184e085d22f9360b9164778bf9a1a6。
+- 备份 /var/backups/k12-workbench/20260905T165858Z：nginx.conf、index.html、service、previous-release、database.sql。
 - 初次发布因 nginx 旧进程在重载瞬间返回 404 自动恢复。修正健康检查短暂重试后部署成功；初次备份 20260905T153512Z。
 - 仅新增工作台代理和首页入口，底座数据未写回。
 
@@ -26,3 +26,8 @@
 
 ## 回退说明
 备份包含原站配置和首页，可恢复二者并 nginx -t 后 reload；首次发布前无工作台服务，需 stop k12-workbench。不要把失败的初次发布目录当成已验收的上一版。后续发布继续使用提交归档与安装脚本，先备份。
+
+## 006 公开案例
+- /workbench/example.html 已发布；入口在工作台首页和导航。
+- /workbench/?example=dissolving 载入经过服务端核验的未保存案例副本，保存由访客主动点击。
+- 公开案例与私有项目数据隔离，无新增数据库表。可回退至 b490caa 服务目录，数据库无需回退。
