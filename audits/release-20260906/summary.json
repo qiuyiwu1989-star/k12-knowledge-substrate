@@ -1,0 +1,171 @@
+{
+  "version": "1.4",
+  "fingerprint": "271c7ef8f4df19d489f9ad47fa96cd8ced5a7d492ead997a34175cccddbfd5f5",
+  "sourceCommit": "bab29ae",
+  "activeNodes": 3671,
+  "allNodes": 4701,
+  "edges": 6695,
+  "inferenceEdges": 5128,
+  "nodeRules": {
+    "A13": 63,
+    "A08": 114,
+    "A09": 226,
+    "A06": 315,
+    "A02": 553,
+    "A04": 309,
+    "A01": 155,
+    "A11": 42,
+    "A05": 12,
+    "A07": 511,
+    "A03": 252,
+    "A14": 6,
+    "A10": 1
+  },
+  "edgeRules": {
+    "E11": 2638,
+    "E05": 1842,
+    "E04": 1626,
+    "E02": 250,
+    "E10": 37
+  },
+  "cycles": [],
+  "nodeStatus": {
+    "ai-reviewed": 2478,
+    "disputed": 553,
+    "ai-adjudicated": 242,
+    "auto-confirmed": 146,
+    "llm-proposed": 252
+  },
+  "edgeStatus": {
+    "llm-proposed": 6692,
+    "auto-confirmed": 3
+  },
+  "types": {
+    "instrument": 253,
+    "semantic": 1672,
+    "component": 3203,
+    "convention": 1567
+  },
+  "disciplines": {
+    "体育与健康": {
+      "nodes": 163,
+      "screenSignals": 142,
+      "edges": 140
+    },
+    "俄语": {
+      "nodes": 39,
+      "screenSignals": 15,
+      "edges": 37
+    },
+    "信息技术": {
+      "nodes": 99,
+      "screenSignals": 50,
+      "edges": 135
+    },
+    "信息科技": {
+      "nodes": 75,
+      "screenSignals": 36,
+      "edges": 156
+    },
+    "劳动": {
+      "nodes": 27,
+      "screenSignals": 9,
+      "edges": 36
+    },
+    "化学": {
+      "nodes": 354,
+      "screenSignals": 70,
+      "edges": 1289
+    },
+    "历史": {
+      "nodes": 119,
+      "screenSignals": 54,
+      "edges": 213
+    },
+    "地理": {
+      "nodes": 215,
+      "screenSignals": 96,
+      "edges": 439
+    },
+    "德语": {
+      "nodes": 57,
+      "screenSignals": 51,
+      "edges": 12
+    },
+    "思想政治": {
+      "nodes": 89,
+      "screenSignals": 50,
+      "edges": 62
+    },
+    "数学": {
+      "nodes": 380,
+      "screenSignals": 106,
+      "edges": 921
+    },
+    "日语": {
+      "nodes": 53,
+      "screenSignals": 53,
+      "edges": 68
+    },
+    "法语": {
+      "nodes": 29,
+      "screenSignals": 9,
+      "edges": 50
+    },
+    "物理": {
+      "nodes": 206,
+      "screenSignals": 68,
+      "edges": 459
+    },
+    "生物学": {
+      "nodes": 162,
+      "screenSignals": 63,
+      "edges": 363
+    },
+    "科学": {
+      "nodes": 252,
+      "screenSignals": 152,
+      "edges": 633
+    },
+    "美术": {
+      "nodes": 61,
+      "screenSignals": 56,
+      "edges": 5
+    },
+    "艺术": {
+      "nodes": 182,
+      "screenSignals": 86,
+      "edges": 269
+    },
+    "英语": {
+      "nodes": 236,
+      "screenSignals": 134,
+      "edges": 300
+    },
+    "西班牙语": {
+      "nodes": 142,
+      "screenSignals": 17,
+      "edges": 335
+    },
+    "语文": {
+      "nodes": 299,
+      "screenSignals": 230,
+      "edges": 149
+    },
+    "通用技术": {
+      "nodes": 260,
+      "screenSignals": 64,
+      "edges": 470
+    },
+    "道德与法治": {
+      "nodes": 58,
+      "screenSignals": 24,
+      "edges": 139
+    },
+    "音乐": {
+      "nodes": 114,
+      "screenSignals": 106,
+      "edges": 15
+    }
+  }
+}

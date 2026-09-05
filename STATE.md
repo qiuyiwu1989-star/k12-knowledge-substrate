@@ -1,5 +1,12 @@
 # 实际部署状态
 
+## 007 审查分支状态（2026-09-06）
+- 分支 audit/release-readiness-20260906；冻结基线 bab29ae / 数据 1.4。
+- 3,671 节点和 6,695 边全量结构筛查，79 条定向语义审阅，24 学科 / 96 个应用层拆解草案。原 PDF、学习实证与全量语义审阅未完成。
+- 可视化报告 audits/release-20260906/review.html；结论与发布计划见同目录 REPORT.md。
+- anchors/edges 未修改；来源标签修复仅在审查分支，尚未发布。线上仍是下面记录的版本。
+- npm run check 与 npm run workbench-test 通过；本地浏览器确认审阅页载入 79 条记录。
+
 ## 已核实（2026-09-06，Asia/Seoul）
 - 站点 https://k12.yongle.school/workbench/，原首页已添加入口。
 - 静态根目录 /var/www/k12.yongle.school；/zhishi/ 仍返回 200。

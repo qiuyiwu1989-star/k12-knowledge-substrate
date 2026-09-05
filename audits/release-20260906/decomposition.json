@@ -1,0 +1,914 @@
+[
+  {
+    "proposalId": "draft/ca_VKU9hc8E",
+    "discipline": "科学",
+    "anchorId": "ca_VKU9hc8E",
+    "original": "能通过对比实验说明搅拌对物质在水中溶解快慢的影响",
+    "title": "控制变量的溶解探究",
+    "components": [
+      {
+        "id": "draft/ca_VKU9hc8E/1",
+        "statement": "识别要比较的搅拌条件",
+        "status": "application-design-proposal"
+      },
+      {
+        "id": "draft/ca_VKU9hc8E/2",
+        "statement": "保持水量、盐量、水温等条件一致",
+        "status": "application-design-proposal"
+      },
+      {
+        "id": "draft/ca_VKU9hc8E/3",
+        "statement": "按同一观察终点记录结果",
+        "status": "application-design-proposal"
+      },
+      {
+        "id": "draft/ca_VKU9hc8E/4",
+        "statement": "依据记录解释差异并说明适用条件",
+        "status": "application-design-proposal"
+      }
+    ],
+    "evidenceDesign": "给定材料与记录表完成一次单变量对比，保留设计、记录与解释。",
+    "counterexample": "只背出搅拌加快溶解，不能证明会控制变量。",
+    "sourceScope": {
+      "min": "G3",
+      "max": "G4"
+    },
+    "relationPolicy": "components are dimensions/tasks; ordering here is presentation only, not validated prerequisite sequence",
+    "assessmentPolicy": "no pass threshold or grade reassignment inferred from this draft",
+    "reviewStatus": "model-proposed; not curriculum text; not applied"
+  },
+  {
+    "proposalId": "draft/ca_yyMBrshz",
+    "discipline": "数学",
+    "anchorId": "ca_yyMBrshz",
+    "original": "能描述减法与加法的关系、除法与乘法的关系",
+    "title": "理解逆运算关系",
+    "components": [
+      {
+        "id": "draft/ca_yyMBrshz/1",
+        "statement": "用实物/图示表达加减的可逆关系",
+        "status": "application-design-proposal"
+      },
+      {
+        "id": "draft/ca_yyMBrshz/2",
+        "statement": "用相应算式互相验证",
+        "status": "application-design-proposal"
+      },
+      {
+        "id": "draft/ca_yyMBrshz/3",
+        "statement": "在新例子中解释未知量与已知量",
+        "status": "application-design-proposal"
+      },
+      {
+        "id": "draft/ca_yyMBrshz/4",
+        "statement": "分别讨论乘除关系",
+        "status": "application-design-proposal"
+      }
+    ],
+    "evidenceDesign": "两类运算各用一个新情境说明关系，区分概念解释与口算流利度。",
+    "counterexample": "口算慢但能用筹码说明逆关系，不应被判概念不成立。",
+    "sourceScope": {
+      "min": "G3",
+      "max": "G4"
+    },
+    "relationPolicy": "components are dimensions/tasks; ordering here is presentation only, not validated prerequisite sequence",
+    "assessmentPolicy": "no pass threshold or grade reassignment inferred from this draft",
+    "reviewStatus": "model-proposed; not curriculum text; not applied"
+  },
+  {
+    "proposalId": "draft/ca_UKA5QsG6",
+    "discipline": "语文",
+    "anchorId": "ca_UKA5QsG6",
+    "original": "能选择感兴趣的作家撰写评论",
+    "title": "写出有依据的作品评论",
+    "components": [
+      {
+        "id": "draft/ca_UKA5QsG6/1",
+        "statement": "明确评论对象与观点",
+        "status": "application-design-proposal"
+      },
+      {
+        "id": "draft/ca_UKA5QsG6/2",
+        "statement": "选择与观点相关的文本细节",
+        "status": "application-design-proposal"
+      },
+      {
+        "id": "draft/ca_UKA5QsG6/3",
+        "statement": "解释细节怎样支持观点",
+        "status": "application-design-proposal"
+      },
+      {
+        "id": "draft/ca_UKA5QsG6/4",
+        "statement": "组织成书面评论并修订",
+        "status": "application-design-proposal"
+      }
+    ],
+    "evidenceDesign": "保留一份书面评论初稿与修改稿，核对观点、证据、论证。",
+    "counterexample": "能口头说喜欢某人物，不等于完成书面评论。",
+    "sourceScope": {
+      "min": "G10",
+      "max": "G12"
+    },
+    "relationPolicy": "components are dimensions/tasks; ordering here is presentation only, not validated prerequisite sequence",
+    "assessmentPolicy": "no pass threshold or grade reassignment inferred from this draft",
+    "reviewStatus": "model-proposed; not curriculum text; not applied"
+  },
+  {
+    "proposalId": "draft/ca_XFNvmxAS",
+    "discipline": "英语",
+    "anchorId": "ca_XFNvmxAS",
+    "original": "能在语篇中正确地理解和使用动词 -ing 形式作句子中的主语、宾语和表语",
+    "title": "在语境中使用 -ing 形式",
+    "components": [
+      {
+        "id": "draft/ca_XFNvmxAS/1",
+        "statement": "识别目标句中所需句法角色",
+        "status": "application-design-proposal"
+      },
+      {
+        "id": "draft/ca_XFNvmxAS/2",
+        "statement": "选择并形成目标 -ing 结构",
+        "status": "application-design-proposal"
+      },
+      {
+        "id": "draft/ca_XFNvmxAS/3",
+        "statement": "分别在主语、宾语、表语语境使用",
+        "status": "application-design-proposal"
+      },
+      {
+        "id": "draft/ca_XFNvmxAS/4",
+        "statement": "检查意思与语境是否一致",
+        "status": "application-design-proposal"
+      }
+    ],
+    "evidenceDesign": "分别给定三个角色语境，明确是目标结构任务，保留可接受替代表达。",
+    "counterexample": "I like to run 可以合语法，只是未展示本题 -ing 目标。",
+    "sourceScope": {
+      "min": "G10",
+      "max": "G12"
+    },
+    "relationPolicy": "components are dimensions/tasks; ordering here is presentation only, not validated prerequisite sequence",
+    "assessmentPolicy": "no pass threshold or grade reassignment inferred from this draft",
+    "reviewStatus": "model-proposed; not curriculum text; not applied"
+  },
+  {
+    "proposalId": "draft/ca_4FJUss43",
+    "discipline": "历史",
+    "anchorId": "ca_4FJUss43",
+    "original": "能分析长安、东京的历史地位",
+    "title": "比较历史城市的地位",
+    "components": [
+      {
+        "id": "draft/ca_4FJUss43/1",
+        "statement": "确定朝代和地名语境",
+        "status": "application-design-proposal"
+      },
+      {
+        "id": "draft/ca_4FJUss43/2",
+        "statement": "从材料提取政治/经济/文化信息",
+        "status": "application-design-proposal"
+      },
+      {
+        "id": "draft/ca_4FJUss43/3",
+        "statement": "分别解释长安与北宋东京的历史地位",
+        "status": "application-design-proposal"
+      },
+      {
+        "id": "draft/ca_4FJUss43/4",
+        "statement": "用证据比较异同",
+        "status": "application-design-proposal"
+      }
+    ],
+    "evidenceDesign": "使用明确标注时代的材料作比较；事实与解释分项核对。",
+    "counterexample": "只记住城市名或把北宋东京当现代东京，不能证明历史解释。",
+    "sourceScope": {
+      "min": "G10",
+      "max": "G12"
+    },
+    "relationPolicy": "components are dimensions/tasks; ordering here is presentation only, not validated prerequisite sequence",
+    "assessmentPolicy": "no pass threshold or grade reassignment inferred from this draft",
+    "reviewStatus": "model-proposed; not curriculum text; not applied"
+  },
+  {
+    "proposalId": "draft/ca_U5G7KYQT",
+    "discipline": "地理",
+    "anchorId": "ca_U5G7KYQT",
+    "original": "能够阅读和提取地图上的地理信息，并利用地理信息说明和分析地理事物和现象",
+    "title": "从地图到地理解释",
+    "components": [
+      {
+        "id": "draft/ca_U5G7KYQT/1",
+        "statement": "识别图例、方向和比例等必要信息",
+        "status": "application-design-proposal"
+      },
+      {
+        "id": "draft/ca_U5G7KYQT/2",
+        "statement": "提取任务相关地点或空间关系",
+        "status": "application-design-proposal"
+      },
+      {
+        "id": "draft/ca_U5G7KYQT/3",
+        "statement": "选择信息支持地理解释",
+        "status": "application-design-proposal"
+      },
+      {
+        "id": "draft/ca_U5G7KYQT/4",
+        "statement": "说明图的尺度与数据局限",
+        "status": "application-design-proposal"
+      }
+    ],
+    "evidenceDesign": "给定地图完成空间判断并指出证据位置。",
+    "counterexample": "会画图或背结论不代表能从这张地图提取依据。",
+    "sourceScope": {
+      "min": "G7",
+      "max": "G9"
+    },
+    "relationPolicy": "components are dimensions/tasks; ordering here is presentation only, not validated prerequisite sequence",
+    "assessmentPolicy": "no pass threshold or grade reassignment inferred from this draft",
+    "reviewStatus": "model-proposed; not curriculum text; not applied"
+  },
+  {
+    "proposalId": "draft/ca_8agveE5P",
+    "discipline": "物理",
+    "anchorId": "ca_8agveE5P",
+    "original": "在归纳或演绎中会引用证据",
+    "title": "在推理中引用证据",
+    "components": [
+      {
+        "id": "draft/ca_8agveE5P/1",
+        "statement": "区分待解释结论和可用证据",
+        "status": "application-design-proposal"
+      },
+      {
+        "id": "draft/ca_8agveE5P/2",
+        "statement": "选择相关观察、测量或资料",
+        "status": "application-design-proposal"
+      },
+      {
+        "id": "draft/ca_8agveE5P/3",
+        "statement": "建立证据与结论的推理联系",
+        "status": "application-design-proposal"
+      },
+      {
+        "id": "draft/ca_8agveE5P/4",
+        "statement": "说明不确定性和反例",
+        "status": "application-design-proposal"
+      }
+    ],
+    "evidenceDesign": "给定记录说明一个推断，允许直接引用读数或观察，不强制画图。",
+    "counterexample": "制作漂亮图表而无法解释联系，不代表证据推理。",
+    "sourceScope": {
+      "min": "G7",
+      "max": "G9"
+    },
+    "relationPolicy": "components are dimensions/tasks; ordering here is presentation only, not validated prerequisite sequence",
+    "assessmentPolicy": "no pass threshold or grade reassignment inferred from this draft",
+    "reviewStatus": "model-proposed; not curriculum text; not applied"
+  },
+  {
+    "proposalId": "draft/ca_kNu5WjAj",
+    "discipline": "化学",
+    "anchorId": "ca_kNu5WjAj",
+    "original": "能利用化学反应相关知识分析和解释自然界、生产生活、实验中的常见现象",
+    "title": "解释生活中的化学现象",
+    "components": [
+      {
+        "id": "draft/ca_kNu5WjAj/1",
+        "statement": "识别现象与相关物质",
+        "status": "application-design-proposal"
+      },
+      {
+        "id": "draft/ca_kNu5WjAj/2",
+        "statement": "提出基于性质或反应的解释",
+        "status": "application-design-proposal"
+      },
+      {
+        "id": "draft/ca_kNu5WjAj/3",
+        "statement": "选择实验事实或材料支持",
+        "status": "application-design-proposal"
+      },
+      {
+        "id": "draft/ca_kNu5WjAj/4",
+        "statement": "需要时使用符号或方程式",
+        "status": "application-design-proposal"
+      }
+    ],
+    "evidenceDesign": "先限定具体现象；定性解释与定量计算分开评分。",
+    "counterexample": "不会配平方程式不一定妨碍合理的定性解释。",
+    "sourceScope": {
+      "min": "G9",
+      "max": "G9"
+    },
+    "relationPolicy": "components are dimensions/tasks; ordering here is presentation only, not validated prerequisite sequence",
+    "assessmentPolicy": "no pass threshold or grade reassignment inferred from this draft",
+    "reviewStatus": "model-proposed; not curriculum text; not applied"
+  },
+  {
+    "proposalId": "draft/ca_y8Ctiegg",
+    "discipline": "生物学",
+    "anchorId": "ca_y8Ctiegg",
+    "original": "能举例说明阳光、温度和水等非生物因素以及不同物种之间的相互作用都会影响生物的种群特征",
+    "title": "解释种群变化",
+    "components": [
+      {
+        "id": "draft/ca_y8Ctiegg/1",
+        "statement": "区分非生物因素与物种相互作用",
+        "status": "application-design-proposal"
+      },
+      {
+        "id": "draft/ca_y8Ctiegg/2",
+        "statement": "从具体资料识别种群变化",
+        "status": "application-design-proposal"
+      },
+      {
+        "id": "draft/ca_y8Ctiegg/3",
+        "statement": "分别解释两类因素的可能作用",
+        "status": "application-design-proposal"
+      },
+      {
+        "id": "draft/ca_y8Ctiegg/4",
+        "statement": "说明其他变量与解释限制",
+        "status": "application-design-proposal"
+      }
+    ],
+    "evidenceDesign": "对两类案例分别给出证据链，避免从相关直接断言因果。",
+    "counterexample": "只举非生物因素例子不能覆盖物种相互作用维度。",
+    "sourceScope": {
+      "min": "G10",
+      "max": "G12"
+    },
+    "relationPolicy": "components are dimensions/tasks; ordering here is presentation only, not validated prerequisite sequence",
+    "assessmentPolicy": "no pass threshold or grade reassignment inferred from this draft",
+    "reviewStatus": "model-proposed; not curriculum text; not applied"
+  },
+  {
+    "proposalId": "draft/ca_L82Wxv3d",
+    "discipline": "信息科技",
+    "anchorId": "ca_L82Wxv3d",
+    "original": "能举出一个网络数据传输过程中需要解决的具体问题，并说明互联网协议是如何解决这个问题的",
+    "title": "解释协议怎样解决问题",
+    "components": [
+      {
+        "id": "draft/ca_L82Wxv3d/1",
+        "statement": "定位一个具体网络传输问题",
+        "status": "application-design-proposal"
+      },
+      {
+        "id": "draft/ca_L82Wxv3d/2",
+        "statement": "识别相关协议机制",
+        "status": "application-design-proposal"
+      },
+      {
+        "id": "draft/ca_L82Wxv3d/3",
+        "statement": "按步骤说明机制如何应对问题",
+        "status": "application-design-proposal"
+      },
+      {
+        "id": "draft/ca_L82Wxv3d/4",
+        "statement": "区分协议能解决与不能解决的部分",
+        "status": "application-design-proposal"
+      }
+    ],
+    "evidenceDesign": "指定问题与协议材料，解释机制；不把某协议当所有问题答案。",
+    "counterexample": "只说“TCP能解决”没有展示机制理解。",
+    "sourceScope": {
+      "min": "G7",
+      "max": "G9"
+    },
+    "relationPolicy": "components are dimensions/tasks; ordering here is presentation only, not validated prerequisite sequence",
+    "assessmentPolicy": "no pass threshold or grade reassignment inferred from this draft",
+    "reviewStatus": "model-proposed; not curriculum text; not applied"
+  },
+  {
+    "proposalId": "draft/ca_QHwRWN5M",
+    "discipline": "信息技术",
+    "anchorId": "ca_QHwRWN5M",
+    "original": "能在数据分析的基础上，完成分析报告",
+    "title": "完成数据分析报告",
+    "components": [
+      {
+        "id": "draft/ca_QHwRWN5M/1",
+        "statement": "明确分析问题与数据来源",
+        "status": "application-design-proposal"
+      },
+      {
+        "id": "draft/ca_QHwRWN5M/2",
+        "statement": "处理并检查数据质量",
+        "status": "application-design-proposal"
+      },
+      {
+        "id": "draft/ca_QHwRWN5M/3",
+        "statement": "选用适合的表示方式",
+        "status": "application-design-proposal"
+      },
+      {
+        "id": "draft/ca_QHwRWN5M/4",
+        "statement": "形成有依据的结论并写成报告",
+        "status": "application-design-proposal"
+      }
+    ],
+    "evidenceDesign": "使用实际数据集形成报告，注明来源、分析方法与局限。",
+    "counterexample": "复制表格不等于分析；完成物理实验不是所有报告的前提。",
+    "sourceScope": {
+      "min": "G10",
+      "max": "G12"
+    },
+    "relationPolicy": "components are dimensions/tasks; ordering here is presentation only, not validated prerequisite sequence",
+    "assessmentPolicy": "no pass threshold or grade reassignment inferred from this draft",
+    "reviewStatus": "model-proposed; not curriculum text; not applied"
+  },
+  {
+    "proposalId": "draft/ca_ADXSSyGn",
+    "discipline": "通用技术",
+    "anchorId": "ca_ADXSSyGn",
+    "original": "能运用手工绘图工具和简易绘图软件绘制草图、简单的三视图，用恰当的技术语言与他人交流设计思想和成果",
+    "title": "用技术图样交流方案",
+    "components": [
+      {
+        "id": "draft/ca_ADXSSyGn/1",
+        "statement": "依据用途选择草图或三视图",
+        "status": "application-design-proposal"
+      },
+      {
+        "id": "draft/ca_ADXSSyGn/2",
+        "statement": "表达必要的形状与尺寸关系",
+        "status": "application-design-proposal"
+      },
+      {
+        "id": "draft/ca_ADXSSyGn/3",
+        "statement": "检查投影与标注的一致性",
+        "status": "application-design-proposal"
+      },
+      {
+        "id": "draft/ca_ADXSSyGn/4",
+        "statement": "向他人说明方案并据反馈修订",
+        "status": "application-design-proposal"
+      }
+    ],
+    "evidenceDesign": "保留图样与一次交流记录；手工和软件要求按实际任务约定。",
+    "counterexample": "会画草图不等于会三视图，使用某软件不是设计理解本身。",
+    "sourceScope": {
+      "min": "G10",
+      "max": "G12"
+    },
+    "relationPolicy": "components are dimensions/tasks; ordering here is presentation only, not validated prerequisite sequence",
+    "assessmentPolicy": "no pass threshold or grade reassignment inferred from this draft",
+    "reviewStatus": "model-proposed; not curriculum text; not applied"
+  },
+  {
+    "proposalId": "draft/ca_ViFhCEpr",
+    "discipline": "艺术",
+    "anchorId": "ca_ViFhCEpr",
+    "original": "按要求独立或与他人合作编创、表现有重复和变化的节奏或旋律",
+    "title": "编创与表现重复变化",
+    "components": [
+      {
+        "id": "draft/ca_ViFhCEpr/1",
+        "statement": "辨认作品中的重复与变化",
+        "status": "application-design-proposal"
+      },
+      {
+        "id": "draft/ca_ViFhCEpr/2",
+        "statement": "按约定材料编创短节奏或旋律",
+        "status": "application-design-proposal"
+      },
+      {
+        "id": "draft/ca_ViFhCEpr/3",
+        "statement": "准确表现自己的或给定的片段",
+        "status": "application-design-proposal"
+      },
+      {
+        "id": "draft/ca_ViFhCEpr/4",
+        "statement": "说明并调整表达效果",
+        "status": "application-design-proposal"
+      }
+    ],
+    "evidenceDesign": "编创作品与表现记录分开评价，合作贡献可追踪。",
+    "counterexample": "能表演既有作品不自动证明会编创。",
+    "sourceScope": {
+      "min": "G8",
+      "max": "G9"
+    },
+    "relationPolicy": "components are dimensions/tasks; ordering here is presentation only, not validated prerequisite sequence",
+    "assessmentPolicy": "no pass threshold or grade reassignment inferred from this draft",
+    "reviewStatus": "model-proposed; not curriculum text; not applied"
+  },
+  {
+    "proposalId": "draft/ca_7LjDZDeW",
+    "discipline": "音乐",
+    "anchorId": "ca_7LjDZDeW",
+    "original": "能理解音乐表现要素在音乐情感和思想内涵表达中的作用",
+    "title": "听辨要素与表达效果",
+    "components": [
+      {
+        "id": "draft/ca_7LjDZDeW/1",
+        "statement": "从音响中辨认相关音乐要素",
+        "status": "application-design-proposal"
+      },
+      {
+        "id": "draft/ca_7LjDZDeW/2",
+        "statement": "指出要素发生变化的位置",
+        "status": "application-design-proposal"
+      },
+      {
+        "id": "draft/ca_7LjDZDeW/3",
+        "statement": "结合语境解释表达效果",
+        "status": "application-design-proposal"
+      },
+      {
+        "id": "draft/ca_7LjDZDeW/4",
+        "statement": "比较可成立的不同解释",
+        "status": "application-design-proposal"
+      }
+    ],
+    "evidenceDesign": "给定音频可通过标注、口述或选择片段作答，不强制演唱。",
+    "counterexample": "唱不准不必然不能听辨与解释。",
+    "sourceScope": {
+      "min": "G10",
+      "max": "G12"
+    },
+    "relationPolicy": "components are dimensions/tasks; ordering here is presentation only, not validated prerequisite sequence",
+    "assessmentPolicy": "no pass threshold or grade reassignment inferred from this draft",
+    "reviewStatus": "model-proposed; not curriculum text; not applied"
+  },
+  {
+    "proposalId": "draft/ca_wg8cyq3C",
+    "discipline": "美术",
+    "anchorId": "ca_wg8cyq3C",
+    "original": "能表达自己的态度和观点",
+    "title": "通过艺术表达观点",
+    "components": [
+      {
+        "id": "draft/ca_wg8cyq3C/1",
+        "statement": "明确表达对象与意图",
+        "status": "application-design-proposal"
+      },
+      {
+        "id": "draft/ca_wg8cyq3C/2",
+        "statement": "选择合适媒介和形式",
+        "status": "application-design-proposal"
+      },
+      {
+        "id": "draft/ca_wg8cyq3C/3",
+        "statement": "形成可被他人解读的作品",
+        "status": "application-design-proposal"
+      },
+      {
+        "id": "draft/ca_wg8cyq3C/4",
+        "statement": "比较意图与实际效果并修订",
+        "status": "application-design-proposal"
+      }
+    ],
+    "evidenceDesign": "作品与作者说明共同呈现；先恢复节点源页的创作媒介语境。",
+    "counterexample": "沉默或不会手工不能直接等同没有态度观点。",
+    "sourceScope": {
+      "min": "G10",
+      "max": "G12"
+    },
+    "relationPolicy": "components are dimensions/tasks; ordering here is presentation only, not validated prerequisite sequence",
+    "assessmentPolicy": "no pass threshold or grade reassignment inferred from this draft",
+    "reviewStatus": "model-proposed; not curriculum text; not applied"
+  },
+  {
+    "proposalId": "draft/ca_ps7EZeA5",
+    "discipline": "体育与健康",
+    "anchorId": "ca_ps7EZeA5",
+    "original": "能与同伴合作，做出自我保护、相互保护与帮助的动作",
+    "title": "在运动中保护自己与同伴",
+    "components": [
+      {
+        "id": "draft/ca_ps7EZeA5/1",
+        "statement": "识别特定运动情境的风险",
+        "status": "application-design-proposal"
+      },
+      {
+        "id": "draft/ca_ps7EZeA5/2",
+        "statement": "在教师组织的适当条件下做保护动作",
+        "status": "application-design-proposal"
+      },
+      {
+        "id": "draft/ca_ps7EZeA5/3",
+        "statement": "与同伴配合并遵守约定",
+        "status": "application-design-proposal"
+      },
+      {
+        "id": "draft/ca_ps7EZeA5/4",
+        "statement": "根据反馈调整动作",
+        "status": "application-design-proposal"
+      }
+    ],
+    "evidenceDesign": "由合适的现场指导者观察具体项目表现，按支持程度记录。",
+    "counterexample": "能描述动作不等于能安全实施；不同项目不能一概迁移。",
+    "sourceScope": {
+      "min": "G1",
+      "max": "G9"
+    },
+    "relationPolicy": "components are dimensions/tasks; ordering here is presentation only, not validated prerequisite sequence",
+    "assessmentPolicy": "no pass threshold or grade reassignment inferred from this draft",
+    "reviewStatus": "model-proposed; not curriculum text; not applied"
+  },
+  {
+    "proposalId": "draft/ca_rnMsnSd5",
+    "discipline": "劳动",
+    "anchorId": "ca_rnMsnSd5",
+    "original": "能说出炒、煎、炖三种烹饪方法的操作要点",
+    "title": "从烹饪知识到实际劳动",
+    "components": [
+      {
+        "id": "draft/ca_rnMsnSd5/1",
+        "statement": "说明所选烹饪方法的关键要点",
+        "status": "application-design-proposal"
+      },
+      {
+        "id": "draft/ca_rnMsnSd5/2",
+        "statement": "准备食材与工具并安排步骤",
+        "status": "application-design-proposal"
+      },
+      {
+        "id": "draft/ca_rnMsnSd5/3",
+        "statement": "在适宜指导条件下完成制作",
+        "status": "application-design-proposal"
+      },
+      {
+        "id": "draft/ca_rnMsnSd5/4",
+        "statement": "整理现场并评价成品与过程",
+        "status": "application-design-proposal"
+      }
+    ],
+    "evidenceDesign": "知识说明和实践制作分别留证；具体任务由年龄与条件决定。",
+    "counterexample": "背出炒煎炖要点不能替代完成制作全过程。",
+    "sourceScope": {
+      "min": "G5",
+      "max": "G6"
+    },
+    "relationPolicy": "components are dimensions/tasks; ordering here is presentation only, not validated prerequisite sequence",
+    "assessmentPolicy": "no pass threshold or grade reassignment inferred from this draft",
+    "reviewStatus": "model-proposed; not curriculum text; not applied"
+  },
+  {
+    "proposalId": "draft/ca_NPBYw8dv",
+    "discipline": "道德与法治",
+    "anchorId": "ca_NPBYw8dv",
+    "original": "能至少举出两个新时代中国特色社会主义伟大成就的具体例子，并说明它们是在党的领导下取得的",
+    "title": "基于事例作解释",
+    "components": [
+      {
+        "id": "draft/ca_NPBYw8dv/1",
+        "statement": "辨识可靠材料中的具体成就",
+        "status": "application-design-proposal"
+      },
+      {
+        "id": "draft/ca_NPBYw8dv/2",
+        "statement": "说明材料与结论的联系",
+        "status": "application-design-proposal"
+      },
+      {
+        "id": "draft/ca_NPBYw8dv/3",
+        "statement": "组织有根据的表达",
+        "status": "application-design-proposal"
+      },
+      {
+        "id": "draft/ca_NPBYw8dv/4",
+        "statement": "区分事实、解释与价值判断",
+        "status": "application-design-proposal"
+      }
+    ],
+    "evidenceDesign": "按给定事例及材料检验解释；数量作为任务参数明示。",
+    "counterexample": "单次复述结论不能证明持续价值认同或责任实践。",
+    "sourceScope": {
+      "min": "G7",
+      "max": "G9"
+    },
+    "relationPolicy": "components are dimensions/tasks; ordering here is presentation only, not validated prerequisite sequence",
+    "assessmentPolicy": "no pass threshold or grade reassignment inferred from this draft",
+    "reviewStatus": "model-proposed; not curriculum text; not applied"
+  },
+  {
+    "proposalId": "draft/ca_qga37Ug5",
+    "discipline": "思想政治",
+    "anchorId": "ca_qga37Ug5",
+    "original": "能比较哲学思维与日常思维的异同",
+    "title": "比较不同思维方式",
+    "components": [
+      {
+        "id": "draft/ca_qga37Ug5/1",
+        "statement": "澄清比较对象和标准",
+        "status": "application-design-proposal"
+      },
+      {
+        "id": "draft/ca_qga37Ug5/2",
+        "statement": "提取给定案例中的思维特点",
+        "status": "application-design-proposal"
+      },
+      {
+        "id": "draft/ca_qga37Ug5/3",
+        "statement": "说明共同点与差异",
+        "status": "application-design-proposal"
+      },
+      {
+        "id": "draft/ca_qga37Ug5/4",
+        "statement": "用反例限定自己的概括",
+        "status": "application-design-proposal"
+      }
+    ],
+    "evidenceDesign": "比较具体案例并解释判据，避免只说“更深刻”。",
+    "counterexample": "背会类型名称不能代表能进行有标准的比较。",
+    "sourceScope": {
+      "min": "G10",
+      "max": "G12"
+    },
+    "relationPolicy": "components are dimensions/tasks; ordering here is presentation only, not validated prerequisite sequence",
+    "assessmentPolicy": "no pass threshold or grade reassignment inferred from this draft",
+    "reviewStatus": "model-proposed; not curriculum text; not applied"
+  },
+  {
+    "proposalId": "draft/ca_9ARCrnE9",
+    "discipline": "日语",
+    "anchorId": "ca_9ARCrnE9",
+    "original": "能理解与运用动词的Vている、Vてある 、Vておく 等语法形式",
+    "title": "辨别进行、结果状态与准备",
+    "components": [
+      {
+        "id": "draft/ca_9ARCrnE9/1",
+        "statement": "理解给定情境的时间与意图",
+        "status": "application-design-proposal"
+      },
+      {
+        "id": "draft/ca_9ARCrnE9/2",
+        "statement": "区分相关动词结构的表达功能",
+        "status": "application-design-proposal"
+      },
+      {
+        "id": "draft/ca_9ARCrnE9/3",
+        "statement": "在具体语境选择并使用形式",
+        "status": "application-design-proposal"
+      },
+      {
+        "id": "draft/ca_9ARCrnE9/4",
+        "statement": "检查助词与动词搭配",
+        "status": "application-design-proposal"
+      }
+    ],
+    "evidenceDesign": "用控制其他语法变量的最小语境对比，分别定位错误。",
+    "counterexample": "助词错误不能一律归因于不理解ておく。",
+    "sourceScope": {
+      "min": "G10",
+      "max": "G12"
+    },
+    "relationPolicy": "components are dimensions/tasks; ordering here is presentation only, not validated prerequisite sequence",
+    "assessmentPolicy": "no pass threshold or grade reassignment inferred from this draft",
+    "reviewStatus": "model-proposed; not curriculum text; not applied"
+  },
+  {
+    "proposalId": "draft/ca_tLb5SAqN",
+    "discipline": "俄语",
+    "anchorId": "ca_tLb5SAqN",
+    "original": "能运用构词知识、上下文语境正确理解词汇意义",
+    "title": "借助线索推断词义",
+    "components": [
+      {
+        "id": "draft/ca_tLb5SAqN/1",
+        "statement": "识别可用的构词或语境线索",
+        "status": "application-design-proposal"
+      },
+      {
+        "id": "draft/ca_tLb5SAqN/2",
+        "statement": "提出候选词义",
+        "status": "application-design-proposal"
+      },
+      {
+        "id": "draft/ca_tLb5SAqN/3",
+        "statement": "代回语境检验是否一致",
+        "status": "application-design-proposal"
+      },
+      {
+        "id": "draft/ca_tLb5SAqN/4",
+        "statement": "在证据不足时保留不确定",
+        "status": "application-design-proposal"
+      }
+    ],
+    "evidenceDesign": "用新词语境展示推断过程，可记录不同有效策略。",
+    "counterexample": "没有词根分析但语境推断正确，不必认定不会理解词义。",
+    "sourceScope": {
+      "min": "G10",
+      "max": "G12"
+    },
+    "relationPolicy": "components are dimensions/tasks; ordering here is presentation only, not validated prerequisite sequence",
+    "assessmentPolicy": "no pass threshold or grade reassignment inferred from this draft",
+    "reviewStatus": "model-proposed; not curriculum text; not applied"
+  },
+  {
+    "proposalId": "draft/ca_DqJKZVYv",
+    "discipline": "德语",
+    "anchorId": "ca_DqJKZVYv",
+    "original": "能运用所学表达进一步搜集有关能源储藏、疆域划分和国家利益等方面的资料",
+    "title": "围绕主题获取资料",
+    "components": [
+      {
+        "id": "draft/ca_DqJKZVYv/1",
+        "statement": "明确具体主题和资料需求",
+        "status": "application-design-proposal"
+      },
+      {
+        "id": "draft/ca_DqJKZVYv/2",
+        "statement": "使用适当德语表达检索",
+        "status": "application-design-proposal"
+      },
+      {
+        "id": "draft/ca_DqJKZVYv/3",
+        "statement": "判断资料与主题的相关性",
+        "status": "application-design-proposal"
+      },
+      {
+        "id": "draft/ca_DqJKZVYv/4",
+        "statement": "整理来源并概述所得信息",
+        "status": "application-design-proposal"
+      }
+    ],
+    "evidenceDesign": "根据选定主题形成小型资料包，区分检索表达、信息判断与总结。",
+    "counterexample": "“等方面”不应自动变成每个主题都必须独立达标。",
+    "sourceScope": {
+      "min": "G10",
+      "max": "G12"
+    },
+    "relationPolicy": "components are dimensions/tasks; ordering here is presentation only, not validated prerequisite sequence",
+    "assessmentPolicy": "no pass threshold or grade reassignment inferred from this draft",
+    "reviewStatus": "model-proposed; not curriculum text; not applied"
+  },
+  {
+    "proposalId": "draft/ca_YP7G86fR",
+    "discipline": "法语",
+    "anchorId": "ca_YP7G86fR",
+    "original": "能正确读出句子的重音、节奏组、升调和降调",
+    "title": "在语境中组织语流",
+    "components": [
+      {
+        "id": "draft/ca_YP7G86fR/1",
+        "statement": "理解句子的交际意图",
+        "status": "application-design-proposal"
+      },
+      {
+        "id": "draft/ca_YP7G86fR/2",
+        "statement": "按法语表达组织节奏组",
+        "status": "application-design-proposal"
+      },
+      {
+        "id": "draft/ca_YP7G86fR/3",
+        "statement": "结合语境实现重音和语调",
+        "status": "application-design-proposal"
+      },
+      {
+        "id": "draft/ca_YP7G86fR/4",
+        "statement": "听回录音并修正",
+        "status": "application-design-proposal"
+      }
+    ],
+    "evidenceDesign": "使用具体法语片段记录表现，限定材料与语境。",
+    "counterexample": "汉语停顿例子不能直接证明法语节奏能力；升调并非固定句末规则。",
+    "sourceScope": {
+      "min": "G10",
+      "max": "G12"
+    },
+    "relationPolicy": "components are dimensions/tasks; ordering here is presentation only, not validated prerequisite sequence",
+    "assessmentPolicy": "no pass threshold or grade reassignment inferred from this draft",
+    "reviewStatus": "model-proposed; not curriculum text; not applied"
+  },
+  {
+    "proposalId": "draft/ca_Q4xGAthA",
+    "discipline": "西班牙语",
+    "anchorId": "ca_Q4xGAthA",
+    "original": "能够根据图片或实物说出相应的单词、词组和短句",
+    "title": "从图片到有意义表达",
+    "components": [
+      {
+        "id": "draft/ca_Q4xGAthA/1",
+        "statement": "识别图像中要表达的信息",
+        "status": "application-design-proposal"
+      },
+      {
+        "id": "draft/ca_Q4xGAthA/2",
+        "statement": "提取合适词汇",
+        "status": "application-design-proposal"
+      },
+      {
+        "id": "draft/ca_Q4xGAthA/3",
+        "statement": "根据任务组成词组或短句",
+        "status": "application-design-proposal"
+      },
+      {
+        "id": "draft/ca_Q4xGAthA/4",
+        "statement": "检查表达是否符合交际目的",
+        "status": "application-design-proposal"
+      }
+    ],
+    "evidenceDesign": "同一场景下分别观察命名、组合和句子表达，保留各维度结果。",
+    "counterexample": "能命名单词但不会组合，不应被写成单词能力缺失。",
+    "sourceScope": {
+      "min": "G10",
+      "max": "G12"
+    },
+    "relationPolicy": "components are dimensions/tasks; ordering here is presentation only, not validated prerequisite sequence",
+    "assessmentPolicy": "no pass threshold or grade reassignment inferred from this draft",
+    "reviewStatus": "model-proposed; not curriculum text; not applied"
+  }
+]
