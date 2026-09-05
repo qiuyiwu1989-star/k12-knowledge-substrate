@@ -37,3 +37,7 @@ var/
 # 指纹在 releases/*.json（那两个才是该进 git 的东西）。
 # 注意：这只是止血，历史里那 42,041 个对象还在 —— 清掉要重写历史，那是另一个决定。
 dist/
+
+# 首页的图数据，由 tools/make_graph3d.py 生成，1.8MB。
+# 和 dist/ 同一个道理：构建产物不进 git，可重建。
+data/graph-data.js

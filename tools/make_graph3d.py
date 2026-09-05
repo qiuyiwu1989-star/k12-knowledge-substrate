@@ -197,6 +197,7 @@ def layout3d(nodes, edges, iters=420, seed=7):
 
 HTML = r"""<!doctype html><html lang="zh-CN"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1"><title>__TITLE__</title>
+<link rel="preload" as="script" href="/data/graph-data.js">
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 /* 深色是这张图的主设计（几千个发光的点需要暗底），浅色是显式覆盖。
@@ -452,8 +453,22 @@ button.cc u{text-decoration:none;font-size:12px;color:var(--mut);margin-left:aut
 <div id="marks"><span id="mn"></span><button onclick="exportMarks()">导出</button><button onclick="clearMarks()">清空</button></div>
 <button id="theme" title="切换深浅" aria-label="切换深色/浅色">◐</button>
 <div id="tip"></div>
+<script src="/data/graph-data.js"></script>
 <script>
-const N = __NODES__, E = __EDGES__, COLOR = __COLORS__, HGT = __HGT__, CCV = __CCV__;
+/* 图数据不再内联，走 /data/graph-data.js。
+   ★ 起因：首页 1,878KB 里数据占 97%（节点 1,631KB + 边 196KB），
+   而代码+样式+全部文案加起来只有 51KB。实测外网 410KB（gzip 后）
+   要 6.3 秒才下完，load 事件 10 秒 —— 同学站把这一页放进 iframe
+   预览时直接显示「拒绝了连接请求」，其实不是拒绝，是等不到。
+   两边的 frame 策略都查过，都没拦。
+
+   拆开之后：HTML 约 51KB，左栏和文案立刻出来；数据在 head 里 preload，
+   解析器还没走到 script 标签就已经在下了。总时长没省多少（带宽就那么多），
+   但**页面从一开始就是活的**，不是白屏等六秒。
+
+   数据脚本用普通 <script src>（不是 async/defer）：它必须在下面这段之前执行完，
+   下面 700 行全部依赖 N/E/COLOR。 */
+const N = window.__GN, E = window.__GE, COLOR = window.__GC, HGT = window.__GH, CCV = window.__GV;
 
 /* 横切索引：标签 → 锚点 id 列表。
    跨学科先修边只有 11 条，四万多对「练同一件事」的关联全在这里。
@@ -1095,7 +1110,18 @@ def main():
             .replace('__HGT__', str(HGT))
             .replace('__SMAX__', str(STAGE_MAX - 1)))
     p = Path(a.out); p.write_text(html, encoding='utf-8')
-    print(f"→ {p}  {p.stat().st_size/1024:.0f}KB")
+    # 数据单独一个文件。挂在 window 上而不是 const —— 内联脚本要读它，
+    # 而 const 在模块外不共享。
+    dp = p.parent / 'data' / 'graph-data.js'
+    dp.parent.mkdir(parents=True, exist_ok=True)
+    dp.write_text(
+        'window.__GN=' + json.dumps(_slim, ensure_ascii=False, separators=(',', ':')) +
+        ';window.__GE=' + json.dumps([[e['prerequisiteId'], e['anchorId']] for e in edges], separators=(',', ':')) +
+        ';window.__GC=' + json.dumps(COLORS, ensure_ascii=False) +
+        ';window.__GV=' + json.dumps(CC_VOCAB, ensure_ascii=False, separators=(',', ':')) +
+        ';window.__GH=' + str(HGT) + ';', encoding='utf-8')
+    print(f"→ {p}  {p.stat().st_size/1024:.0f}KB（原来含数据约 1,878KB）")
+    print(f"→ {dp}  {dp.stat().st_size/1024:.0f}KB")
 
 
 if __name__ == '__main__':

@@ -49,6 +49,9 @@ V=$(cat VERSION)
 N=$(find dist/a -name index.html 2>/dev/null | wc -l | tr -d ' ')
 [ "$N" -gt 2800 ] || { echo "✗ 详情页只有 $N 个，少于 2800 —— 构建没跑全"; exit 1; }
 [ -f dist/data/slice/index.json ] || { echo "✗ 分片缺失 —— make_slices 没跑或被 rm -rf dist 删了"; exit 1; }
+# 图数据从首页拆出去之后，它就成了首页能不能画出东西的单点。
+# 缺了不会报错，只会画出一张空画布 —— 正是该由闸拦的那种失败。
+[ -s dist/data/graph-data.js ] || { echo "✗ 图数据缺失 —— 首页会是空画布。build.sh 没拷？"; exit 1; }
 echo "本地闸通过：详情页 $N · 分片在 · 首页非空"
 
 tar czf /tmp/k12-dist.tgz -C dist .
