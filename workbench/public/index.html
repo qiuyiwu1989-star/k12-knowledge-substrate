@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="把应用里的学习任务映射到小学科学能力，核对课标依据，保存自己的映射判断。">
+<title>应用映射工作台 · 永乐 K12</title><link rel="stylesheet" href="./style.css"><script type="module" src="./app.js"></script></head>
+<body>
+<a class="skip" href="#results">跳到映射结果</a>
+<header class="site-header"><a class="brand" href="/">永乐<span>K12 能力底座</span></a><nav aria-label="主导航"><a href="./" aria-current="page">映射工作台</a><a href="/">全景图谱 ↗</a><a href="./integration.html">开发者接入</a></nav><button id="history" class="quiet">我的项目</button></header>
+<main>
+<section class="page-heading"><div><p class="eyebrow">小学科学 · 应用共用的能力坐标</p><h1>让每个学习任务，<span>找到能力坐标。</span></h1><p class="intro">从一段任务出发，核对它练什么、依据在哪里，再留下你的映射判断。</p></div><div class="dataset"><strong id="node-count">—</strong><span>条可引用的科学能力</span><small id="version">正在连接底座</small></div></section>
+<div id="announcement" class="announcement" role="status" aria-live="polite"></div>
+<div class="workspace">
+<aside class="input-panel"><div class="section-title"><span class="step">01</span><h2>描述你的应用</h2></div><p class="muted">写孩子实际要做的事，每行一个任务。</p>
+<form id="mapping-form"><label for="app-title">应用或课程名称</label><input id="app-title" name="title" maxlength="100" placeholder="例如：我的植物观察日记" required>
+<div class="scope-row"><div><label for="grade">目标年级</label><select id="grade" name="grade"><option value="1">一年级</option><option value="2">二年级</option><option value="3" selected>三年级</option><option value="4">四年级</option><option value="5">五年级</option><option value="6">六年级</option></select></div><div><label>学科范围</label><div class="fixed-scope">小学科学</div></div></div>
+<label for="task-text">具体学习任务 <span id="task-count">0 / 8</span></label><textarea id="task-text" rows="9" maxlength="3210" placeholder="观察植物的根、茎、叶，描述它们的外部特征。&#10;记录植物一周的生长变化，用图表展示观察结果。" required></textarea><p class="field-hint">每个任务 4–400 字，最多 8 个。请填写教学活动，不要填写学生个人信息。</p>
+<button class="primary map-button" id="map-button" type="submit"><span>寻找候选能力</span><span aria-hidden="true">↗</span></button></form>
+<div class="examples"><span>从一个例子开始</span><button data-example="plant">植物观察</button><button data-example="material">材料实验</button><button data-example="magnet">磁铁探究</button></div>
+<div class="input-note"><strong>先定位，再判断。</strong><p>当前采用字面召回。共同词语说明它为何被找到，不代表映射已经成立。</p></div>
+<div class="source-status"><span class="status-dot"></span><span id="scope-count">等待连接</span></div>
+</aside>
+<section class="results-panel" id="results" tabindex="-1"><div class="result-header"><div class="section-title"><span class="step">02</span><h2>核对能力与依据</h2></div><div class="result-actions"><button class="quiet" id="import-button">导入</button><input type="file" id="import-file" accept="application/json,.json" hidden><button class="quiet" id="export-button" disabled>导出 JSON</button><button class="secondary" id="save-button" disabled>保存项目</button></div></div>
+<div class="result-status"><p id="result-summary">还没有开始映射</p><span id="save-state">项目按当前浏览器会话保存</span></div>
+<div id="empty-state" class="empty-state"><div class="orbit" aria-hidden="true"><span class="orbit-center">任务</span><span class="orbit-node n1">观察</span><span class="orbit-node n2">比较</span><span class="orbit-node n3">解释</span></div><h3>从“做一件事”，走向“练一种能力”。</h3><p>在左侧输入任务，或选择一个示例。<br>候选能力会带着原文、出处和适用年级来到这里。</p><div class="empty-flow"><span>任务原文</span><b>→</b><span>候选能力</span><b>→</b><span>人工确认</span></div></div>
+<div id="mapped-content" hidden><div id="task-tabs" class="task-tabs" role="tablist" aria-label="任务"></div><div class="active-task"><span>当前任务</span><p id="active-task-text"></p><button id="add-capability" class="text-button">手动补充能力 +</button></div>
+<div class="review-layout"><div><div class="candidate-heading"><h3>候选池</h3><span id="candidate-count"></span></div><div id="candidate-list" class="candidate-list"></div></div><section id="detail-panel" class="detail-panel" aria-label="能力依据与映射确认"></section></div></div>
+</section>
+</div>
+<section id="coverage-section" class="coverage-section"><div class="coverage-heading"><div><div class="section-title"><span class="step">03</span><h2>看见应用的能力覆盖</h2></div><p class="muted">只展示已确认的任务关系。点击连线两端，回到对应任务与能力。</p></div><div class="coverage-legend"><span><i class="requires"></i>前置要求</span><span><i class="trains"></i>主要训练</span><span><i class="observes"></i>可观察表现</span></div></div><div id="coverage" class="coverage-empty">确认第一条映射后，这里会出现任务与能力的连接。</div><p id="coverage-summary" class="coverage-summary">覆盖描述应用提供的学习机会，不表示孩子的掌握程度。</p></section>
+<footer><span>永乐教育 · 每个应用，都能接入同一套能力语言。</span><a href="/about/">底座的方法与边界 ↗</a></footer>
+</main>
+<dialog id="history-dialog"><div class="dialog-header"><h2>我的项目</h2><button class="quiet" data-close="history-dialog" aria-label="关闭项目列表">关闭 ×</button></div><p class="muted">属于当前浏览器会话。更换设备前，请导出 JSON 留存。</p><div id="project-list"></div></dialog>
+<dialog id="catalog-dialog"><div class="dialog-header"><h2>补充一个能力</h2><button class="quiet" data-close="catalog-dialog" aria-label="关闭能力检索">关闭 ×</button></div><p class="muted">限定当前年级。补充后仍需核对任务依据并确认。</p><form id="catalog-form" class="search-row"><input id="catalog-query" maxlength="80" placeholder="搜索能力或主题，如：植物" aria-label="检索能力"><button class="secondary">检索</button></form><div id="catalog-list"></div><button class="quiet" id="catalog-more" hidden>查看更多</button></dialog>
+</body></html>

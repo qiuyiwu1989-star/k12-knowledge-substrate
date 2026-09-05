@@ -1,0 +1,37 @@
+<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>开发者接入 · 永乐 K12</title><link rel="stylesheet" href="./style.css"></head><body>
+<header class="site-header"><a class="brand" href="/">永乐<span>K12 能力底座</span></a><nav aria-label="主导航"><a href="./">映射工作台</a><a href="/">全景图谱 ↗</a><a href="./integration.html" aria-current="page">开发者接入</a></nav></header>
+<main class="integration"><p class="eyebrow">应用共用的能力坐标</p><h1>一次定义，<span>三种接入方式。</span></h1><p>网页、HTTP 和本地 MCP 使用同一套小学科学映射核心。返回的是待确认候选，映射判断保留在应用层，不回写课标底座。</p>
+<h2>HTTP · 直接映射任务</h2><p>公开只读接口，不保存提交的任务内容。目标年级 1–6，每次 1–8 个任务，每项 4–400 字。每分钟最多 20 次写方法请求；忙碌时返回 503，可稍后重试。</p>
+<pre><code>curl https://k12.yongle.school/workbench/api/map \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "title": "溶解实验室",
+    "grade": 3,
+    "tasks": [{
+      "id": "experiment-1",
+      "text": "通过对比实验，说明搅拌对食盐在水中溶解快慢的影响。"
+    }]
+  }'</code></pre>
+<table><thead><tr><th>接口</th><th>用途</th></tr></thead><tbody><tr><td>GET /workbench/api/meta</td><td>范围、年级数量、数据版本和指纹</td></tr><tr><td>GET /workbench/api/catalog?grade=3&amp;q=溶解</td><td>能力检索；支持 offset、limit 分页</td></tr><tr><td>POST /workbench/api/map</td><td>按任务召回候选</td></tr><tr><td>POST /workbench/api/validate</td><td>核验映射文件，返回规范化数据；不保存</td></tr></tbody></table>
+<h2>MCP · 给你的 AI 工具使用</h2><p>从开发分支取得仓库，需要 Node.js 与 Python 3。现有 MCP 服务新增 <code>map_science_tasks</code>，原有查询工具继续可用。当前是本地 stdio 接入，不是可粘贴到远程 MCP 配置中的 URL。</p>
+<pre><code>git clone --depth 1 --branch feat/primary-science-mapping-workbench \
+  https://github.com/qiuyiwu1989-star/k12-knowledge-substrate.git
+
+{
+  "mcpServers": {
+    "k12-substrate": {
+      "command": "node",
+      "args": ["/你的绝对路径/k12-knowledge-substrate/mcp/server.mjs"],
+      "env": { "K12_USAGE": "0" }
+    }
+  }
+}</code></pre><p>调用 <code>map_science_tasks</code>，参数与上面的 HTTP 请求相同。每条候选附课标来源、适用年级、复核来源和粒度提醒，结果同时提供 text 与 structuredContent。</p>
+<h2>Node 库 · 在自己的服务中组合</h2><pre><code>import { mapTasks, catalog, validateProject }
+  from './workbench/core.mjs';
+
+const result = await mapTasks({
+  title: '溶解实验室', grade: 3,
+  tasks: [{ id: 't1', text: '通过对比实验说明搅拌对溶解快慢的影响。' }]
+});</code></pre>
+<h2>映射记录的含义</h2><p><code>pending</code> 待确认、<code>confirmed</code> 应用映射已确认、<code>rejected</code> 已排除。关系为 <code>requires</code> 前置要求、<code>trains</code> 主要训练、<code>observes</code> 可观察表现。确认需任务原文摘录与具体理由。</p><p>保留 <code>datasetVersion</code> 与 <code>datasetFingerprint</code>。导出文件可在工作台导入并再次核验。工作台保存属于浏览器会话；第三方项目持久化请放在调用方自己的库中。</p>
+<h2>当前边界与下一步</h2><p>仅纳入年级范围完整落在 G1–G6 的可引用科学记录；可引用不代表教师已审定。字面召回会漏掉同义表达，也可能找到语义不符的节点。远程 MCP、组织授权、语义精排与教师金标准属于下一阶段。</p><p><a href="https://github.com/qiuyiwu1989-star/k12-knowledge-substrate/blob/feat/primary-science-mapping-workbench/docs/primary-science-plan.md">查看小学科学执行计划 ↗</a> · <a href="./">回到工作台 →</a></p></main></body></html>

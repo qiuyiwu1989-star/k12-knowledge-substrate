@@ -413,6 +413,8 @@ button.cc u{text-decoration:none;font-size:12px;color:var(--mut);margin-left:aut
   #panel{right:10px;top:88px;width:calc(100vw - 20px);max-width:400px;max-height:calc(100vh - 108px)}
 }
 @media(max-width:620px){#logo,#q{display:none}}
+#mapping-entry{position:fixed;right:26px;top:74px;z-index:7;font-size:12px;color:var(--fg);background:var(--chip);border:1px solid var(--line);border-radius:7px;padding:6px 12px;text-decoration:none}
+@media(max-width:1180px){#mapping-entry{top:auto;bottom:56px;right:18px}}
 </style></head><body>
 <canvas id="cv"></canvas><div id="gr"></div>
 <div id="rail">
@@ -435,6 +437,7 @@ button.cc u{text-decoration:none;font-size:12px;color:var(--mut);margin-left:aut
   <a href="/2d/">2D 视角</a>
   <em>ODbL 1.0</em>
 </div>
+<a id="mapping-entry" href="/workbench/">应用映射工作台 ↗</a>
 <input id="q" placeholder="搜索能力…（回车定位）">
 <div id="qf"><label><input type="checkbox" id="onlyusable"> 只看已复核的（__USE__ 条）</label>
 <label style="display:none"><input type="checkbox" id="onlyok"></label></div>

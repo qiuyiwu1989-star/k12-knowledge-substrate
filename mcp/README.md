@@ -19,10 +19,11 @@ Claude Code / Claude Desktop 的 MCP 配置里加：
 
 `search_anchors` 会 shell out 调 `tools/mapper.py`，所以机器上要有 `python3`。
 
-## 四个工具
+## 五个工具
 
 | | 干什么 |
 |---|---|
+| `map_science_tasks` | 按任务映射小学科学，严格 G1–G6 范围，返回待确认候选；参数见 `workbench/README.md` |
 | `search_anchors` | 把一段教学内容映射到锚点。**给 discipline**，不给会跨科召回 |
 | `get_anchor` | 一条锚点的全部：断言、课标逐字原文、判定问句、前置与后继 |
 | `get_prerequisites` | 沿前置边往上走，hard 边优先，`convention` 排最后（那不是真依赖） |
@@ -66,3 +67,5 @@ npm run mcp-test
 
 起真进程、走真 stdio、做真握手 —— 不 import 直接调函数，那测不到协议层，
 而调用方看到的恰恰只有协议层。
+
+新增的 `map_science_tasks` 复用 `workbench/core.mjs`，同时供 HTTP 和 Node 调用。无需 PostgreSQL 或 npm 安装；只有网页项目保存服务依赖数据库。

@@ -48,7 +48,7 @@ ok(/教师签字数为 0/.test(init.result?.instructions ?? ''), 'instructions �
 
 const list = await rpc('tools/list', {});
 const names = (list.result?.tools ?? []).map((t) => t.name);
-ok(names.length === 4, `四个工具都在：${names.join(' ')}`);
+ok(names.length === 5, `五个工具都在：${names.join(' ')}`);
 
 // ── search ──
 const s = body(await rpc('tools/call', { name: 'search_anchors', arguments: {

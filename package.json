@@ -27,6 +27,8 @@
     "usage-report": "node scripts/usage-report.mjs",
     "release-manifest": "node scripts/release-manifest.mjs",
     "release": "bash scripts/release.sh",
-    "edge-retagged": "node scripts/edge-retagged.mjs"
+    "edge-retagged": "node scripts/edge-retagged.mjs",
+    "workbench": "node workbench/server.mjs",
+    "workbench-test": "node --test workbench/tests/*.test.mjs"
   }
 }

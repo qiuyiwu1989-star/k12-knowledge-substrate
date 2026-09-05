@@ -24,6 +24,7 @@ import { fileURLToPath } from 'node:url';
 import { execFileSync } from 'node:child_process';
 import { createInterface } from 'node:readline';
 import { makePresenter } from './present.mjs';
+import { mapTasks, mappingTool } from '../workbench/core.mjs';
 // 计数落在 scripts/usage.mjs 里，不在 mcp/ —— 这个目录整个是只读的。
 // 那个文件被 no-writeback 单独盯着：只许一处写入、目标是 var/ 下的硬编码常量、
 // 一个联网原语都不许有。记的是「这条被碰过几次」，**不是别人认为它对应什么**。
@@ -79,6 +80,7 @@ const edgeOut = (e, otherId) => ({
 
 // ── 工具 ───────────────────────────────────────────────────────────
 const TOOLS = [
+  mappingTool,
   {
     name: 'search_anchors',
     description:
@@ -136,7 +138,10 @@ const DISCLAIMER = {
   grain: '锚点是坐标系的刻度，不是教学单元。不要当标签用、当进度用、当教案用。',
 };
 
-function callTool(name, args) {
+async function callTool(name, args) {
+  if (name === 'map_science_tasks') {
+    try { return await mapTasks(args); } catch (error) { return { error: error.message }; }
+  }
   if (name === 'search_anchors') {
     const a = ['tools/mapper.py', '--json', '--text', String(args.text ?? '')];
     if (args.discipline) a.push('--discipline', String(args.discipline));
@@ -229,7 +234,7 @@ const send = (o) => process.stdout.write(JSON.stringify(o) + '\n');
 const rl = createInterface({ input: process.stdin });
 rl.on('close', flush);
 for (const sig of ['SIGINT', 'SIGTERM']) process.on(sig, () => { flush(); process.exit(0); });
-rl.on('line', (line) => {
+rl.on('line', async (line) => {
   if (!line.trim()) return;
   let msg;
   try { msg = JSON.parse(line); } catch { return; }
@@ -249,9 +254,10 @@ rl.on('line', (line) => {
   if (method === 'notifications/initialized') return;
   if (method === 'tools/list') return send({ jsonrpc: '2.0', id, result: { tools: TOOLS } });
   if (method === 'tools/call') {
-    const r = callTool(params?.name, params?.arguments ?? {});
+    const r = await callTool(params?.name, params?.arguments ?? {});
     return send({ jsonrpc: '2.0', id, result: {
       content: [{ type: 'text', text: JSON.stringify(r, null, 1) }],
+      structuredContent: r,
       isError: Boolean(r.error),
     } });
   }

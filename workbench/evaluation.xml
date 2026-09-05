@@ -1,0 +1,42 @@
+<evaluation>
+  <qa_pair>
+    <question>在底座 v1.4 中，为三年级应用定位任务「通过对比实验说明搅拌对物质在水中溶解快慢的影响」，先用 map_science_tasks，再用 get_anchor 核对候选的出处及适用年级。只返回完整描述与该任务一致、没有扩大到其他并列动作的候选 ID。</question>
+    <answer>ca_VKU9hc8E</answer>
+  </qa_pair>
+  <qa_pair>
+    <question>在底座 v1.4 中，为三年级应用定位任务「通过对比实验说明温度高低对物质在水中溶解快慢的影响」，先用 map_science_tasks，再用 get_anchor 核对候选的出处及适用年级。只返回完整描述与该任务一致、没有扩大到其他并列动作的候选 ID。</question>
+    <answer>ca_d2XpK8Ar</answer>
+  </qa_pair>
+  <qa_pair>
+    <question>在底座 v1.4 中，为三年级应用定位任务「利用工具测量并描述常见物体的特征和材料的性能」，先用 map_science_tasks，再用 get_anchor 核对候选的出处及适用年级。只返回完整描述与该任务一致、没有扩大到其他并列动作的候选 ID。</question>
+    <answer>ca_mCSatHY7</answer>
+  </qa_pair>
+  <qa_pair>
+    <question>在底座 v1.4 中，为三年级应用定位任务「测量并描述物体的温度」，先用 map_science_tasks，再用 get_anchor 核对候选的出处及适用年级。只返回完整描述与该任务一致、没有扩大到其他并列动作的候选 ID。</question>
+    <answer>ca_NLrxDJ1m</answer>
+  </qa_pair>
+  <qa_pair>
+    <question>在底座 v1.4 中，为三年级应用定位任务「指出地球在太阳系示意图中的位置，并说出太阳系中另外两颗行星的名称」，先用 map_science_tasks，再用 get_anchor 核对候选的出处及适用年级。只返回完整描述与该任务一致、没有扩大到其他并列动作的候选 ID。</question>
+    <answer>ca_76AhhG9F</answer>
+  </qa_pair>
+  <qa_pair>
+    <question>在底座 v1.4 中，为三年级应用定位任务「指出或描述月球表面的一个显著特征（如环形山、月海等）」，先用 map_science_tasks，再用 get_anchor 核对候选的出处及适用年级。只返回完整描述与该任务一致、没有扩大到其他并列动作的候选 ID。</question>
+    <answer>ca_Cyr2GPAb</answer>
+  </qa_pair>
+  <qa_pair>
+    <question>在底座 v1.4 中，为三年级应用定位任务「测量并记录一天中不同时刻的物体影长」，先用 map_science_tasks，再用 get_anchor 核对候选的出处及适用年级。只返回完整描述与该任务一致、没有扩大到其他并列动作的候选 ID。</question>
+    <answer>ca_1Gjv3P0f</answer>
+  </qa_pair>
+  <qa_pair>
+    <question>在底座 v1.4 中，为三年级应用定位任务「列举当地的植物资源，尤其是与人类生活密切相关的植物」，先用 map_science_tasks，再用 get_anchor 核对候选的出处及适用年级。只返回完整描述与该任务一致、没有扩大到其他并列动作的候选 ID。</question>
+    <answer>ca_48jKLSrh</answer>
+  </qa_pair>
+  <qa_pair>
+    <question>在底座 v1.4 中，为三年级应用定位任务「说出电源、导线、用电器和开关是构成电路的必要元件」，先用 map_science_tasks，再用 get_anchor 核对候选的出处及适用年级。只返回完整描述与该任务一致、没有扩大到其他并列动作的候选 ID。</question>
+    <answer>ca_7LrflvaG</answer>
+  </qa_pair>
+  <qa_pair>
+    <question>在底座 v1.4 中，为三年级应用定位任务「通过制作简易装置改变振动的幅度与频率」，先用 map_science_tasks，再用 get_anchor 核对候选的出处及适用年级。只返回完整描述与该任务一致、没有扩大到其他并列动作的候选 ID。</question>
+    <answer>ca_gscUD1zB</answer>
+  </qa_pair>
+</evaluation>

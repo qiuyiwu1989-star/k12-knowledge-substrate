@@ -1,0 +1,8 @@
+{
+  "name": "k12-mapping-workbench",
+  "private": true,
+  "type": "module",
+  "engines": { "node": ">=22.13" },
+  "scripts": { "start": "node server.mjs", "test": "node --test tests/*.test.mjs" },
+  "dependencies": { "pg": "^8.16.3" }
+}

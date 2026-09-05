@@ -33,6 +33,8 @@ const ROOT = process.env.K12_ROOT ?? resolve(dirname(fileURLToPath(import.meta.u
 
 // 登记为只读的工具。加新的对外查询工具时必须加进来。
 const READONLY = [
+  'workbench/core.mjs',
+  'workbench/recall.py',
   'tools/mapper.py',        // 把别人的内容映射到锚点 ID —— 结果留在调用方那边
   'tools/citable.py',       // 读 mappings/citable.json
   'scripts/lib/citable.mjs',
