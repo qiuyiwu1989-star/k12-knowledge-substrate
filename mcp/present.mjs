@@ -32,6 +32,7 @@ export function makePresenter(ROOT) {
     const out = {
       id: a.id,
       statement: a.statement,
+      sourceKind: a.evidenceSource === 'capability-rewrite' ? 'derived' : 'standard',
       discipline: a.discipline,
       stage: { min: s.min ?? null, max: s.max ?? null },
       track: a.track ?? null,

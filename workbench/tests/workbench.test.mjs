@@ -15,6 +15,9 @@ const clone = value => JSON.parse(JSON.stringify(value));
 
 test('005: scientific scope excludes deprecated, non-citable and cross-secondary records', () => {
   assert.ok(metadata().count > 0);
+  assert.equal(getCapability('ca_VKU9hc8E').sourceKind, 'derived');
+  assert.equal(getCapability('ca_d2XpK8Ar').sourceKind, 'derived');
+  assert.equal(getCapability('ca_cvPPJHbz').sourceKind, 'standard');
   for (let grade = 1; grade <= 6; grade++) {
     const page = catalog({ grade, limit: 100 });
     for (const a of page.items) {

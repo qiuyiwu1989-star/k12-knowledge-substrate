@@ -18,6 +18,7 @@
             "anchor": {
               "id": "ca_VKU9hc8E",
               "statement": "能通过对比实验说明搅拌对物质在水中溶解快慢的影响",
+              "sourceKind": "derived",
               "discipline": "科学",
               "stage": {
                 "min": "G3",
@@ -25,7 +26,7 @@
               },
               "track": "MATRIX",
               "provenance": {
-                "document": "义务教育科学课程标准（2022年版）",
+                "document": "能力转写（由课标锚点推导，非课标原话）",
                 "subject": "科学",
                 "page": 36,
                 "stage": null,
@@ -55,7 +56,6 @@
                 "探究实践"
               ],
               "evidenceSource": "capability-rewrite",
-              "sourceKind": "standard",
               "detailUrl": "https://k12.yongle.school/a/ca_VKU9hc8E/"
             },
             "status": "confirmed",
@@ -74,6 +74,7 @@
             "anchor": {
               "id": "ca_d2XpK8Ar",
               "statement": "能通过对比实验说明温度高低对物质在水中溶解快慢的影响",
+              "sourceKind": "derived",
               "discipline": "科学",
               "stage": {
                 "min": "G3",
@@ -81,7 +82,7 @@
               },
               "track": "MATRIX",
               "provenance": {
-                "document": "义务教育科学课程标准（2022年版）",
+                "document": "能力转写（由课标锚点推导，非课标原话）",
                 "subject": "科学",
                 "page": 36,
                 "stage": null,
@@ -111,7 +112,6 @@
                 "探究实践"
               ],
               "evidenceSource": "capability-rewrite",
-              "sourceKind": "standard",
               "detailUrl": "https://k12.yongle.school/a/ca_d2XpK8Ar/"
             },
             "status": "rejected",
@@ -129,6 +129,7 @@
             "anchor": {
               "id": "ca_nCCmJWwZ",
               "statement": "能通过对比实验，说明搅拌和温度高低对物质在水中溶解快慢的影响",
+              "sourceKind": "derived",
               "discipline": "科学",
               "stage": {
                 "min": "G3",
@@ -169,7 +170,6 @@
                 "探究实践"
               ],
               "evidenceSource": "capability-rewrite",
-              "sourceKind": "derived",
               "detailUrl": "https://k12.yongle.school/a/ca_nCCmJWwZ/"
             },
             "status": "rejected",
@@ -188,6 +188,7 @@
             "anchor": {
               "id": "ca_cvPPJHbz",
               "statement": "能说出是否搅拌和温度高低是影响物质在水中溶解快慢的常见因素",
+              "sourceKind": "standard",
               "discipline": "科学",
               "stage": {
                 "min": "G3",
@@ -225,7 +226,6 @@
                 "探究实践"
               ],
               "evidenceSource": "curriculum-content",
-              "sourceKind": "standard",
               "detailUrl": "https://k12.yongle.school/a/ca_cvPPJHbz/"
             },
             "status": "rejected",
@@ -243,6 +243,7 @@
             "anchor": {
               "id": "ca_1Gjv3P0f",
               "statement": "能测量并记录一天中不同时刻的物体影长",
+              "sourceKind": "standard",
               "discipline": "科学",
               "stage": {
                 "min": "G3",
@@ -280,7 +281,6 @@
                 "探究实践"
               ],
               "evidenceSource": "curriculum-content",
-              "sourceKind": "standard",
               "detailUrl": "https://k12.yongle.school/a/ca_1Gjv3P0f/"
             },
             "status": "rejected",
@@ -297,6 +297,7 @@
             "anchor": {
               "id": "ca_fcC35IDz",
               "statement": "能观察并分析常见的生物，对其进行排序和分类",
+              "sourceKind": "standard",
               "discipline": "科学",
               "stage": {
                 "min": "G3",
@@ -334,7 +335,6 @@
                 "科学思维"
               ],
               "evidenceSource": "curriculum-content",
-              "sourceKind": "standard",
               "detailUrl": "https://k12.yongle.school/a/ca_fcC35IDz/"
             },
             "status": "rejected",
@@ -357,6 +357,7 @@
             "anchor": {
               "id": "ca_d2XpK8Ar",
               "statement": "能通过对比实验说明温度高低对物质在水中溶解快慢的影响",
+              "sourceKind": "derived",
               "discipline": "科学",
               "stage": {
                 "min": "G3",
@@ -364,7 +365,7 @@
               },
               "track": "MATRIX",
               "provenance": {
-                "document": "义务教育科学课程标准（2022年版）",
+                "document": "能力转写（由课标锚点推导，非课标原话）",
                 "subject": "科学",
                 "page": 36,
                 "stage": null,
@@ -394,7 +395,6 @@
                 "探究实践"
               ],
               "evidenceSource": "capability-rewrite",
-              "sourceKind": "standard",
               "detailUrl": "https://k12.yongle.school/a/ca_d2XpK8Ar/"
             },
             "status": "confirmed",
@@ -411,6 +411,7 @@
             "anchor": {
               "id": "ca_nCCmJWwZ",
               "statement": "能通过对比实验，说明搅拌和温度高低对物质在水中溶解快慢的影响",
+              "sourceKind": "derived",
               "discipline": "科学",
               "stage": {
                 "min": "G3",
@@ -451,7 +452,6 @@
                 "探究实践"
               ],
               "evidenceSource": "capability-rewrite",
-              "sourceKind": "derived",
               "detailUrl": "https://k12.yongle.school/a/ca_nCCmJWwZ/"
             },
             "status": "rejected",
@@ -471,6 +471,7 @@
             "anchor": {
               "id": "ca_VKU9hc8E",
               "statement": "能通过对比实验说明搅拌对物质在水中溶解快慢的影响",
+              "sourceKind": "derived",
               "discipline": "科学",
               "stage": {
                 "min": "G3",
@@ -478,7 +479,7 @@
               },
               "track": "MATRIX",
               "provenance": {
-                "document": "义务教育科学课程标准（2022年版）",
+                "document": "能力转写（由课标锚点推导，非课标原话）",
                 "subject": "科学",
                 "page": 36,
                 "stage": null,
@@ -508,7 +509,6 @@
                 "探究实践"
               ],
               "evidenceSource": "capability-rewrite",
-              "sourceKind": "standard",
               "detailUrl": "https://k12.yongle.school/a/ca_VKU9hc8E/"
             },
             "status": "rejected",
@@ -527,6 +527,7 @@
             "anchor": {
               "id": "ca_cvPPJHbz",
               "statement": "能说出是否搅拌和温度高低是影响物质在水中溶解快慢的常见因素",
+              "sourceKind": "standard",
               "discipline": "科学",
               "stage": {
                 "min": "G3",
@@ -564,7 +565,6 @@
                 "探究实践"
               ],
               "evidenceSource": "curriculum-content",
-              "sourceKind": "standard",
               "detailUrl": "https://k12.yongle.school/a/ca_cvPPJHbz/"
             },
             "status": "rejected",
@@ -584,6 +584,7 @@
             "anchor": {
               "id": "ca_xryQqMe6",
               "statement": "能举例说明一个化学变化中物质性质的改变和新物质的生成",
+              "sourceKind": "derived",
               "discipline": "科学",
               "stage": {
                 "min": "G1",
@@ -621,7 +622,6 @@
                 "科学观念"
               ],
               "evidenceSource": "capability-rewrite",
-              "sourceKind": "derived",
               "detailUrl": "https://k12.yongle.school/a/ca_xryQqMe6/"
             },
             "status": "rejected",
@@ -640,6 +640,7 @@
             "anchor": {
               "id": "ca_g7CDvcXQ",
               "statement": "能比较两个物体运动快慢，相同时间比路程或相同路程比时间",
+              "sourceKind": "standard",
               "discipline": "科学",
               "stage": {
                 "min": "G1",
@@ -677,7 +678,6 @@
                 "科学思维"
               ],
               "evidenceSource": "curriculum-content",
-              "sourceKind": "standard",
               "detailUrl": "https://k12.yongle.school/a/ca_g7CDvcXQ/"
             },
             "status": "rejected",
@@ -701,6 +701,7 @@
             "anchor": {
               "id": "ca_VKU9hc8E",
               "statement": "能通过对比实验说明搅拌对物质在水中溶解快慢的影响",
+              "sourceKind": "derived",
               "discipline": "科学",
               "stage": {
                 "min": "G3",
@@ -708,7 +709,7 @@
               },
               "track": "MATRIX",
               "provenance": {
-                "document": "义务教育科学课程标准（2022年版）",
+                "document": "能力转写（由课标锚点推导，非课标原话）",
                 "subject": "科学",
                 "page": 36,
                 "stage": null,
@@ -738,7 +739,6 @@
                 "探究实践"
               ],
               "evidenceSource": "capability-rewrite",
-              "sourceKind": "standard",
               "detailUrl": "https://k12.yongle.school/a/ca_VKU9hc8E/"
             },
             "status": "confirmed",
@@ -757,6 +757,7 @@
             "anchor": {
               "id": "ca_nCCmJWwZ",
               "statement": "能通过对比实验，说明搅拌和温度高低对物质在水中溶解快慢的影响",
+              "sourceKind": "derived",
               "discipline": "科学",
               "stage": {
                 "min": "G3",
@@ -797,7 +798,6 @@
                 "探究实践"
               ],
               "evidenceSource": "capability-rewrite",
-              "sourceKind": "derived",
               "detailUrl": "https://k12.yongle.school/a/ca_nCCmJWwZ/"
             },
             "status": "rejected",
@@ -817,6 +817,7 @@
             "anchor": {
               "id": "ca_d2XpK8Ar",
               "statement": "能通过对比实验说明温度高低对物质在水中溶解快慢的影响",
+              "sourceKind": "derived",
               "discipline": "科学",
               "stage": {
                 "min": "G3",
@@ -824,7 +825,7 @@
               },
               "track": "MATRIX",
               "provenance": {
-                "document": "义务教育科学课程标准（2022年版）",
+                "document": "能力转写（由课标锚点推导，非课标原话）",
                 "subject": "科学",
                 "page": 36,
                 "stage": null,
@@ -854,7 +855,6 @@
                 "探究实践"
               ],
               "evidenceSource": "capability-rewrite",
-              "sourceKind": "standard",
               "detailUrl": "https://k12.yongle.school/a/ca_d2XpK8Ar/"
             },
             "status": "rejected",
@@ -873,6 +873,7 @@
             "anchor": {
               "id": "ca_cvPPJHbz",
               "statement": "能说出是否搅拌和温度高低是影响物质在水中溶解快慢的常见因素",
+              "sourceKind": "standard",
               "discipline": "科学",
               "stage": {
                 "min": "G3",
@@ -910,7 +911,6 @@
                 "探究实践"
               ],
               "evidenceSource": "curriculum-content",
-              "sourceKind": "standard",
               "detailUrl": "https://k12.yongle.school/a/ca_cvPPJHbz/"
             },
             "status": "rejected",
@@ -929,6 +929,7 @@
             "anchor": {
               "id": "ca_NS7Fzf83",
               "statement": "能判断给定的变化是否属于物理变化，并说明理由",
+              "sourceKind": "derived",
               "discipline": "科学",
               "stage": {
                 "min": "G1",
@@ -969,7 +970,6 @@
                 "科学思维"
               ],
               "evidenceSource": "capability-rewrite",
-              "sourceKind": "derived",
               "detailUrl": "https://k12.yongle.school/a/ca_NS7Fzf83/"
             },
             "status": "rejected",
@@ -988,6 +988,7 @@
             "anchor": {
               "id": "ca_PEJuSJi2",
               "statement": "能说出人的生命起点是受精卵，并指出其在母体内的发育场所",
+              "sourceKind": "derived",
               "discipline": "科学",
               "stage": {
                 "min": "G1",
@@ -1028,7 +1029,6 @@
                 "科学观念"
               ],
               "evidenceSource": "capability-rewrite",
-              "sourceKind": "derived",
               "detailUrl": "https://k12.yongle.school/a/ca_PEJuSJi2/"
             },
             "status": "rejected",

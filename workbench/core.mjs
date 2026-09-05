@@ -36,12 +36,12 @@ for (const filename of readdirSync(join(ROOT, 'anchors')).sort()) {
     const a = JSON.parse(line);
     if (a.discipline !== '科学') continue;
     hash.update(line);
-    a._doc = filename.startsWith('rewrite-') ? '能力转写（由课标锚点推导，非课标原话）' : '义务教育科学课程标准（2022年版）';
+    a._doc = a.evidenceSource === 'capability-rewrite' ? '能力转写（由课标锚点推导，非课标原话）' : '义务教育科学课程标准（2022年版）';
     const p = present(a, { full: true });
     const lo = Number(p.stage.min?.slice(1)), hi = Number(p.stage.max?.slice(1));
     if (a.deprecated || !p.citable || !Number.isInteger(lo) || !Number.isInteger(hi) || lo > hi || lo < 1 || hi > 6) continue;
     source.set(a.id, { ...p, dimension: a.dimension ?? '未分类', literacy: a.literacy ?? [],
-      evidenceSource: a.evidenceSource ?? null, sourceKind: filename.startsWith('rewrite-') ? 'derived' : 'standard',
+      evidenceSource: a.evidenceSource ?? null, sourceKind: p.sourceKind,
       detailUrl: `https://k12.yongle.school/a/${encodeURIComponent(a.id)}/` });
   }
 }
