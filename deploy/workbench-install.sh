@@ -139,6 +139,8 @@ if ! nginx -t; then
   echo "Nginx test failed; restored backup: $backup" >&2; exit 1
 fi
 systemctl reload nginx
-curl --fail --silent --resolve k12.yongle.school:443:127.0.0.1 https://k12.yongle.school/workbench/api/health
+# Reload returns before the new workers necessarily accept connections.
+curl --fail --silent --show-error --retry 10 --retry-all-errors --retry-delay 1 --max-time 5 \
+  --resolve k12.yongle.school:443:127.0.0.1 https://k12.yongle.school/workbench/api/health
 trap - ERR
 printf '\nRelease: %s\nBackup: %s\n' "$revision" "$backup"
