@@ -19,6 +19,7 @@ python3 tools/split_teacher_sheet.py
 rm -rf dist && mkdir -p dist/2d dist/data
 cp graph-3d.html dist/index.html    # 首页是 3D
 cp graph.html    dist/2d/index.html # /2d 是俯视版
+cp -r site/mcp dist/mcp            # MCP 介绍与本地接入说明
 # ⚠️ 分片必须在 `rm -rf dist` **之后**跑。第一版放在了前面，刚生成就被删掉 ——
 #    而部署脚本里的 `test -f .../slice/index.json` 闸当场拦住了切换，
 #    线上没被换成缺分片的版本。**闸比我可靠。**

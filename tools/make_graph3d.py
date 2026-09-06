@@ -433,6 +433,7 @@ button.cc u{text-decoration:none;font-size:12px;color:var(--mut);margin-left:aut
 <div id="cta">
   <a href="/list/">全部能力点</a>
   <a href="/about/">方法论</a>
+  <a id="mcp-entry" href="/mcp/">MCP 接入</a>
   <a href="https://github.com/qiuyiwu1989-star/k12-knowledge-substrate" target="_blank" rel="noopener">GitHub</a>
   <a href="/2d/">2D 视角</a>
   <em>ODbL 1.0</em>

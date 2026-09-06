@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="description" content="通过本地 MCP 将永乐 K12 能力底座接入 AI：查询课标能力、核对来源、映射小学科学任务。"><title>MCP 接入 · 永乐 K12</title><link rel="stylesheet" href="./style.css"><script src="./app.js" defer></script></head>
+<body><header><a class="brand" href="/">永乐 <span>K12 学习基础设施</span></a><nav aria-label="主导航"><a href="/">能力图谱</a><a href="/zhishi/">知识体系</a><a href="/workbench/">映射工作台</a><a href="/mcp/" aria-current="page">MCP 接入</a></nav></header>
+<main><section class="hero"><p class="eyebrow">FOR AGENTS & APPLICATIONS</p><h1>让你的 AI，<br>读懂学习的坐标。</h1><p class="lead">查询课标能力，展开来源依据，把应用里的具体任务映射到能力候选。让不同应用，使用同一套可追溯的坐标。</p><div class="actions"><a class="primary" href="#connect">开始接入 <span>↓</span></a><a href="/workbench/example.html">先看一个完整案例 ↗</a></div><div class="status"><span class="dot"></span><b>本地 MCP 可用</b><span>stdio · 5 个工具 · 只读查询</span></div></section>
+<section class="flow" aria-label="MCP 的使用流程"><div><span>01 / INPUT</span><h2>你的应用任务</h2><p>一节课、一道题<br>一次实验或一个活动</p></div><b class="arrow" aria-hidden="true">→</b><div><span>02 / MCP</span><h2>K12 能力底座</h2><p>定位候选 · 核对来源<br>查看范围与关系</p></div><b class="arrow" aria-hidden="true">→</b><div><span>03 / OUTPUT</span><h2>可解释的映射</h2><p>能力 ID · 课标出处<br>候选理由 · 待确认项</p></div></section>
+<aside class="notice"><strong>现在怎么用</strong><p>当前支持在自己的电脑或应用运行环境中启动 MCP。此页面是使用说明，<b>不是远程 MCP 接口地址</b>。远程 MCP、知识与课程联合查询仍在规划中。</p></aside>
+<section id="connect"><div class="section-head"><p class="eyebrow">QUICK START</p><h2>三步，接入你的 AI 工具。</h2><p>准备 Git、Node.js 22.13 或更高版本、Python 3，以及支持本地 stdio 的 MCP 客户端。无需安装 npm 依赖；<code>node</code> 与 <code>python3</code> 需要在客户端进程的 PATH 中。</p></div>
+<article class="setup"><div class="number">1</div><div><h3>取得可复现的版本</h3><p>下面固定到本页核验的提交，避免开发分支后续变化影响接入。</p><div class="codehead"><span>终端</span><button data-copy="clone">复制命令</button></div><pre id="clone"><code>git clone --branch audit/release-readiness-20260906 \
+  https://github.com/qiuyiwu1989-star/k12-knowledge-substrate.git
+cd k12-knowledge-substrate
+git checkout d80cb1a
+npm run mcp-test</code></pre><p class="small">测试会启动真实 MCP 进程并检查通信。手动执行 <code>node mcp/server.mjs</code> 后等待输入是正常行为。</p></div></article>
+<article class="setup"><div class="number">2</div><div><h3>添加本地 MCP 配置</h3><p>以下适用于接受 <code>mcpServers</code> JSON 配置的客户端。替换成仓库在你机器上的绝对路径；其他客户端按其格式填写同样的 command、args 和 env。</p><div class="codehead"><span>客户端 MCP 配置</span><button data-copy="config">复制配置</button></div><pre id="config"><code>{
+  "mcpServers": {
+    "k12-substrate": {
+      "command": "node",
+      "args": ["/你的绝对路径/k12-knowledge-substrate/mcp/server.mjs"],
+      "env": { "K12_USAGE": "0" }
+    }
+  }
+}</code></pre><p class="small">保存后让客户端重新加载 MCP。若提示找不到 node，填写 <code>node</code> 可执行文件的绝对路径；同时确保 Python 3 可被该进程找到。</p></div></article>
+<article class="setup"><div class="number">3</div><div><h3>把一个真实任务交给 Agent</h3><div class="prompt"><p id="prompt">请用 K12 MCP，为三年级“通过对比实验说明搅拌对食盐溶解快慢的影响”查找能力候选。展开关键候选的课标来源，说明哪些是推导改写，以及还需要什么证据才能评价实验能力。</p><button data-copy="prompt">复制示例指令</button></div><p>客户端应能发现下方 5 个工具。先看候选，再展开依据；返回映射不等于学生已经掌握。</p></div></article></section>
+<section><div class="section-head"><p class="eyebrow">AVAILABLE NOW</p><h2>当前可以调用的 5 个工具</h2></div><div class="tool-list"><div><code>search_anchors</code><p>根据教学文本寻找能力候选，建议指定学科和年级。</p></div><div><code>get_anchor</code><p>按 ID 查看能力表述、来源片段、证据描述和关联。</p></div><div><code>get_prerequisites</code><p>查看已有依赖链。关系仍需核验，hard 标签不能直接作为学习门槛。</p></div><div><code>list_slice</code><p>查看学科、学段或年级分片；读取分片需要本地已有构建产物。</p></div><div><code>map_science_tasks</code><p>映射小学科学具体任务，支持 1–6 年级，返回待确认候选。</p></div></div>
+<details><summary>开发者：查看 map_science_tasks 调用参数</summary><p>这是工具 arguments，不是完整 JSON-RPC 请求。每次 1–8 个任务，任务文本每项 4–400 字。</p><div class="codehead"><span>工具参数</span><button data-copy="arguments">复制参数</button></div><pre id="arguments"><code>{
+  "title": "溶解实验室",
+  "grade": 3,
+  "tasks": [{
+    "id": "experiment-1",
+    "text": "通过对比实验说明搅拌对食盐在水中溶解快慢的影响。"
+  }]
+}</code></pre><p><a href="/workbench/integration.html">查看 HTTP 与 Node 库接入说明 ↗</a></p></details></section>
+<section class="reading"><div class="section-head"><p class="eyebrow">READ THE RESULT</p><h2>拿到结果后，先看这四件事。</h2></div><div class="four"><div><b>01</b><h3>候选是什么</h3><p>能力表述与稳定 ID。文本相似只用于召回，需要结合任务核对。</p></div><div><b>02</b><h3>依据在哪里</h3><p>课标来源、页码和保留的片段。推导改写与课标表述分开看。</p></div><div><b>03</b><h3>适用到哪里</h3><p>年级范围、任务条件和粒度提醒。宽范围不等于精确年级要求。</p></div><div><b>04</b><h3>还有什么未知</h3><p>AI 审阅不等于教师审定。应用覆盖、评价设计与学生掌握分别判断。</p></div></div></section>
+<section class="roadmap"><p class="eyebrow">NEXT / CANDIDATE SPECIFICATION</p><h2>面向多应用的下一代 MCP</h2><p>候选规范 v0.1 定义了统一发现、按需读取、来源核验、关系解释和应用映射。新增的 <code>k12_*</code> 工具尚未实现；当前接入仍使用上面的 5 个工具。</p><div class="doclinks"><a href="https://github.com/qiuyiwu1989-star/k12-knowledge-substrate/blob/d80cb1a/docs/k12-mcp-v0.1.md">阅读候选规范 ↗</a><a href="https://github.com/qiuyiwu1989-star/k12-knowledge-substrate/blob/d80cb1a/docs/k12-agent-guide.md">Agent 读取指南 ↗</a><a href="https://github.com/qiuyiwu1989-star/k12-knowledge-substrate/blob/d80cb1a/docs/k12-mcp-tool-catalog.v0.1.json">工具定义 JSON ↗</a></div></section>
+<section><details><summary>常见问题与使用边界</summary><h3>能否把本页面 URL 粘贴到远程 MCP 配置？</h3><p>不能。当前提供本地 stdio 服务。网页工作台的 HTTP API 也不是远程 MCP endpoint。</p><h3>list_slice 提示分片未生成？</h3><p>它读取本地构建产物；尚未构建时先用 search_anchors 或 get_anchor。完整构建方式见仓库 deploy/README.md。</p><h3>是否会修改公共图谱？</h3><p>MCP 查询与映射不会回写课标能力底座。应用的映射判断由调用方保存；示例配置关闭本地使用计数。</p><h3>知识体系和课程查询现在能用吗？</h3><p>尚未接入当前 MCP。可以先浏览知识体系页面，联合查询能力以未来实际工具清单为准。</p></details></section>
+<p id="copy-status" class="sr-only" role="status" aria-live="polite"></p></main><footer><a href="/">永乐 K12</a><span>项目维护方接入说明 · 更新于 2026-09-06</span><a href="https://github.com/qiuyiwu1989-star/k12-knowledge-substrate/tree/d80cb1a">查看核验源码 ↗</a></footer></body></html>
