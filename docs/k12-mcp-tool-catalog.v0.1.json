@@ -1,0 +1,529 @@
+{
+  "catalog_version": "0.1",
+  "status": "draft-not-runtime-tools-list",
+  "service_name": "k12-learning-infrastructure",
+  "implemented": false,
+  "domain_schema_version": "0.1",
+  "policy_version": "0.1",
+  "transport_protocol_version": null,
+  "transport_note": "Select and test an explicit protocol support matrix; this catalog is transport-independent. No new remote endpoint is deployed.",
+  "tools": [
+    {
+      "name": "k12_get_profile",
+      "description": "首次接入或检查服务支持范围时使用；可按 section 读取指南。返回实际可用对象、快照、策略和限制。已知 ID 可直接读对象，无需每次先调用本工具。",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "section": {
+            "type": "string",
+            "enum": [
+              "overview",
+              "guide",
+              "schemas",
+              "policies"
+            ],
+            "default": "overview"
+          }
+        },
+        "required": [],
+        "additionalProperties": false
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      },
+      "x-k12": {
+        "status": "proposed",
+        "phase": "P0",
+        "implemented": false,
+        "return_fields": [
+          "availability",
+          "snapshots",
+          "policy_version",
+          "limits",
+          "guide"
+        ],
+        "output_schema_status": "required-before-implementation-release"
+      }
+    },
+    {
+      "name": "k12_search_entities",
+      "description": "按主题或教学文本找学习对象候选。建议给学科/年级；返回短摘要、理由和出处状态。不是确认映射或掌握度；已有 ID 用 get_entities。",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "query": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 10000
+          },
+          "types": {
+            "type": "array",
+            "items": {
+              "enum": [
+                "knowledge",
+                "capability",
+                "performance_level",
+                "course",
+                "unit",
+                "resource",
+                "theme"
+              ]
+            },
+            "minItems": 1,
+            "uniqueItems": true
+          },
+          "filters": {
+            "type": "object",
+            "properties": {
+              "discipline": {
+                "type": "string",
+                "minLength": 1
+              },
+              "grade": {
+                "type": "string",
+                "pattern": "^G([1-9]|1[0-2])$"
+              },
+              "curriculum_revision": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "additionalProperties": false
+          },
+          "snapshot": {
+            "type": "string",
+            "minLength": 1
+          },
+          "limit": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 50,
+            "default": 8
+          },
+          "cursor": {
+            "type": "string",
+            "minLength": 1
+          },
+          "max_chars": {
+            "type": "integer",
+            "minimum": 2000,
+            "maximum": 50000,
+            "default": 12000,
+            "description": "候选字符预算，完整记录返回；省略/续取必须明示"
+          }
+        },
+        "required": [
+          "query"
+        ],
+        "additionalProperties": false
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      },
+      "x-k12": {
+        "status": "proposed",
+        "phase": "P0",
+        "implemented": false,
+        "return_fields": [
+          "candidates",
+          "match_reason",
+          "evidence_refs",
+          "coverage",
+          "next_actions"
+        ],
+        "output_schema_status": "required-before-implementation-release"
+      }
+    },
+    {
+      "name": "k12_get_entities",
+      "description": "按真实 ID 和版本批量读取对象。用于核对能力表述、范围、来源和状态；保留原顺序及逐项错误。不得静默替换旧版本。",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "refs": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "namespace": {
+                  "type": "string",
+                  "minLength": 1,
+                  "description": "命名空间；当前能力库建议 capability"
+                },
+                "id": {
+                  "type": "string",
+                  "minLength": 1,
+                  "description": "工具返回的真实 ID，不猜测"
+                },
+                "revision": {
+                  "type": "string",
+                  "minLength": 1,
+                  "description": "工具返回的不可变版本"
+                }
+              },
+              "required": [
+                "namespace",
+                "id",
+                "revision"
+              ],
+              "additionalProperties": false
+            },
+            "minItems": 1,
+            "maxItems": 20
+          },
+          "detail": {
+            "enum": [
+              "summary",
+              "full"
+            ],
+            "default": "full"
+          },
+          "max_chars": {
+            "type": "integer",
+            "minimum": 2000,
+            "maximum": 50000,
+            "default": 12000,
+            "description": "候选字符预算，完整记录返回；省略/续取必须明示"
+          }
+        },
+        "required": [
+          "refs"
+        ],
+        "additionalProperties": false
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      },
+      "x-k12": {
+        "status": "proposed",
+        "phase": "P0",
+        "implemented": false,
+        "return_fields": [
+          "items",
+          "item_errors",
+          "origin",
+          "review",
+          "scope",
+          "evidence_refs"
+        ],
+        "output_schema_status": "required-before-implementation-release"
+      }
+    },
+    {
+      "name": "k12_get_source_context",
+      "description": "核对工具返回的来源引用及相邻上下文。返回来源版本、栏目和可用位置；只有抽取片段时明确报告，不能伪称读过原 PDF。",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "ref": {
+            "type": "object",
+            "properties": {
+              "namespace": {
+                "type": "string",
+                "minLength": 1,
+                "description": "命名空间；当前能力库建议 capability"
+              },
+              "id": {
+                "type": "string",
+                "minLength": 1,
+                "description": "工具返回的真实 ID，不猜测"
+              },
+              "revision": {
+                "type": "string",
+                "minLength": 1,
+                "description": "工具返回的不可变版本"
+              }
+            },
+            "required": [
+              "namespace",
+              "id",
+              "revision"
+            ],
+            "additionalProperties": false
+          },
+          "context_paragraphs": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 5,
+            "default": 1
+          },
+          "max_chars": {
+            "type": "integer",
+            "minimum": 2000,
+            "maximum": 50000,
+            "default": 12000,
+            "description": "候选字符预算，完整记录返回；省略/续取必须明示"
+          }
+        },
+        "required": [
+          "ref"
+        ],
+        "additionalProperties": false
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      },
+      "x-k12": {
+        "status": "proposed",
+        "phase": "P0",
+        "implemented": false,
+        "return_fields": [
+          "fragment",
+          "context",
+          "locator",
+          "source_revision",
+          "verification",
+          "limitations"
+        ],
+        "output_schema_status": "required-before-implementation-release"
+      }
+    },
+    {
+      "name": "k12_get_relations",
+      "description": "读取具体对象的关系与依据，区分组成、建议顺序、先修候选。默认一跳；hard 不是验证结果，输出不得解释为自动解锁/拦截学习。",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "ref": {
+            "type": "object",
+            "properties": {
+              "namespace": {
+                "type": "string",
+                "minLength": 1,
+                "description": "命名空间；当前能力库建议 capability"
+              },
+              "id": {
+                "type": "string",
+                "minLength": 1,
+                "description": "工具返回的真实 ID，不猜测"
+              },
+              "revision": {
+                "type": "string",
+                "minLength": 1,
+                "description": "工具返回的不可变版本"
+              }
+            },
+            "required": [
+              "namespace",
+              "id",
+              "revision"
+            ],
+            "additionalProperties": false
+          },
+          "types": {
+            "type": "array",
+            "items": {
+              "enum": [
+                "prerequisite",
+                "part_of",
+                "recommended_before",
+                "sequence",
+                "specializes",
+                "aligns_to",
+                "supports",
+                "assesses"
+              ]
+            },
+            "uniqueItems": true
+          },
+          "direction": {
+            "enum": [
+              "incoming",
+              "outgoing",
+              "both"
+            ],
+            "default": "both"
+          },
+          "depth": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 3,
+            "default": 1
+          },
+          "limit": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 50,
+            "default": 8
+          },
+          "cursor": {
+            "type": "string",
+            "minLength": 1
+          },
+          "max_chars": {
+            "type": "integer",
+            "minimum": 2000,
+            "maximum": 50000,
+            "default": 12000,
+            "description": "候选字符预算，完整记录返回；省略/续取必须明示"
+          }
+        },
+        "required": [
+          "ref"
+        ],
+        "additionalProperties": false
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      },
+      "x-k12": {
+        "status": "proposed",
+        "phase": "P0",
+        "implemented": false,
+        "return_fields": [
+          "subject",
+          "predicate",
+          "object",
+          "legacy_relation",
+          "normalization_status",
+          "review",
+          "conditions",
+          "allowed_uses",
+          "unsupported_inferences"
+        ],
+        "output_schema_status": "required-before-implementation-release"
+      }
+    },
+    {
+      "name": "k12_map_activity",
+      "description": "把应用具体任务映射到学习对象候选，分别说明内容、练习和评价设计覆盖。任务缺产物/标准时返回缺口，不猜测；不收学生身份、不判断学生掌握、不保存映射。",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "tasks": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 100
+                },
+                "description": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 10000
+                },
+                "expected_artifact": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 5000
+                },
+                "assessment_criteria": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 5000
+                },
+                "support_conditions": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 5000
+                }
+              },
+              "required": [
+                "id",
+                "description"
+              ],
+              "additionalProperties": false
+            },
+            "minItems": 1,
+            "maxItems": 10
+          },
+          "filters": {
+            "type": "object",
+            "properties": {
+              "discipline": {
+                "type": "string",
+                "minLength": 1
+              },
+              "grade": {
+                "type": "string",
+                "pattern": "^G([1-9]|1[0-2])$"
+              },
+              "curriculum_revision": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "additionalProperties": false
+          },
+          "snapshot": {
+            "type": "string",
+            "minLength": 1
+          },
+          "limit": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 50,
+            "default": 8
+          },
+          "max_chars": {
+            "type": "integer",
+            "minimum": 2000,
+            "maximum": 50000,
+            "default": 12000,
+            "description": "候选字符预算，完整记录返回；省略/续取必须明示"
+          }
+        },
+        "required": [
+          "tasks"
+        ],
+        "additionalProperties": false
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      },
+      "x-k12": {
+        "status": "proposed",
+        "phase": "P0",
+        "implemented": false,
+        "return_fields": [
+          "task_id",
+          "content_candidates",
+          "practice_candidates",
+          "assessment_candidates",
+          "input_evidence",
+          "missing_requirements",
+          "review_status"
+        ],
+        "output_schema_status": "required-before-implementation-release"
+      }
+    }
+  ],
+  "planned_p1": [
+    "k12_build_learning_context",
+    "k12_get_unit_coverage",
+    "k12_submit_proposal",
+    "k12_list_changes"
+  ],
+  "common_result_fields": [
+    "schema_version",
+    "policy_version",
+    "snapshot",
+    "status",
+    "summary",
+    "data",
+    "coverage",
+    "limitations",
+    "next_actions"
+  ]
+}

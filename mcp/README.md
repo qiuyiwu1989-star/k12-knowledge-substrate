@@ -1,5 +1,7 @@
 # k12-substrate · MCP server
 
+下一代官方候选契约见 [K12 MCP v0.1](../docs/k12-mcp-v0.1.md) 与 [Agent 读取指南](../docs/k12-agent-guide.md)。其中新增 k12_* 工具尚未实现，不能据该文档配置远程接入；下列五工具是当前实现。
+
 底座的只读查询接口。零依赖，`node mcp/server.mjs` 直接跑。
 
 ## 接上
