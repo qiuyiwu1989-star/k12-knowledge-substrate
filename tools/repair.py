@@ -50,12 +50,20 @@ stage 只在诊断里有学段问题时给，否则留空字符串。改不了�
 
 ENDPOINTS = [("/v1/chat/completions", "openai"), ("/anthropic/v1/messages", "anthropic")]
 _rr = itertools.count()
+# 上一次打通的端点。**失败立刻换另一个，两个都满了才睡。**
+# 原来是严格轮转：失败后先睡满指数退避，再去试另一个端点 —— 而 /v1 与 /anthropic
+# 是两个独立的限流池，一个被 429 打满时另一个多半是空的。实测一个满、另一个 3.8 秒
+# 正常返回，于是一半的调用白白先睡一整轮。08-28 一个子 Agent 在自己脚本里改成
+# 「先打通的那个」，吞吐从 3 次/分升到 17 次/分；2026-09-28 合进共享脚本。
+_pref = [0]
 
 
 def call(sysp, user, base, key, model, timeout=120):
     last = None
-    for attempt in range(7):
-        suffix, style = ENDPOINTS[next(_rr) % len(ENDPOINTS)]
+    tried_this_round = 0
+    idx = _pref[0]
+    for attempt in range(12):
+        suffix, style = ENDPOINTS[idx % len(ENDPOINTS)]
         if style == "anthropic":
             body = {"model": model, "max_tokens": 600, "thinking": {"type": "disabled"},
                     "system": sysp, "messages": [{"role": "user", "content": user}]}
@@ -68,6 +76,7 @@ def call(sysp, user, base, key, model, timeout=120):
         req = request.Request(base + suffix, data=json.dumps(body).encode(), headers=hdr)
         try:
             d = json.load(request.urlopen(req, timeout=timeout))
+            _pref[0] = idx % len(ENDPOINTS)      # 记住这个通的，下次先打它
             if style == "anthropic":
                 return "".join(b.get("text", "") for b in d.get("content", []))
             return d['choices'][0]['message'].get('content') or ''
@@ -77,7 +86,13 @@ def call(sysp, user, base, key, model, timeout=120):
                 raise RuntimeError(f"HTTP {e.code}")
         except Exception as e:
             last = type(e).__name__
-        time.sleep(min(25.0, 1.4 * (1.9 ** attempt)) * (.6 + random.random() * .8))
+        # 这个端点失败 → 立刻换另一个；两个都在这一轮失败了才退避
+        idx += 1
+        tried_this_round += 1
+        if tried_this_round >= len(ENDPOINTS):
+            tried_this_round = 0
+            rnd = attempt // len(ENDPOINTS)
+            time.sleep(min(25.0, 1.4 * (1.9 ** rnd)) * (.6 + random.random() * .8))
     raise RuntimeError(f"重试耗尽（{last}）")
 
 

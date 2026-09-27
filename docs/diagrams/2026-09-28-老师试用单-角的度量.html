@@ -1,0 +1,144 @@
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>角的度量 · 老师试用单</title>
+<style>
+:root{--paper:#FFFFFF;--ground:#F2F3EF;--ink:#16191D;--ink-2:#4A5058;--ink-3:#80868D;--rule:#D2D5CD;--rule-2:#B7BBB1;--accent:#9C2B22;--tint:#F6F7F3}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--paper:#1A1D22;--ground:#121418;--ink:#E6E7E2;--ink-2:#A3A9AF;--ink-3:#71777E;--rule:#2C3138;--rule-2:#40464E;--accent:#D2564A;--tint:#20242A}}
+:root[data-theme="dark"]{--paper:#1A1D22;--ground:#121418;--ink:#E6E7E2;--ink-2:#A3A9AF;--ink-3:#71777E;--rule:#2C3138;--rule-2:#40464E;--accent:#D2564A;--tint:#20242A}
+*{box-sizing:border-box}
+body{margin:0;background:var(--ground);color:var(--ink);font-family:-apple-system,"PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;font-size:14px;line-height:1.7}
+.sheet{max-width:210mm;margin:0 auto;background:var(--paper);padding:14mm 15mm 16mm}
+h1{font-family:"Songti SC","STSong",SimSun,serif;font-size:24px;margin:0 0 2px;font-weight:600}
+.sub{color:var(--ink-2);font-size:13px;margin:0 0 12px}
+.mono{font-family:ui-monospace,Menlo,monospace;font-size:11.5px}
+.intro{border:1px solid var(--rule-2);background:var(--tint);padding:10px 13px;margin:0 0 14px;font-size:13px}
+.intro p{margin:0 0 5px} .intro p:last-child{margin:0}
+.intro b{font-weight:600}
+.it{border-top:1px solid var(--rule);padding:11px 0 12px;break-inside:avoid;page-break-inside:avoid}
+.top{display:flex;gap:10px;align-items:baseline}
+.no{flex:none;width:22px;height:22px;border:1.5px solid var(--ink);border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;font-family:ui-monospace,Menlo,monospace}
+.st{font-family:"Songti SC","STSong",SimSun,serif;font-size:16.5px;font-weight:600;line-height:1.45}
+.meta{color:var(--ink-3);font-size:11.5px;margin:3px 0 6px 32px}
+.ask{margin:0 0 7px 32px;font-size:13px;color:var(--ink-2)}
+.lb{display:inline-block;font-size:11px;color:var(--ink-3);border:1px solid var(--rule-2);padding:0 5px;margin-right:6px;border-radius:2px}
+.q{margin:4px 0 0 32px;display:flex;flex-wrap:wrap;align-items:center;gap:6px 10px;font-size:13.5px}
+.qn{flex:none;font-size:11px;color:var(--accent);border:1px solid var(--accent);padding:0 5px;border-radius:2px;font-weight:600}
+.qt em{font-style:normal;color:var(--ink-3);font-size:12px}
+.opts{display:inline-flex;align-items:center;gap:4px 5px;flex-wrap:wrap}
+.box{display:inline-block;width:13px;height:13px;border:1.5px solid var(--ink);margin:0 3px 0 10px;vertical-align:-2px}
+.box:first-child{margin-left:0}
+.line{display:inline-block;border-bottom:1px solid var(--ink);height:16px}
+.line.s{width:44px} .line.l{flex:1;min-width:180px}
+.q.wide{flex-wrap:nowrap}
+.end{border-top:2px solid var(--ink);margin-top:6px;padding-top:12px;break-inside:avoid;page-break-inside:avoid}
+.end h2{font-family:"Songti SC",SimSun,serif;font-size:16px;margin:0 0 8px;font-weight:600}
+.oq{margin:0 0 12px} .oq .t{font-size:13.5px} .oq .t b{font-weight:600}
+.oq .ln{border-bottom:1px solid var(--ink-3);height:22px} .oq .ln+.ln{margin-top:2px}
+.sign{display:grid;grid-template-columns:repeat(2,1fr);gap:10px 18px;margin-top:14px;font-size:13px}
+.sign div{display:flex;gap:6px;align-items:flex-end} .sign span.f{flex:1;border-bottom:1px solid var(--ink);height:18px}
+.note{font-size:11.5px;color:var(--ink-3);margin-top:12px;line-height:1.6}
+@media print{body{background:#fff} .sheet{padding:10mm 12mm;max-width:none} :root{--paper:#fff;--ink:#000;--ink-2:#333;--ink-3:#666;--rule:#bbb;--rule-2:#999;--accent:#000;--tint:#f4f4f4} @page{size:A4;margin:8mm}}
+</style></head><body><div class="sheet">
+<h1>角的度量 · 老师试用单</h1>
+<p class="sub">四年级上册「角的度量」「平行与垂直」附近 · 共 8 条 · 大约 15 分钟</p>
+<div class="intro">
+  <p><b>我们在做什么：</b>把课程标准里的要求，一句一句整理成「能判断一个孩子会没会」的能力条目。下面 8 条都出自数学课标同一页。</p>
+  <p><b>请您做什么：</b>每条回答三个小问题，最后三个开放题。不需要准备，不需要查资料，<b>按您的直觉判断就好</b>。</p>
+  <p><b>我们最想知道的：</b>这些条目对真正在教的老师来说，到底判不判得了。<b>说「判不了」和说「判得了」一样有用。</b></p>
+</div>
+<article class="it">
+  <div class="top"><span class="no">1</span><div class="st">能说出线段、射线和直线的共性与区别</div></div>
+  <div class="meta">出自《义务教育数学课程标准（2022年版）》第 37 页 · 三、四年级 · 编号 <span class="mono">ca_gQK8FkcK</span></div>
+  <div class="ask"><span class="lb">给家长的问法</span>「孩子，你能告诉我线段、射线和直线有什么相同和不同的地方吗？」</div>
+  <div class="q"><span class="qn">一</span><span class="qt">用这一条，能判断一个具体的孩子会不会吗？</span>
+    <span class="opts"><span class="box"></span>能<span class="box"></span>不能<span class="box"></span>说不准</span></div>
+  <div class="q"><span class="qn">二</span><span class="qt">您班上大概几成孩子已经会了？<em>（选填）</em></span>
+    <span class="opts"><span class="line s"></span>成</span></div>
+  <div class="q wide"><span class="qn">三</span><span class="qt">这句话要改吗？</span>
+    <span class="opts"><span class="box"></span>不用改<span class="box"></span>要改，改成</span><span class="line l"></span></div>
+</article><article class="it">
+  <div class="top"><span class="no">2</span><div class="st">能辨认平角和周角</div></div>
+  <div class="meta">出自《义务教育数学课程标准（2022年版）》第 37 页 · 三、四年级 · 编号 <span class="mono">ca_fhGqFSMT</span></div>
+  <div class="ask"><span class="lb">给家长的问法</span>「孩子，你能告诉我哪个是平角、哪个是周角吗？」</div>
+  <div class="q"><span class="qn">一</span><span class="qt">用这一条，能判断一个具体的孩子会不会吗？</span>
+    <span class="opts"><span class="box"></span>能<span class="box"></span>不能<span class="box"></span>说不准</span></div>
+  <div class="q"><span class="qn">二</span><span class="qt">您班上大概几成孩子已经会了？<em>（选填）</em></span>
+    <span class="opts"><span class="line s"></span>成</span></div>
+  <div class="q wide"><span class="qn">三</span><span class="qt">这句话要改吗？</span>
+    <span class="opts"><span class="box"></span>不用改<span class="box"></span>要改，改成</span><span class="line l"></span></div>
+</article><article class="it">
+  <div class="top"><span class="no">3</span><div class="st">能说出直角、锐角、钝角的特征</div></div>
+  <div class="meta">出自《义务教育数学课程标准（2022年版）》第 37 页 · 三、四年级 · 编号 <span class="mono">ca_2PgUWDZq</span></div>
+  <div class="ask"><span class="lb">给家长的问法</span>「孩子，你能画出直角、锐角和钝角，并告诉它们各自的特点吗？」</div>
+  <div class="q"><span class="qn">一</span><span class="qt">用这一条，能判断一个具体的孩子会不会吗？</span>
+    <span class="opts"><span class="box"></span>能<span class="box"></span>不能<span class="box"></span>说不准</span></div>
+  <div class="q"><span class="qn">二</span><span class="qt">您班上大概几成孩子已经会了？<em>（选填）</em></span>
+    <span class="opts"><span class="line s"></span>成</span></div>
+  <div class="q wide"><span class="qn">三</span><span class="qt">这句话要改吗？</span>
+    <span class="opts"><span class="box"></span>不用改<span class="box"></span>要改，改成</span><span class="line l"></span></div>
+</article><article class="it">
+  <div class="top"><span class="no">4</span><div class="st">会用量角器测量角的大小</div></div>
+  <div class="meta">出自《义务教育数学课程标准（2022年版）》第 37 页 · 三、四年级 · 编号 <span class="mono">ca_YwQwQpbx</span></div>
+  <div class="ask"><span class="lb">给家长的问法</span>「孩子，你能用量角器量出这个角是多少度吗？」</div>
+  <div class="q"><span class="qn">一</span><span class="qt">用这一条，能判断一个具体的孩子会不会吗？</span>
+    <span class="opts"><span class="box"></span>能<span class="box"></span>不能<span class="box"></span>说不准</span></div>
+  <div class="q"><span class="qn">二</span><span class="qt">您班上大概几成孩子已经会了？<em>（选填）</em></span>
+    <span class="opts"><span class="line s"></span>成</span></div>
+  <div class="q wide"><span class="qn">三</span><span class="qt">这句话要改吗？</span>
+    <span class="opts"><span class="box"></span>不用改<span class="box"></span>要改，改成</span><span class="line l"></span></div>
+</article><article class="it">
+  <div class="top"><span class="no">5</span><div class="st">能用直尺和量角器画出指定度数的角</div></div>
+  <div class="meta">出自《义务教育数学课程标准（2022年版）》第 37 页 · 三、四年级 · 编号 <span class="mono">ca_hJ9TxmeA</span></div>
+  <div class="ask"><span class="lb">给家长的问法</span>「孩子，你能用尺子和量角器画出老师说的角吗？比如画一个75度的角。」</div>
+  <div class="q"><span class="qn">一</span><span class="qt">用这一条，能判断一个具体的孩子会不会吗？</span>
+    <span class="opts"><span class="box"></span>能<span class="box"></span>不能<span class="box"></span>说不准</span></div>
+  <div class="q"><span class="qn">二</span><span class="qt">您班上大概几成孩子已经会了？<em>（选填）</em></span>
+    <span class="opts"><span class="line s"></span>成</span></div>
+  <div class="q wide"><span class="qn">三</span><span class="qt">这句话要改吗？</span>
+    <span class="opts"><span class="box"></span>不用改<span class="box"></span>要改，改成</span><span class="line l"></span></div>
+</article><article class="it">
+  <div class="top"><span class="no">6</span><div class="st">能辨认同一平面内两条直线是否平行或垂直</div></div>
+  <div class="meta">出自《义务教育数学课程标准（2022年版）》第 37 页 · 三、四年级 · 编号 <span class="mono">ca_qVvsKLFD</span></div>
+  <div class="ask"><span class="lb">给家长的问法</span>「孩子，看看教室里的门框，哪两条边是互相平行的，哪两条是互相垂直的？」</div>
+  <div class="q"><span class="qn">一</span><span class="qt">用这一条，能判断一个具体的孩子会不会吗？</span>
+    <span class="opts"><span class="box"></span>能<span class="box"></span>不能<span class="box"></span>说不准</span></div>
+  <div class="q"><span class="qn">二</span><span class="qt">您班上大概几成孩子已经会了？<em>（选填）</em></span>
+    <span class="opts"><span class="line s"></span>成</span></div>
+  <div class="q wide"><span class="qn">三</span><span class="qt">这句话要改吗？</span>
+    <span class="opts"><span class="box"></span>不用改<span class="box"></span>要改，改成</span><span class="line l"></span></div>
+</article><article class="it">
+  <div class="top"><span class="no">7</span><div class="st">会根据角的特征对三角形分类，认识直角三角形、锐角三角形和钝角三角形</div></div>
+  <div class="meta">出自《义务教育数学课程标准（2022年版）》第 37 页 · 三、四年级 · 编号 <span class="mono">ca_4qKPsXyg</span></div>
+  <div class="ask"><span class="lb">给家长的问法</span>「孩子，你能根据角的大小把三角形分成直角、锐角和钝角三角形吗？」</div>
+  <div class="q"><span class="qn">一</span><span class="qt">用这一条，能判断一个具体的孩子会不会吗？</span>
+    <span class="opts"><span class="box"></span>能<span class="box"></span>不能<span class="box"></span>说不准</span></div>
+  <div class="q"><span class="qn">二</span><span class="qt">您班上大概几成孩子已经会了？<em>（选填）</em></span>
+    <span class="opts"><span class="line s"></span>成</span></div>
+  <div class="q wide"><span class="qn">三</span><span class="qt">这句话要改吗？</span>
+    <span class="opts"><span class="box"></span>不用改<span class="box"></span>要改，改成</span><span class="line l"></span></div>
+</article><article class="it">
+  <div class="top"><span class="no">8</span><div class="st">能说出两点间所有连线中线段最短，并在具体情境中运用这一知识解决简单问题</div></div>
+  <div class="meta">出自《义务教育数学课程标准（2022年版）》第 37 页 · 三、四年级 · 编号 <span class="mono">ca_YCnx84kK</span></div>
+  <div class="ask"><span class="lb">给家长的问法</span>「孩子，你能用两点之间线段最短的道理，解释为什么走直路比绕弯快吗？」</div>
+  <div class="q"><span class="qn">一</span><span class="qt">用这一条，能判断一个具体的孩子会不会吗？</span>
+    <span class="opts"><span class="box"></span>能<span class="box"></span>不能<span class="box"></span>说不准</span></div>
+  <div class="q"><span class="qn">二</span><span class="qt">您班上大概几成孩子已经会了？<em>（选填）</em></span>
+    <span class="opts"><span class="line s"></span>成</span></div>
+  <div class="q wide"><span class="qn">三</span><span class="qt">这句话要改吗？</span>
+    <span class="opts"><span class="box"></span>不用改<span class="box"></span>要改，改成</span><span class="line l"></span></div>
+</article>
+<section class="end">
+  <h2>最后三个问题</h2>
+  <div class="oq"><div class="t">一、填这张单子一共用了多少分钟？</div><div class="ln" style="width:120px"></div></div>
+  <div class="oq"><div class="t">二、哪一条<b>最难判断</b>？为什么？</div><div class="ln"></div><div class="ln"></div></div>
+  <div class="oq"><div class="t">三、这样的条目对您的教学<b>有没有用</b>？有的话，会用在哪里；没有的话，缺了什么？</div><div class="ln"></div><div class="ln"></div><div class="ln"></div></div>
+  <div class="sign">
+    <div>姓名<span class="f"></span></div><div>学校<span class="f"></span></div>
+    <div>任教年级<span class="f"></span></div><div>日期<span class="f"></span></div>
+  </div>
+  <p class="note">您签名之后，您在第一问勾了「能」、且第三问勾了「不用改」的条目，会记为「教师确认」；
+    勾了「不能」「说不准」或「要改」的条目<b>不会</b>记为确认，而是按您写的意见修改或存疑。
+    您的姓名只用于记录「谁确认的」，不会公开。谢谢您。</p>
+</section>
+</div></body></html>

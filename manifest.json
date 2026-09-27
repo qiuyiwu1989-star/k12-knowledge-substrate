@@ -2,7 +2,7 @@
   "dataset": "K12 教育的能力结构 (K12 Capability Structure)",
   "release": "0.1.0",
   "schemaVersion": "0.1.0",
-  "generatedAt": "2026-09-05",
+  "generatedAt": "2026-09-27",
   "counts": {
     "anchors": 4701,
     "candidates": 0,
@@ -58,24 +58,24 @@
   "disputedAnchors": 553,
   "files": {
     "anchors/art.jsonl": {
-      "bytes": 503261,
-      "sha256": "d768fa64c1a5f44638e51e0ec5e7971a7ec24875e19d2f4c6afb5f282018e390"
+      "bytes": 503225,
+      "sha256": "55227c462f19c46fd0c7a7eab089469bd54d3a6173dcfad582233980f50d4f71"
     },
     "anchors/biology.jsonl": {
       "bytes": 201599,
       "sha256": "88853d8f8953110eacf71c36cc179b40d68ce6146f46d5b8b507cd8d62e7c6e1"
     },
     "anchors/chemistry.jsonl": {
-      "bytes": 328894,
-      "sha256": "373c9a32b3ee6b5b6aa0a3ea2baf3f25cb1c6805c27e8855e06b6d71c37bd847"
+      "bytes": 328876,
+      "sha256": "44117a82fa7784a483a7df438e1a934dca9e40b40db473c078b5a96bebb5c8f0"
     },
     "anchors/chinese-lists.jsonl": {
       "bytes": 169504,
       "sha256": "a690cc83aa0115d90bf95ccfcd797cbe2f3c9d1068ac55992e3555e73780858d"
     },
     "anchors/chinese.jsonl": {
-      "bytes": 335917,
-      "sha256": "7c57a3e48120b9290a04844fc617baa5a5d410d4a99e24c429f559a4600b8de2"
+      "bytes": 335881,
+      "sha256": "d54e855366db015e4b8e62e9d9811ec8f81651160d3ddea8aafcc49b3d772daf"
     },
     "anchors/english-lists.jsonl": {
       "bytes": 12602,
@@ -174,24 +174,24 @@
       "sha256": "d0a40047f1b6455af833743c39c5846c906e51653ce1f187483d56b70e2623eb"
     },
     "anchors/infotech.jsonl": {
-      "bytes": 179523,
-      "sha256": "9b87db06f937f058b896b2791a856f3fcd831ccf05a4f591072b540c606947af"
+      "bytes": 179568,
+      "sha256": "ee5c447e48e7df7abf385510d24dd4622a362ded02827e9902153450a18039d8"
     },
     "anchors/labor.jsonl": {
       "bytes": 120988,
       "sha256": "b65a8cff273eff59c18a0b8a28dbacc4c06046fa8996fc9fabb3a722d8a96c14"
     },
     "anchors/math.jsonl": {
-      "bytes": 666883,
-      "sha256": "4e5ce02901f537da94f5fb3a93503e66306a90283e168ef84e787b4971c1adfb"
+      "bytes": 666832,
+      "sha256": "bb2fc112e24548d6f95f1f0931ffcfccec618c0aeada123c95c379f9ad357359"
     },
     "anchors/morality.jsonl": {
       "bytes": 111498,
       "sha256": "f57db9711b9a3fa1e0a4a36f987121f4e0926c88dea9386e09978743c7a9a4b9"
     },
     "anchors/pe.jsonl": {
-      "bytes": 523245,
-      "sha256": "591b9fdc298c7cdefefc21873108064092ba5afefbc22bf492f9365b81f86186"
+      "bytes": 523212,
+      "sha256": "59f140dab176a6fb6311a61df3953160871c8da039162a72b785dac267875e3b"
     },
     "anchors/physics.jsonl": {
       "bytes": 351498,
@@ -202,8 +202,8 @@
       "sha256": "725e001b9581fcc677204cdabfba60958264d75c6d22621d1c434777861aaa28"
     },
     "anchors/rewrite-信息科技.jsonl": {
-      "bytes": 30277,
-      "sha256": "f82d52c865c3cc56cf90008ce7036188f0de61ea3c5ab2b127b4d4141073298a"
+      "bytes": 30303,
+      "sha256": "fead2933df5d20784146f5bbe285a9e52e0add1b9928c562e63f8da2b65042f2"
     },
     "anchors/rewrite-劳动.jsonl": {
       "bytes": 11695,
@@ -254,8 +254,8 @@
       "sha256": "6f343ef86489e1388d3779e3411805dc09600813d77e5ee6b23869014d1d371b"
     },
     "anchors/science.jsonl": {
-      "bytes": 848116,
-      "sha256": "54391bf121fbfea46925113966e8cee11a17b138157133924b836f76c8fe3eac"
+      "bytes": 848062,
+      "sha256": "ec308bc2c494cc546e19e5d420a243146346ac9ce4764e791efae309efd6f1bf"
     },
     "edges/art.jsonl": {
       "bytes": 170586,

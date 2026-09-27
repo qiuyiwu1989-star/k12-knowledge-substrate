@@ -18,7 +18,7 @@ Marble 的 3,221 条边全是模型自由生成的，结果社区提了「抗逆
 
   python3 tools/gen_edges.py --discipline 数学
 """
-import argparse, collections, hashlib, itertools, json, os, random, re, sys, time
+import argparse, collections, hashlib, itertools, json, math, os, random, re, sys, time
 from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 from urllib import request, error
@@ -145,12 +145,77 @@ def build_bridge_pool(target, all_in_disc, cap=40):
     return [a for _, a in pool[:cap]]
 
 
-def build_pool(target, all_in_disc, cap=40):
+# ── 候选池的字面相似度索引（char-bigram TF-IDF，纯标准库）─────────────
+# 2026-09-28 合入（修法由 08-28 的子 Agent 做出、主进程复核后合并）。
+#
+# 同学科池原来的排序键是 (是否同 strand, 学段差)。通用技术 260 条锚点全是 G10、
+# strand/topic 全为 None → 键对每个目标恒为 (1, 0) → Python 稳定排序等于没排 →
+# **260 个目标里 225 个拿到的是同一份池子**（学科文件里的前 40 条）。
+# 实测「有资格出现在任何候选池里的锚点」：通用技术 41/260 · 西班牙语 41/142 ·
+# 信息技术 41/99 —— 三科都恰好 41，因为那就是「文件前 40 条 + 被剔掉的目标自己补进来的那条」。
+# **模型不是判断错，是根本没看见。**
+_PUNC = re.compile(r'[\s，。、；：？！“”‘’（）《》()\[\]{}<>,.;:?!"\'`~@#$%^&*_+=|\\/-]+')
+
+
+def _sim_text(a):
+    parts = [a.get('statement') or '']
+    for k in ('dimension', 'topic', 'strand'):
+        if a.get(k):
+            parts.append(str(a[k]))
+    return _PUNC.sub('', ''.join(parts))
+
+
+def _grams(s):
+    """char-bigram + unigram。加 unigram 是为了短断言不至于向量全空。"""
+    g = collections.Counter(s[i:i + 2] for i in range(len(s) - 1))
+    g.update(s)
+    return g
+
+
+class SimIndex:
+    """一组锚点上的 TF-IDF 索引，O(N) 内存。"""
+
+    def __init__(self, anchors):
+        self.vec, docs, df = {}, {}, collections.Counter()
+        for a in anchors:
+            g = _grams(_sim_text(a)); docs[a['id']] = g; df.update(g.keys())
+        n = max(1, len(docs))
+        idf = {t: math.log(1 + n / (1 + c)) for t, c in df.items()}
+        for aid, g in docs.items():
+            v = {t: (1 + math.log(c)) * idf.get(t, 0.0) for t, c in g.items()}
+            norm = math.sqrt(sum(x * x for x in v.values())) or 1.0
+            self.vec[aid] = {t: x / norm for t, x in v.items()}
+
+    def cos(self, a_id, b_id):
+        va, vb = self.vec.get(a_id), self.vec.get(b_id)
+        if not va or not vb:
+            return 0.0
+        if len(va) > len(vb):
+            va, vb = vb, va
+        return sum(x * vb.get(t, 0.0) for t, x in va.items())
+
+
+_SIM_CACHE = {}
+
+
+def _sim_for(anchors):
+    k = id(anchors)
+    if k not in _SIM_CACHE:
+        _SIM_CACHE[k] = SimIndex(anchors)
+    return _SIM_CACHE[k]
+
+
+def build_pool(target, all_in_disc, cap=40, sim=None):
     """候选前置池：同学科、学段不晚于自己、同领域优先，**但给跨学段留名额**。"""
+    sim = sim or _sim_for(all_in_disc)
     tmin, _ = stage_of(target)
     same, earlier = [], []
     for a in all_in_disc:
         if a['id'] == target['id']:
+            continue
+        # 已废弃的锚点不能当前置。原先没这一条 —— 恒等池的 41 条里有 5 条是废弃的，
+        # 照样被当成候选喂给模型。第二个独立的 bug，和排序键无关，一起修。
+        if a.get('deprecated'):
             continue
         # 同学科的 LIST 档不能当前置 —— 字表词表篇目是覆盖模型，
         # 「学完这个才能学那个」的语义它没有（validate 里有对应的硬闸）。
@@ -161,7 +226,10 @@ def build_pool(target, all_in_disc, cap=40):
         if amin > tmin:              # 学段整体晚于目标 → 不可能是前置
             continue
         same_strand = (a.get('strand') and a.get('strand') == target.get('strand'))
-        key = (0 if same_strand else 1, tmin - amin)
+        # 第三项 -sim 是**严格细化**：前两项不同的候选相对次序和原来完全一致，
+        # 只有原本平手的才按字面相似度重排。所以数学这类有区分度的学科几乎无损，
+        # strand/学段全空的学科直接从恒等池变成按目标定制的池。
+        key = (0 if same_strand else 1, tmin - amin, -sim.cos(target['id'], a['id']))
         # 「更早学段」的判据：**按学段档比，不按年级差比**。
         # 原先写的是 `tmin - amin >= 3`（年级差 ≥3），而学段档是
         # 1-2 / 3-4 / 5-6 / 7-9 / 10-12 —— G4→G5 跨了档但差只有 1，
@@ -186,30 +254,57 @@ ENABLERS = {'数学': 0, '语文': 1, '信息科技': 2}
 
 
 def build_cross_pool(target, all_anchors, outdeg, cap=40):
-    """跨学科候选池：别的学科、学段不晚于自己、被依赖多的优先。
+    """跨学科候选池：别的学科、学段不晚于自己。
 
     **按学科均摊配额，不能全局排序取前 N。** 第一版按 ENABLERS 排序取前 36，
     结果数学把池子占满了，语文一条都进不去 —— 产出 44 条边全是「数学 → X」，
     连「撰写实验报告 ← 语文表达」这种明显的都出不来。池子里没有的，模型选不出来。
+
+    ★ 2026-09-28 再修两处，都是 08-28 两个子 Agent 各自独立查出来的：
+
+    1. **排序依据错了。** 原来按 outdeg（被依赖次数）排，而 outdeg 高低反映的是
+       「在自己学科内被依赖多」，跟「对这个目标有没有用」不是一回事。实测 900 个目标的
+       候选池并集只有 **102 条锚点（全库 2.8%）** —— 其余 97% 从来没有机会被提议当前置。
+       现在先按和目标的字面相似度排，outdeg 只做平手时的次序。
+
+    2. **工具科名额从没兑现过。** 注释写「工具科 10 个名额」，但轮转是每科每轮放 1 条：
+       高中目标有 23 个可选前科，第一轮放满 23、第二轮到 40 就截断 —— 数学永远只拿到 2 条。
+       实测高中 G10 目标 **400/400 的池子里数学 ≤ 2 条**，同时小语种和英语占 8 条以上。
+       「会计算算法的时空复杂度」的池子里，数学只有「20 以内口算」和「四则运算的含义」。
+       现在分两段：工具科先按名额取，剩下的名额再在其余学科间轮转。
     """
     tmin, _ = stage_of(target)
     td = target['discipline']
+    sim = _sim_for(all_anchors)
     by_d = collections.defaultdict(list)
     for a in all_anchors:
-        if a['discipline'] == td or stage_of(a)[0] > tmin:
+        if a['discipline'] == td or a.get('deprecated') or stage_of(a)[0] > tmin:
             continue
         by_d[a['discipline']].append(a)
     for d in by_d:
-        by_d[d].sort(key=lambda a: -outdeg.get(a['id'], 0))
-    # 工具型学科多给名额，其余每科至少 2 个，轮转直到填满
-    quota = {d: (10 if d in ENABLERS else 2) for d in by_d}
-    pool, i = [], 0
-    while len(pool) < cap and any(quota[d] > 0 and len(by_d[d]) > i for d in by_d):
-        for d in sorted(by_d, key=lambda d: ENABLERS.get(d, 9)):
-            if quota[d] > 0 and len(by_d[d]) > i and len(pool) < cap:
-                pool.append(by_d[d][i]); quota[d] -= 1
+        by_d[d].sort(key=lambda a: (-sim.cos(target['id'], a['id']), -outdeg.get(a['id'], 0)))
+    pool = []
+    # 第一段：工具科按名额取。名额按 cap 缩放，给其余学科留出至少一半的位置。
+    per_enabler = max(2, (cap // 2) // max(1, sum(1 for d in by_d if d in ENABLERS)))
+    for d in sorted((d for d in by_d if d in ENABLERS), key=lambda d: ENABLERS[d]):
+        pool += by_d[d][:per_enabler]
+    # 第二段：其余学科轮转，每科每轮一条，直到填满
+    others = [d for d in by_d if d not in ENABLERS]
+    others.sort(key=lambda d: -max((sim.cos(target['id'], a['id']) for a in by_d[d][:1]), default=0))
+    i = 0
+    while len(pool) < cap and any(len(by_d[d]) > i for d in others):
+        for d in others:
+            if len(by_d[d]) > i and len(pool) < cap:
+                pool.append(by_d[d][i])
         i += 1
-    return pool
+    # 工具科如果还有富余而池子没满，补进来
+    if len(pool) < cap:
+        seen = {a['id'] for a in pool}
+        for d in (d for d in by_d if d in ENABLERS):
+            for a in by_d[d][per_enabler:]:
+                if len(pool) >= cap: break
+                if a['id'] not in seen: pool.append(a); seen.add(a['id'])
+    return pool[:cap]
 
 
 def main():
@@ -238,6 +333,11 @@ def main():
     for f in sorted((ROOT / a.src).rglob('*.jsonl')):
         for l in f.open(encoding='utf-8'):
             anchors.append(json.loads(l))
+    # --cross 的候选池必须看全库：--discipline 只限定「后继是哪一科」，不能先把候选删光。
+    # 原来这里直接过滤 anchors，而 build_cross_pool 又会剔掉同学科的 ——
+    # 于是 `--cross --discipline X` 的池子必然是空的。三个子 Agent 各自撞到过，
+    # 这大概也是跨学科那条路从 08-15 之后一直没重跑的原因之一。
+    all_anchors = anchors
     if a.discipline:
         anchors = [x for x in anchors if x['discipline'] == a.discipline]
     by_disc = collections.defaultdict(list)
@@ -283,7 +383,7 @@ def main():
                 continue
             if t.get('deprecated'):
                 continue
-            pool = (build_cross_pool(t, anchors, outdeg_seed) if a.cross
+            pool = (build_cross_pool(t, all_anchors, outdeg_seed) if a.cross
                     else build_bridge_pool(t, group) if a.stage_bridge
                     else build_pool(t, group))
             if pool:

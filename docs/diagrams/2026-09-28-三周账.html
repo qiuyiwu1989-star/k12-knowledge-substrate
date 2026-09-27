@@ -208,15 +208,22 @@ code{font-family:ui-monospace,Menlo,monospace;font-size:.92em;background:var(--s
 
 <section>
   <span class="eb">还欠着的</span>
-  <h2>七笔账，按要紧程度</h2>
+  <h2>六笔账，按要紧程度</h2>
   <div class="cards">
     <div class="card"><span class="tag hi">验收标准</span><h3>真实调用 0 次</h3><p>MCP 已上线，计数器已隔离自测污染。方案里写死的唯一验收标准，到现在没有一行非零。</p></div>
     <div class="card"><span class="tag hi">机器做不了</span><h3>教师签字 0 条</h3><p>「可引用」的准确含义仍是「AI 看过、没挑出毛病」。24 份单科复核单一直备着。</p></div>
     <div class="card"><span class="tag md">上游</span><h3>三个抽取病灶 · 553 条存疑</h3><p>两组复核独立指向同一结论：问题率跟来源章节走、不跟学科走。取字是干净的，坏的是证据生成器和切分粒度。</p></div>
     <div class="card"><span class="tag md">可涨</span><h3>252 条卡在证据占位符</h3><p>断言过了复核，但证据只是复读断言。补真证据就能升档 —— 可用数下一个能涨的地方。</p></div>
-    <div class="card"><span class="tag md">边</span><h3>71 条前缀边，43 条 hard</h3><p>同一句课标被切成两条锚点，短的给长的当前置。不是先修关系，是切分的产物。</p></div>
     <div class="card"><span class="tag lo">待合并</span><h3>候选池的三个 bug</h3><p>同学科池修法在 <code>tools/out/</code> 未合并；跨学科池只有 2.8% 的锚点有机会当前置；高中目标的池子 100% 拿不到数学。</p></div>
     <div class="card"><span class="tag lo">覆盖率</span><h3>半个库无法自证覆盖率</h3><p>义务教育课标的源 PDF 不在仓库里（抽完没留），只有高中那半能对账到页。</p></div>
+  </div>
+  <div class="thesis" style="border-left-color:var(--warn)">
+    <p class="q" style="font-size:16px">更正（同日）：原先列在这里的第七笔「71 条前缀边，43 条 hard」是我判断错了。</p>
+    <p class="lead">当时说它们「不是先修关系，是切分的产物」。动手处理前重新核对：这样的边实际是 <strong>78 条</strong>，
+      <strong>全部</strong>带 containment 证据，前置<strong>全部</strong>是从母条拆出来的原子 —— 正是拆原子步骤设计出来的边。
+      原子 A 字面上就是母条 B 的一部分，不会 A 就一定做不完 B；
+      对家长说「先会口算 20 以内加减，才能完整掌握『20 以内加减和表内乘除』」是真的。<strong>不用改。</strong></p>
+    <p class="lead">这一条正好是这一页讲的那个形状，而且是我自己造的：事实没变，是我对它的描述错了，然后写进了一份文档。</p>
   </div>
 </section>
 
@@ -224,7 +231,7 @@ code{font-family:ui-monospace,Menlo,monospace;font-size:.92em;background:var(--s
   <span class="eb">下一步</span>
   <div class="next">
     <p class="q">接一个真调用方，让那个 0 第一次变成 1。</p>
-    <p class="lead">上面七笔账里，除了第一笔，其余六笔都是供给侧。它们都是真的，也都值得还 ——
+    <p class="lead">上面六笔账里，除了第一笔，其余五笔都是供给侧。它们都是真的，也都值得还 ——
       但方案里自己写过：<strong>锚点数、边数、复核档位、页面好看程度，不算证据</strong>。
       这三周这四样都涨了，那个数还是 0。</p>
     <p class="lead">最短的路径是 DSH 插件：它本来就是你自己的消费方，已经在读底座的静态快照。

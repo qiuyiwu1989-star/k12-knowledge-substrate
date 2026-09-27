@@ -15,6 +15,7 @@ import { readFileSync, writeFileSync, readdirSync, mkdirSync, existsSync } from 
 import { join, resolve, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { createHash } from 'node:crypto';
+import { CITABLE } from './lib/citable.mjs';
 
 const ROOT = process.env.K12_ROOT ?? resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const h = (s) => createHash('sha256').update(String(s)).digest('hex').slice(0, 12);
@@ -37,6 +38,10 @@ export function fingerprint() {
           st: h(a.statement ?? ''),
           stage: `${s.min ?? '?'}-${s.max ?? '?'}`,
           dep: a.deprecated ? 1 : 0,
+          // 可不可引用。**只用来报告，不参与破坏性分类** —— 契约里「复核升档不该惊动任何人」
+          // 那条不改。加它是因为 v1.4 可引用涨了 277 条，而 version-diff 一个字都没说：
+          // pin 在 v1.3 和 v1.4 的调用方拿到的可引用集合不一样，他却收不到任何信号。
+          cit: CITABLE.has(a.reviewStatus) && !a.deprecated ? 1 : 0,
         };
       }
     }

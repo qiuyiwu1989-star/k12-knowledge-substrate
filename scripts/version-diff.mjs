@@ -61,8 +61,27 @@ for (const id of Object.keys(cur.anchors)) if (!prev.anchors[id]) additive++;
 const dEdges = cur.counts.edges - prev.counts.edges;
 
 const changed = breaking.length + deprecating.length + revising.length + additive || dEdges !== 0;
+
+// 可引用集合的变化：**只报告，不拦**。契约不变（复核升档不触发版本动作），
+// 但调用方缓存了可引用集合的话，他应该能看见它变了。
+// 旧版本的指纹没有 cit 字段 —— 那就如实说「从下个版本起可比」，不假装比过了。
+const hasCit = Object.values(prev.anchors).some((o) => 'cit' in o);
+let citNote;
+if (hasCit) {
+  let up = 0, down = 0;
+  for (const [id, n] of Object.entries(cur.anchors)) {
+    const o = prev.anchors[id];
+    const was = o ? (o.cit || 0) : 0;
+    if (n.cit && !was) up++;
+    if (!n.cit && was) down++;
+  }
+  citNote = `可引用集合：+${up} / -${down}（只报告，不影响版本判定）`;
+} else {
+  citNote = `可引用集合：上个版本 ${last} 的指纹没记录这一项，从下个版本起可比`;
+}
 console.log(`与 ${last} 相比：破坏 ${breaking.length} · 弃用 ${deprecating.length} · 修订 ${revising.length} · 新增锚点 ${additive} · 边 ${dEdges >= 0 ? '+' : ''}${dEdges}`);
 for (const l of [...breaking, ...deprecating].slice(0, 10)) console.log(`   ${l}`);
+console.log(`   ${citNote}`);
 
 let fail = 0;
 if (breaking.length && V.maj <= P.maj) {
