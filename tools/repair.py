@@ -58,6 +58,10 @@ _rr = itertools.count()
 _pref = [0]
 
 
+class QuotaExhausted(RuntimeError):
+    pass
+
+
 def call(sysp, user, base, key, model, timeout=120):
     last = None
     tried_this_round = 0
@@ -82,6 +86,10 @@ def call(sysp, user, base, key, model, timeout=120):
             return d['choices'][0]['message'].get('content') or ''
         except error.HTTPError as e:
             last = f"HTTP {e.code}"
+            # 同是 429，「quota exhausted」是套餐额度用完，不是限流：两个端点一起挂，等多久都没用。
+            # 立刻抛 QuotaExhausted，让调用方停整批，别把剩下的任务全烧成调用失败
+            if e.code == 429 and b'quota exhausted' in (e.read() or b''):
+                raise QuotaExhausted("mimo 套餐额度用完（quota exhausted），等重置或加额度")
             if e.code not in (429, 500, 502, 503, 504):
                 raise RuntimeError(f"HTTP {e.code}")
         except Exception as e:
@@ -148,6 +156,8 @@ def main():
             return f, i, json.loads(cf.read_text())
         try:
             txt = call(sysp, user, base, key, model)
+        except QuotaExhausted:
+            raise
         except Exception as e:
             return f, i, {'verdict': 'error', 'why': str(e)[:40]}
         m = re.search(r'\{.*\}', txt, re.S)
