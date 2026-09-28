@@ -169,7 +169,12 @@ function callTool(name, args) {
       query: r.query,
       candidates: (r.candidates ?? []).map((c) => {
         const full = anchors.get(c.id);
-        return { ...(full ? present(full) : { id: c.id, statement: c.statement }), why: c.why };
+        return {
+          ...(full ? present(full) : { id: c.id, statement: c.statement }),
+          why: c.why,
+          // 同一句课标拆出来的其他条目（原句 / 兄弟原子），不占名额。引用时挑最贴切的那一条
+          ...(c.sameFamily?.length ? { sameFamily: c.sameFamily } : {}),
+        };
       }),
       ranking: r.status === 'reranked'
         ? (r.expansion ? '已过查询改写 + 模型精排' : '已过模型精排')

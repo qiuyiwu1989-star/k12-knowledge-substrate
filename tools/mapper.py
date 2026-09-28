@@ -338,8 +338,38 @@ def main():
         else:
             reranked, rnote = rerank(q, cands[:a.pool], *env)   # 精排看的是原文，不是改写
             note = '；'.join(x for x in (note, rnote) if x)
-    top = ([c for c, _ in reranked] if reranked is not None else cands)[:a.top]
+    ranked = [c for c, _ in reranked] if reranked is not None else cands
     why_of = {id(c): w for c, w in (reranked or [])}
+
+    # ── 同族折叠 ──
+    # 原句和从它拆出来的原子（splitFrom）、转写（derivedFrom）都可引用，
+    # 不折叠的话一次检索会连着给出三条意思相同的（映射基准的标注者报的）。
+    # 折法：按名次走，一条锚点的父或子已经在结果里，就挂到那一条的 sameFamily 下，不占名额。
+    # 按「根」分组：沿 splitFrom / derivedFrom 往上走到头。兄弟条目（同一句拆出来的几个原子）
+    # 根相同 —— 只按父子连线会漏掉兄弟，试跑时就是这么漏的。
+    parent = {}
+    for x in anchors:
+        pv = x.get('provenance') or {}
+        par = x.get('splitFrom') or pv.get('splitFrom') or x.get('derivedFrom') or pv.get('derivedFrom')
+        if par:
+            parent[x['id']] = par
+
+    def root(i):
+        seen = set()
+        while i in parent and i not in seen:
+            seen.add(i)
+            i = parent[i]
+        return i
+    top, host_of, folded = [], {}, collections.defaultdict(list)
+    for cand in ranked:
+        r = root(cand[2]['id'])
+        if r in host_of:
+            folded[host_of[r]].append(cand[2])
+            continue
+        if len(top) >= a.top:
+            continue
+        top.append(cand)
+        host_of[r] = cand[2]['id']
 
     out = []
     for cand in top:
@@ -371,6 +401,9 @@ def main():
             'grain': grain_of(x),
             'why': why,
             'srcPage': (x.get('provenance') or {}).get('srcPage'),
+            # 折进来的同族条目：原句 / 拆出来的原子。引用时挑最贴切的那一条，别全记
+            'sameFamily': [{'id': y['id'], 'statement': y['statement'], 'reviewStatus': y['reviewStatus']}
+                           for y in folded.get(x['id'], [])],
         })
 
     if a.json:
