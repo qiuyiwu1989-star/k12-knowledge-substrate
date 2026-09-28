@@ -2,7 +2,7 @@
   "dataset": "K12 教育的能力结构 (K12 Capability Structure)",
   "release": "0.1.0",
   "schemaVersion": "0.1.0",
-  "generatedAt": "2026-09-27",
+  "generatedAt": "2026-09-28",
   "counts": {
     "anchors": 4701,
     "candidates": 0,
@@ -43,19 +43,18 @@
       "LIST": 229
     },
     "byReview": {
-      "ai-reviewed": 2478,
-      "disputed": 553,
+      "ai-reviewed": 2712,
+      "disputed": 571,
       "ai-adjudicated": 242,
-      "auto-confirmed": 146,
-      "llm-proposed": 252
+      "auto-confirmed": 146
     }
   },
-  "usableAnchors": 2866,
+  "usableAnchors": 3100,
   "humanConfirmedAnchors": 0,
   "rewrittenAnchors": 309,
   "curriculumDerivedAnchors": 3362,
-  "aiReviewedAnchors": 2478,
-  "disputedAnchors": 553,
+  "aiReviewedAnchors": 2712,
+  "disputedAnchors": 571,
   "files": {
     "anchors/art.jsonl": {
       "bytes": 503225,
@@ -86,84 +85,84 @@
       "sha256": "67cc1658289a6b4a644aa6a6a6cda907a886f365c5fa25c1be3b67df72b1cbdf"
     },
     "anchors/gaozhong-体育与健康.jsonl": {
-      "bytes": 106654,
-      "sha256": "863ec6252d4f33f3aef64738ba73c450a7dfaf4de153df299526fbb6e5aaef79"
+      "bytes": 111306,
+      "sha256": "25bfd09db4712e9902d2e0de5490dd3a63cf7d319f37aeeef26e002ebb30f623"
     },
     "anchors/gaozhong-俄语.jsonl": {
-      "bytes": 73784,
-      "sha256": "128df7e65fdac01a7bf894cd787f36c015e178d3c14ddc17b1d362a3d2c38e45"
+      "bytes": 74026,
+      "sha256": "c70dd44aa0555ca15de9f720595ca3116ff9923ceab4d1bc1bfc7a3e7d477e78"
     },
     "anchors/gaozhong-信息技术.jsonl": {
-      "bytes": 295127,
-      "sha256": "bd84b9678a5b4ad11cdb4f3d208f30442318f456ce2f1c8f7b8c7430013bd936"
+      "bytes": 299079,
+      "sha256": "07697ae783934d2da9ef4d901dde024c5318bd0d5e4a8fef9ff79d0f34df9a59"
     },
     "anchors/gaozhong-化学.jsonl": {
-      "bytes": 445844,
-      "sha256": "794381bee96aba4b2bfb2b24cbf116782faeb91f9178969555c5a09daecc06da"
+      "bytes": 447073,
+      "sha256": "f8e79258c1d2065be2e0f81da6f42e28f34e7dfa41aaa1e0d9fb8dd5cdb4dfcc"
     },
     "anchors/gaozhong-历史.jsonl": {
-      "bytes": 94362,
-      "sha256": "e8ea084547ebe5f21586f5c7234e616a57745f0e51c82998caa28fe0cc0fc30f"
+      "bytes": 98422,
+      "sha256": "ba12f032e470cf5068e5149f666290a98da5978510f2ef4a569922dc567eeb5d"
     },
     "anchors/gaozhong-地理.jsonl": {
-      "bytes": 219401,
-      "sha256": "577e0c300ff68acc53747743058e6ba1ffb5c12aa9fe6ca20fcedc9ff5146404"
+      "bytes": 228091,
+      "sha256": "2ae56c79c3d1ecb5851eb4fde239fca8a3646020c41f736f4e7f9766ea9af9fa"
     },
     "anchors/gaozhong-德语.jsonl": {
-      "bytes": 106114,
-      "sha256": "dbac40c7c27511878785332c6fa6510d5b494746ef4c8b9b767c982849b94014"
+      "bytes": 108139,
+      "sha256": "e9e92b9bacac88015f869bf841ac8161ec4d2228bf494976f2f0ffd9873dca92"
     },
     "anchors/gaozhong-思想政治.jsonl": {
-      "bytes": 146228,
-      "sha256": "9abfeea5694728a07cdcf93acdbda51286bc7c7866946482a2c79b02730566f5"
+      "bytes": 153323,
+      "sha256": "0dd066703f5c220dc4b43457dbf9d7cd4202974681e8632c7ac652808584bf5b"
     },
     "anchors/gaozhong-数学.jsonl": {
-      "bytes": 189094,
-      "sha256": "41c4e0bb06544ffc67974994b7aacd448a8fc2c83446403567820980774ab4b7"
+      "bytes": 194434,
+      "sha256": "846189e40d57786217b7debfa02426905cc9840c8c25ce52e52bd0e917e8115c"
     },
     "anchors/gaozhong-日语.jsonl": {
-      "bytes": 100122,
-      "sha256": "24c92e74108c21f9b8ebd9de14a3695c35edf4fa8fdb4f06cb7eeffd03622e8b"
+      "bytes": 101665,
+      "sha256": "98536e04a13d1cdf5de1331f6419fca5601937eaa378c7ee9ee23b75f5ea973b"
     },
     "anchors/gaozhong-法语.jsonl": {
-      "bytes": 51514,
-      "sha256": "5135d90b071562cc49436ac16b8ddc7c1c6ff981992a0df45a6fa2fc442878c5"
+      "bytes": 52313,
+      "sha256": "64264c674e3c4fa8b067bb1cc7d2335a773e58accc2def4b0612082717488629"
     },
     "anchors/gaozhong-物理.jsonl": {
-      "bytes": 147914,
-      "sha256": "511843639e02f3421d20698d226d32aabc5acfa62450c83e8516ca0fa8723e8c"
+      "bytes": 149259,
+      "sha256": "fcb27ebd763dc1c9bcda50b16cd165d9be96fec3bcd6a622ab1cbaeef48e0aa7"
     },
     "anchors/gaozhong-生物学.jsonl": {
-      "bytes": 133220,
-      "sha256": "63375cd4827e08f96955e751572466bb6e1d1f9ddd4192d5507fdf30bce55d4c"
+      "bytes": 134611,
+      "sha256": "5db1e2d036c000ef4ef8d86393cac513283efffe2831fed92dd44c83fd5d800e"
     },
     "anchors/gaozhong-美术.jsonl": {
-      "bytes": 97869,
-      "sha256": "9e78fa76296707b68ee40529c738ef6159ebfff8d9a674ac50eef586cd21575e"
+      "bytes": 104360,
+      "sha256": "6105593a6517bd63bc6f512c637facfcd1f5ddcffba6d06d5356c60fc7834bc7"
     },
     "anchors/gaozhong-艺术.jsonl": {
-      "bytes": 112932,
-      "sha256": "6114a891d605a21443735684e5401cf46c2a9886e2da2f53d865ff98d114a9c8"
+      "bytes": 116047,
+      "sha256": "92ac6349bbc3c25d7f5dc68db96a1ce3bb3c2c5975dc7089cb9c5b1bd9808542"
     },
     "anchors/gaozhong-英语.jsonl": {
-      "bytes": 225802,
-      "sha256": "df1eb3fb56068e80b08f01ed7385ccf0f300a9220fdfb31b71d8398ffabd1bda"
+      "bytes": 230822,
+      "sha256": "c037c006631a1b6a632e4de4fd80dfa124771b858f589fe8edd0560db2a315fa"
     },
     "anchors/gaozhong-西班牙语.jsonl": {
       "bytes": 306149,
       "sha256": "ea7246c1d2c48f654723149b38d1dc93b6542748f415016e433570267ce987ee"
     },
     "anchors/gaozhong-语文.jsonl": {
-      "bytes": 116227,
-      "sha256": "3e0281e25dce47654e3ad17645bc9ca8ad5f144ebd4a8359e9842c701dec14c6"
+      "bytes": 122146,
+      "sha256": "c5c69a46b2d9f7020e794870dcd5ff102976371a22bc088d4ebb9054903809ba"
     },
     "anchors/gaozhong-通用技术.jsonl": {
-      "bytes": 606785,
-      "sha256": "fc1a136572359c1fe8492ccd6f48efc1de269fb9b4a36310f9bf1c681a955661"
+      "bytes": 610772,
+      "sha256": "ade3b08ca25d1671806f7151f81e6109187e72d7b9e3846c5c018a7cf5cff537"
     },
     "anchors/gaozhong-音乐.jsonl": {
-      "bytes": 162258,
-      "sha256": "a1b8f52ffa4305061234f45ac771f31ddfd0d4ee7a05044b11cf538cc471fb61"
+      "bytes": 177408,
+      "sha256": "b49ef64d82e11c78f60893513ead589b29c65564a6283edf7617e287d26a61ff"
     },
     "anchors/geography.jsonl": {
       "bytes": 131766,
