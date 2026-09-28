@@ -60,11 +60,12 @@ def main():
         if not r or r.get('deprecated'):
             stat['锚点不在 / 已弃用 → 跳过'] += 1
             continue
-        m = re.fullmatch(r'G(\d{1,2})-G(\d{1,2})', str(j.get('stage') or ''))
+        # 单个年级写成「G7」的也收（艺术舞蹈 p82「有条件的地区和学校可在 7 年级开设」）
+        m = re.fullmatch(r'G(\d{1,2})(?:-G(\d{1,2}))?', str(j.get('stage') or ''))
         if j.get('confidence') != 'high' or not m:
             stat['判读不确定（low / null）→ 不动'] += 1
             continue
-        lo, hi = int(m.group(1)), int(m.group(2))
+        lo = int(m.group(1)); hi = int(m.group(2) or m.group(1))
         if not (1 <= lo <= hi <= 9):
             stat['区间不合法 → 不动'] += 1
             continue

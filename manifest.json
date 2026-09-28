@@ -6,7 +6,7 @@
   "counts": {
     "anchors": 4701,
     "candidates": 0,
-    "edges": 6659,
+    "edges": 6635,
     "listItems": 6262,
     "mappings": 4,
     "liveAnchors": 4060,
@@ -57,8 +57,8 @@
   "disputedAnchors": 616,
   "files": {
     "anchors/art.jsonl": {
-      "bytes": 518583,
-      "sha256": "a1fe105567ecf74b35f4211d42f4c84f761cb1f79240693a67b46e5cd5f3c2a8"
+      "bytes": 521194,
+      "sha256": "a19dd9c770ab91c45524ed43323012deeece767133d4b819364d4ce598c34edd"
     },
     "anchors/biology.jsonl": {
       "bytes": 202457,
@@ -73,8 +73,8 @@
       "sha256": "a690cc83aa0115d90bf95ccfcd797cbe2f3c9d1068ac55992e3555e73780858d"
     },
     "anchors/chinese.jsonl": {
-      "bytes": 347962,
-      "sha256": "b1c4e31adbb067b039a854d8b3d8094a9b3ba7b867d28b525812048461ef5440"
+      "bytes": 348667,
+      "sha256": "55b610aa58e16a7409676728600a02e2ff1fbb964afcf86ff12d88aa670f9a38"
     },
     "anchors/english-lists.jsonl": {
       "bytes": 12602,
@@ -173,16 +173,16 @@
       "sha256": "039ebf77b90066759bdd9124db4da9001e180a08aaa348b29936331a0fae5439"
     },
     "anchors/infotech.jsonl": {
-      "bytes": 182512,
-      "sha256": "03738fad521f726582d5b88bb796861f1a63c0be4ce309e6eb5f8d2c9871949c"
+      "bytes": 183811,
+      "sha256": "7eecadb4f63778f210d7cf61f72ab45fee43ad8656c41103258106a30974124c"
     },
     "anchors/labor.jsonl": {
       "bytes": 125306,
       "sha256": "699c56c800dea82666a76373199ea254de55d4196c61a1ed2cb0289432efc3bb"
     },
     "anchors/math.jsonl": {
-      "bytes": 674063,
-      "sha256": "443d8ec46c51d5e5381aa7ad384aabe46dc919b64655500028d1dffedbab4ca1"
+      "bytes": 674469,
+      "sha256": "8bb8360cbc49727b3e92797ad716a437020f728ea156b344f3068ce5bc30773b"
     },
     "anchors/morality.jsonl": {
       "bytes": 111776,
@@ -201,8 +201,8 @@
       "sha256": "4da0ca0f8e61dc0cefd85d30bca56186d4a83e1cc9914a09fdcaef406ec4f314"
     },
     "anchors/rewrite-信息科技.jsonl": {
-      "bytes": 30305,
-      "sha256": "0a8806d2c5895fd963c8323f05602f8954a92ef4d4205279e89e5f79a49f3898"
+      "bytes": 30525,
+      "sha256": "ba3ee3fbdbef9fff59db818ed6aa84539de262549943c2ee57819ea7f7a79929"
     },
     "anchors/rewrite-劳动.jsonl": {
       "bytes": 11695,
@@ -221,8 +221,8 @@
       "sha256": "245cc16977a56e522f487034148eecc295fd08f9c461f48ae5206ea92e051fc2"
     },
     "anchors/rewrite-数学.jsonl": {
-      "bytes": 46750,
-      "sha256": "ed3be21c2e09a964cf5e694d321a78686f5f2e52e28a85a306650ad70214afd9"
+      "bytes": 46832,
+      "sha256": "23feb35db8dc81647dd9acf3a0f8768da3ea51023eb78ae0d90a14321a416cd8"
     },
     "anchors/rewrite-物理.jsonl": {
       "bytes": 14905,
@@ -237,8 +237,8 @@
       "sha256": "a26eecb24df7a7adedc0a72ea00c4dd870c99dfbce5909eea779a6a9c0b2d662"
     },
     "anchors/rewrite-艺术.jsonl": {
-      "bytes": 28271,
-      "sha256": "fb0acb0ddd34e90db249a60fa1c5364ca50c5891722b641f528d24af97eb0b36"
+      "bytes": 28655,
+      "sha256": "52a885103dc9c8b9e853a4cf6e0d1ef6c17f6ff17ef933eaf3f7ed101daaf176"
     },
     "anchors/rewrite-英语.jsonl": {
       "bytes": 18707,
@@ -257,8 +257,8 @@
       "sha256": "7bf5b1ae7bf6ad34f29067d41329805c47fe13ca367edfc226c68e56bdaa12db"
     },
     "edges/art.jsonl": {
-      "bytes": 164686,
-      "sha256": "167ac04a8a411e94d6fd98ee9d4efc7006d63dc8686f221fd9546af6769c5cfe"
+      "bytes": 158293,
+      "sha256": "76b126d1d52f38464876c00cb82928b8fc662c9bf9825ae76a70d763d908df02"
     },
     "edges/biology.jsonl": {
       "bytes": 236845,
@@ -329,16 +329,16 @@
       "sha256": "23637f85a7452a3fd1c225a866904dc385f9cfeb171cd151573f679f7d15c146"
     },
     "edges/infotech.jsonl": {
-      "bytes": 100098,
-      "sha256": "6ce2a72a2f3d4109b21a050561c208d092ea090153ff64f9a99b1447476ff201"
+      "bytes": 96418,
+      "sha256": "72d090f22ebe968c55595aad7c6a4e392f8966e4a89cf1955921fe4a435d0498"
     },
     "edges/labor.jsonl": {
       "bytes": 23924,
       "sha256": "cc87313a0a68575127c5eaa4d7b299721bcc27575882670a4ce9e433210c7c73"
     },
     "edges/math.jsonl": {
-      "bytes": 605257,
-      "sha256": "ba2502cc67f3cb4a1ec732dcc07d9c0415286dd8abfa655443fef39a3a00f59b"
+      "bytes": 600920,
+      "sha256": "cb01712b8e25d5f34a3c856c537a968b58899b4029fddd4fd6237c219dc6e75a"
     },
     "edges/morality.jsonl": {
       "bytes": 85914,
@@ -369,8 +369,8 @@
       "sha256": "5c20925d85920bfe80f52cee1f1e7623d2518354fdd9d52d0321a3fa163eb078"
     },
     "edges/信息科技.jsonl": {
-      "bytes": 24880,
-      "sha256": "4170374caf2460f35ffd71a7040ce870ae269a3db0a821be9fa4120b88203be9"
+      "bytes": 23090,
+      "sha256": "1d67e79847556ebeef8b88e35b408b389ac9ff8f57cadfadba2e65eb53cf3f3b"
     },
     "edges/劳动.jsonl": {
       "bytes": 4609,
@@ -393,8 +393,8 @@
       "sha256": "c3602e2a7f84e13e537739247bc52d709381fdb3a03232a40420c9991956f773"
     },
     "edges/数学.jsonl": {
-      "bytes": 126358,
-      "sha256": "9074b2c634d1973a584b27f49c0bb1ecc435b46c62a0b07747dc6b5b38469c66"
+      "bytes": 124889,
+      "sha256": "e4f5340d8d2c00783d4e6335d8fc784cdcfbf0ce3c5bcb29703230ef77e864e1"
     },
     "edges/日语.jsonl": {
       "bytes": 36591,
@@ -421,8 +421,8 @@
       "sha256": "213f26857776a4000dcdcbc271887de416dfbd1639f647544ed26cb3d272d2e3"
     },
     "edges/艺术.jsonl": {
-      "bytes": 47394,
-      "sha256": "3876ff5f0c76c351bb065c67e70b605c5cb25ba58c4fc0873c8441f189b32aa9"
+      "bytes": 46623,
+      "sha256": "cf42f3628a481476aeeb39705c3c02d46af05a7e90910de4f59c58c7d3f53f49"
     },
     "edges/西班牙语.jsonl": {
       "bytes": 201103,
