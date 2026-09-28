@@ -59,8 +59,11 @@ def main():
     ap.add_argument('--concurrency', type=int, default=10)
     a = ap.parse_args()
     base, key, model = os.environ['LLM_BASE'], os.environ['LLM_KEY'], os.environ['LLM_MODEL']
+    # 复审模型可以和起草模型分开（REVIEW_MODEL）。不分开就是同一个模型审自己写的 —— 偏宽，
+    # 2026-09-28 这样升上去的 60 条事后又让豆包补审了一遍
+    rmodel = os.environ.get('REVIEW_MODEL') or model
     suffix = os.environ.get('LLM_ENDPOINT', '/chat/completions')
-    by = 'ai:' + re.sub(r'-\d{6}$', '', model) + '-' + time.strftime('%Y-%m-%d')
+    by = 'ai:' + re.sub(r'-\d{6}$', '', rmodel) + '-' + time.strftime('%Y-%m-%d')
     CACHE.mkdir(exist_ok=True)
 
     files = {f: [json.loads(l) for l in f.read_text(encoding='utf-8').splitlines() if l.strip()]
@@ -87,13 +90,14 @@ def main():
     print(f"A 已可引用但证据弱 {sum(g == 'A' for g, _ in jobs)} · B 仅因证据弱存疑 {sum(g == 'B' for g, _ in jobs)}")
 
     def ask(sysp, user, tag):
-        h = hashlib.sha256((model + tag + sysp + user).encode()).hexdigest()[:24]
+        mdl = rmodel if tag == 'review' else model
+        h = hashlib.sha256((mdl + tag + sysp + user).encode()).hexdigest()[:24]
         cf = CACHE / f'{h}.json'
         if cf.exists():
             return json.loads(cf.read_text(encoding='utf-8'))
         for _ in range(3):
             try:
-                txt = call(sysp, user, base, key, model, suffix)
+                txt = call(sysp, user, base, key, mdl, suffix)
             except Exception as e:
                 return {'error': str(e)[:60]}
             m = re.search(r'\{.*\}', txt, re.S)
