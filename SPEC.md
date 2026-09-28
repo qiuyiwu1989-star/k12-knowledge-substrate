@@ -26,7 +26,7 @@
 | | |
 |---|---|
 | 存活锚点 | <!--N:liveAnchors-->3671<!--/N--> 条 |
-| 可被档案引用（`usableAnchors`） | <!--N:usable-->3100<!--/N--> 条 |
+| 可被档案引用（`usableAnchors`） | <!--N:usable-->3123<!--/N--> 条 |
 | **有教师签字的** | **<!--N:humanConfirmed-->0<!--/N--> 条** |
 
 **第三个数是 0，它没有写错。** 底座里没有任何一条断言经过一线教师复核。
@@ -234,10 +234,10 @@ if (a.deprecated && !a.supersededBy)
 | `auto-confirmed` | 146 | 能 |
 | `ai-adjudicated` | 242 | 能（AI 裁定，**待人工异议**） |
 | `expert-confirmed` | 0 | 能 |
-| `ai-reviewed` | 2712 | 能（2026-08-20 起 —— **AI 看过、没挑出毛病**，不是教师签字） |
-| `disputed` | 571 | **不能** —— AI 复核挑出了具体问题 |
+| `ai-reviewed` | 2735 | 能（2026-08-20 起 —— **AI 看过、没挑出毛病**，不是教师签字） |
+| `disputed` | 548 | **不能** —— AI 复核挑出了具体问题 |
 | `llm-proposed` | 0 | **不能** —— 没有任何东西看过一眼 |
-| **存活合计** | **3671** | 其中 **3100** 可用 |<!--/N-->
+| **存活合计** | **3671** | 其中 **3123** 可用 |<!--/N-->
 
 各档的确切含义：
 
@@ -296,7 +296,7 @@ mappings/citable.json  →  citable: ["auto-confirmed", "expert-confirmed",
 `fieldIssues` 是**字段级**缺陷（证据弱、学段可疑、缺 topic、独立验证存疑、复合未拆），
 和 `reviewStatus` 分开记：`reviewStatus` 回答「这条断言成不成立」，
 证据写得弱是别的字段的毛病，不该让断言替它背锅。
-当前 <!--N:fieldIssueAnchors-->482<!--/N--> 条存活锚点带 `fieldIssues`，其中不少是可引用的。
+当前 <!--N:fieldIssueAnchors-->450<!--/N--> 条存活锚点带 `fieldIssues`，其中不少是可引用的。
 **展示给最终用户时请把它显示出来。**
 
 ### 5.5 成色分档（`tiers`）和「可引用」是两件事
