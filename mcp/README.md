@@ -43,7 +43,7 @@ grain.warning 这条覆盖几个年级
 「ai-adjudicated 比 ai-reviewed 更可信」是在卖一个从没被外部验证过的排序 ——
 虚假精度。想看原始档位：`get_anchor` 返回里有 `reviewStatusRaw`。
 
-**`grain.warning` 是这个接口最重要的一个字段。** <!--N:grainSpan3-->71.3<!--/N-->% 的锚点覆盖 3 个年级，
+**`grain.warning` 是这个接口最重要的一个字段。** <!--N:grainSpan3-->78.2<!--/N-->% 的锚点覆盖 3 个年级，
 映射「成功」但信息量接近于零，是这个库最容易骗到调用方的地方。详见 `../GRAIN.md`。
 
 ## 两条硬规矩

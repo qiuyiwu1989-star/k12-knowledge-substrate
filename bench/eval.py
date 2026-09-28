@@ -129,6 +129,11 @@ def main():
         out['n'] = len(lab)
         return out
 
+    # 每题的排名留一份在 .cache/，诊断「第一名换成了谁」用（不进仓库）
+    (HERE / '.cache' / 'last-run.json').write_text(json.dumps(
+        [{'qid': r['it']['qid'], 'gold': r['it']['gold'], 'coarse': r['ranked'][:10],
+          'deep': (r['xrr'] if r.get('xrr') is not None else r.get('xr') or [])[:10]} for r in rows],
+        ensure_ascii=False), encoding='utf-8')
     coarse = metrics(lambda r: r['ranked'])
     reach = sum(bool(set(r['ranked'][:a.pool]) & set(r['it']['gold'])) for r in rows if r['it']['gold'])
     by = collections.defaultdict(list)

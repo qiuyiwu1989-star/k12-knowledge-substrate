@@ -144,11 +144,31 @@ def build_df(anchors):
     return df, len(anchors)
 
 
+_MT, _QB = {}, {}
+
+
+def _bigrams(t):
+    return {t[k:k + 2] for k in range(len(t) - 1)}
+
+
 def score(q, a, disc, stage, df, n):
     """⚠️ 这个打分**只够粗召回**，排出来的名次不可信，理由见文件头。"""
     if disc and a['discipline'] != disc:
         return None                                  # 不同学科直接排除，不是降权
-    mt = match_text(a)
+    # 预筛（无损）：公共子串最短 2 字，没有共享的二字片段就不可能有命中，直接跳过。
+    # v1.11 锚点涨到 5,000+、比对文本加了证据和原句之后，一次查询 3.1s 超了自测的时限；
+    # 最长公共子串是 O(n·m) 的，绝大多数锚点其实一个二字片段都不共享。
+    ent = _MT.get(a['id'])
+    if ent is None or ent[0] is not a:
+        mt0 = match_text(a)
+        ent = _MT[a['id']] = (a, mt0, _bigrams(mt0))
+    qb = _QB.get(q)
+    if qb is None:
+        _QB.clear()
+        qb = _QB[q] = _bigrams(q)
+    if not (qb & ent[2]):
+        return None
+    mt = ent[1]
     runs = common_runs(q, mt)
     if not runs:
         return None

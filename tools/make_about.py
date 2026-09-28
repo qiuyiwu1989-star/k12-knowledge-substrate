@@ -52,7 +52,7 @@ def main():
     rw = M.get('rewrittenAnchors', 0)
     LIST_CN = {'lst_hanzi-changyong-3500': '常用字表', 'lst_en-vocab-l3': '英语三级词汇',
                'lst_en-vocab-l2': '英语二级词汇', 'lst_hanzi-jiben-300': '基本字表',
-               'lst_recite-yiwu-135': '背诵篇目', 'lst_en-irregular-verbs': '不规则动词'}
+               'lst_recite-yiwu-135': '背诵篇目', 'lst_recite-gaozhong-72': '高中背诵篇目', 'lst_en-irregular-verbs': '不规则动词'}
     list_rows = ''.join(
         f'<tr><td>{LIST_CN.get(k, k)}</td><td class=n>{v:,}</td></tr>'
         for k, v in lists.most_common(6))

@@ -25,8 +25,8 @@
 
 | | |
 |---|---|
-| 存活锚点 | <!--N:liveAnchors-->4060<!--/N--> 条 |
-| 可被档案引用（`usableAnchors`） | <!--N:usable-->3444<!--/N--> 条 |
+| 存活锚点 | <!--N:liveAnchors-->5349<!--/N--> 条 |
+| 可被档案引用（`usableAnchors`） | <!--N:usable-->4127<!--/N--> 条 |
 | **有教师签字的** | **<!--N:humanConfirmed-->0<!--/N--> 条** |
 
 **第三个数是 0，它没有写错。** 底座里没有任何一条断言经过一线教师复核。
@@ -53,7 +53,7 @@
 | **档位**（`track`） | 学科的结构类型：`DAG`（强先修，数理化）／`LIST`（清单覆盖，字表词表篇目）／`MATRIX`（能力维度×主题，史地生政科）。决定这个学科允许存在什么边。 |
 | **复核档**（`reviewStatus`） | 这条断言被谁看过、看到什么程度。决定它能不能被引用。 |
 | **可引用**（citable） | 允许被个人学习档案当主键引用。唯一定义在机器可读的 [`mappings/citable.json`](mappings/citable.json)，不在任何文档里。 |
-| **清单**（list） | L1 层的事实性名单：字表、词表、背诵篇目。共 <!--N:listItems-->6262<!--/N--> 条。 |
+| **清单**（list） | L1 层的事实性名单：字表、词表、背诵篇目。共 <!--N:listItems-->6339<!--/N--> 条。 |
 | **L0–L4** | 分层：L0 锚点 / L1 映射与清单 / L2 教材编排（**不在本仓库**）/ L3 个人档案（**永不进本仓库**）/ L4 应用。 |
 | **快照**（release） | 一次对外发布的数据状态，由 `manifest.json` 完整描述。 |
 
@@ -126,7 +126,7 @@ curl https://k12.yongle.school/data/lists/hanzi/jiben-300.jsonl
 - **不承诺行序稳定。** JSONL 的行顺序随重算变化，不表达任何含义。
 - **不承诺锚点总数单调增。** 已经掉过一次：清理劣质锚点使
   <!--N:deprecatedAnchors-->641<!--/N--> 条退出存活集合。累计铸出的 ID 共
-  <!--N:anchorsAll-->4701<!--/N--> 个。
+  <!--N:anchorsAll-->5990<!--/N--> 个。
 - **不承诺 `usableAnchors` 单调增。** 复核可以把一条从可用降级为 `disputed`；
   降级只需一个人说不对（宁可错杀）。
 
@@ -231,13 +231,13 @@ if (a.deprecated && !a.supersededBy)
 
 <!--N:reviewTable-->| 状态 | 条数 | 能否被 L3 档案引用 |
 |---|---:|---|
-| `auto-confirmed` | 146 | 能 |
+| `auto-confirmed` | 223 | 能 |
 | `ai-adjudicated` | 241 | 能（AI 裁定，**待人工异议**） |
 | `expert-confirmed` | 0 | 能 |
-| `ai-reviewed` | 3057 | 能（2026-08-20 起 —— **AI 看过、没挑出毛病**，不是教师签字） |
-| `disputed` | 616 | **不能** —— AI 复核挑出了具体问题 |
+| `ai-reviewed` | 3663 | 能（2026-08-20 起 —— **AI 看过、没挑出毛病**，不是教师签字） |
+| `disputed` | 1222 | **不能** —— AI 复核挑出了具体问题 |
 | `llm-proposed` | 0 | **不能** —— 没有任何东西看过一眼 |
-| **存活合计** | **4060** | 其中 **3444** 可用 |<!--/N-->
+| **存活合计** | **5349** | 其中 **4127** 可用 |<!--/N-->
 
 各档的确切含义：
 
@@ -409,7 +409,7 @@ mappings/citable.json  →  citable: ["auto-confirmed", "expert-confirmed",
 ### 7.2 校验和：`manifest.files`
 
 `manifest.json` 的 `files` 段列出每个数据文件的 `bytes` 与 `sha256`
-（当前 <!--N:manifestFiles-->108<!--/N--> 个文件）。这是判断「有没有变」的最省事的办法：
+（当前 <!--N:manifestFiles-->129<!--/N--> 个文件）。这是判断「有没有变」的最省事的办法：
 
 ```js
 const m = await (await fetch('.../data/manifest.json')).json();
@@ -464,7 +464,7 @@ for (const [path, { sha256 }] of Object.entries(m.files)) {
 
 ### 关于 `provenance.srcText`
 
-<!--N:srcTextAnchors-->3905<!--/N--> 条存活锚点带句子级课标引文，中位数 33 字、最长 183 字，
+<!--N:srcTextAnchors-->5117<!--/N--> 条存活锚点带句子级课标引文，中位数 33 字、最长 183 字，
 单句、不连段。项目对它的表述（照抄 PROVENANCE.md）：
 
 > **我们的判断**：单句、非连续、用于标注与核查目的的引用，按合理引用处理。
@@ -495,7 +495,7 @@ for (const [path, { sha256 }] of Object.entries(m.files)) {
 这一节和上面所有承诺一样重要。按重要性排：
 
 1. **没有教师签字。** <!--N:humanConfirmed-->0<!--/N--> 条。
-   全库 <!--N:liveAnchors-->4060<!--/N--> 条断言没有一条经过一线教师复核。
+   全库 <!--N:liveAnchors-->5349<!--/N--> 条断言没有一条经过一线教师复核。
 2. **没有判定方法。** `assessmentSpec`（题型、判定规范、通过标准、衰减提示）
    当前 <!--N:assessmentSpecAnchors-->0<!--/N--> 条有值。
    **空着是对的** —— 用模型批量编样题会污染底座且无法追溯。

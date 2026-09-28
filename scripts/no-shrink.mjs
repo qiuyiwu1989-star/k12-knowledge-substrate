@@ -44,6 +44,19 @@ try {
   }
 } catch { /* 没有 retired/ 目录 */ }
 
+// 现在仓库里**任何文件**里还在的 ID —— 判据是「从整个仓库消失」，不是「从这个文件消失」。
+// 2026-09-28 修：原先逐文件比，把 272 条高中锚点从义教文件搬进 gaozhong-*.jsonl 报成了「消失」，
+// 和上面那句「换个文件放没关系」自相矛盾。
+const nowAll = new Set();
+const collect = (dir) => {
+  for (const name of readdirSync(join(ROOT, dir))) {
+    const rel = join(dir, name);
+    if (statSync(join(ROOT, rel)).isDirectory()) { collect(rel); continue; }
+    if (name.endsWith('.jsonl')) for (const i of ids(readFileSync(join(ROOT, rel), 'utf8'), 'id')) nowAll.add(i);
+  }
+};
+collect('anchors');
+
 let gone = 0;
 const walk = (dir, key) => {
   for (const name of readdirSync(join(ROOT, dir))) {
@@ -56,10 +69,10 @@ const walk = (dir, key) => {
                           { cwd: ROOT, encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'] });
     } catch { continue; }                       // 新文件，没有 HEAD 版本（git 的报错不必打出来）
     const before = ids(head, key), after = ids(readFileSync(join(ROOT, rel), 'utf8'), key);
-    const lost = [...before].filter((i) => !after.has(i) && !archived.has(i));
+    const lost = [...before].filter((i) => !after.has(i) && !nowAll.has(i) && !archived.has(i));
     if (lost.length) {
       gone += lost.length;
-      console.error(`✗ ${rel}  ${lost.length} 条记录从文件里消失了：${lost.slice(0, 4).join(' ')}${lost.length > 4 ? ' …' : ''}`);
+      console.error(`✗ ${rel}  ${lost.length} 条记录从仓库里消失了：${lost.slice(0, 4).join(' ')}${lost.length > 4 ? ' …' : ''}`);
     }
   }
 };

@@ -125,7 +125,10 @@ export function checkDecidable(statement) {
   const s = String(statement ?? '').trim();
 
   if (s.length < 8) reasons.push('过短：不足 8 字，几乎不可能包含判定条件');
-  if (s.length > 60) reasons.push('过长：超过 60 字，多半是把几条能力揉在了一起，应拆分');
+  // 书名号里的是**标题**，不是能力：《子路、曾晳、冉有、公西华侍坐》的三个顿号不是三条并列能力，
+  // 长篇名也不是「揉了几条能力」。长度和顿号都在去掉书名号内容之后数（2026-09-28，高中背诵篇目撞见）
+  const bare = s.replace(/《[^》]*》/g, '《》');
+  if (bare.length > 60) reasons.push('过长：超过 60 字，多半是把几条能力揉在了一起，应拆分');
 
   // 1) 必须命中一个可观察行为动词（取最长匹配）
   //
@@ -305,7 +308,7 @@ export function checkDecidable(statement) {
   }
 
   // 8) 顿号堆叠 = 一条锚点塞了多条能力
-  const commas = (s.match(/[、，]/g) || []).length;
+  const commas = (bare.match(/[、，]/g) || []).length;
   if (commas >= 3) reasons.push('并列项过多（≥3 个顿号）：一个锚点只承载一条可判定能力，请拆分');
 
   return { ok: reasons.length === 0, verb, reasons };
