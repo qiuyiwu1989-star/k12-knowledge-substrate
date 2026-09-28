@@ -188,7 +188,7 @@ const RE = /<!--N:([A-Za-z][\w-]*)-->([\s\S]*?)<!--\/N-->/g;
 let stale = 0, filled = 0, unknown = 0;
 
 // SPEC.md 是对外契约，**必须一起扫** —— 不扫等于它里面的数字全是手打的。
-for (const name of ['README.md', 'PROVENANCE.md', 'SPEC.md', 'CONTRACT.md', 'GRAIN.md']) {
+for (const name of ['README.md', 'PROVENANCE.md', 'SPEC.md', 'CONTRACT.md', 'GRAIN.md', 'mcp/README.md']) {
   const p = join(ROOT, name);
   if (!existsSync(p)) continue;
   const src = readFileSync(p, 'utf8');

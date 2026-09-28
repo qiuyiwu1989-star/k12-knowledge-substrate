@@ -28,6 +28,7 @@ import { makePresenter } from './present.mjs';
 // 那个文件被 no-writeback 单独盯着：只许一处写入、目标是 var/ 下的硬编码常量、
 // 一个联网原语都不许有。记的是「这条被碰过几次」，**不是别人认为它对应什么**。
 import { record, flush } from '../scripts/usage.mjs';
+import { grainSpan } from '../scripts/lib/grain.mjs';
 
 const ROOT = process.env.K12_ROOT ?? resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const present = makePresenter(ROOT);
@@ -52,6 +53,10 @@ for (const f of readdirSync(join(ROOT, 'anchors'))) {
     try { const a = JSON.parse(l); a._doc = docOf(f); anchors.set(a.id, a); } catch { /* validate 管坏行 */ }
   }
 }
+// 粒度占比现算，不手打：原来工具说明里写死「67.6%」，数据变了两轮之后它还在对模型这么说
+const _live = [...anchors.values()].filter((a) => !a.deprecated);
+const SPAN3 = _live.length ? (_live.filter((a) => grainSpan(a) === 3).length / _live.length * 100).toFixed(1) : '?';
+
 const edges = [];
 for (const f of readdirSync(join(ROOT, 'edges'))) {
   if (!f.endsWith('.jsonl')) continue;
@@ -83,7 +88,7 @@ const TOOLS = [
     name: 'search_anchors',
     description:
       '把一段教学内容（一节课、一道题、一份教案）映射到课标能力锚点。返回候选，按相关度排序。\n'
-      + '⚠️ 结果是**坐标定位**，不是标签：锚点的粒度是课标的粒度（67.6% 覆盖 3 个年级），'
+      + `⚠️ 结果是**坐标定位**，不是标签：锚点的粒度是课标的粒度（${SPAN3}% 覆盖 3 个年级），`
       + '不要拿来当「这道题=这条能力」的等号用。每条结果都带 grain.warning，照它说的办。\n'
       + '⚠️ 映射结果不写回底座 —— 那是你的判断，留在你那边。',
     inputSchema: {

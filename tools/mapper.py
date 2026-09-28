@@ -366,7 +366,7 @@ def main():
             'humanConfirmed': x['reviewStatus'] in HUMAN_CONFIRMED,
             'fieldIssues': x.get('fieldIssues') or [],
             # 粒度警告：**每条都带**，不是可选项。
-            # 67.6% 的锚点覆盖 3 个年级 —— 映射「成功」但信息量接近于零是这个库
+            # 约三分之二的锚点覆盖 3 个年级（准数见 GRAIN.md） —— 映射「成功」但信息量接近于零是这个库
             # 最容易骗到调用方的地方，所以把它摆在结果里，而不是藏在文档里。
             'grain': grain_of(x),
             'why': why,
