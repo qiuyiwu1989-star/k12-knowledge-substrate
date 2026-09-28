@@ -23,7 +23,7 @@ Claude Code / Claude Desktop 的 MCP 配置里加：
 
 | | 干什么 |
 |---|---|
-| `search_anchors` | 把一段教学内容映射到锚点。**给 discipline**，不给会跨科召回 |
+| `search_anchors` | 把一段教学内容映射到锚点。**给 discipline**，不给会跨科召回。题目、课堂语言传 `deep: true`（查询改写 + 模型精排，要服务端配 `LLM_BASE`/`LLM_KEY`/`LLM_MODEL`，没配自动退回字面召回）。准不准见 `reports/mapping-bench.md` |
 | `get_anchor` | 一条锚点的全部：断言、课标逐字原文、判定问句、前置与后继 |
 | `get_prerequisites` | 沿前置边往上走，hard 边优先，`convention` 排最后（那不是真依赖） |
 | `list_slice` | 静态分片。stage=归属 · grade=投影 · subject=学科 |

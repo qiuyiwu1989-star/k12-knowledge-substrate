@@ -49,6 +49,10 @@ SYS = """你是{disc}教研员，正在修一条从课标里抽坏了的能力�
 stage 只在诊断里有学段问题时给，否则留空字符串。改不了就 {{"fixable":false,"why":"原句只是教学建议，不含学生能力"}}"""
 
 ENDPOINTS = [("/v1/chat/completions", "openai"), ("/anthropic/v1/messages", "anthropic")]
+# 换供应商（如火山方舟）时只有一个 OpenAI 兼容端点：LLM_ENDPOINT=/chat/completions。
+# mapper 的精排、bench/eval.py --rerank 都经这里调模型，不设就是 mimo 的双端点。
+if os.environ.get('LLM_ENDPOINT'):
+    ENDPOINTS = [(os.environ['LLM_ENDPOINT'], 'openai')]
 _rr = itertools.count()
 # 上一次打通的端点。**失败立刻换另一个，两个都满了才睡。**
 # 原来是严格轮转：失败后先睡满指数退避，再去试另一个端点 —— 而 /v1 与 /anthropic

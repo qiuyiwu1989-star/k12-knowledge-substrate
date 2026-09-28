@@ -117,12 +117,28 @@ def load():
     return out
 
 
+def match_text(a):
+    """粗召回拿来比对的文本：断言 + 掌握证据 + 家长问句 + 课标原句。
+
+    2026-09-28 之前只比断言。bench/ 的 100 道真题量出来：小学应用题前 10 名只中 18% ——
+    「芳芳看了 90 页还剩多少」和「能计算两位数减两位数」字面几乎不相交。
+    而证据、问句是**旁观者看得见的具体行为**，天然更接近题目的说法；课标原句保留了
+    拆句时丢掉的子句（「评析联合国的作用」只活在 srcText 里）。
+    四样一起比：前 10 名 43% → 67%，前 25 名 54% → 77%，小学前 10 名 18% → 61%。
+    这不是对着那 100 题调参数 —— 只是把锚点本来就有、却没用上的字段用上。"""
+    t = [a['statement']] + (a.get('evidence') or [])[:3]
+    if a.get('assessment'):
+        t.append(a['assessment'])
+    t.append((a.get('provenance') or {}).get('srcText') or '')
+    return '；'.join(x for x in t if x)
+
+
 def build_df(anchors):
     """每个 2 字片段出现在多少条锚点里 —— 给命中的段降权用：
     「计算」在几百条里出现，「退位」只在几条，分量不该一样。"""
     df = collections.Counter()
     for a in anchors:
-        t = a['statement']
+        t = match_text(a)
         for w in {t[k:k + 2] for k in range(len(t) - 1)}:
             df[w] += 1
     return df, len(anchors)
@@ -132,7 +148,8 @@ def score(q, a, disc, stage, df, n):
     """⚠️ 这个打分**只够粗召回**，排出来的名次不可信，理由见文件头。"""
     if disc and a['discipline'] != disc:
         return None                                  # 不同学科直接排除，不是降权
-    runs = common_runs(q, a['statement'])
+    mt = match_text(a)
+    runs = common_runs(q, mt)
     if not runs:
         return None
     # **召回优先**：只要有一段非标点的公共子串就收进候选池。
@@ -142,11 +159,19 @@ def score(q, a, disc, stage, df, n):
     runs = [(w, L) for w, L in runs if any('一' <= c <= '鿿' for c in w)]
     if not runs:
         return None
+    # 上面那条「宁可多收」只对**断言本身**成立。证据、问句、原句更长、更口语，
+    # 单个两字词（「公园」「特别」「开心」）到处都有 —— 放风筝的日记会被捞进一堆数学锚点。
+    # 所以：断言里有命中 → 照旧收；只在别的字段里命中 → 得有一段 ≥3 字，或两段不同的，才收。
+    cjk = lambda w: sum('一' <= c <= '鿿' for c in w)
+    if not any(w in a['statement'] for w, _ in runs):
+        solid = [(w, L) for w, L in runs if cjk(w) >= 2]
+        if not (any(cjk(w) >= 3 for w, _ in solid) or len(solid) >= 2):
+            return None
     tot = 0.0
     for sub, L in runs:
         rarity = math.log(n / (1 + df.get(sub[:2], 0)))
         tot += L * L * max(0.4, rarity)              # 长度平方：4 字的抵得过四个 2 字的
-    s = tot / (len(a['statement']) ** 0.5 + 4)       # 按断言长度归一，长断言别靠体量取胜
+    s = tot / (len(mt) ** 0.5 + 4)                   # 按比对文本长度归一，长文本别靠体量取胜
     if a.get('verb') and a['verb'] in q:
         s *= 1.3
     if stage:
@@ -224,6 +249,45 @@ def rerank(q, cands, base, key, model):
     return picks, note
 
 
+EXPAND_SYS = '你是一位熟悉中国课程标准的教研员。'
+EXPAND = """下面是一段{disc}内容（{stage}）。用课程标准的说法，写出做这件事要用到的能力，2 到 4 条。
+每条以「能」开头，用课标常见术语（如「两位数减法」「一元一次方程」「解决简单实际问题」「化学方程式」），
+写能力本身，不写内容里的具体数字和人名。只输出每行一条，不要编号和解释。
+
+内容：{q}"""
+
+
+def llm_env():
+    """精排 / 改写用哪个模型。LLM_* 优先（火山方舟等 OpenAI 兼容端点），其次 MIMO_*。"""
+    import os
+    base = os.environ.get('LLM_BASE') or os.environ.get('MIMO_BASE')
+    key = os.environ.get('LLM_KEY') or os.environ.get('MIMO_KEY')
+    model = os.environ.get('LLM_MODEL') or os.environ.get('MIMO_MODEL', 'mimo-v2.5')
+    return (base, key, model) if base and key else None
+
+
+def expand(q, disc, stage, base, key, model):
+    """查询改写：把题目 / 课堂语言翻成课标说法，**只用来扩大粗召回**。
+
+    为什么需要：粗召回是字面匹配，而「芳芳看了 90 页还剩多少」和「两位数减法」字面不相交。
+    bench/ 100 道真题实测：正确答案进前 25 名候选池的比例 66% → 94%。
+
+    为什么安全：改写的文字**只参与找候选**。最后挑哪几条，精排拿的是原文；
+    ID 永远来自锚点库，模型编不出一条不存在的锚点。改写失败就当没改写。
+    """
+    import sys as _s
+    _s.path.insert(0, str(Path(__file__).resolve().parent))
+    from repair import call
+    try:
+        t = call(EXPAND_SYS, EXPAND.format(disc=disc or '学科', stage=f'G{stage}' if stage else '年级未知',
+                                           q=q[:600]), base, key, model)
+    except Exception:
+        return None
+    lines = [l.strip(' -·*0123456789.、') for l in (t or '').splitlines()]
+    lines = [l for l in lines if l.startswith('能') and 4 <= len(l) <= 60][:4]
+    return '\n'.join(lines) or None
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument('--text', default=None)
@@ -237,6 +301,9 @@ def main():
                     help='开精排：把粗召回的候选交给模型挑并排序（一次调用）。'
                          '不开就只有粗召回，排序不可信。')
     ap.add_argument('--pool', type=int, default=25, help='送去精排的候选数，默认 25')
+    ap.add_argument('--expand', action='store_true',
+                    help='先让模型把内容改写成课标说法，再拿「原文 + 改写」做粗召回（一次调用）。'
+                         '和 --rerank 一起用：改写管找得到，精排管挑得准')
     a = ap.parse_args()
 
     q = a.text or (Path(a.file).read_text(encoding='utf-8') if a.file else None)
@@ -245,24 +312,32 @@ def main():
     stage = G(a.stage) if a.stage else None
     anchors = load()
     df, corpus_n = build_df(anchors)
+    env = llm_env()
+    expansion, note = None, None
+    if a.expand:
+        if not env:
+            note = '要改写得先设 LLM_BASE / LLM_KEY（或 MIMO_*），现在只用原文召回'
+        else:
+            expansion = expand(q, a.discipline, stage, *env)
+            if not expansion:
+                note = '改写失败，只用原文召回'
+    rq = q + ('\n' + expansion if expansion else '')
     cands = []
     for x in anchors:
         if a.citable_only and x['reviewStatus'] not in CITABLE:
             continue
-        r = score(q, x, a.discipline, stage, df, corpus_n)
+        r = score(rq, x, a.discipline, stage, df, corpus_n)
         if r:
             cands.append((r[0], r[1], x))
     cands.sort(key=lambda t: -t[0])
 
-    reranked, note = None, None
+    reranked = None
     if a.rerank:
-        import os
-        base, key = os.environ.get('MIMO_BASE'), os.environ.get('MIMO_KEY')
-        if not base or not key:
-            note = '要精排得先设 MIMO_BASE / MIMO_KEY，现在只有粗召回'
+        if not env:
+            note = '要精排得先设 LLM_BASE / LLM_KEY（或 MIMO_*），现在只有粗召回'
         else:
-            reranked, note = rerank(q, cands[:a.pool], base, key,
-                                    os.environ.get('MIMO_MODEL', 'mimo-v2.5'))
+            reranked, rnote = rerank(q, cands[:a.pool], *env)   # 精排看的是原文，不是改写
+            note = '；'.join(x for x in (note, rnote) if x)
     top = ([c for c, _ in reranked] if reranked is not None else cands)[:a.top]
     why_of = {id(c): w for c, w in (reranked or [])}
 
@@ -304,6 +379,7 @@ def main():
             'candidates': out,
             'status': 'reranked' if reranked is not None else 'recall-only',
             'rerankNote': note,
+            'expansion': expansion,
             'disclaimer': ('已过模型精排：候选是从粗召回池里挑的，**模型只能从池里选，不许自由生成 ID**，'
                            '池外的漏了就漏了。sortScore 是粗召回的分，排名以精排为准。'
                            if reranked is not None else

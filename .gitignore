@@ -41,3 +41,4 @@ dist/
 # 首页的图数据，由 tools/make_graph3d.py 生成，1.8MB。
 # 和 dist/ 同一个道理：构建产物不进 git，可重建。
 data/graph-data.js
+bench/.cache/

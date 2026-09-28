@@ -94,6 +94,12 @@ const TOOLS = [
         stage: { type: 'string', description: '孩子所在年级，如 G3' },
         limit: { type: 'number', description: '返回条数，默认 8' },
         citableOnly: { type: 'boolean', description: '只要可被档案引用的，默认 false' },
+        deep: {
+          type: 'boolean',
+          description: '深度检索：先让模型把内容改写成课标说法再召回，再让模型从候选里挑（两次模型调用，约 3–8 秒）。'
+            + '题目、课堂语言这类和课标说法字面不同的内容要开。100 道真题实测第一名命中 27% → 61%。'
+            + '服务端没配模型密钥时自动退回字面召回，结果里 status 会说明。默认 false',
+        },
       },
       required: ['text'],
     },
@@ -143,6 +149,7 @@ function callTool(name, args) {
     if (args.stage) a.push('--stage', String(args.stage));
     if (args.limit) a.push('--top', String(args.limit));
     if (args.citableOnly) a.push('--citable-only');
+    if (args.deep) a.push('--expand', '--rerank');
     let raw;
     try {
       raw = execFileSync('python3', a, { cwd: ROOT, encoding: 'utf8', maxBuffer: 32 * 1024 * 1024 });
@@ -159,7 +166,10 @@ function callTool(name, args) {
         const full = anchors.get(c.id);
         return { ...(full ? present(full) : { id: c.id, statement: c.statement }), why: c.why };
       }),
-      ranking: r.status === 'reranked' ? '已过模型精排' : '⚠️ 只有字面粗召回，排序不可信 —— 请当候选池用，别用名次做自动映射',
+      ranking: r.status === 'reranked'
+        ? (r.expansion ? '已过查询改写 + 模型精排' : '已过模型精排')
+        : '⚠️ 只有字面粗召回，排序不可信 —— 请当候选池用，别用名次做自动映射'
+          + (args.deep ? `（要了 deep 但没走成：${r.rerankNote ?? '原因未知'}）` : '。题目 / 课堂语言请传 deep: true'),
       notes: DISCLAIMER,
     };
   }
