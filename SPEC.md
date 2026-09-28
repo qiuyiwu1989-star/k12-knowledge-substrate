@@ -25,8 +25,8 @@
 
 | | |
 |---|---|
-| 存活锚点 | <!--N:liveAnchors-->3671<!--/N--> 条 |
-| 可被档案引用（`usableAnchors`） | <!--N:usable-->3123<!--/N--> 条 |
+| 存活锚点 | <!--N:liveAnchors-->4062<!--/N--> 条 |
+| 可被档案引用（`usableAnchors`） | <!--N:usable-->3263<!--/N--> 条 |
 | **有教师签字的** | **<!--N:humanConfirmed-->0<!--/N--> 条** |
 
 **第三个数是 0，它没有写错。** 底座里没有任何一条断言经过一线教师复核。
@@ -125,7 +125,7 @@ curl https://k12.yongle.school/data/lists/hanzi/jiben-300.jsonl
   这种切分是内部实现，会调整。**按 ID 全局查找，不要按文件建索引。**
 - **不承诺行序稳定。** JSONL 的行顺序随重算变化，不表达任何含义。
 - **不承诺锚点总数单调增。** 已经掉过一次：清理劣质锚点使
-  <!--N:deprecatedAnchors-->1030<!--/N--> 条退出存活集合。累计铸出的 ID 共
+  <!--N:deprecatedAnchors-->639<!--/N--> 条退出存活集合。累计铸出的 ID 共
   <!--N:anchorsAll-->4701<!--/N--> 个。
 - **不承诺 `usableAnchors` 单调增。** 复核可以把一条从可用降级为 `disputed`；
   降级只需一个人说不对（宁可错杀）。
@@ -152,10 +152,10 @@ curl https://k12.yongle.school/data/lists/hanzi/jiben-300.jsonl
 
 ### 4.2 实际分布：多数弃用**没有继任者**
 
-当前 <!--N:deprecatedAnchors-->1030<!--/N--> 条弃用锚点里：
+当前 <!--N:deprecatedAnchors-->639<!--/N--> 条弃用锚点里：
 
 - <!--N:supersededAnchors-->12<!--/N--> 条有 `supersededBy`（有继任者）
-- <!--N:droppedNoSuccessor-->1018<!--/N--> 条只有 `dropReason`（**没有继任者**）
+- <!--N:droppedNoSuccessor-->627<!--/N--> 条只有 `dropReason`（**没有继任者**）
 
 **这是本节最重要的一句话**：绝大多数弃用不是「换了个更好的说法」，
 而是「这条根本不该存在」—— 典型的 `dropReason` 是「AI 判定不是学生能力（教学建议/课程目标）」
@@ -209,7 +209,7 @@ if (a.deprecated && !a.supersededBy)
 | 两者的关系 | 一条 `type: "component"` 的边：`{ "anchorId": 母条, "prerequisiteId": 子条 }`，读作**母条依赖子条**（子条是母条的一个子动作）。 |
 
 当前 <!--N:compositeAnchors-->226<!--/N--> 条母条、
-<!--N:splitChildren-->548<!--/N--> 条子条、
+<!--N:splitChildren-->555<!--/N--> 条子条、
 <!--N:edgesComponent-->3203<!--/N--> 条 `component` 边。
 
 **母条为什么不弃用**：它是课标自己的单位，而且弃用它会让**指向它的现存边全部悬空**，
@@ -234,10 +234,10 @@ if (a.deprecated && !a.supersededBy)
 | `auto-confirmed` | 146 | 能 |
 | `ai-adjudicated` | 242 | 能（AI 裁定，**待人工异议**） |
 | `expert-confirmed` | 0 | 能 |
-| `ai-reviewed` | 2735 | 能（2026-08-20 起 —— **AI 看过、没挑出毛病**，不是教师签字） |
-| `disputed` | 548 | **不能** —— AI 复核挑出了具体问题 |
+| `ai-reviewed` | 2875 | 能（2026-08-20 起 —— **AI 看过、没挑出毛病**，不是教师签字） |
+| `disputed` | 799 | **不能** —— AI 复核挑出了具体问题 |
 | `llm-proposed` | 0 | **不能** —— 没有任何东西看过一眼 |
-| **存活合计** | **3671** | 其中 **3123** 可用 |<!--/N-->
+| **存活合计** | **4062** | 其中 **3263** 可用 |<!--/N-->
 
 各档的确切含义：
 
@@ -384,7 +384,7 @@ mappings/citable.json  →  citable: ["auto-confirmed", "expert-confirmed",
 
 「能力跨界」在本项目里由**另一层**表达：横切维度 `crosscutting`（参照 NGSS 跨学科概念，
 闭合词表）与 `practice`（科学与工程实践）。
-当前 <!--N:crosscuttingTagged-->1899<!--/N--> 条锚点已打标。
+当前 <!--N:crosscuttingTagged-->1908<!--/N--> 条锚点已打标。
 **这两个是标签，不是边** —— 练同一个横切概念的两条锚点之间有关联，
 但那关联没有方向、画不成有向边。别把它当依赖用。
 
@@ -464,7 +464,7 @@ for (const [path, { sha256 }] of Object.entries(m.files)) {
 
 ### 关于 `provenance.srcText`
 
-<!--N:srcTextAnchors-->3516<!--/N--> 条存活锚点带句子级课标引文，中位数 33 字、最长 183 字，
+<!--N:srcTextAnchors-->3907<!--/N--> 条存活锚点带句子级课标引文，中位数 33 字、最长 183 字，
 单句、不连段。项目对它的表述（照抄 PROVENANCE.md）：
 
 > **我们的判断**：单句、非连续、用于标注与核查目的的引用，按合理引用处理。
@@ -495,7 +495,7 @@ for (const [path, { sha256 }] of Object.entries(m.files)) {
 这一节和上面所有承诺一样重要。按重要性排：
 
 1. **没有教师签字。** <!--N:humanConfirmed-->0<!--/N--> 条。
-   全库 <!--N:liveAnchors-->3671<!--/N--> 条断言没有一条经过一线教师复核。
+   全库 <!--N:liveAnchors-->4062<!--/N--> 条断言没有一条经过一线教师复核。
 2. **没有判定方法。** `assessmentSpec`（题型、判定规范、通过标准、衰减提示）
    当前 <!--N:assessmentSpecAnchors-->0<!--/N--> 条有值。
    **空着是对的** —— 用模型批量编样题会污染底座且无法追溯。

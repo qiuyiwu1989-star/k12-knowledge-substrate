@@ -46,7 +46,7 @@ const cur = fingerprint();
 const V = parse(readFileSync(join(ROOT, 'VERSION'), 'utf8'));
 const P = parse(last);
 
-const breaking = [], deprecating = [], revising = [];
+const breaking = [], deprecating = [], reviving = [], revising = [];
 let additive = 0;
 for (const [id, o] of Object.entries(prev.anchors)) {
   const n = cur.anchors[id];
@@ -54,13 +54,16 @@ for (const [id, o] of Object.entries(prev.anchors)) {
   if (n.d !== o.d) breaking.push(`${id} 学科 ${o.d}→${n.d}`);
   else if (n.site !== o.site && !o.site.includes('?') && !n.site.includes('?')) breaking.push(`${id} 出处 ${o.site}→${n.site}`);
   else if (!o.dep && n.dep) deprecating.push(`${id} 被标弃用`);
+  // 撤销弃用（2026-09-28 邱懿武同意）：归「修订」进 minor，但和弃用一样**逐条进 CHANGELOG** ——
+  // 一条锚点从「不存在」回到「存在」，调用方看到的世界变了，得有人对每一条负责
+  else if (o.dep && !n.dep) reviving.push(`${id} 撤销弃用`);
   else if (n.st !== o.st) revising.push(`${id} 断言原文改了`);
   else if (n.stage !== o.stage) revising.push(`${id} 学段 ${o.stage}→${n.stage}`);
 }
 for (const id of Object.keys(cur.anchors)) if (!prev.anchors[id]) additive++;
 const dEdges = cur.counts.edges - prev.counts.edges;
 
-const changed = breaking.length + deprecating.length + revising.length + additive || dEdges !== 0;
+const changed = breaking.length + deprecating.length + reviving.length + revising.length + additive || dEdges !== 0;
 
 // 可引用集合的变化：**只报告，不拦**。契约不变（复核升档不触发版本动作），
 // 但调用方缓存了可引用集合的话，他应该能看见它变了。
@@ -79,8 +82,8 @@ if (hasCit) {
 } else {
   citNote = `可引用集合：上个版本 ${last} 的指纹没记录这一项，从下个版本起可比`;
 }
-console.log(`与 ${last} 相比：破坏 ${breaking.length} · 弃用 ${deprecating.length} · 修订 ${revising.length} · 新增锚点 ${additive} · 边 ${dEdges >= 0 ? '+' : ''}${dEdges}`);
-for (const l of [...breaking, ...deprecating].slice(0, 10)) console.log(`   ${l}`);
+console.log(`与 ${last} 相比：破坏 ${breaking.length} · 弃用 ${deprecating.length} · 撤销弃用 ${reviving.length} · 修订 ${revising.length} · 新增锚点 ${additive} · 边 ${dEdges >= 0 ? '+' : ''}${dEdges}`);
+for (const l of [...breaking, ...deprecating, ...reviving].slice(0, 10)) console.log(`   ${l}`);
 console.log(`   ${citNote}`);
 
 let fail = 0;
@@ -94,12 +97,12 @@ if (changed && V.maj === P.maj && V.min <= P.min) {
   fail++;
 }
 // 破坏与弃用必须逐条出现在 CHANGELOG —— 逼人真的去看每一条
-const need = [...breaking, ...deprecating].map((s) => s.split(' ')[0]);
+const need = [...breaking, ...deprecating, ...reviving].map((s) => s.split(' ')[0]);
 if (need.length) {
   const cl = existsSync(join(ROOT, 'CHANGELOG.md')) ? readFileSync(join(ROOT, 'CHANGELOG.md'), 'utf8') : '';
   const absent = need.filter((id) => !cl.includes(id));
   if (absent.length) {
-    console.error(`\n✗ ${absent.length} 条破坏/弃用没写进 CHANGELOG.md：${absent.slice(0, 6).join(' ')}`);
+    console.error(`\n✗ ${absent.length} 条破坏/弃用/撤销弃用没写进 CHANGELOG.md：${absent.slice(0, 6).join(' ')}`);
     console.error('  版本号是给机器看的，CHANGELOG 是给人看的 —— 逐条写，是为了逼人真的去看每一条。');
     fail++;
   }

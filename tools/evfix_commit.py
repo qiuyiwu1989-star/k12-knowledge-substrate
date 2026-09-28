@@ -29,7 +29,7 @@ TOOLS = Path(__file__).resolve().parent
 ROOT = TOOLS.parent
 sys.path.insert(0, str(TOOLS))
 from ai_review import SYS, OPEN_AT            # noqa: E402  同一份提示词，不另写
-from fix_src_stages import read_bands, STD    # noqa: E402  学段划分只有一份定义
+from doc_stage import split_stage_issues      # noqa: E402  课标学段裁决只有一份定义
 
 SRC = TOOLS / 'out' / 'evidence-fix.jsonl'
 CACHE = TOOLS / 'out' / '.cache-evfix-review'
@@ -80,16 +80,6 @@ def main():
              for f in sorted((ROOT / 'anchors').rglob('*.jsonl'))}
     byid = {r['id']: r for rows in files.values() for r in rows}
     fileof = {r['id']: f.name for f, rows in files.items() for r in rows}
-    BANDS, _ = read_bands()
-
-    def doc_stage(r):
-        """课标文件本身定下的学段。**课标写了学段，模型的意见不能盖过课标**（resolve_disputed ①②）。"""
-        if fileof[r['id']].startswith('gaozhong-'):
-            return (10, 12), '出自普通高中课标，学段由文档决定'
-        m = re.fullmatch(r'第([一二三四])学段', ((r.get('provenance') or {}).get('srcStage') or '').strip())
-        if m:
-            return BANDS.get(r['discipline'], STD)[m.group(1)], f'课标正文标了{m.group(0)}'
-        return None, None
     edges_in = collections.defaultdict(list)
     for f in sorted((ROOT / 'edges').rglob('*.jsonl')):
         for l in f.open(encoding='utf-8'):
@@ -157,14 +147,9 @@ def main():
             if d.get('assessment') and not r.get('assessment'):
                 r['assessment'] = PARENT_ASK.sub('', d['assessment'])
             iss = [x for x in (o.get('issues') or []) if isinstance(x, dict) and x.get('type')]
-            withdrawn = []
-            ds, why = doc_stage(r)
-            h = r.get('stageHint') or {}
-            if ds and (h.get('min'), h.get('max')) == (f'G{ds[0]}', f'G{ds[1]}'):
-                withdrawn = [x for x in iss if x['type'] == 'stage']
-                iss = [x for x in iss if x['type'] != 'stage']
-                if withdrawn:
-                    stat['  其中 stage 异议被课标学段撤销'] += 1
+            iss, withdrawn, why = split_stage_issues(r, fileof[r['id']], iss)
+            if withdrawn:
+                stat['  其中 stage 异议被课标学段撤销'] += 1
             fi = [x for x in (r.get('fieldIssues') or []) if x != 'evidence-weak']
             if any(x['type'] == 'evidence-weak' for x in iss):
                 fi.append('evidence-weak')

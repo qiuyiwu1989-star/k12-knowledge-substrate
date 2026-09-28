@@ -36,7 +36,7 @@ sys.path.insert(0, str(TOOLS))
 import fix_fallback_evidence as F              # noqa: E402  起草提示词与闸
 from ai_review import SYS as REVIEW, OPEN_AT   # noqa: E402  复审提示词
 from evfix_commit import call, PARENT_ASK      # noqa: E402
-from fix_src_stages import read_bands, STD     # noqa: E402
+from doc_stage import split_stage_issues       # noqa: E402
 
 CACHE = TOOLS / 'out' / '.cache-evfix2'
 LOG = TOOLS / 'out' / 'evidence-fix-round2.jsonl'
@@ -72,16 +72,6 @@ def main():
         for l in f.open(encoding='utf-8'):
             e = json.loads(l)
             edges_in[e['anchorId']].append(e['prerequisiteId'])
-    BANDS, _ = read_bands()
-
-    def doc_stage(r):
-        if fileof[r['id']].startswith('gaozhong-'):
-            return (10, 12), '出自普通高中课标，学段由文档决定'
-        m = re.fullmatch(r'第([一二三四])学段', ((r.get('provenance') or {}).get('srcStage') or '').strip())
-        if m:
-            return BANDS.get(r['discipline'], STD)[m.group(1)], f'课标正文标了{m.group(0)}'
-        return None, None
-
     jobs = []
     for r in byid.values():
         if r.get('deprecated') or str(r.get('evidenceSource', '')).startswith('curriculum-'):
@@ -154,12 +144,7 @@ def main():
             if res['stage'] != 'ok':
                 stat[f"{g} 没动（{res['stage']}：{res['why'][:14]}）"] += 1
                 continue
-            iss, wd = res['issues'], []
-            ds, why = doc_stage(r)
-            h = r.get('stageHint') or {}
-            if ds and (h.get('min'), h.get('max')) == (f'G{ds[0]}', f'G{ds[1]}'):
-                wd = [x for x in iss if x['type'] == 'stage']
-                iss = [x for x in iss if x['type'] != 'stage']
+            iss, wd, why = split_stage_issues(r, fileof[r['id']], res['issues'])
             types = {x['type'] for x in iss}
             if 'evidence-weak' in types:
                 stat[f'{g} 没动（复审说新证据仍弱）'] += 1
