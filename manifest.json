@@ -173,8 +173,8 @@
       "sha256": "d0a40047f1b6455af833743c39c5846c906e51653ce1f187483d56b70e2623eb"
     },
     "anchors/infotech.jsonl": {
-      "bytes": 179568,
-      "sha256": "ee5c447e48e7df7abf385510d24dd4622a362ded02827e9902153450a18039d8"
+      "bytes": 179574,
+      "sha256": "3c20ae4a036171da218547f06f1a4cd93a98743da4337157adeb17354d0e77e3"
     },
     "anchors/labor.jsonl": {
       "bytes": 120988,
@@ -201,8 +201,8 @@
       "sha256": "725e001b9581fcc677204cdabfba60958264d75c6d22621d1c434777861aaa28"
     },
     "anchors/rewrite-信息科技.jsonl": {
-      "bytes": 30303,
-      "sha256": "fead2933df5d20784146f5bbe285a9e52e0add1b9928c562e63f8da2b65042f2"
+      "bytes": 30305,
+      "sha256": "0a8806d2c5895fd963c8323f05602f8954a92ef4d4205279e89e5f79a49f3898"
     },
     "anchors/rewrite-劳动.jsonl": {
       "bytes": 11695,
