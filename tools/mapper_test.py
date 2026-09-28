@@ -32,9 +32,14 @@ def run(q, disc, stage):
         cmd += ['--discipline', disc]
     if stage:
         cmd += ['--stage', stage]
-    t0 = time.time()
-    p = subprocess.run(cmd, input=q, capture_output=True, text=True, timeout=60)
-    return json.loads(p.stdout), time.time() - t0
+    # 计的是子进程自己用掉的 CPU 时间（user + sys），不是墙钟。
+    # 2026-09-28：同机别的项目把 load average 顶到 43，墙钟从 0.7s 涨到 5s，这道闸挡掉了一次发布 ——
+    # 慢的是机器不是映射器。这里要拦的是**算法变贵**，那就量算法自己花的时间。
+    import resource
+    r0 = resource.getrusage(resource.RUSAGE_CHILDREN)
+    p = subprocess.run(cmd, input=q, capture_output=True, text=True, timeout=120)
+    r1 = resource.getrusage(resource.RUSAGE_CHILDREN)
+    return json.loads(p.stdout), (r1.ru_utime - r0.ru_utime) + (r1.ru_stime - r0.ru_stime)
 
 
 ok = bad = 0
@@ -50,9 +55,9 @@ for q, disc, stage, must in CASES:
     slow = dt > 3
     if good and not slow:
         ok += 1
-        print(f'  ✓ {desc}　{dt:.2f}s')
+        print(f'  ✓ {desc}　CPU {dt:.2f}s')
     else:
         bad += 1
-        print(f'  ✗ {q[:28]}…　{desc}' + ('　**超时 %.1fs**' % dt if slow else ''))
+        print(f'  ✗ {q[:28]}…　{desc}' + ('　**CPU 超时 %.1fs**' % dt if slow else ''))
 print(f'\n{"✓" if not bad else "✗"} 映射器粗召回: {ok} 通过 / {bad} 失败')
 sys.exit(1 if bad else 0)

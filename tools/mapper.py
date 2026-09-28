@@ -117,6 +117,9 @@ def load():
     return out
 
 
+_MT, _QB = {}, {}      # 锚点 id → (锚点, 比对文本, 二字片段集)；查询 → 二字片段集
+
+
 def match_text(a):
     """粗召回拿来比对的文本：断言 + 掌握证据 + 家长问句 + 课标原句。
 
@@ -139,12 +142,10 @@ def build_df(anchors):
     df = collections.Counter()
     for a in anchors:
         t = match_text(a)
-        for w in {t[k:k + 2] for k in range(len(t) - 1)}:
-            df[w] += 1
+        bg = {t[k:k + 2] for k in range(len(t) - 1)}
+        _MT[a['id']] = (a, t, bg)                    # 预筛要用同一份二字片段，这里算一次顺手存下
+        df.update(bg)
     return df, len(anchors)
-
-
-_MT, _QB = {}, {}
 
 
 def _bigrams(t):
