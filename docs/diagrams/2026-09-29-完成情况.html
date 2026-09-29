@@ -1,0 +1,161 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>K12 底座完成情况</title>
+<style>
+:root{
+  --ground:#f6f5f1; --surface:#fff; --ink:#1d1d1b; --muted:#6b6a64; --line:#e3e1da;
+  --accent:#b4471f; --bar:#2f6f5e; --bar2:#9cc7b9; --warn:#b4471f; --warn-soft:#f5e1d8; --ok-soft:#dcebe5; --ok:#2f6f5e;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --ground:#151513; --surface:#1f1f1c; --ink:#ecebe6; --muted:#a3a19a; --line:#34332f;
+    --accent:#e0825c; --bar:#7cc4ad; --bar2:#3f6b5e; --warn:#e0825c; --warn-soft:#3a2720; --ok-soft:#223630; --ok:#7cc4ad;
+  }
+}
+:root[data-theme="dark"]{
+  --ground:#151513; --surface:#1f1f1c; --ink:#ecebe6; --muted:#a3a19a; --line:#34332f;
+  --accent:#e0825c; --bar:#7cc4ad; --bar2:#3f6b5e; --warn:#e0825c; --warn-soft:#3a2720; --ok-soft:#223630; --ok:#7cc4ad;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--ground);color:var(--ink);font:15px/1.65 "IBM Plex Sans",-apple-system,"PingFang SC","Microsoft YaHei",sans-serif}
+main{max-width:1040px;margin:0 auto;padding:32px 16px 64px}
+h1{font-size:26px;margin:0 0 4px}
+h2{font-size:18px;margin:32px 0 6px}
+.sub{color:var(--muted);margin:0 0 18px}
+.top{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;align-items:flex-start}
+button{font:inherit;border:1px solid var(--line);background:var(--surface);color:var(--ink);padding:6px 12px;border-radius:8px;cursor:pointer}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin:8px 0 4px}
+.kpi{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:12px 14px}
+.kpi b{display:block;font-size:24px;font-variant-numeric:tabular-nums}
+.kpi span{color:var(--muted);font-size:13px}
+.kpi.zero b{color:var(--warn)}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:16px}
+figure{margin:0}
+figcaption{color:var(--muted);font-size:13px;margin-top:6px}
+svg text{fill:currentColor;font-size:12px}
+.ver{display:grid;grid-template-columns:64px 1fr;gap:4px 14px;padding:10px 0;border-top:1px solid var(--line)}
+.ver:first-child{border-top:0}
+.ver .v{font-weight:600;font-variant-numeric:tabular-nums}
+.ver .t{font-weight:600}
+.ver .d{grid-column:2;color:var(--muted);font-size:13.5px}
+.cols{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+@media (max-width:760px){.cols{grid-template-columns:1fr}}
+ul{margin:6px 0 0;padding-left:18px}
+li{margin:4px 0}
+.tag{display:inline-block;font-size:11.5px;padding:1px 7px;border-radius:999px;margin-left:6px;vertical-align:1px}
+.tag.you{background:var(--warn-soft);color:var(--warn)} .tag.me{background:var(--ok-soft);color:var(--ok)}
+table{border-collapse:collapse;width:100%;font-variant-numeric:tabular-nums}
+th,td{text-align:left;padding:6px 8px;border-bottom:1px solid var(--line);font-size:14px}
+th{color:var(--muted);font-weight:500}
+td.n{text-align:right}
+.note{color:var(--muted);font-size:13px}
+footer{margin-top:28px;color:var(--muted);font-size:12px}
+</style>
+</head>
+<body>
+<main>
+<div class="top">
+  <div>
+    <h1>K12 底座完成情况</h1>
+    <p class="sub">2026-09-27 → 09-29 · 底座 v1.4 → v1.12（9 个版本全部打标签、上线、推 GitHub）· DSH 插件同步到 v1.12</p>
+  </div>
+  <button id="theme" type="button">切换亮暗</button>
+</div>
+
+<div class="kpis">
+  <div class="kpi"><b>4,231</b><span>可引用锚点（v1.4 时 2,866）</span></div>
+  <div class="kpi"><b>5,349</b><span>在用锚点（v1.4 时 3,671）</span></div>
+  <div class="kpi"><b>80%</b><span>映射前三命中（深度检索）</span></div>
+  <div class="kpi"><b>17</b><span>基准里底座覆盖不到的题（原 21）</span></div>
+  <div class="kpi zero"><b>0</b><span>教师签字</span></div>
+</div>
+
+<h2>可引用锚点，一版一版怎么涨上来的</h2>
+<div class="card">
+<figure>
+<svg viewBox="0 0 960 250" width="100%" role="img" aria-label="各版本可引用锚点数柱状图">
+  <g transform="translate(40,10)">
+    <!-- 刻度：0 / 2000 / 4000，高 200 对应 4400 -->
+    <line x1="0" y1="200" x2="900" y2="200" stroke="currentColor" opacity=".25"/>
+    <line x1="0" y1="109" x2="900" y2="109" stroke="currentColor" opacity=".1"/>
+    <line x1="0" y1="18" x2="900" y2="18" stroke="currentColor" opacity=".1"/>
+    <text x="-6" y="204" text-anchor="end" opacity=".6">0</text>
+    <text x="-6" y="113" text-anchor="end" opacity=".6">2000</text>
+    <text x="-6" y="22" text-anchor="end" opacity=".6">4000</text>
+  </g>
+  <g id="bars" transform="translate(40,10)"></g>
+</svg>
+<figcaption>柱高 = 可引用锚点数；深色部分是能力转写层（我们的教育判断，不是课标原话）。数字取自各版本 tag 下的 manifest.json。</figcaption>
+</figure>
+</div>
+
+<h2>九个版本各做了什么</h2>
+<div class="card" id="vers"></div>
+
+<h2>映射基准（100 道真题，量「给一道题能不能对到能力」）</h2>
+<div class="card">
+<table>
+<tr><th>检索方式</th><th class="n">第一名</th><th class="n">前三</th><th>说明</th></tr>
+<tr><td>字面匹配（接口默认）</td><td class="n">27–28%</td><td class="n">39–42%</td><td class="note">题目和课标说法字面不相交，天生吃亏</td></tr>
+<tr><td><b>改写 + 精排（deep: true）</b></td><td class="n">57–65%</td><td class="n"><b>80%</b></td><td class="note">第一名随精排模型每次运行波动，看前三</td></tr>
+</table>
+<p class="note">题目来自 CMATH（小学）/ C-Eval（初中）/ GAOKAO-Bench（高中），固定种子分层抽；金标是 AI 标的（标注时禁用被测工具），老师复核前不对外当准确率说。</p>
+</div>
+
+<h2>还没做完的</h2>
+<div class="cols">
+<div class="card">
+  <b>卡在你这里</b>
+  <ul>
+    <li>补义务教育<b>物理、化学、生物学、地理</b>课标原件（还缺日语、俄语）<span class="tag you">最先</span><br><span class="note">17 个缺口里初中理科和地理占大半，没原件补不了</span></li>
+    <li>找一位小学数学老师 15 分钟（试用单早备好）<br><span class="note">教师签字仍是 0；映射准确率也要老师复核金标才能对外说</span></li>
+    <li>轮换火山方舟 key（贴在过聊天里）</li>
+    <li>深度检索用哪家模型、谁付费；<code>record_mastery</code> 要不要走 MCP</li>
+  </ul>
+</div>
+<div class="card">
+  <b>我可以接着做</b>
+  <ul>
+    <li>给新增的约 1,200 条锚点补先修依赖边（现在它们没有边）<span class="tag me">下一步</span></li>
+    <li>扫 topic 标错（如「列方程」标在「图形与几何」）</li>
+    <li>v1.8 撤销弃用时退休的边：要重做类型标注才能放回</li>
+    <li>3 条原句在原件里找不到的锚点（疑似转述，均不可引用）</li>
+    <li>1,118 条 disputed 里仍有一批两家模型意见冲突的，等人判</li>
+  </ul>
+</div>
+</div>
+
+<footer>数字来源：<code>git show v1.x:manifest.json</code> · <code>CHANGELOG.md</code> · <code>reports/mapping-bench.md</code>。本页不含任何未落库的数字。</footer>
+</main>
+<script>
+(function(){
+  var D=[['1.4',2866,309],['1.5',3100,309],['1.6',3123,309],['1.7',3123,309],['1.8',3263,309],['1.9',3444,308],['1.10',3444,308],['1.11',4127,914],['1.12',4231,914]];
+  var g=document.getElementById('bars'),ns='http://www.w3.org/2000/svg',W=900/D.length,H=200,max=4400;
+  D.forEach(function(d,i){
+    var x=i*W+W*0.2,w=W*0.6,h=d[1]/max*H,hr=d[2]/max*H;
+    function r(y,hh,c){var e=document.createElementNS(ns,'rect');e.setAttribute('x',x);e.setAttribute('y',y);e.setAttribute('width',w);e.setAttribute('height',hh);e.setAttribute('fill',c);e.setAttribute('rx',2);g.appendChild(e);}
+    r(H-h,h-hr,'var(--bar2)'); r(H-hr,hr,'var(--bar)');
+    var t=document.createElementNS(ns,'text');t.setAttribute('x',x+w/2);t.setAttribute('y',H-h-6);t.setAttribute('text-anchor','middle');t.textContent=d[1].toLocaleString('en-US');g.appendChild(t);
+    var l=document.createElementNS(ns,'text');l.setAttribute('x',x+w/2);l.setAttribute('y',H+16);l.setAttribute('text-anchor','middle');l.setAttribute('opacity','.7');l.textContent='v'+d[0];g.appendChild(l);
+  });
+  var V=[
+   ['v1.5','占位证据换成真证据','284 条「证据只是复读断言」的锚点起草真证据并复审，234 条进可引用'],
+   ['v1.6','带着复核意见重写证据','68 条证据弱的，23 条升档；已可引用的 4 条与上轮冲突，不降，留给人'],
+   ['v1.7','信息科技 4 条学段按原件改正','找到义教课标 PDF，按第二学段改为 G3–G4'],
+   ['v1.8','撤销误弃用 391 条','映射基准揭出「列出方程」被误判不是能力；契约新增 reviving，复查 821 条，140 条回可引用'],
+   ['v1.9','学段按课标原件改正 407 条','科学、体育表格按学段分行，前向填充认不出；子 agent 逐条看扫描页判读。拆掉「能说出 X 年级学生应」伪断言'],
+   ['v1.10','学段再改正 157 条','全书 OCR 审计：学段标题在页中间起头；映射基准重标，缺口 21 → 19'],
+   ['v1.11','高中能力转写 + 初中历史 + 高中背诵','546 + 60 对转写（DeepSeek 写、豆包审）、77 条背诵篇目；272 条高中锚点搬回正确文件；映射器 3.1s → 0.7s'],
+   ['v1.12','跨厂商复审','豆包补审 605 条（98% 一致）；第三判官处理 230 条冲突；从存疑升档要求两家双签，184 条里 107 条过'],
+  ];
+  var box=document.getElementById('vers');
+  V.forEach(function(v){var d=document.createElement('div');d.className='ver';d.innerHTML='<div class="v">'+v[0]+'</div><div class="t">'+v[1]+'</div><div class="d">'+v[2]+'</div>';box.appendChild(d);});
+  var root=document.documentElement;
+  document.getElementById('theme').onclick=function(){var dk=root.getAttribute('data-theme')==='dark'||(!root.getAttribute('data-theme')&&matchMedia('(prefers-color-scheme: dark)').matches);root.setAttribute('data-theme',dk?'light':'dark');};
+})();
+</script>
+</body>
+</html>
